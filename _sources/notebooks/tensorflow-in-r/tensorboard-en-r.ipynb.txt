@@ -1,0 +1,452 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "toc-hr-collapsed": false
+   },
+   "source": [
+    "Uso de TensorBoard desde R\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "TensorBoard es una herramienta para visualizar gráficas computacionales, facilitar su comprensión y analizar resultados provenientes de la ejecución de modelos. TensorBoard usa la información almacenada en archivos de eventos generados por TensorFlow. La página https://www.tensorflow.org/guide/summaries_and_tensorboard presenta información detallada sobre su uso desde Python; la página https://tensorflow.rstudio.com/tensorflow/articles/howto_summaries_and_tensorboard.html presenta información adicional sobre su uso desde el lenguaje R. El lector debe consultar estas referencias para profundizar su conocimiento sobre TensorBoard. \n",
+    "\n",
+    "Para abordar los temas tratados en este documento es necesario que el lector domine los temas abordados en el documento *Cómputos usando el API de bajo nivel de TensorFlow for R*.\n",
+    "\n",
+    "Esta lección presenta una introducción al uso de TensorBoard desde R, y especificamente enseña:\n",
+    "\n",
+    "- Cómo visualizar flujos de datos.\n",
+    "- Cómo organizar una gráfica usando ámbitos.\n",
+    "- Cómo consturir resumenes de ejecuciones."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preparación"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## \n",
+    "## Se importa la librería\n",
+    "##\n",
+    "library(tensorflow)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Visualización de flujos de datos en TensorBoard"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Creación de la gráfica de flujo de datos"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "`TensorBoard` es una herramienta que permite visualizar las gráficas de flujo de datos generadas por TensorFlow. A continuación se construye la gráfica para la expresión `5 * 2 - (2 + 3)`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<tensorflow.python.summary.writer.writer.FileWriter>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Se crea una nueva gráfica de flujo de datos\n",
+    "##\n",
+    "g <- tf$Graph()\n",
+    "\n",
+    "##\n",
+    "## Se usa la gráfica de flujo de datos g como\n",
+    "## la gráfica por defecto\n",
+    "##\n",
+    "with(g$as_default(), {\n",
+    "    node1 <- tf$constant(5.0)           # Tensor []\n",
+    "    node2 <- tf$constant(2.0)           # Tensor []\n",
+    "    node3 <- tf$constant(3.0)           # Tensor []\n",
+    "    node4 <- tf$multiply(node1, node2)  # Operación *\n",
+    "    node5 <- tf$add(node3, node2)       # Operación +\n",
+    "    node6 <- tf$subtract(node4, node5)  # Operación - \n",
+    "    \n",
+    "    ##\n",
+    "    ## summary permite contruir los resumenes que se desean\n",
+    "    ## visualizar en TensorBoard. La función FileWriter \n",
+    "    ## escribe en disco la información de la gráfica creada.\n",
+    "    ## Aquí se usa la carpeta /tmp/example/ para almacenar\n",
+    "    ## la información.\n",
+    "    ##\n",
+    "    tf$summary$FileWriter('/tmp/example', g)\n",
+    "})"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Visualización de la gráfica en TensorBoard"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para visualizar el grafo, puede usar una de las siguientes alternativas:\n",
+    "\n",
+    "* Lanzar `TensorBoard` desde el Terminal usando:\n",
+    "\n",
+    "       tensorboard --logdir=\"/tmp/example\"\n",
+    "     \n",
+    "     \n",
+    "  Abra el explorador de internet en la dirección http://localhost:6006\n",
+    "    \n",
+    "* Abrir la extensión TensorBoards en la pestaña lateral de Jupyter Lab.\n",
+    "\n",
+    "**Nota:** Si desea escribir la gráfica al directorio actual puede usar\n",
+    "\n",
+    "    tf$summary$FileWriter('.', g)\n",
+    "    \n",
+    "y para abrirla en TensorBoard\n",
+    "\n",
+    "    tensorboard --logdir ."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El gráfico generado es el siguiente:\n",
+    "\n",
+    "![TensorBoardIntro-01.png](assets/TensorBoardIntro-01.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## División de una gráfica de flujo de datos en ámbitos"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Es posible crear subgráficas dentro de una gráfica principal usando ámbitos. Esto permite organizar un gráfico complejo en partes que pueden expandirse o contraerse individualmente. El procedimiento consiste en crear cada ámbito y asociar a este los nodos. Por ejemplo, en el siguiente gráfico se crean los ámbitos A y B y se asocian tres nodos a cada uno."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Creación de la gráfica"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<tensorflow.python.summary.writer.writer.FileWriter>"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Crea una nueva gráfica\n",
+    "##\n",
+    "g = tf$Graph()\n",
+    "\n",
+    "##\n",
+    "## Crea los nodos dentro de la grafica g \n",
+    "##\n",
+    "with(g$as_default(),{\n",
+    "    \n",
+    "    ##\n",
+    "    ##  Se crea el ámbito A. La palabra reservada with\n",
+    "    ##  permite asociar los tres nodos creados (a, b y c)\n",
+    "    ##  al ámbito A.\n",
+    "    ##\n",
+    "    with(tf$name_scope('A'), {\n",
+    "        a <- tf$add(1, 2, name='Aa')\n",
+    "        b <- tf$add(3, 4, name='Ab')\n",
+    "        c <- tf$multiply(a, b, name='Ac')\n",
+    "        ## note que el nodo c es el raíz para este ámbito\n",
+    "    })\n",
+    "\n",
+    "    ##\n",
+    "    ##  Se crea el ámbito B con tres nodos (d, e, f)  \n",
+    "    ##\n",
+    "    with(tf$name_scope('B'), {\n",
+    "        d <- tf$add(5, 6, name='Bd')\n",
+    "        e <- tf$add(7, 8, name='Be')\n",
+    "        f <- tf$multiply(d, e, name='Bf')\n",
+    "        ## note que el nodo f es el raíz para este ámbito\n",
+    "    })\n",
+    "\n",
+    "    ##\n",
+    "    ## Este es el nodo raíz de los dos ámbitos\n",
+    "    ##\n",
+    "    h <- tf$subtract(c, f, 'raiz')\n",
+    "\n",
+    "    ##\n",
+    "    ## Se escribe la gráfica de flujo de datos al disco\n",
+    "    ## en el directorio /tmp/ambito\n",
+    "    ##\n",
+    "    tf$summary$FileWriter('/tmp/ambito', g)\n",
+    "})"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Visualización de la gráfica en TensorBoard"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para abrir la gráfica, use el comando `tensorboard --logir=/tmp/ambito` en términal y luego habra la dirección http://localhost/6006 en el explorador. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La gráfica generada es la siguiente:\n",
+    "\n",
+    "![TensorBoardIntro-02.png](assets/TensorBoardIntro-02.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "donde la parte superior corresponde a la grafica colapsada y la parte inferior a la gráfica expandida."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Construcción de resumenes de ejecuciones en TensorBoard"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "TensorBoard también puede ser utilizado para visualizar información relacionada con la ejecución de un cómputo. En el siguiente ejemplo, se muestra como organizar en ámbitos el código en un programa de TensorFlow, la forma de construir resumenes, y de visualizar el reporte generado en `TensorBoard`. En este ejemplo, se computa $y=f(x)$ para diferentes valores de $x$; adicionalmente, se almacena la cantidad de corridas y el valor de  $\\sum f(x)$ como información de la corrida."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Implementación"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Borra el directorio de trabajo en cada corrida.\n",
+    "## Se ejecuta el comando de Linux `rm -rf /tmp/example`\n",
+    "## el cual borra dicha carpeta del disco duro. \n",
+    "##\n",
+    "system(\"rm -rf /tmp/example\")\n",
+    "\n",
+    "##\n",
+    "## Crea una gráfica\n",
+    "##\n",
+    "graph <- tf$Graph()\n",
+    "\n",
+    "##\n",
+    "## Se usa la nueva gráfica como la gráfica por defecto\n",
+    "##\n",
+    "with(graph$as_default(), {\n",
+    "    \n",
+    "    ##\n",
+    "    ## Se definen las variables a usar en la corrida dentro\n",
+    "    ## del ámbito `variables`\n",
+    "    ##\n",
+    "    with(tf$name_scope('variables'), {\n",
+    "        num_corridas <- tf$Variable(0, name='num_corridas')\n",
+    "        suma_y <- tf$Variable(0.0, name='suma_y')\n",
+    "    })\n",
+    "        \n",
+    "    ##\n",
+    "    ## Se crea el ámbito `x`, en el cual se define \n",
+    "    ## a x como un placeholder. Recuede que la codificación\n",
+    "    ## de la función es independiente de x, y el valor de x\n",
+    "    ## se suministra cada vez que se llame a f(x)\n",
+    "    ##\n",
+    "    with(tf$name_scope('x'), {\n",
+    "        x <- tf$placeholder(tf$float32, shape=c(), name='placeholder_x')\n",
+    "    })\n",
+    "        \n",
+    "    ##\n",
+    "    ## Este ámbito contiene el código de la función f(x).\n",
+    "    ## Es decir, evalua f(x) = x^2\n",
+    "    ##\n",
+    "    with(tf$name_scope('fx'), {\n",
+    "        y <- tf$square(x, name='y')\n",
+    "    })\n",
+    "        \n",
+    "    ##\n",
+    "    ## Se crea el ámbito `contadores`, el cual contiene \n",
+    "    ## la información intermedia, que en este caso corresponde\n",
+    "    ## a la sumatoria de f(x) y el número de ejecuciones.\n",
+    "    ##\n",
+    "    with(tf$name_scope('contadores'), {\n",
+    "        incr_suma_y <- suma_y$assign_add(y)\n",
+    "        incr_num_corridas = num_corridas$assign_add(1)\n",
+    "    })\n",
+    "    \n",
+    "    ##\n",
+    "    ## Se crean los resumenes\n",
+    "    ##\n",
+    "    with(tf$name_scope('resumenes'), {\n",
+    "        tf$summary$scalar('Y', y)\n",
+    "        tf$summary$scalar('Suma_y', suma_y)\n",
+    "    })\n",
+    "        \n",
+    "    ##\n",
+    "    ## Inicializa las variables y los resumenes\n",
+    "    ##\n",
+    "    with(tf$name_scope('operaciones'), {\n",
+    "        ## Paso obligatorio para inicializar las variables\n",
+    "        ## en TensorFlow\n",
+    "        init <- tf$global_variables_initializer()\n",
+    "        \n",
+    "        ## \n",
+    "        ## Genera un nodo que permite evaluar todos \n",
+    "        ## los resumenes definidos en el ámbito `resumenes`\n",
+    "        ##  \n",
+    "        resumenes <- tf$summary$merge_all()\n",
+    "    })\n",
+    "})  \n",
+    "\n",
+    "##\n",
+    "## Ejecución\n",
+    "##   Se crea una sesión para realizar los cómputos\n",
+    "##\n",
+    "sess <- tf$Session(graph=graph)\n",
+    "\n",
+    "##\n",
+    "##   Se crea el directorio donde se almacenarán los resultados\n",
+    "##\n",
+    "writer <- tf$summary$FileWriter('/tmp/example', graph)\n",
+    "\n",
+    "##\n",
+    "##   Inicialización de las variables\n",
+    "##\n",
+    "sess$run(init)\n",
+    "\n",
+    "##\n",
+    "## Se llama a la función f(x) para x = 0, 1, 2, ...\n",
+    "##\n",
+    "for(a in 1:10)\n",
+    "{\n",
+    "    ## Ejecuta la gráfica\n",
+    "    result <- sess$run(\n",
+    "        c(y,                  # Computa y = f(x)\n",
+    "          incr_suma_y,        # sumatoria de f(x)\n",
+    "          resumenes),         # Genera el resumen (Y, Suma_Y)\n",
+    "        feed_dict=dict(x=a))  # Pasa el valor de x a TensorFlow\n",
+    "    \n",
+    "    ## Almacena los resultados de esta llamada en el disco duro\n",
+    "    writer$add_summary(result[[3]], global_step=result[[2]])\n",
+    "}\n",
+    "\n",
+    "## se vacia el buffer al disco duro y se cierra la conexión\n",
+    "writer$flush()\n",
+    "writer$close()\n",
+    "\n",
+    "## Se cierra la sesión\n",
+    "sess$close()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Ejecución y visualización en TensorBoard"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La organización del código en ámbitos permite su mejor organización. En la siguiente figura se muestra la gráfica computacional generada.\n",
+    "\n",
+    "![TensorBoardIntro-03.png](assets/TensorBoardIntro-03.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Los gráficos generados por los resumenes son los siguientes:\n",
+    "\n",
+    "![TensorBoardIntro-04.png](assets/TensorBoardIntro-04.png)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "3.4.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

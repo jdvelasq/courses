@@ -1,0 +1,2339 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Análisis de datos usando sparklyr\n",
+    "===\n",
+    "\n",
+    "* *30 min* | Última modificación: Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este tutorial se presenta el análisis de una base de datos sobre vuelos usando SQL en Spark desde la interfaz de R desarrollada por RStudio. En este documento se ejemplifica el uso de DataFrames para la realización de consultas usando sus funciones nativas, como también el envio de comandos SQL. Adicionalmente, se demuestra como salvar los resultados al HDFS en distintos formatos. \n",
+    "\n",
+    "Al finalizar este documento, el lector estará en capacidad de:\n",
+    "\n",
+    "* Mover archivos entre el HDFS y el sistema local.\n",
+    "\n",
+    "* Importar tablas en formato CSV a Sparklyr.\n",
+    "\n",
+    "* Aplicar operadores de selección, filtrado y agregación desde R.\n",
+    "\n",
+    "* Usar los resultados obtenidos para construir gráficos.\n",
+    "\n",
+    "* Exportar los resultados a archivos en el sistema HDFS."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Este ejemplo está basado en el tutorial de Spark de HortoWorks, disponible en https://es.hortonworks.com/tutorial/learning-spark-sql-with-zeppelin/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este tutorial se ejemplican los mismos comandos usados en el tutorial 'Análisis de datos usando PySpark', por lo que aquí solo se ilustra la sintaxis usada; para obtener información detallada, debe verse el tutorial citado."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preparación"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Esta función se usará para ejecutar comandos en el \n",
+    "## sistema operativo y capturar la salida.\n",
+    "##\n",
+    "systemp <- function(command) cat(system(command, intern = TRUE), sep = '\\n')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "Attaching package: ‘dplyr’\n",
+      "\n",
+      "The following objects are masked from ‘package:stats’:\n",
+      "\n",
+      "    filter, lag\n",
+      "\n",
+      "The following objects are masked from ‘package:base’:\n",
+      "\n",
+      "    intersect, setdiff, setequal, union\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "library(sparklyr)\n",
+    "library(dplyr)\n",
+    "sc <- spark_connect(master='local', spark_home='/home/vagrant/spark/spark-2.4.3-bin-hadoop2.7')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Copia de archivos al HDFS"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Warning message:\n",
+      "“running command 'hdfs dfs -copyFromLocal flights.csv /tmp/' had status 1”"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "-rw-r--r--   1 vagrant supergroup    9719582 2019-05-21 01:44 /tmp/flights.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## El archivo flights.csv se encuentra en la capeta de\n",
+    "## trabajo de la máquina local. Se copia el archivo \n",
+    "## a la carpeta /tmp del sistema HDFS.\n",
+    "##\n",
+    "systemp('hdfs dfs -copyFromLocal flights.csv /tmp/')\n",
+    "\n",
+    "##\n",
+    "## Se listan los archivos en la carpeta /tmp del HDFS\n",
+    "## para verificar que el archivo haya sido copiado\n",
+    "##\n",
+    "systemp('hdfs dfs -ls /tmp/*csv')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Carga de datos en Spark"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Crea un DataFrame a partir del archivo fligths.csv\n",
+    "##\n",
+    "flights <- spark_read_csv(sc, \n",
+    "                          \"flights\",\n",
+    "                          \"/tmp/flights.csv\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<dl>\n",
+       "\t<dt>$Year</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'Year'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$Month</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'Month'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$DayofMonth</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'DayofMonth'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$DayOfWeek</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'DayOfWeek'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$DepTime</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'DepTime'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$CRSDepTime</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'CRSDepTime'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$ArrTime</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'ArrTime'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$CRSArrTime</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'CRSArrTime'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$UniqueCarrier</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'UniqueCarrier'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$FlightNum</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'FlightNum'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$TailNum</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'TailNum'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$ActualElapsedTime</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'ActualElapsedTime'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$CRSElapsedTime</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'CRSElapsedTime'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$AirTime</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'AirTime'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$ArrDelay</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'ArrDelay'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$DepDelay</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'DepDelay'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$Origin</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'Origin'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$Dest</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'Dest'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$Distance</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'Distance'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$TaxiIn</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'TaxiIn'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$TaxiOut</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'TaxiOut'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$Cancelled</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'Cancelled'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$CancellationCode</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'CancellationCode'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$Diverted</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'Diverted'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'IntegerType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$CarrierDelay</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'CarrierDelay'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$WeatherDelay</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'WeatherDelay'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$NASDelay</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'NASDelay'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$SecurityDelay</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'SecurityDelay'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "\t<dt>$LateAircraftDelay</dt>\n",
+       "\t\t<dd><dl>\n",
+       "\t<dt>$name</dt>\n",
+       "\t\t<dd>'LateAircraftDelay'</dd>\n",
+       "\t<dt>$type</dt>\n",
+       "\t\t<dd>'StringType'</dd>\n",
+       "</dl>\n",
+       "</dd>\n",
+       "</dl>\n"
+      ],
+      "text/latex": [
+       "\\begin{description}\n",
+       "\\item[\\$Year] \\begin{description}\n",
+       "\\item[\\$name] 'Year'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$Month] \\begin{description}\n",
+       "\\item[\\$name] 'Month'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$DayofMonth] \\begin{description}\n",
+       "\\item[\\$name] 'DayofMonth'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$DayOfWeek] \\begin{description}\n",
+       "\\item[\\$name] 'DayOfWeek'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$DepTime] \\begin{description}\n",
+       "\\item[\\$name] 'DepTime'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$CRSDepTime] \\begin{description}\n",
+       "\\item[\\$name] 'CRSDepTime'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$ArrTime] \\begin{description}\n",
+       "\\item[\\$name] 'ArrTime'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$CRSArrTime] \\begin{description}\n",
+       "\\item[\\$name] 'CRSArrTime'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$UniqueCarrier] \\begin{description}\n",
+       "\\item[\\$name] 'UniqueCarrier'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$FlightNum] \\begin{description}\n",
+       "\\item[\\$name] 'FlightNum'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$TailNum] \\begin{description}\n",
+       "\\item[\\$name] 'TailNum'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$ActualElapsedTime] \\begin{description}\n",
+       "\\item[\\$name] 'ActualElapsedTime'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$CRSElapsedTime] \\begin{description}\n",
+       "\\item[\\$name] 'CRSElapsedTime'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$AirTime] \\begin{description}\n",
+       "\\item[\\$name] 'AirTime'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$ArrDelay] \\begin{description}\n",
+       "\\item[\\$name] 'ArrDelay'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$DepDelay] \\begin{description}\n",
+       "\\item[\\$name] 'DepDelay'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$Origin] \\begin{description}\n",
+       "\\item[\\$name] 'Origin'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$Dest] \\begin{description}\n",
+       "\\item[\\$name] 'Dest'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$Distance] \\begin{description}\n",
+       "\\item[\\$name] 'Distance'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$TaxiIn] \\begin{description}\n",
+       "\\item[\\$name] 'TaxiIn'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$TaxiOut] \\begin{description}\n",
+       "\\item[\\$name] 'TaxiOut'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$Cancelled] \\begin{description}\n",
+       "\\item[\\$name] 'Cancelled'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$CancellationCode] \\begin{description}\n",
+       "\\item[\\$name] 'CancellationCode'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$Diverted] \\begin{description}\n",
+       "\\item[\\$name] 'Diverted'\n",
+       "\\item[\\$type] 'IntegerType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$CarrierDelay] \\begin{description}\n",
+       "\\item[\\$name] 'CarrierDelay'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$WeatherDelay] \\begin{description}\n",
+       "\\item[\\$name] 'WeatherDelay'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$NASDelay] \\begin{description}\n",
+       "\\item[\\$name] 'NASDelay'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$SecurityDelay] \\begin{description}\n",
+       "\\item[\\$name] 'SecurityDelay'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\item[\\$LateAircraftDelay] \\begin{description}\n",
+       "\\item[\\$name] 'LateAircraftDelay'\n",
+       "\\item[\\$type] 'StringType'\n",
+       "\\end{description}\n",
+       "\n",
+       "\\end{description}\n"
+      ],
+      "text/markdown": [
+       "$Year\n",
+       ":   $name\n",
+       ":   'Year'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$Month\n",
+       ":   $name\n",
+       ":   'Month'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$DayofMonth\n",
+       ":   $name\n",
+       ":   'DayofMonth'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$DayOfWeek\n",
+       ":   $name\n",
+       ":   'DayOfWeek'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$DepTime\n",
+       ":   $name\n",
+       ":   'DepTime'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$CRSDepTime\n",
+       ":   $name\n",
+       ":   'CRSDepTime'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$ArrTime\n",
+       ":   $name\n",
+       ":   'ArrTime'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$CRSArrTime\n",
+       ":   $name\n",
+       ":   'CRSArrTime'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$UniqueCarrier\n",
+       ":   $name\n",
+       ":   'UniqueCarrier'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$FlightNum\n",
+       ":   $name\n",
+       ":   'FlightNum'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$TailNum\n",
+       ":   $name\n",
+       ":   'TailNum'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$ActualElapsedTime\n",
+       ":   $name\n",
+       ":   'ActualElapsedTime'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$CRSElapsedTime\n",
+       ":   $name\n",
+       ":   'CRSElapsedTime'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$AirTime\n",
+       ":   $name\n",
+       ":   'AirTime'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$ArrDelay\n",
+       ":   $name\n",
+       ":   'ArrDelay'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$DepDelay\n",
+       ":   $name\n",
+       ":   'DepDelay'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$Origin\n",
+       ":   $name\n",
+       ":   'Origin'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$Dest\n",
+       ":   $name\n",
+       ":   'Dest'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$Distance\n",
+       ":   $name\n",
+       ":   'Distance'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$TaxiIn\n",
+       ":   $name\n",
+       ":   'TaxiIn'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$TaxiOut\n",
+       ":   $name\n",
+       ":   'TaxiOut'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$Cancelled\n",
+       ":   $name\n",
+       ":   'Cancelled'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$CancellationCode\n",
+       ":   $name\n",
+       ":   'CancellationCode'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$Diverted\n",
+       ":   $name\n",
+       ":   'Diverted'\n",
+       "$type\n",
+       ":   'IntegerType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$CarrierDelay\n",
+       ":   $name\n",
+       ":   'CarrierDelay'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$WeatherDelay\n",
+       ":   $name\n",
+       ":   'WeatherDelay'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$NASDelay\n",
+       ":   $name\n",
+       ":   'NASDelay'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$SecurityDelay\n",
+       ":   $name\n",
+       ":   'SecurityDelay'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "$LateAircraftDelay\n",
+       ":   $name\n",
+       ":   'LateAircraftDelay'\n",
+       "$type\n",
+       ":   'StringType'\n",
+       "\n",
+       "\n",
+       "\n",
+       "\n",
+       "\n"
+      ],
+      "text/plain": [
+       "$Year\n",
+       "$Year$name\n",
+       "[1] \"Year\"\n",
+       "\n",
+       "$Year$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$Month\n",
+       "$Month$name\n",
+       "[1] \"Month\"\n",
+       "\n",
+       "$Month$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$DayofMonth\n",
+       "$DayofMonth$name\n",
+       "[1] \"DayofMonth\"\n",
+       "\n",
+       "$DayofMonth$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$DayOfWeek\n",
+       "$DayOfWeek$name\n",
+       "[1] \"DayOfWeek\"\n",
+       "\n",
+       "$DayOfWeek$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$DepTime\n",
+       "$DepTime$name\n",
+       "[1] \"DepTime\"\n",
+       "\n",
+       "$DepTime$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$CRSDepTime\n",
+       "$CRSDepTime$name\n",
+       "[1] \"CRSDepTime\"\n",
+       "\n",
+       "$CRSDepTime$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$ArrTime\n",
+       "$ArrTime$name\n",
+       "[1] \"ArrTime\"\n",
+       "\n",
+       "$ArrTime$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$CRSArrTime\n",
+       "$CRSArrTime$name\n",
+       "[1] \"CRSArrTime\"\n",
+       "\n",
+       "$CRSArrTime$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$UniqueCarrier\n",
+       "$UniqueCarrier$name\n",
+       "[1] \"UniqueCarrier\"\n",
+       "\n",
+       "$UniqueCarrier$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$FlightNum\n",
+       "$FlightNum$name\n",
+       "[1] \"FlightNum\"\n",
+       "\n",
+       "$FlightNum$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$TailNum\n",
+       "$TailNum$name\n",
+       "[1] \"TailNum\"\n",
+       "\n",
+       "$TailNum$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$ActualElapsedTime\n",
+       "$ActualElapsedTime$name\n",
+       "[1] \"ActualElapsedTime\"\n",
+       "\n",
+       "$ActualElapsedTime$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$CRSElapsedTime\n",
+       "$CRSElapsedTime$name\n",
+       "[1] \"CRSElapsedTime\"\n",
+       "\n",
+       "$CRSElapsedTime$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$AirTime\n",
+       "$AirTime$name\n",
+       "[1] \"AirTime\"\n",
+       "\n",
+       "$AirTime$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$ArrDelay\n",
+       "$ArrDelay$name\n",
+       "[1] \"ArrDelay\"\n",
+       "\n",
+       "$ArrDelay$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$DepDelay\n",
+       "$DepDelay$name\n",
+       "[1] \"DepDelay\"\n",
+       "\n",
+       "$DepDelay$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$Origin\n",
+       "$Origin$name\n",
+       "[1] \"Origin\"\n",
+       "\n",
+       "$Origin$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$Dest\n",
+       "$Dest$name\n",
+       "[1] \"Dest\"\n",
+       "\n",
+       "$Dest$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$Distance\n",
+       "$Distance$name\n",
+       "[1] \"Distance\"\n",
+       "\n",
+       "$Distance$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$TaxiIn\n",
+       "$TaxiIn$name\n",
+       "[1] \"TaxiIn\"\n",
+       "\n",
+       "$TaxiIn$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$TaxiOut\n",
+       "$TaxiOut$name\n",
+       "[1] \"TaxiOut\"\n",
+       "\n",
+       "$TaxiOut$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$Cancelled\n",
+       "$Cancelled$name\n",
+       "[1] \"Cancelled\"\n",
+       "\n",
+       "$Cancelled$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$CancellationCode\n",
+       "$CancellationCode$name\n",
+       "[1] \"CancellationCode\"\n",
+       "\n",
+       "$CancellationCode$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$Diverted\n",
+       "$Diverted$name\n",
+       "[1] \"Diverted\"\n",
+       "\n",
+       "$Diverted$type\n",
+       "[1] \"IntegerType\"\n",
+       "\n",
+       "\n",
+       "$CarrierDelay\n",
+       "$CarrierDelay$name\n",
+       "[1] \"CarrierDelay\"\n",
+       "\n",
+       "$CarrierDelay$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$WeatherDelay\n",
+       "$WeatherDelay$name\n",
+       "[1] \"WeatherDelay\"\n",
+       "\n",
+       "$WeatherDelay$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$NASDelay\n",
+       "$NASDelay$name\n",
+       "[1] \"NASDelay\"\n",
+       "\n",
+       "$NASDelay$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$SecurityDelay\n",
+       "$SecurityDelay$name\n",
+       "[1] \"SecurityDelay\"\n",
+       "\n",
+       "$SecurityDelay$type\n",
+       "[1] \"StringType\"\n",
+       "\n",
+       "\n",
+       "$LateAircraftDelay\n",
+       "$LateAircraftDelay$name\n",
+       "[1] \"LateAircraftDelay\"\n",
+       "\n",
+       "$LateAircraftDelay$type\n",
+       "[1] \"StringType\"\n",
+       "\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Se imprime el esquema para verificar la lectura\n",
+    "## del archivo.\n",
+    "##\n",
+    "sdf_schema(flights)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 5]\u001b[39m\n",
+       "  UniqueCarrier FlightNum DepDelay ArrDelay Distance\n",
+       "  \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m             \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m    \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m       \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m\n",
+       "\u001b[38;5;250m1\u001b[39m WN                  335 8        -14           810\n",
+       "\u001b[38;5;250m2\u001b[39m WN                 \u001b[4m3\u001b[24m231 19       2             810\n",
+       "\u001b[38;5;250m3\u001b[39m WN                  448 8        14            515\n",
+       "\u001b[38;5;250m4\u001b[39m WN                 \u001b[4m1\u001b[24m746 -4       -6            515\n",
+       "\u001b[38;5;250m5\u001b[39m WN                 \u001b[4m3\u001b[24m920 34       34            515\n",
+       "\u001b[38;5;250m6\u001b[39m WN                  378 25       11            688"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "## \n",
+    "## Se imprime un subconjunto de las columnas para verificar\n",
+    "## la lectura\n",
+    "##\n",
+    "head(select(flights, 'UniqueCarrier', 'FlightNum', 'DepDelay', 'ArrDelay', 'Distance'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 5]\u001b[39m\n",
+       "  UniqueCarrier FlightNum DepDelay ArrDelay Distance\n",
+       "  \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m             \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m    \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m       \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m\n",
+       "\u001b[38;5;250m1\u001b[39m WN                  335 8        -14           810\n",
+       "\u001b[38;5;250m2\u001b[39m WN                 \u001b[4m3\u001b[24m231 19       2             810\n",
+       "\u001b[38;5;250m3\u001b[39m WN                  448 8        14            515\n",
+       "\u001b[38;5;250m4\u001b[39m WN                 \u001b[4m1\u001b[24m746 -4       -6            515\n",
+       "\u001b[38;5;250m5\u001b[39m WN                 \u001b[4m3\u001b[24m920 34       34            515\n",
+       "\u001b[38;5;250m6\u001b[39m WN                  378 25       11            688"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Usando piping:\n",
+    "##\n",
+    "head(flights %>% select('UniqueCarrier', 'FlightNum', 'DepDelay', 'ArrDelay', 'Distance'))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "1e+05"
+      ],
+      "text/latex": [
+       "1e+05"
+      ],
+      "text/markdown": [
+       "1e+05"
+      ],
+      "text/plain": [
+       "[1] 1e+05"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Número total de registros leidos\n",
+    "##\n",
+    "numTotalFlights <- collect(count(flights))$n\n",
+    "numTotalFlights"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 1]\u001b[39m\n",
+       "       n\n",
+       "   \u001b[3m\u001b[38;5;246m<dbl>\u001b[39m\u001b[23m\n",
+       "\u001b[38;5;250m1\u001b[39m \u001b[4m1\u001b[24m\u001b[4m0\u001b[24m\u001b[4m0\u001b[24m000"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Usando piping:\n",
+    "##\n",
+    "flights %>% count()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Cálculos usando funciones de los DataFrames"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Cómputo del porcentaje de vuelos retrasados"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 2]\u001b[39m\n",
+       "  UniqueCarrier DepDelay\n",
+       "  \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m         \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m   \n",
+       "\u001b[38;5;250m1\u001b[39m WN            19      \n",
+       "\u001b[38;5;250m2\u001b[39m WN            34      \n",
+       "\u001b[38;5;250m3\u001b[39m WN            25      \n",
+       "\u001b[38;5;250m4\u001b[39m WN            67      \n",
+       "\u001b[38;5;250m5\u001b[39m WN            94      \n",
+       "\u001b[38;5;250m6\u001b[39m WN            27      "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## La variable delayedFlights contiene las columnas \n",
+    "## UniqueCarrier y DepDelay para los vuelos con \n",
+    "## DepDelay > 15 minutos.\n",
+    "##\n",
+    "delayedFlights <- select(filter(flights, DepDelay > 15), c('UniqueCarrier', 'DepDelay'))\n",
+    "head(delayedFlights)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 2]\u001b[39m\n",
+       "  UniqueCarrier DepDelay\n",
+       "  \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m         \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m   \n",
+       "\u001b[38;5;250m1\u001b[39m WN            19      \n",
+       "\u001b[38;5;250m2\u001b[39m WN            34      \n",
+       "\u001b[38;5;250m3\u001b[39m WN            25      \n",
+       "\u001b[38;5;250m4\u001b[39m WN            67      \n",
+       "\u001b[38;5;250m5\u001b[39m WN            94      \n",
+       "\u001b[38;5;250m6\u001b[39m WN            27      "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Usando piping:\n",
+    "##\n",
+    "delayedFlights <- flights %>% filter(DepDelay > 15) %>% select(UniqueCarrier, DepDelay)\n",
+    "head(delayedFlights)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "19587"
+      ],
+      "text/latex": [
+       "19587"
+      ],
+      "text/markdown": [
+       "19587"
+      ],
+      "text/plain": [
+       "[1] 19587"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "collect(count(delayedFlights))$n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Porcentaje de vuelos retrasados:  19.587 %"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Porcentaje de vuelos retrasados.\n",
+    "##\n",
+    "numDelayedFlights <- collect(count(delayedFlights))$n\n",
+    "cat(\"Porcentaje de vuelos retrasados: \", numDelayedFlights / numTotalFlights * 100, \"%\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Creación de campos"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A continuación se desea crear una nueva columna llamada `IsDelayed` que vale 0 si el vuelo se realizó a tiempo y 1 si se retraso."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 2]\u001b[39m\n",
+       "  DepDelay IsDelayed\n",
+       "  \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m        \u001b[3m\u001b[38;5;246m<dbl>\u001b[39m\u001b[23m\n",
+       "\u001b[38;5;250m1\u001b[39m 8                0\n",
+       "\u001b[38;5;250m2\u001b[39m 19               1\n",
+       "\u001b[38;5;250m3\u001b[39m 8                0\n",
+       "\u001b[38;5;250m4\u001b[39m -4               0\n",
+       "\u001b[38;5;250m5\u001b[39m 34               1\n",
+       "\u001b[38;5;250m6\u001b[39m 25               1"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Selecciona algunos campos del DataFrame original\n",
+    "##\n",
+    "flightsWithDelays <- select(flights, c('Year', \n",
+    "                                       'Month',\n",
+    "                                       'DayofMonth', \n",
+    "                                       'UniqueCarrier', \n",
+    "                                       'FlightNum', \n",
+    "                                       'DepDelay'))\n",
+    "                                   \n",
+    "##\n",
+    "## Crea un nuevo campo, como computo de otro existente\n",
+    "##\n",
+    "\n",
+    "flightsWithDelays <- mutate(flightsWithDelays, \n",
+    "                            IsDelayed = ifelse(DepDelay > 15, 1, 0))\n",
+    "\n",
+    "flightsWithDelays <- flightsWithDelays %>% na.replace(IsDelayed = 0)\n",
+    "\n",
+    "##\n",
+    "## Se imprimen algunos registros para verificar el resultado.\n",
+    "##\n",
+    "head(select(flightsWithDelays, c('DepDelay', 'IsDelayed')))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Warning message:\n",
+      "“Missing values are always removed in SQL.\n",
+      "Use `SUM(x, na.rm = TRUE)` to silence this warning\n",
+      "This warning is displayed only once per session.”"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "0.19587"
+      ],
+      "text/latex": [
+       "0.19587"
+      ],
+      "text/markdown": [
+       "0.19587"
+      ],
+      "text/plain": [
+       "[1] 0.19587"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "## \n",
+    "## A continuación, se calcula el porcentaje de vuelos con retrasos\n",
+    "##\n",
+    "sum_is_delayed <- collect(flightsWithDelays %>% summarize(sum(IsDelayed)))$'sum(IsDelayed)'\n",
+    "count_depdelay <- collect(flightsWithDelays %>% summarize(n()))$'n()'\n",
+    "sum_is_delayed / count_depdelay"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Cómputos usando SQL"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A continuación se realizan los mismos cálculos anteriores, pero usando SQL desde Spark."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<flights_mutated> [?? x 30]\u001b[39m\n",
+       "    Year Month DayofMonth DayOfWeek DepTime CRSDepTime ArrTime CRSArrTime\n",
+       "   \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m      \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m     \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m        \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m        \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m\n",
+       "\u001b[38;5;250m 1\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 2003          \u001b[4m1\u001b[24m955 2211          \u001b[4m2\u001b[24m225\n",
+       "\u001b[38;5;250m 2\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 754            735 1002          \u001b[4m1\u001b[24m000\n",
+       "\u001b[38;5;250m 3\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 628            620 804            750\n",
+       "\u001b[38;5;250m 4\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 926            930 1054          \u001b[4m1\u001b[24m100\n",
+       "\u001b[38;5;250m 5\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 1829          \u001b[4m1\u001b[24m755 1959          \u001b[4m1\u001b[24m925\n",
+       "\u001b[38;5;250m 6\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 1940          \u001b[4m1\u001b[24m915 2121          \u001b[4m2\u001b[24m110\n",
+       "\u001b[38;5;250m 7\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 1937          \u001b[4m1\u001b[24m830 2037          \u001b[4m1\u001b[24m940\n",
+       "\u001b[38;5;250m 8\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 1039          \u001b[4m1\u001b[24m040 1132          \u001b[4m1\u001b[24m150\n",
+       "\u001b[38;5;250m 9\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 617            615 652            650\n",
+       "\u001b[38;5;250m10\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 1620          \u001b[4m1\u001b[24m620 1639          \u001b[4m1\u001b[24m655\n",
+       "\u001b[38;5;246m# … with more rows, and 22 more variables: UniqueCarrier \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   FlightNum \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m, TailNum \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, ActualElapsedTime \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   CRSElapsedTime \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m, AirTime \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, ArrDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, DepDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   Origin \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, Dest \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, Distance \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m, TaxiIn \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, TaxiOut \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   Cancelled \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m, CancellationCode \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, Diverted \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m,\n",
+       "#   CarrierDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, WeatherDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, NASDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   SecurityDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, LateAircraftDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, IsDelayed \u001b[3m\u001b[38;5;246m<dbl>\u001b[38;5;246m\u001b[23m\u001b[39m"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "## \n",
+    "## Se crea la tabla\n",
+    "##\n",
+    "flights %>%   \n",
+    "    mutate(IsDelayed = ifelse(DepDelay > 15, 1, 0)) %>% \n",
+    "    na.replace(0) %>%\n",
+    "    sdf_register('flights_mutated')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<ol class=list-inline>\n",
+       "\t<li>'flights'</li>\n",
+       "\t<li>'flights_mutated'</li>\n",
+       "</ol>\n"
+      ],
+      "text/latex": [
+       "\\begin{enumerate*}\n",
+       "\\item 'flights'\n",
+       "\\item 'flights\\_mutated'\n",
+       "\\end{enumerate*}\n"
+      ],
+      "text/markdown": [
+       "1. 'flights'\n",
+       "2. 'flights_mutated'\n",
+       "\n",
+       "\n"
+      ],
+      "text/plain": [
+       "[1] \"flights\"         \"flights_mutated\""
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "dplyr::src_tbls(sc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 29]\u001b[39m\n",
+       "   Year Month DayofMonth DayOfWeek DepTime CRSDepTime ArrTime CRSArrTime\n",
+       "  \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m      \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m     \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m        \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m        \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m\n",
+       "\u001b[38;5;250m1\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 2003          \u001b[4m1\u001b[24m955 2211          \u001b[4m2\u001b[24m225\n",
+       "\u001b[38;5;250m2\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 754            735 1002          \u001b[4m1\u001b[24m000\n",
+       "\u001b[38;5;250m3\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 628            620 804            750\n",
+       "\u001b[38;5;250m4\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 926            930 1054          \u001b[4m1\u001b[24m100\n",
+       "\u001b[38;5;250m5\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 1829          \u001b[4m1\u001b[24m755 1959          \u001b[4m1\u001b[24m925\n",
+       "\u001b[38;5;250m6\u001b[39m  \u001b[4m2\u001b[24m008     1          3         4 1940          \u001b[4m1\u001b[24m915 2121          \u001b[4m2\u001b[24m110\n",
+       "\u001b[38;5;246m# … with 21 more variables: UniqueCarrier \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, FlightNum \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m,\n",
+       "#   TailNum \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, ActualElapsedTime \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, CRSElapsedTime \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m,\n",
+       "#   AirTime \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, ArrDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, DepDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, Origin \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, Dest \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   Distance \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m, TaxiIn \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, TaxiOut \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, Cancelled \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m,\n",
+       "#   CancellationCode \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, Diverted \u001b[3m\u001b[38;5;246m<int>\u001b[38;5;246m\u001b[23m, CarrierDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   WeatherDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, NASDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m, SecurityDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m,\n",
+       "#   LateAircraftDelay \u001b[3m\u001b[38;5;246m<chr>\u001b[38;5;246m\u001b[23m\u001b[39m"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "head(flights)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 2 × 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>UniqueCarrier</th><th scope=col>NumDelays</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>WN</td><td>18573</td></tr>\n",
+       "\t<tr><td>XE</td><td> 1014</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 2 × 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " UniqueCarrier & NumDelays\\\\\n",
+       " <chr> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t WN & 18573\\\\\n",
+       "\t XE &  1014\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 2 × 2\n",
+       "\n",
+       "| UniqueCarrier &lt;chr&gt; | NumDelays &lt;dbl&gt; |\n",
+       "|---|---|\n",
+       "| WN | 18573 |\n",
+       "| XE |  1014 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  UniqueCarrier NumDelays\n",
+       "1 WN            18573    \n",
+       "2 XE             1014    "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Numero total de retrasos por transportador\n",
+    "##\n",
+    "DBI::dbGetQuery(sc, \"\n",
+    "SELECT \n",
+    "    UniqueCarrier, \n",
+    "    SUM(IsDelayed) AS NumDelays \n",
+    "FROM \n",
+    "    flights_mutated\n",
+    "GROUP BY \n",
+    "    UniqueCarrier\n",
+    "\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAABmFBMVEUAAAABAQECAgIDAwMF\nBQUGBgYHBwcLCwsMDAwNDQ0ODg4PDw8QEBARERETExMUFBQVFRUWFhYXFxcZGRkbGxscHBwf\nHx8gICAiIiIkJCQmJiYnJycvLy8wMDAxMTEyMjIzMzM2NjY3Nzc4ODg5OTk+Pj5BQUFDQ0NF\nRUVISEhJSUlMTExNTU1PT09SUlJVVVVWVlZXV1dZWVlaWlpbW1tfX19gYGBhYWFkZGRlZWVm\nZmZoaGhqampra2tubm5vb29wcHBzc3N3d3d5eXl6enp7e3t8fHx9fX2Dg4OEhISFhYWGhoaL\ni4uMjIyQkJCYmJienp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqarq6utra2urq6vr6+ysrKz\ns7O0tLS4uLi6urq7u7u8vLy+vr6/v7/AwMDBwcHCwsLDw8PFxcXIyMjKysrMzMzNzc3Ozs7S\n0tLT09PV1dXY2Njc3Nzd3d3e3t7h4eHk5OTl5eXo6Ojs7Ozu7u7x8fHz8/P09PT19fX29vb4\n+Pj5+fn7+/v9/f3+/v7///9eqN1tAAAACXBIWXMAABJ0AAASdAHeZh94AAAUhElEQVR4nO3d\n/5NeZWHG4cMKkQoViiCgJBDwe8HEABpQAQ3YqLGWANZqYlttra0aGxMtKC3EkvBvVxeTRcec\nHc953sl9972uHzLPzPvkzDu78wGSvXeZ3gZWm270G4D/D4QEAwgJBhASDCAkGEBIMICQYAAh\nwQBCggGEBAMICQYQEgwgJBhASDCAkGAAIcEAQoIBhAQDCAkGEBIMICQYQEgwgJBgACHBAEKC\nAYQEAwgJBhASDCAkGEBIMICQYAAhwQBCggGEBAMICQYQEgwgJBhASDCAkGAAIcEAQoIBhAQD\nCAkGEBIMICQYQEgwgJBgACHBAEKCAYQEAwgJBhASDCAkGEBIMICQYAAhwQBCggGEBAMICQYQ\nEgwgJBhASDCAkGAAIcEAQoIBhAQDCAkGEBIMICQYQEgwgJBgACHBAEKCAYQEAwgJBhASDCAk\nGEBIMICQYAAhwQBCggGEBAMICQYQEgwgJBhASDCAkGAAIcEAQoIBhAQDCAkGEBIMICQYQEgw\ngJBgACHBADcypNd/yn7+5wZ+fvgz3MiQnp7Yz9/cwM8Pf4YbGdJnP/kvzDv85Rv4+eHPIKRo\nQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGk\naEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmoh\npGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJq\nIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhC\naiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRo\nQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGk\naEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmoh\npGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmohpGhCaiGkaEJqIaRoQmqxJqQrF86+8vLZ\nC1eW/n4h7UtILZaHdOnk3dOue05eWvYEIe1LSC0Wh/TGw9POoaNPPX304M70yJuLHiGkfQmp\nxeKQnp+eeO2d06vHphcWPUJI+xJSi8Uh3ffQ5avHyw/ev+gRQtqXkFosDumW5/bOzx5Y9Agh\n7UtILRaHdOdje+dH71r0CCHtS0gtFod0bOelq8cXb3p80SOEtC8htVgc0sXbpkMnTp85c/rE\nwen2i4seIaR9CanF8q8jnT88/d7h88ueIKR9CanFmmXDuVPHjxw5furc0t8vpH0JqYWtXTQh\ntRBSNCG1MFqNJqQWRqvRhNTCaDWakFoYrUYTUguj1WhCamG0Gk1ILYxWowmphdFqNCG1MFqN\nJqQWRqvRhNTCaDWakFrY2kUTUgshRRNSC6PVaEJqYbQaTUgtjFajCamF0Wo0IbXYzGj18r9+\n/5p//vb1HiGkfQmpxWZGq7+84y+v+Yvpres8Qkj7ElKLzY9W/2P63+u8IqR9CanF5kerQlpB\nSC02P1oV0gpCarH50aqQVhBSi82PVoW0gpBabH5rJ6QVhNRCSNGE1EJI0YTUYmVIP/rU+299\n4BvX+4rrLiGtIKQWi0O665nf/vLt9+z+td1jc99JIaQVhNRicUjTk2+//etbd77yy9e/+4Hp\nWzMXhbSCkFqsCumb0+7g7sfTJ2YuCmkFIbVYFdIXpp/vng/eOXNRSCsIqcWqkD43vfO9sZ++\neeaikFYQUotVIX1t+tXu+WN3zFwU0gpCarE8pJ0DB26efrB7vvfQzEUhrSCkFotD+vCur//u\neG76/MxFIa0gpBYjlg0/OfWzmVeFtIKQWpgIRRNSCyFFE1ILIUUTUoshIX3pgzMvCmkFIbUY\nEtKTc08R0gpCaiGkaEJqsTikz7zLvULaECG1WL5s+AMzF4W0gpBaLA7pvR/63jUfF9KGCKnF\n4pA+8r69b4v1Z6RNEVKLxSF9cdr78apC2hQhtVgc0nce+uHeee7/jySkFYTUwrIhmpBaCCma\nkFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggp\nmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoI\nKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBa\nCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQ\nWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCma\nkFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggp\nmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoI\nKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBa\nCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQWggpmpBaCCmakFoIKZqQ\nWggpmpBaCCmakFoIKZqQWggpmpBarAnpyoWzr7x89sKV+VtCWkFILZaHdOnk3dOue05emrsn\npBWE1GJxSG88PO0cOvrU00cP7kyPvDlzUUgrCKnF4pCen5547Z3Tq8emF2YuCmkFIbVYHNJ9\nD12+erz84P0zF4W0gpBaLA7pluf2zs8emLkopBWE1GJxSHc+tnd+9K6Zi0JaQUgtFod0bOel\nq8cXb3p85qKQVhBSi8UhXbxtOnTi9Jkzp08cnG6/OHNRSCsIqcXyryOdPzz93uHzc/eEtIKQ\nWqxZNpw7dfzIkeOnzs3fEtIKQmphaxdNSC2EFE1ILYxWowmphdFqNCG1MFqNJqQWRqvRhNTC\naDWakFoYrUYTUguj1WhCamG0Gk1ILYxWowmphdFqNCG1MFqNJqQWtnbRhNRCSNGE1MJoNZqQ\nWhitRhNSC6PVaEJqYbQaTUgtNjNavfLv37/mb4W0nJBabGa0+oubp3f5zXUeIaR9CamF0Wo0\nIbUwWo0mpBZGq9GE1MJoNZqQWhitRhNSC1u7aEJqIaRoQmphtBpNSC2MVqMJqYXRajQhtTBa\njSakFn7SajQhtfCTVqMJqYXRajQhtTBajSakFkar0YTUwmg1mpBaGK1GE1ILW7toQmohpGhC\naiGkaEJqMSSkL31w5kUhrSCkFkNCenLuKUJaQUgthBRNSC0Wh/SZd7lXSBsipBaLQ5r+wMxF\nIa0gpBaLQ3rvh753zceFtCFCarE4pI+8b+9nNfgz0qYIqcXikL447S1VhbQpQmqxOKTvPPTD\nvbNvNd8QIbWwbIgmpBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQW\nQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiak\nFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoom\npBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKK\nJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZC\niiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQW\nQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiak\nFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoom\npBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKK\nJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZCiiakFkKKJqQWQoompBZC\niiakFkKKJqQWQoompBZrQrpy4ewrL5+9cGX+lpBWEFKL5SFdOnn3tOuek5fm7glpBSG1WBzS\nGw9PO4eOPvX00YM70yNvzlwU0gpCarE4pOenJ1575/TqsemFmYtCWkFILRaHdN9Dl68eLz94\n/8xFIa0gpBaLQ7rlub3zswdmLgppBSG1WBzSnY/tnR+9a+aikFYQUovFIR3beenq8cWbHp+5\nKKQVhNRicUgXb5sOnTh95szpEwen2y/OXBTSCkJqsfzrSOcPT793+PzcPSGtIKQWa5YN504d\nP3Lk+Klz87eEtIKQWtjaRRNSCyFFE1ILo9VoQmphtBpNSC2MVqMJqYXRajQhtTBajSakFkar\n0YTUwmg1mpBaGK1GE1ILo9VoQmphtBpNSC2MVqMJqcWGtnb/+dNr/k5IywmpxWZCurgzvctv\nrnNLSPsSUosNjVbfeP2af/JvpOWE1MJoNZqQWhitRhNSC6PVaEJqYbQaTUgtjFajCamF0Wo0\nIbUwWo0mpBZGq9GE1MJoNZqQWhitRhNSCz8gMpqQWggpmpBaCCmakFqsDOlHn3r/rQ984625\nK0JaQUgtFod01zO//eXb79n9a7vH5n78t5BWEFKLxSFNT7799q9v3fnKL1//7gemb81cFNIK\nQmqxKqRvTruDux9Pn5i5KKQVhNRiVUhfmH6+ez5458xFIa0gpBarQvrc9M73xn765pmLQlpB\nSC1WhfS16Ve754/dMXNRSCsIqcXykHYOHLh5+sHu+d5DMxeFtIKQWiwO6cO7vv6747np8zMX\nhbSCkFqMWDb85NTPZl4V0gpCamEiFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1I\nLYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRN\nSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQU\nTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2E\nFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgt\nhBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1I\nLYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRN\nSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQU\nTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2E\nFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgthBRNSC2EFE1ILYQUTUgt\nhBRNSC2EFE1ILYQUbXlI//Y0+/nHpR/cP0FI0ZaH9OW/+mvm3fPZpR/cP0FI0VaEdPhGv/d4\nnxTS1hDSBglpewhpg4S0PYS0QULaHkLaICFtDyFtkJC2h5A2SEjbQ0gbJKTtIaQNEtL2ENIG\nCWl7CGmDhLQ9hLRBQtoeQtogIW0PIW2QkLaHkDZISNtDSBskpO0hpA0S0vYQ0gYJaXsIaYOE\ntD2EtEFC2h5C2iAhbQ8hbZCQtoeQNkhI20NIGySk7SGkDRLS9hDSBglpewhpg2JCunLh7Csv\nn71wZf6WkFYQ0gaFhHTp5N3TrntOXpq7J6QVhLRBGSG98fC0c+joU08fPbgzPfLmzEUhrSCk\nDcoI6fnpidfeOb16bHph5qKQVhDSBmWEdN9Dl68eLz94/x+/+l+/uOYfrh/SR/+eeQ8sD+mB\nG/3e4300IqRbnts7P3vgj168eNO056a3rvOIZyb289Wln5+v3uh3XuCZpR/cP2FxSHc+tnd+\n9K4/fvW/X9/z6+s94q3X2c/l633w9nP5Rr/zAtf7J/wSi0M6tvPS1eOLNz0+5s1Aq8UhXbxt\nOnTi9Jkzp08cnG6/OPItQZ/lX0c6f/jqf2oePj/wDUGjNcuGc6eOHzly/NS5YW8GWm1+awdb\nQEgwgJBgACHBAEKCAYQEAwgJBhASDCAkGEBIMICQYAAhwQBCggGEBAMICQYQEgwgJBhASDCA\nkGAAIcEAQoIBhAQDCAkGEBIMICQYQEgwgJBgACHBAEKCAYQEAwgJBhASDCAkGEBIMICQYAAh\nwQBCggGEBAMICQYQEgwgJBhASDCAkGAAIcEAQoIBhAQDCAkGEBIMICQYQEgwgJBgACHBAEKC\nAYQEAwgJBhASDCAkGEBIMICQYAAhwQBCggGEBAMICQYQEgwgJBhASDCAkGAAIcEAQoIBhAQD\nCAkGEBIMICQYQEgwgJBgACHBAEKCAYQEAwgJBhASDCAkGEBIMICQYAAhwQBCggGEBAMICQYQ\nEgwgJBhASDCAkGAAIcEAQoIBhAQDCAkGEBIMICQYQEgwgJBgACHBAEKCAYQEAwgJBhASDCAk\nGEBIMICQYAAhwQBCggGEBAMICQYQEgwgJBhASDCAkGAAIcEAQoIBhAQDCAkGEBIMICQYQEgw\ngJBggP8Dxk34wZd9WnoAAAAASUVORK5CYII=",
+      "text/plain": [
+       "plot without title"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Gráfico\n",
+    "##\n",
+    "result <- DBI::dbGetQuery(sc, \"\n",
+    "SELECT \n",
+    "    UniqueCarrier, \n",
+    "    SUM(IsDelayed) AS NumDelays \n",
+    "FROM \n",
+    "    flights_mutated\n",
+    "GROUP BY \n",
+    "    UniqueCarrier\n",
+    "\")\n",
+    "                  \n",
+    "barplot(result$NumDelays)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 2 × 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>UniqueCarrier</th><th scope=col>TotalTimeDelay</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>WN</td><td>978547</td></tr>\n",
+       "\t<tr><td>XE</td><td> 47505</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 2 × 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " UniqueCarrier & TotalTimeDelay\\\\\n",
+       " <chr> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t WN & 978547\\\\\n",
+       "\t XE &  47505\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 2 × 2\n",
+       "\n",
+       "| UniqueCarrier &lt;chr&gt; | TotalTimeDelay &lt;dbl&gt; |\n",
+       "|---|---|\n",
+       "| WN | 978547 |\n",
+       "| XE |  47505 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  UniqueCarrier TotalTimeDelay\n",
+       "1 WN            978547        \n",
+       "2 XE             47505        "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Tiempo total de retrasos por transportador\n",
+    "##\n",
+    "DBI::dbGetQuery(sc, \"\n",
+    "SELECT \n",
+    "    UniqueCarrier, \n",
+    "    SUM(DepDelay) AS TotalTimeDelay \n",
+    "FROM \n",
+    "    flights\n",
+    "GROUP BY \n",
+    "    UniqueCarrier\n",
+    "\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 2 × 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>UniqueCarrier</th><th scope=col>AvgDistanceTraveled</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>XE</td><td>738.0678</td></tr>\n",
+       "\t<tr><td>WN</td><td>623.7927</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 2 × 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " UniqueCarrier & AvgDistanceTraveled\\\\\n",
+       " <chr> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t XE & 738.0678\\\\\n",
+       "\t WN & 623.7927\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 2 × 2\n",
+       "\n",
+       "| UniqueCarrier &lt;chr&gt; | AvgDistanceTraveled &lt;dbl&gt; |\n",
+       "|---|---|\n",
+       "| XE | 738.0678 |\n",
+       "| WN | 623.7927 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  UniqueCarrier AvgDistanceTraveled\n",
+       "1 XE            738.0678           \n",
+       "2 WN            623.7927           "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Distancia recorrida por operador\n",
+    "##\n",
+    "DBI::dbGetQuery(sc, \"\n",
+    "SELECT \n",
+    "    UniqueCarrier, \n",
+    "    avg(Distance) AS AvgDistanceTraveled \n",
+    "FROM \n",
+    "    flights\n",
+    "GROUP BY \n",
+    "    UniqueCarrier \n",
+    "ORDER BY \n",
+    "    AvgDistanceTraveled DESC\n",
+    "\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Retrasos por día de la semana"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 14 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>DayOfWeek</th><th scope=col>delayed</th><th scope=col>Count</th></tr>\n",
+       "\t<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>1</td><td>1</td><td> 2656</td></tr>\n",
+       "\t<tr><td>1</td><td>0</td><td>11863</td></tr>\n",
+       "\t<tr><td>2</td><td>0</td><td>12911</td></tr>\n",
+       "\t<tr><td>2</td><td>1</td><td> 1799</td></tr>\n",
+       "\t<tr><td>3</td><td>0</td><td>13260</td></tr>\n",
+       "\t<tr><td>3</td><td>1</td><td> 1434</td></tr>\n",
+       "\t<tr><td>4</td><td>0</td><td>12271</td></tr>\n",
+       "\t<tr><td>4</td><td>1</td><td> 4808</td></tr>\n",
+       "\t<tr><td>5</td><td>1</td><td> 3514</td></tr>\n",
+       "\t<tr><td>5</td><td>0</td><td>11003</td></tr>\n",
+       "\t<tr><td>6</td><td>0</td><td> 9407</td></tr>\n",
+       "\t<tr><td>6</td><td>1</td><td> 1878</td></tr>\n",
+       "\t<tr><td>7</td><td>0</td><td> 9698</td></tr>\n",
+       "\t<tr><td>7</td><td>1</td><td> 3498</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 14 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       " DayOfWeek & delayed & Count\\\\\n",
+       " <int> & <dbl> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t 1 & 1 &  2656\\\\\n",
+       "\t 1 & 0 & 11863\\\\\n",
+       "\t 2 & 0 & 12911\\\\\n",
+       "\t 2 & 1 &  1799\\\\\n",
+       "\t 3 & 0 & 13260\\\\\n",
+       "\t 3 & 1 &  1434\\\\\n",
+       "\t 4 & 0 & 12271\\\\\n",
+       "\t 4 & 1 &  4808\\\\\n",
+       "\t 5 & 1 &  3514\\\\\n",
+       "\t 5 & 0 & 11003\\\\\n",
+       "\t 6 & 0 &  9407\\\\\n",
+       "\t 6 & 1 &  1878\\\\\n",
+       "\t 7 & 0 &  9698\\\\\n",
+       "\t 7 & 1 &  3498\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 14 × 3\n",
+       "\n",
+       "| DayOfWeek &lt;int&gt; | delayed &lt;dbl&gt; | Count &lt;dbl&gt; |\n",
+       "|---|---|---|\n",
+       "| 1 | 1 |  2656 |\n",
+       "| 1 | 0 | 11863 |\n",
+       "| 2 | 0 | 12911 |\n",
+       "| 2 | 1 |  1799 |\n",
+       "| 3 | 0 | 13260 |\n",
+       "| 3 | 1 |  1434 |\n",
+       "| 4 | 0 | 12271 |\n",
+       "| 4 | 1 |  4808 |\n",
+       "| 5 | 1 |  3514 |\n",
+       "| 5 | 0 | 11003 |\n",
+       "| 6 | 0 |  9407 |\n",
+       "| 6 | 1 |  1878 |\n",
+       "| 7 | 0 |  9698 |\n",
+       "| 7 | 1 |  3498 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "   DayOfWeek delayed Count\n",
+       "1  1         1        2656\n",
+       "2  1         0       11863\n",
+       "3  2         0       12911\n",
+       "4  2         1        1799\n",
+       "5  3         0       13260\n",
+       "6  3         1        1434\n",
+       "7  4         0       12271\n",
+       "8  4         1        4808\n",
+       "9  5         1        3514\n",
+       "10 5         0       11003\n",
+       "11 6         0        9407\n",
+       "12 6         1        1878\n",
+       "13 7         0        9698\n",
+       "14 7         1        3498"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "DBI::dbGetQuery(sc, \"\n",
+    "SELECT \n",
+    "    DayOfWeek, \n",
+    "    delayed,\n",
+    "    COUNT(1) AS Count\n",
+    "FROM\n",
+    "    (SELECT\n",
+    "        DayOfWeek,\n",
+    "        IsDelayed AS delayed\n",
+    "     FROM\n",
+    "        flights_mutated)\n",
+    "GROUP BY \n",
+    "    DayOfWeek, \n",
+    "    delayed\n",
+    "ORDER BY \n",
+    "    DayOfWeek\n",
+    "\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Retrasos por hora del día"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 6 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>Hour</th><th scope=col>delayed</th><th scope=col>Count</th></tr>\n",
+       "\t<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>6</td><td>0</td><td>6126</td></tr>\n",
+       "\t<tr><td>6</td><td>1</td><td> 208</td></tr>\n",
+       "\t<tr><td>7</td><td>1</td><td> 372</td></tr>\n",
+       "\t<tr><td>7</td><td>0</td><td>7274</td></tr>\n",
+       "\t<tr><td>8</td><td>1</td><td> 547</td></tr>\n",
+       "\t<tr><td>8</td><td>0</td><td>5956</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       " Hour & delayed & Count\\\\\n",
+       " <int> & <dbl> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t 6 & 0 & 6126\\\\\n",
+       "\t 6 & 1 &  208\\\\\n",
+       "\t 7 & 1 &  372\\\\\n",
+       "\t 7 & 0 & 7274\\\\\n",
+       "\t 8 & 1 &  547\\\\\n",
+       "\t 8 & 0 & 5956\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 × 3\n",
+       "\n",
+       "| Hour &lt;int&gt; | delayed &lt;dbl&gt; | Count &lt;dbl&gt; |\n",
+       "|---|---|---|\n",
+       "| 6 | 0 | 6126 |\n",
+       "| 6 | 1 |  208 |\n",
+       "| 7 | 1 |  372 |\n",
+       "| 7 | 0 | 7274 |\n",
+       "| 8 | 1 |  547 |\n",
+       "| 8 | 0 | 5956 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  Hour delayed Count\n",
+       "1 6    0       6126 \n",
+       "2 6    1        208 \n",
+       "3 7    1        372 \n",
+       "4 7    0       7274 \n",
+       "5 8    1        547 \n",
+       "6 8    0       5956 "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "head(\n",
+    "    DBI::dbGetQuery(sc, \"\n",
+    "        SELECT \n",
+    "            Hour,\n",
+    "            delayed, \n",
+    "            COUNT(1) AS Count\n",
+    "        FROM \n",
+    "        (\n",
+    "            SELECT\n",
+    "                CAST(CRSDepTime / 100 AS INT) AS Hour, \n",
+    "                IsDelayed AS delayed\n",
+    "            FROM\n",
+    "                flights_mutated\n",
+    "        )\n",
+    "        GROUP BY \n",
+    "            Hour, \n",
+    "            delayed\n",
+    "        ORDER BY \n",
+    "            Hour\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Almacenamiento y lectura de tablas calculadas"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Escritura de resultados en el HDFS con formato ORC"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Deleted /tmp/flightsWithDelays.orc\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Se salva la tabla calculada al directorio tmp del HDFS.\n",
+    "## Primero se borra si existe.\n",
+    "##\n",
+    "systemp('hdfs dfs -rm -r -f /tmp/flightsWithDelays.orc')\n",
+    "\n",
+    "## Se salva en formato ORC\n",
+    "spark_write_orc(flightsWithDelays, \"/tmp/flightsWithDelays.orc\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 3 items\n",
+      "-rw-r--r--   1 vagrant supergroup          0 2019-05-21 01:49 /tmp/flightsWithDelays.orc/_SUCCESS\n",
+      "-rw-r--r--   1 vagrant supergroup     165675 2019-05-21 01:49 /tmp/flightsWithDelays.orc/part-00000-d5759437-bd2b-40ff-83b4-a1ebc90a5b71-c000.snappy.orc\n",
+      "-rw-r--r--   1 vagrant supergroup      70799 2019-05-21 01:49 /tmp/flightsWithDelays.orc/part-00001-d5759437-bd2b-40ff-83b4-a1ebc90a5b71-c000.snappy.orc\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Contenido del directorio donde se salvó la tabla\n",
+    "##\n",
+    "systemp('hdfs dfs -ls /tmp/flightsWithDelays.orc')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Carga de los resultados desde el HDFS"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\u001b[38;5;246m# Source: spark<?> [?? x 7]\u001b[39m\n",
+       "   Year Month DayofMonth UniqueCarrier FlightNum DepDelay IsDelayed\n",
+       "  \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m      \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m             \u001b[3m\u001b[38;5;246m<int>\u001b[39m\u001b[23m \u001b[3m\u001b[38;5;246m<chr>\u001b[39m\u001b[23m        \u001b[3m\u001b[38;5;246m<dbl>\u001b[39m\u001b[23m\n",
+       "\u001b[38;5;250m1\u001b[39m  \u001b[4m2\u001b[24m008     1          3 WN                  335 8                0\n",
+       "\u001b[38;5;250m2\u001b[39m  \u001b[4m2\u001b[24m008     1          3 WN                 \u001b[4m3\u001b[24m231 19               1\n",
+       "\u001b[38;5;250m3\u001b[39m  \u001b[4m2\u001b[24m008     1          3 WN                  448 8                0\n",
+       "\u001b[38;5;250m4\u001b[39m  \u001b[4m2\u001b[24m008     1          3 WN                 \u001b[4m1\u001b[24m746 -4               0\n",
+       "\u001b[38;5;250m5\u001b[39m  \u001b[4m2\u001b[24m008     1          3 WN                 \u001b[4m3\u001b[24m920 34               1\n",
+       "\u001b[38;5;250m6\u001b[39m  \u001b[4m2\u001b[24m008     1          3 WN                  378 25               1"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Se lee la tabla calculada desde el HDFS\n",
+    "##\n",
+    "test <- spark_read_orc(sc, \"/tmp/flightsWithDelays.orc\")\n",
+    "head(test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Salva el DataFrame como una tabla permamente"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## La tabla queda guardada en la carpeta\n",
+    "## spark-warehouse del directorio actual\n",
+    "##\n",
+    "\n",
+    "spark_write_table(flightsWithDelays, \"flightswithdelaystbl\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Tablas almacenadas"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 6 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>database</th><th scope=col>tableName</th><th scope=col>isTemporary</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;lgl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>default</td><td>flightswithdelaystbl     </td><td>FALSE</td></tr>\n",
+       "\t<tr><td>       </td><td>flights                  </td><td> TRUE</td></tr>\n",
+       "\t<tr><td>       </td><td>flights_mutated          </td><td> TRUE</td></tr>\n",
+       "\t<tr><td>       </td><td>flightswithdelays        </td><td> TRUE</td></tr>\n",
+       "\t<tr><td>       </td><td>sparklyr_tmp_22401ab35f8f</td><td> TRUE</td></tr>\n",
+       "\t<tr><td>       </td><td>sparklyr_tmp_22407ea974e6</td><td> TRUE</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       " database & tableName & isTemporary\\\\\n",
+       " <chr> & <chr> & <lgl>\\\\\n",
+       "\\hline\n",
+       "\t default & flightswithdelaystbl      & FALSE\\\\\n",
+       "\t         & flights                   &  TRUE\\\\\n",
+       "\t         & flights\\_mutated           &  TRUE\\\\\n",
+       "\t         & flightswithdelays         &  TRUE\\\\\n",
+       "\t         & sparklyr\\_tmp\\_22401ab35f8f &  TRUE\\\\\n",
+       "\t         & sparklyr\\_tmp\\_22407ea974e6 &  TRUE\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 × 3\n",
+       "\n",
+       "| database &lt;chr&gt; | tableName &lt;chr&gt; | isTemporary &lt;lgl&gt; |\n",
+       "|---|---|---|\n",
+       "| default | flightswithdelaystbl      | FALSE |\n",
+       "| <!----> | flights                   |  TRUE |\n",
+       "| <!----> | flights_mutated           |  TRUE |\n",
+       "| <!----> | flightswithdelays         |  TRUE |\n",
+       "| <!----> | sparklyr_tmp_22401ab35f8f |  TRUE |\n",
+       "| <!----> | sparklyr_tmp_22407ea974e6 |  TRUE |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  database tableName                 isTemporary\n",
+       "1 default  flightswithdelaystbl      FALSE      \n",
+       "2          flights                    TRUE      \n",
+       "3          flights_mutated            TRUE      \n",
+       "4          flightswithdelays          TRUE      \n",
+       "5          sparklyr_tmp_22401ab35f8f  TRUE      \n",
+       "6          sparklyr_tmp_22407ea974e6  TRUE      "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "DBI::dbGetQuery(sc, \"SHOW TABLES\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Consultas en un tabla permanente"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 1 × 1</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>Total</th></tr>\n",
+       "\t<tr><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>1e+05</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 1 × 1\n",
+       "\\begin{tabular}{r|l}\n",
+       " Total\\\\\n",
+       " <dbl>\\\\\n",
+       "\\hline\n",
+       "\t 1e+05\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 1 × 1\n",
+       "\n",
+       "| Total &lt;dbl&gt; |\n",
+       "|---|\n",
+       "| 1e+05 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  Total\n",
+       "1 1e+05"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "## \n",
+    "## Note que cuando la tabla está almacenada de forma\n",
+    "## permanente no es necesario cargarla a la memoria\n",
+    "## para poder usarla.\n",
+    "##\n",
+    "DBI::dbGetQuery(sc, \"SELECT COUNT(1) AS Total from flightswithdelaystbl\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 4 × 3</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>database</th><th scope=col>tableName</th><th scope=col>isTemporary</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;lgl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td></td><td>flights                  </td><td>TRUE</td></tr>\n",
+       "\t<tr><td></td><td>flightswithdelays        </td><td>TRUE</td></tr>\n",
+       "\t<tr><td></td><td>sparklyr_tmp_22401ab35f8f</td><td>TRUE</td></tr>\n",
+       "\t<tr><td></td><td>sparklyr_tmp_22407ea974e6</td><td>TRUE</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 4 × 3\n",
+       "\\begin{tabular}{r|lll}\n",
+       " database & tableName & isTemporary\\\\\n",
+       " <chr> & <chr> & <lgl>\\\\\n",
+       "\\hline\n",
+       "\t  & flights                   & TRUE\\\\\n",
+       "\t  & flightswithdelays         & TRUE\\\\\n",
+       "\t  & sparklyr\\_tmp\\_22401ab35f8f & TRUE\\\\\n",
+       "\t  & sparklyr\\_tmp\\_22407ea974e6 & TRUE\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 4 × 3\n",
+       "\n",
+       "| database &lt;chr&gt; | tableName &lt;chr&gt; | isTemporary &lt;lgl&gt; |\n",
+       "|---|---|---|\n",
+       "| <!----> | flights                   | TRUE |\n",
+       "| <!----> | flightswithdelays         | TRUE |\n",
+       "| <!----> | sparklyr_tmp_22401ab35f8f | TRUE |\n",
+       "| <!----> | sparklyr_tmp_22407ea974e6 | TRUE |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  database tableName                 isTemporary\n",
+       "1          flights                   TRUE       \n",
+       "2          flightswithdelays         TRUE       \n",
+       "3          sparklyr_tmp_22401ab35f8f TRUE       \n",
+       "4          sparklyr_tmp_22407ea974e6 TRUE       "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "## Se borran las tablas para limpiar el área\n",
+    "## de trabajo.\n",
+    "DBI::dbGetQuery(sc, \"DROP TABLE flightswithdelaystbl\")\n",
+    "DBI::dbGetQuery(sc, \"DROP TABLE flights_mutated\")\n",
+    "collect(DBI::dbGetQuery(sc, \"SHOW TABLES\"))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Limpieza**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Deleted /tmp/flights.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "systemp('hdfs dfs -rm /tmp/flights.csv')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "3.4.4"
+  },
+  "toc-autonumbering": false
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

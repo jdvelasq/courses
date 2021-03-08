@@ -1,0 +1,459 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Reconocimiento de patrones binarios usando neuronas de McCulloch-Pitts\n",
+    "===\n",
+    "\n",
+    "* *30 min* | Última modificación: Marzo 20, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Definición del problema"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El problema real abordado por McCulloch y Pitts consistía en desarrollar un sistema de visión que permite identificar patrones binarios simples."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En términos de los datos, se tiene un conjunto de cuatro patrones binarios de entrada que deben ser reconocidos, donde cada patrón está conformado por tres dígitos binarios $\\{0, 1\\}$. Los patrones a ser reconocidos y su simil con el cerebro son presentados en la figura de abajo. En este caso, el sistema de visión debe determinar el valor de los tres bits (entrada al modelo) y el cerebro debe determinar si el patrón arbitrario observado corresponde a uno de los cuatro patrones indicados (decisión). \n",
+    "\n",
+    "En términos matemáticos, este problema puede ser definido como un problema de clasificación de patrones donde las entradas son todas las cadenas de tres dígitos binarios posibles, y la salida es 1 si la cadena es reconocida y 0 en caso contrario."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/McCullochPitts-01.png](assets/McCullochPitts-01.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En otras palabras, se desea tener un modelo matemático $f($ `Entrada` $)$ = `Salida` cuyas entradas y salidas están determinadas por la siguiente tabla, donde cero es blanco y uno es gris. Los patrones con salida 1 son los que deben ser reconocidos.  \n",
+    "    \n",
+    "     Entrada   Salida\n",
+    "    ------------------\n",
+    "       000       0\n",
+    "       001       1\n",
+    "       010       0\n",
+    "       011       0\n",
+    "       100       1\n",
+    "       101       0\n",
+    "       110       1\n",
+    "       111       1\n",
+    "\n",
+    "       "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Solución"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Modelo matemático de la neurona"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El modelo de neurona de [McCulloch-Pitts](https://en.wikipedia.org/wiki/Artificial_neuron) fue propuesto originalmente como un postulado sobre la forma en que el cerebro puede reconocer patrones complejos (parte derecha de la figura anterior). Este modelo plantea que, en general, una célula (neurona) puede representarse matemáticamente como una función no lineal que es descrita a continuación.\n",
+    "\n",
+    "El modelo de la neurona se basa en una unidad genérica de cómputo que aparece en la figura de abajo. La neurona (unidad de cómputo) recibe varias entradas binarias excitatorias notadas como $x_i$; la neurona agrega estas entradas mediante la función $g()$, definida usualmente como (parte izquierda de la figura de abajo):\n",
+    "\n",
+    "$$g(x_1, ...,x_n) = v = \\sum_{i=1}^n x_i$$\n",
+    "\n",
+    "para obtener una entrada neta $v$. Posteriormente la entrada neta $v$ es transformada con una función no lineal $f()$ definida como:\n",
+    "\n",
+    "$$f(v) = \n",
+    "\\begin{cases}      \n",
+    "      1, & \\text{Si $v \\ge \\theta$}\\\\\n",
+    "      0, & \\text{Si $v \\lt \\theta$}\\\\\n",
+    "\\end{cases}$$\n",
+    "\n",
+    "El valor $\\theta$ es un umbral. Así, la salida de la neurona es un dígito binario $\\{0, 1\\}$ (parte central de la figura de abajo)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/McCullochPitts-02.png](assets/McCullochPitts-02.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Adicionalmente, la neurona artificial contiene conexiones inhibitorias notadas como $y_m$, tal que la salida siempre es cero si alguna de las entradas inhibitorias vale 1, independientemente del valor que puedan tomar las conexiones excitatorias. La representación gráfica de la neurona de McCulloch-Pitts aparece en la parte derecha de la figura anterior."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Las entradas $x_i$ son señales exitadores, y las señales $y_j$ son inhibidoras. La salida es cero (0) si alguna de las señales inhibidoras es uno (1).  La salida es uno (1) si la suma de señales de entrada es mayor o igual que el umbral ($\\theta$), y todas las señales inhibidoras son cero (0)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Una neurona de McCulloch-Pitts puede interpretarse como compuerta lógica de umbral (circuito lógico):\n",
+    "\n",
+    "![assets/McCullochPitts-06.png](assets/McCullochPitts-06.png)\n",
+    "\n",
+    "Por ejemplo:\n",
+    "\n",
+    "- Para $x_1$ AND $x_2$:\n",
+    "\n",
+    "```\n",
+    "       x1   x2     x1 AND x2    v   Umbral    Salida\n",
+    "                   (deseada)                v >= umbral\n",
+    "      ---------------------------------------------------\n",
+    "       0    0         0         0     2          0\n",
+    "       0    1         0         1     2          0\n",
+    "       1    0         0         1     2          0\n",
+    "       1    1         1         2     2          1\n",
+    "```       \n",
+    "       \n",
+    "- Para $x_1$ NOR $x_2$:\n",
+    "\n",
+    "```\n",
+    "       x1   x2     x1 NOR x2    v   Umbral    Salida\n",
+    "                   (deseada)                v >= umbral\n",
+    "      ---------------------------------------------------\n",
+    "       0    0         1         0     0          1\n",
+    "       0    1         0     x1 es inhibitoria    0\n",
+    "       1    0         0     x2 es inhibitoria    0\n",
+    "       1    1         0  x1, x2 son inhibitorias 0\n",
+    "```\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** Calcule la salida para la siguiente red de neuronas de McCulloch-Pitts.\n",
+    "\n",
+    "![assets/McCullochPitts-04.png](assets/McCullochPitts-04.png)\n",
+    "\n",
+    "Rta/ \n",
+    "     \n",
+    "      Entrada  Salida\n",
+    "     -----------------\n",
+    "       0 0 0     0\n",
+    "       0 0 1     0\n",
+    "       0 1 0     0\n",
+    "       0 1 1     1\n",
+    "       1 0 0     0\n",
+    "       1 0 1     0\n",
+    "       1 1 0     1\n",
+    "       1 1 1     1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Representación del problema de clasificación como una función lógica"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El problema de clasificación planteado inicialmente, puede ser resuelto mediante la construcción de una función lógica $y=f(x_1, x_2, ..., x_n)$ definida como $f:\\{0,1\\}^n \\to \\{0,1\\}$ con:  $y  \\in \\{0,1\\}$, y $x_i \\in \\{0,1\\}$. En otras palabras, una función lógica es una función $f$ que recibe como entrada una cadena de bits de tamaño $n$ o $\\{0,1\\}^n$ y devuelve un dígito binario $\\{0,1\\}$. En términos del problema planteado, las entradas a la función lógica son las cadenas de bits observadas y la salida en un número binario que indica que el patrón se reconoce o no. Para el problema abordado, la función lógica requerida es definida por la siguiente tabla:\n",
+    "\n",
+    "     x1 x2 x3   f\n",
+    "    ---------------\n",
+    "      0  0  0   0\n",
+    "      0  0  1   1\n",
+    "      0  1  0   0\n",
+    "      0  1  1   0\n",
+    "      1  0  0   1\n",
+    "      1  0  1   0\n",
+    "      1  1  0   1\n",
+    "      1  1  1   1\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Representación de funciones lógicas mediante redes de neuronas de McCulloch-Pitts"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Una red de neuronas de McCulloch-Pitts de dos capas puede representar cualquier función lógica $F:\\{0,1\\}^n \\to \\{0,1\\}$. A continuación se presenta el proceso de construcción para la función lógica que se presenta en la siguiente figura:\n",
+    "\n",
+    "![assets/McCullochPitts-03.png](assets/McCullochPitts-03.png)\n",
+    "\n",
+    "- Se crea una neurona en la primera capa por cada salida igual a 1; para el ejemplo planteado se requieren dos neuronas.  \n",
+    "\n",
+    "- La segunda capa contiene una neurona que representa la función OR; esto es, si todas las entradas a la neurona son cero, la salida es cero; si una o más entradas son uno, la salida de la neurona es uno. Esta neurona recibe como entrada todas las salida de las neuronas de la primera capa; todas las entradas son excitatorias y el umbral es 1.\n",
+    "\n",
+    "- Cada neurona de entrada se especializa en un patrón binario de entrada así: si una entrada es cero, la correspondiente conexión se hace inhibitoria y excitatoria en caso contrario; por ejemplo, para el patrón de entrada 001 (primera neurona de la primera capa) las conexiones para $x_1$ y $x2$ son inhibitorias y la conexión para $x_3$ es excitatoria; y para el patrón 010, las conexiones correspondientes a $x_1$ y $x_3$ son inhibitorias y para $x_2$ excitatoria. El valor del umbral de la neurona es la cantidad de unos de la entrada. Así para los patrones 001 y 010 el umbral es 1. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Representación matricial de la operación de una red de neuronas \n",
+    "\n",
+    "Para la implementación, las conexiones entre las neuronas son representadas mediante matrices. Si las conexiones inhibitorias son representas por un número negativo grande $N$, las conexiones a la primera capa de procesamiento puede representarse como:\n",
+    "\n",
+    "$$\\mathbf{w} = \n",
+    "\\begin{bmatrix}\n",
+    " N & N & 1 \\\\\n",
+    " N & 1 & N\n",
+    "\\end{bmatrix}$$\n",
+    "\n",
+    "donde las filas representan las neuronas y las columnas los dígitos binarios de la entrada.\n",
+    "\n",
+    "De esta forma, la entrada neta para el patron 001 es:\n",
+    "\n",
+    "$$\\begin{bmatrix}\n",
+    " N & N & 1 \\\\\n",
+    " N & 1 & N\n",
+    "\\end{bmatrix}\n",
+    "\\begin{bmatrix} 0 \\\\ 0 \\\\ 1 \\end{bmatrix} = \\begin{bmatrix} 1 \\\\ N \\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "En la práctica resulta más conveniente usar un vector para representar los umbrales de las neuronas (que en este caso sería un vector de unos), tal que:\n",
+    "\n",
+    "$$\n",
+    "\\begin{bmatrix} 1 \\\\ N \\end{bmatrix} - \n",
+    "\\begin{bmatrix} 1 \\\\ 1 \\end{bmatrix} = \n",
+    "\\begin{bmatrix} 0 \\\\ N-1 \\end{bmatrix}  \n",
+    "$$\n",
+    "\n",
+    "Seguidamente, se aplica la función de transformación no lineal $f()$. El resultado obtenido corresponde a la salida de las dos neuronas de la primera capa de procesamiento.\n",
+    "\n",
+    "$$\n",
+    "f \\left(\\begin{bmatrix} 0 \\\\ N-1 \\end{bmatrix} \\right) = \n",
+    "\\begin{bmatrix} f(0) \\\\ f(N-1) \\end{bmatrix} = \n",
+    "\\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix}\n",
+    "$$\n",
+    "\n",
+    "que fue definida anteriormente como:\n",
+    "\n",
+    "$$f(v) = \n",
+    "\\begin{cases}      \n",
+    "      1, & \\text{Si $v \\ge \\theta$}\\\\\n",
+    "      0, & \\text{Si $v \\lt \\theta$}\\\\\n",
+    "\\end{cases}$$\n",
+    "\n",
+    "Recuerde que $N$ es un número negativo muy grande, tal que $f()$ siempre se evalua a cero.\n",
+    "\n",
+    "\n",
+    "Finalmente, la función OR que representa neurona de salida puede ser computada con la función vectorial $\\max()$, la cual devuelve el valor máximo de su argumento.\n",
+    "\n",
+    "$$\n",
+    "\\max \\left(\\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix} \\right) = \\max(1, 0) = 1\n",
+    "$$\n",
+    "\n",
+    "Este es el proceso de cálculo que se implementa computacionalmente."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Solución al problema propuesto "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para el problema propuesto, cada patrón puede ser codificado como un vector de tres posiciones. Cuando el cuadro es negro, el valor de la posición correspondiente del vector es +1 y cuando es blanco es -1. Cada patrón es asociado a una variable de salida que toma el valor de +1 cuando el patrón debe ser reconocido y 0 cuando debe ser ignorado. De esta forma, el problema puede plantearse como:\n",
+    "\n",
+    "         Entrada    Salida\n",
+    "      (x1, x2, x3)                 +----+----+----+\n",
+    "     -----------------------       | x1 | x2 | x3 |\n",
+    "           000        0            +----+----+----+\n",
+    "           001        1                  \n",
+    "           010        0                 \n",
+    "           011        0                 \n",
+    "           100        1                 \n",
+    "           101        0\n",
+    "           110        1\n",
+    "           111        1       \n",
+    "           \n",
+    "De esta forma, el patrón 100 se representaría matricialmente como:\n",
+    "\n",
+    "$$\\mathbf{x} = \n",
+    "\\begin{bmatrix}\n",
+    " 1 \\\\\n",
+    " 0 \\\\\n",
+    " 0\n",
+    "\\end{bmatrix}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Implementación en Python"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import seaborn as sns\n",
+    "import matplotlib as mpl\n",
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline\n",
+    "%load_ext rpy2.ipython"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\u001b[H\u001b[2J"
+     ]
+    }
+   ],
+   "source": [
+    "%clear\n",
+    "import numpy as np\n",
+    "\n",
+    "##\n",
+    "## Define una clase que implementa el modelo.\n",
+    "##\n",
+    "class McCullochPits:\n",
+    "    \n",
+    "    ##\n",
+    "    ## Esta función crea la red neuronal \n",
+    "    ##\n",
+    "    def fit(self, x, y):\n",
+    "        \"\"\"\n",
+    "        - x: Es una lista de listas que representa la matriz\n",
+    "             de entradas a la red neuronal.\n",
+    "        - y: Es una lista de binarios que representan la \n",
+    "             salida de la red neuronal.\n",
+    "        \"\"\"\n",
+    "        ## Calcula la cantidad de entradas + 1\n",
+    "        n = len(x[0]) + 1\n",
+    "        \n",
+    "        ## Obtiene las filas de la matriz x para las\n",
+    "        ## cuales la salida es unitaria\n",
+    "        w = [w for w, z in zip(x, y) if z == 1]\n",
+    "        \n",
+    "        ## Computa la cantidad de 1s en la entrada, que\n",
+    "        ## corresponde al valor del umbral de cada\n",
+    "        ## neurona\n",
+    "        self.threshold = np.array([sum(row) for row in w])\n",
+    "        \n",
+    "        ## Convierte los 0 en la matriz w a -n para \n",
+    "        ## transformalos en conextiones inhibitorias\n",
+    "        self.w = np.array([[element if element > 0 else -n for element in row] for row in w])\n",
+    "        \n",
+    "    def predict(self, x):\n",
+    "        \"\"\"\n",
+    "        Pronostica la salida para una lista de entradas.\n",
+    "        \n",
+    "        >>> x = [[0, 0, 0], \n",
+    "        ...      [0, 0, 1], \n",
+    "        ...      [0, 1, 0], \n",
+    "        ...      [0, 1, 1],\n",
+    "        ...      [1, 0, 0], \n",
+    "        ...      [1, 0, 1], \n",
+    "        ...      [1, 1, 0], \n",
+    "        ...      [1, 1, 1]]\n",
+    "        >>> y = [0, \n",
+    "        ...      1, \n",
+    "        ...      0, \n",
+    "        ...      0, \n",
+    "        ...      1, \n",
+    "        ...      0, \n",
+    "        ...      1, \n",
+    "        ...      1]\n",
+    "        >>> m = McCullochPits() # crea el modelo\n",
+    "        >>> m.fit(x, y)         # construye la red neuronal\n",
+    "        >>> for u in x:         #\n",
+    "        ...    m.predict(u)     # pronostica la salida para cadaa patrón de x \n",
+    "        0\n",
+    "        1\n",
+    "        0\n",
+    "        0\n",
+    "        1\n",
+    "        0\n",
+    "        1\n",
+    "        1\n",
+    "       \n",
+    "        \"\"\"\n",
+    "        x = np.array(x)                               # convierte x en un array\n",
+    "        u = x * self.w                                # calcula la entrada a cada neurona\n",
+    "        u = np.sum(u, axis=1)                         #\n",
+    "        u = u - self.threshold\n",
+    "        f = np.vectorize(lambda x: 1 if x >= 0 else 0)\n",
+    "        u = f(u)\n",
+    "        u = np.max(u)\n",
+    "        return u\n",
+    "    \n",
+    "if __name__ == \"__main__\":\n",
+    "    import doctest\n",
+    "    doctest.testmod()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

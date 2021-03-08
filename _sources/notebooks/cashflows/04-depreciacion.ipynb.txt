@@ -1,0 +1,1327 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "Depreciación de Activos\n",
+    "===\n",
+    "\n",
+    "* *60 min* | Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "\n",
+    "# Importa la librería financiera.\n",
+    "# Solo es necesario ejecutar la importación una sola vez.\n",
+    "import cashflows as cf"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "#### Depreciación en línea recta\n",
+    "\n",
+    "La depreciación permite la deducción de los costos de las inversiones (pérdida de valor de ellas) con el fin de reducir el impuesto de renta.\n",
+    "\n",
+    "La depreciación en todos los años es igual.\n",
+    "\n",
+    "* $P$ -- valor de compra en libros.\n",
+    "\n",
+    "* $N$ -- número de años en que ocurre la depreciación (vida útil del activo).\n",
+    "\n",
+    "* $D_n$ -- depreciación en el año $n$.\n",
+    "\n",
+    "* $F$ -- valor de salvamento al final de la vida útil.\n",
+    "\n",
+    "$$D_n = \\frac{P-F}{N}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** Un activo cuesta  `$` 200. Si la depreciación ocurre durante 5 años, ¿cuál es su depreciación anual?."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000    200.0\n",
+       "2001      0.0\n",
+       "2002      0.0\n",
+       "2003      0.0\n",
+       "2004      0.0\n",
+       "2005      0.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "costs = cf.cashflow(const_value=0,  # valor 0 por defecto\n",
+    "                    periods=6,      # compra + vida útil\n",
+    "                    start=2000,\n",
+    "                    freq='A')\n",
+    "costs[0] = 200\n",
+    "costs"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "scrolled": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000    5.0\n",
+       "2001    0.0\n",
+       "2002    0.0\n",
+       "2003    0.0\n",
+       "2004    0.0\n",
+       "2005    0.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "life  = cf.cashflow(const_value=0, # vida util = 0\n",
+    "                    periods=6,     # compra + vida útil\n",
+    "                    start=2000,\n",
+    "                    freq='A')\n",
+    "life[0]=5 # vida útil del activo\n",
+    "life"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beg_Book</th>\n",
+       "      <th>Costs</th>\n",
+       "      <th>Depr</th>\n",
+       "      <th>Accum_Depr</th>\n",
+       "      <th>End_Book</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2000</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>200.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>200.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001</th>\n",
+       "      <td>200.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>160.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2002</th>\n",
+       "      <td>160.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>80.0</td>\n",
+       "      <td>120.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2003</th>\n",
+       "      <td>120.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>120.0</td>\n",
+       "      <td>80.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2004</th>\n",
+       "      <td>80.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>160.0</td>\n",
+       "      <td>40.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2005</th>\n",
+       "      <td>40.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>200.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Beg_Book  Costs  Depr  Accum_Depr  End_Book\n",
+       "2000       0.0  200.0   0.0         0.0     200.0\n",
+       "2001     200.0    0.0  40.0        40.0     160.0\n",
+       "2002     160.0    0.0  40.0        80.0     120.0\n",
+       "2003     120.0    0.0  40.0       120.0      80.0\n",
+       "2004      80.0    0.0  40.0       160.0      40.0\n",
+       "2005      40.0    0.0  40.0       200.0       0.0"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.depreciation_sl(costs=costs,    # costos de las inversiones \n",
+    "                   life=life)      # vida útil de cada inversión\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** En el año 2001 se compra un activo por valor de `$` 200 y en el año 2006 otro activo por valor de `$` 300. Los activos tienen vidas útiles de 5 y 10 años respectivamente. Calcule la depreciación total anual para cada año. Haga sus cálculos iniciando en el año 2000."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000      0.0\n",
+       "2001    200.0\n",
+       "2002      0.0\n",
+       "2003      0.0\n",
+       "2004      0.0\n",
+       "2005      0.0\n",
+       "2006    300.0\n",
+       "2007      0.0\n",
+       "2008      0.0\n",
+       "2009      0.0\n",
+       "2010      0.0\n",
+       "2011      0.0\n",
+       "2012      0.0\n",
+       "2013      0.0\n",
+       "2014      0.0\n",
+       "2015      0.0\n",
+       "2016      0.0\n",
+       "2017      0.0\n",
+       "2018      0.0\n",
+       "2019      0.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "costs = cf.cashflow(const_value=0,   # valor por defecto \n",
+    "                    periods=20,      # cantidad de períodos\n",
+    "                    start=2000,\n",
+    "                    freq='A')\n",
+    "costs['2001'] = 200\n",
+    "costs['2006'] = 300\n",
+    "costs"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000     0.0\n",
+       "2001     5.0\n",
+       "2002     0.0\n",
+       "2003     0.0\n",
+       "2004     0.0\n",
+       "2005     0.0\n",
+       "2006    10.0\n",
+       "2007     0.0\n",
+       "2008     0.0\n",
+       "2009     0.0\n",
+       "2010     0.0\n",
+       "2011     0.0\n",
+       "2012     0.0\n",
+       "2013     0.0\n",
+       "2014     0.0\n",
+       "2015     0.0\n",
+       "2016     0.0\n",
+       "2017     0.0\n",
+       "2018     0.0\n",
+       "2019     0.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "life = cf.cashflow(const_value=0,    # valor por defecto \n",
+    "                   periods=20,       # cantidad de períodos\n",
+    "                   start=2000,\n",
+    "                   freq='A')\n",
+    "life['2001'] = 5\n",
+    "life['2006'] = 10\n",
+    "life"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beg_Book</th>\n",
+       "      <th>Costs</th>\n",
+       "      <th>Depr</th>\n",
+       "      <th>Accum_Depr</th>\n",
+       "      <th>End_Book</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2000</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>200.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>200.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2002</th>\n",
+       "      <td>200.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>160.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2003</th>\n",
+       "      <td>160.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>80.0</td>\n",
+       "      <td>120.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2004</th>\n",
+       "      <td>120.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>120.0</td>\n",
+       "      <td>80.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2005</th>\n",
+       "      <td>80.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>160.0</td>\n",
+       "      <td>40.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2006</th>\n",
+       "      <td>40.0</td>\n",
+       "      <td>300.0</td>\n",
+       "      <td>40.0</td>\n",
+       "      <td>200.0</td>\n",
+       "      <td>300.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2007</th>\n",
+       "      <td>300.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>230.0</td>\n",
+       "      <td>270.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2008</th>\n",
+       "      <td>270.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>260.0</td>\n",
+       "      <td>240.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2009</th>\n",
+       "      <td>240.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>290.0</td>\n",
+       "      <td>210.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2010</th>\n",
+       "      <td>210.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>320.0</td>\n",
+       "      <td>180.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2011</th>\n",
+       "      <td>180.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>150.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2012</th>\n",
+       "      <td>150.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>380.0</td>\n",
+       "      <td>120.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013</th>\n",
+       "      <td>120.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>410.0</td>\n",
+       "      <td>90.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2014</th>\n",
+       "      <td>90.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>440.0</td>\n",
+       "      <td>60.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2015</th>\n",
+       "      <td>60.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>470.0</td>\n",
+       "      <td>30.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016</th>\n",
+       "      <td>30.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>30.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2017</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2018</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Beg_Book  Costs  Depr  Accum_Depr  End_Book\n",
+       "2000       0.0    0.0   0.0         0.0       0.0\n",
+       "2001       0.0  200.0   0.0         0.0     200.0\n",
+       "2002     200.0    0.0  40.0        40.0     160.0\n",
+       "2003     160.0    0.0  40.0        80.0     120.0\n",
+       "2004     120.0    0.0  40.0       120.0      80.0\n",
+       "2005      80.0    0.0  40.0       160.0      40.0\n",
+       "2006      40.0  300.0  40.0       200.0     300.0\n",
+       "2007     300.0    0.0  30.0       230.0     270.0\n",
+       "2008     270.0    0.0  30.0       260.0     240.0\n",
+       "2009     240.0    0.0  30.0       290.0     210.0\n",
+       "2010     210.0    0.0  30.0       320.0     180.0\n",
+       "2011     180.0    0.0  30.0       350.0     150.0\n",
+       "2012     150.0    0.0  30.0       380.0     120.0\n",
+       "2013     120.0    0.0  30.0       410.0      90.0\n",
+       "2014      90.0    0.0  30.0       440.0      60.0\n",
+       "2015      60.0    0.0  30.0       470.0      30.0\n",
+       "2016      30.0    0.0  30.0       500.0       0.0\n",
+       "2017       0.0    0.0   0.0       500.0       0.0\n",
+       "2018       0.0    0.0   0.0       500.0       0.0\n",
+       "2019       0.0    0.0   0.0       500.0       0.0"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.depreciation_sl(costs=costs,    # inversiones\n",
+    "                   life=life)      # vida útil"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "#### Depreciación por suma de los dígitos de los años (o depreciación acelerada)\n",
+    "\n",
+    "En este método de depreciación se hace mayor al principio y más pequeña al final. Se basa en la progresión desde $N$ hasta 1.\n",
+    "\n",
+    "$$S = \\sum_{i=1}^N i = \\frac{1}{2} N(N + 1)$$\n",
+    "\n",
+    "$$D_n = (P - F) * \\frac{(N - n + 1)}{S} = 2 * (P - F) * \\frac{N-n+1}{N(N+1)}$$ "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** Un activo cuesta  `$` 200. Si la depreciación ocurre durante 5 años, ¿cuál es su depreciación anual?."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "costs = cf.cashflow(const_value=[200]+[0]*5,\n",
+    "                    start=2000,\n",
+    "                    freq='A')\n",
+    "\n",
+    "life  = cf.cashflow(const_value=[5]+[0]*5,\n",
+    "                    start='2000',\n",
+    "                    freq='A')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beg_Book</th>\n",
+       "      <th>Costs</th>\n",
+       "      <th>Depr</th>\n",
+       "      <th>Accum_Depr</th>\n",
+       "      <th>End_Book</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2000</th>\n",
+       "      <td>0.00</td>\n",
+       "      <td>200.0</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>0.00</td>\n",
+       "      <td>200.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001</th>\n",
+       "      <td>200.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>66.67</td>\n",
+       "      <td>66.67</td>\n",
+       "      <td>133.33</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2002</th>\n",
+       "      <td>133.33</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>53.33</td>\n",
+       "      <td>120.00</td>\n",
+       "      <td>80.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2003</th>\n",
+       "      <td>80.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>40.00</td>\n",
+       "      <td>160.00</td>\n",
+       "      <td>40.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2004</th>\n",
+       "      <td>40.00</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>26.67</td>\n",
+       "      <td>186.67</td>\n",
+       "      <td>13.33</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2005</th>\n",
+       "      <td>13.33</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>13.33</td>\n",
+       "      <td>200.00</td>\n",
+       "      <td>-0.00</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Beg_Book  Costs   Depr  Accum_Depr  End_Book\n",
+       "2000      0.00  200.0   0.00        0.00    200.00\n",
+       "2001    200.00    0.0  66.67       66.67    133.33\n",
+       "2002    133.33    0.0  53.33      120.00     80.00\n",
+       "2003     80.00    0.0  40.00      160.00     40.00\n",
+       "2004     40.00    0.0  26.67      186.67     13.33\n",
+       "2005     13.33    0.0  13.33      200.00     -0.00"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.depreciation_soyd(costs=costs, life=life)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Efecto de la depreciación sobre el impuesto de renta y el flujo de caja"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "def compute_cf(ingreso_operativo,\n",
+    "               tax_rate,\n",
+    "               depreciacion):\n",
+    "    utilidad_AI = ingreso_operativo - depreciacion\n",
+    "    impuestos   = cf.after_tax_cashflow(utilidad_AI, tax_rate=tax_rate)\n",
+    "    utilidad_DI = utilidad_AI - impuestos\n",
+    "    cashf       = utilidad_DI + depreciacion\n",
+    "    \n",
+    "    return impuestos, cashf\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## impuesto de renta del 35%\n",
+    "tax_rate = cf.interest_rate(const_value=[35]*6, start=2018, freq='A')\n",
+    "\n",
+    "## crea el flujo de caja\n",
+    "ingreso_operativo = cf.cashflow(const_value=[0]+[500]*5, start=2018, freq='A') \n",
+    "\n",
+    "## activo depreciable\n",
+    "costs = cf.cashflow(const_value=[200]+[0]*5, start=2018, freq='A')\n",
+    "life  = cf.cashflow(const_value=[5]+[0]*5,   start=2018, freq='A')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Caso 1: sin depreciación.**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018      0.0\n",
+       "2019    175.0\n",
+       "2020    175.0\n",
+       "2021    175.0\n",
+       "2022    175.0\n",
+       "2023    175.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "depreciacion_1 = cf.cashflow(const_value=[0]*6, start=2018, freq='A') \n",
+    "impuesto_1, cf_1 = compute_cf(ingreso_operativo, tax_rate, depreciacion_1)\n",
+    "impuesto_1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018      0.0\n",
+       "2019    325.0\n",
+       "2020    325.0\n",
+       "2021    325.0\n",
+       "2022    325.0\n",
+       "2023    325.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf_1"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Caso 2: depreciación en linea recta.**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {
+    "scrolled": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018     0.0\n",
+       "2019    40.0\n",
+       "2020    40.0\n",
+       "2021    40.0\n",
+       "2022    40.0\n",
+       "2023    40.0\n",
+       "Freq: A-DEC, Name: Depr, dtype: float64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## considere un activo depreciable\n",
+    "depreciacion_2 = cf.depreciation_sl(costs=costs, life=life)['Depr']\n",
+    "depreciacion_2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {
+    "scrolled": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018      0.0\n",
+       "2019    161.0\n",
+       "2020    161.0\n",
+       "2021    161.0\n",
+       "2022    161.0\n",
+       "2023    161.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "impuesto_2, cf_2 = compute_cf(ingreso_operativo, tax_rate, depreciacion_2)\n",
+    "impuesto_2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018      0.0\n",
+       "2019    339.0\n",
+       "2020    339.0\n",
+       "2021    339.0\n",
+       "2022    339.0\n",
+       "2023    339.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf_2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Note que en el resultado anterior el ingreso después de impuestos es mayor que en el caso 1."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Caso 3: depreciación acelerada.**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018     0.00\n",
+       "2019    66.67\n",
+       "2020    53.33\n",
+       "2021    40.00\n",
+       "2022    26.67\n",
+       "2023    13.33\n",
+       "Freq: A-DEC, Name: Depr, dtype: float64"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "depreciacion_3 = cf.depreciation_soyd(costs=costs, life=life)['Depr']\n",
+    "depreciacion_3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018      0.0000\n",
+       "2019    151.6655\n",
+       "2020    156.3345\n",
+       "2021    161.0000\n",
+       "2022    165.6655\n",
+       "2023    170.3345\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "impuesto_3, cf_3 = compute_cf(ingreso_operativo, tax_rate, depreciacion_3)\n",
+    "impuesto_3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018      0.0000\n",
+       "2019    348.3345\n",
+       "2020    343.6655\n",
+       "2021    339.0000\n",
+       "2022    334.3345\n",
+       "2023    329.6655\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf_3"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Comparación**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>impuesto_1</th>\n",
+       "      <th>impuesto_2</th>\n",
+       "      <th>impuesto_3</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019</th>\n",
+       "      <td>175.0</td>\n",
+       "      <td>161.0</td>\n",
+       "      <td>151.67</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2020</th>\n",
+       "      <td>175.0</td>\n",
+       "      <td>161.0</td>\n",
+       "      <td>156.33</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2021</th>\n",
+       "      <td>175.0</td>\n",
+       "      <td>161.0</td>\n",
+       "      <td>161.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022</th>\n",
+       "      <td>175.0</td>\n",
+       "      <td>161.0</td>\n",
+       "      <td>165.67</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2023</th>\n",
+       "      <td>175.0</td>\n",
+       "      <td>161.0</td>\n",
+       "      <td>170.33</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      impuesto_1  impuesto_2  impuesto_3\n",
+       "2018         0.0         0.0        0.00\n",
+       "2019       175.0       161.0      151.67\n",
+       "2020       175.0       161.0      156.33\n",
+       "2021       175.0       161.0      161.00\n",
+       "2022       175.0       161.0      165.67\n",
+       "2023       175.0       161.0      170.33"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pd.DataFrame({'impuesto_1':impuesto_1, 'impuesto_2':impuesto_2, 'impuesto_3':impuesto_3}).round(2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>cf_1</th>\n",
+       "      <th>cf_2</th>\n",
+       "      <th>cf_3</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019</th>\n",
+       "      <td>325.0</td>\n",
+       "      <td>339.0</td>\n",
+       "      <td>348.33</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2020</th>\n",
+       "      <td>325.0</td>\n",
+       "      <td>339.0</td>\n",
+       "      <td>343.67</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2021</th>\n",
+       "      <td>325.0</td>\n",
+       "      <td>339.0</td>\n",
+       "      <td>339.00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022</th>\n",
+       "      <td>325.0</td>\n",
+       "      <td>339.0</td>\n",
+       "      <td>334.33</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2023</th>\n",
+       "      <td>325.0</td>\n",
+       "      <td>339.0</td>\n",
+       "      <td>329.67</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "       cf_1   cf_2    cf_3\n",
+       "2018    0.0    0.0    0.00\n",
+       "2019  325.0  339.0  348.33\n",
+       "2020  325.0  339.0  343.67\n",
+       "2021  325.0  339.0  339.00\n",
+       "2022  325.0  339.0  334.33\n",
+       "2023  325.0  339.0  329.67"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pd.DataFrame({'cf_1':cf_1, 'cf_2':cf_2, 'cf_3':cf_3}).round(2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejercicio.--*** Una empresa de energía eléctrica realiza las siguientes inversiones: \n",
+    "\n",
+    "* Un nuevo edificio por `$` 1000 (depreciación en línea recta a 20 años) que entra en funcionamiento en 2018-01.\n",
+    "\n",
+    "\n",
+    "* Una nueva turbina por `$` 300 (depreciación usando el método de la suma de los dígitos de los años, a 10 años) que entra en operación en 2018-04.\n",
+    "\n",
+    "\n",
+    "* Una nueva turbina por `$` 250 (depreciación usando el método de la suma de los dígitos de los años, a 10 años) que entra en operación en 2018-08.\n",
+    "\n",
+    "\n",
+    "* Una nueva turbina por `$` 240 (depreciación usando el método de la suma de los dígitos de los años, a 10 años) que entra en operación en 2019-03.\n",
+    "\n",
+    "\n",
+    "Compute la depreciación total para cada año. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Bibliografía**\n",
+    "\n",
+    "> * [1] SAS/ETS 14.1 User's Guide, 2015.   \n",
+    "* [2] **hp** 12c platinum financial calculator. User's guide. \n",
+    "* [3] HP Business Consultant II Owner's manual.\n",
+    "* [4] C.S. Park and G.P. Sharp-Bette. Advanced Engineering Economics. John Wiley & Sons, Inc., 1990."
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "celltoolbar": "Slideshow",
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

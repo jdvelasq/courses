@@ -1,0 +1,510 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Afinación de los parámetros de modelos"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* *30 min* | Ultima modificación: Abril 13, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Este tutorial demuestra como obtener la mejor combinación de hiperparámetros posibles de un modelo usando cross-validation."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Carga de datos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(150, 4) (150,)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Carga de datos del dataset del iris\n",
+    "#\n",
+    "from sklearn import datasets\n",
+    "data = datasets.load_iris()\n",
+    "\n",
+    "#\n",
+    "# Carga de datos.\n",
+    "#   Se verifica la cantidad de datos de la muestra\n",
+    "#\n",
+    "X, y = data.data, data.target\n",
+    "print(X.shape, y.shape)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Partición de los datos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.model_selection import train_test_split\n",
+    "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=33)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preprocesamiento"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.preprocessing import StandardScaler\n",
+    "\n",
+    "scaler = StandardScaler()\n",
+    "scaler.fit(X_train)\n",
+    "X_train = scaler.transform(X_train)\n",
+    "X_test  = scaler.transform(X_test)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Creación de la malla de datos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "GridSearchCV(cv=5, error_score=nan,\n",
+       "             estimator=SGDClassifier(alpha=0.0001, average=False,\n",
+       "                                     class_weight=None, early_stopping=False,\n",
+       "                                     epsilon=0.1, eta0=0.0, fit_intercept=True,\n",
+       "                                     l1_ratio=0.15, learning_rate='optimal',\n",
+       "                                     loss='hinge', max_iter=1000,\n",
+       "                                     n_iter_no_change=5, n_jobs=None,\n",
+       "                                     penalty='l2', power_t=0.5,\n",
+       "                                     random_state=None, shuffle=True, tol=0.001,\n",
+       "                                     validation_fraction=0.1, verbose=0,\n",
+       "                                     warm_start=False),\n",
+       "             iid='deprecated', n_jobs=None,\n",
+       "             param_grid=[{'penalty': ['none']},\n",
+       "                         {'alpha': [1e-05, 2e-05, 3e-05], 'penalty': ['l2']},\n",
+       "                         {'alpha': [1e-05, 2e-05, 3e-05],\n",
+       "                          'l1_ratio': [0.1, 0.15, 0.2], 'penalty': ['l1']}],\n",
+       "             pre_dispatch='2*n_jobs', refit=True, return_train_score=False,\n",
+       "             scoring=None, verbose=0)"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.linear_model import SGDClassifier\n",
+    "from sklearn.model_selection import GridSearchCV\n",
+    "\n",
+    "\n",
+    "#\n",
+    "# La variable tuned_parameters es una lista de diccionarios\n",
+    "# que contiene los valores que pueden ajustarse\n",
+    "#\n",
+    "parameters = [ {'penalty': ['none']},\n",
+    "               {'penalty': ['l2'],\n",
+    "                'alpha': [0.00001, 0.00002, 0.00003]},\n",
+    "               {'penalty': ['l1'],\n",
+    "                'alpha': [0.00001, 0.00002, 0.00003],\n",
+    "                'l1_ratio': [0.10, 0.15, 0.20]} ]\n",
+    "\n",
+    "#\n",
+    "# Construye la malla de hiperparámetros\n",
+    "#\n",
+    "clf = GridSearchCV(SGDClassifier(), \n",
+    "                       parameters, \n",
+    "                       cv=5)\n",
+    "\n",
+    "#\n",
+    "# Entrenamiento de todos los modelos y selección\n",
+    "# de la combinación óptima de parámetros\n",
+    "#\n",
+    "clf.fit(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'mean_fit_time': array([0.0029778 , 0.0026813 , 0.0027029 , 0.00276084, 0.00284386,\n",
+       "        0.00289602, 0.00354352, 0.00304675, 0.00286613, 0.00259495,\n",
+       "        0.00260658, 0.00264225, 0.00261641]),\n",
+       " 'std_fit_time': array([2.64037071e-04, 1.03741554e-04, 1.62831155e-04, 1.24644029e-04,\n",
+       "        1.42623341e-04, 1.55474465e-04, 7.35495721e-04, 4.33973398e-04,\n",
+       "        2.39768052e-04, 5.78474424e-05, 9.58884313e-05, 5.83857066e-05,\n",
+       "        4.43637976e-05]),\n",
+       " 'mean_score_time': array([0.0004066 , 0.00045028, 0.00037251, 0.00045509, 0.00034795,\n",
+       "        0.00033865, 0.00057549, 0.00040164, 0.00032053, 0.00035806,\n",
+       "        0.00035367, 0.00033679, 0.00035515]),\n",
+       " 'std_score_time': array([5.51605175e-05, 1.39943103e-04, 7.19840298e-05, 7.49248204e-05,\n",
+       "        3.83697205e-05, 1.94638363e-05, 2.31998865e-04, 6.61346838e-05,\n",
+       "        1.01316395e-05, 6.18802367e-05, 5.34752411e-05, 4.11255394e-05,\n",
+       "        5.27823627e-05]),\n",
+       " 'param_penalty': masked_array(data=['none', 'l2', 'l2', 'l2', 'l1', 'l1', 'l1', 'l1', 'l1',\n",
+       "                    'l1', 'l1', 'l1', 'l1'],\n",
+       "              mask=[False, False, False, False, False, False, False, False,\n",
+       "                    False, False, False, False, False],\n",
+       "        fill_value='?',\n",
+       "             dtype=object),\n",
+       " 'param_alpha': masked_array(data=[--, 1e-05, 2e-05, 3e-05, 1e-05, 1e-05, 1e-05, 2e-05,\n",
+       "                    2e-05, 2e-05, 3e-05, 3e-05, 3e-05],\n",
+       "              mask=[ True, False, False, False, False, False, False, False,\n",
+       "                    False, False, False, False, False],\n",
+       "        fill_value='?',\n",
+       "             dtype=object),\n",
+       " 'param_l1_ratio': masked_array(data=[--, --, --, --, 0.1, 0.15, 0.2, 0.1, 0.15, 0.2, 0.1,\n",
+       "                    0.15, 0.2],\n",
+       "              mask=[ True,  True,  True,  True, False, False, False, False,\n",
+       "                    False, False, False, False, False],\n",
+       "        fill_value='?',\n",
+       "             dtype=object),\n",
+       " 'params': [{'penalty': 'none'},\n",
+       "  {'alpha': 1e-05, 'penalty': 'l2'},\n",
+       "  {'alpha': 2e-05, 'penalty': 'l2'},\n",
+       "  {'alpha': 3e-05, 'penalty': 'l2'},\n",
+       "  {'alpha': 1e-05, 'l1_ratio': 0.1, 'penalty': 'l1'},\n",
+       "  {'alpha': 1e-05, 'l1_ratio': 0.15, 'penalty': 'l1'},\n",
+       "  {'alpha': 1e-05, 'l1_ratio': 0.2, 'penalty': 'l1'},\n",
+       "  {'alpha': 2e-05, 'l1_ratio': 0.1, 'penalty': 'l1'},\n",
+       "  {'alpha': 2e-05, 'l1_ratio': 0.15, 'penalty': 'l1'},\n",
+       "  {'alpha': 2e-05, 'l1_ratio': 0.2, 'penalty': 'l1'},\n",
+       "  {'alpha': 3e-05, 'l1_ratio': 0.1, 'penalty': 'l1'},\n",
+       "  {'alpha': 3e-05, 'l1_ratio': 0.15, 'penalty': 'l1'},\n",
+       "  {'alpha': 3e-05, 'l1_ratio': 0.2, 'penalty': 'l1'}],\n",
+       " 'split0_test_score': array([0.86956522, 0.86956522, 0.86956522, 0.7826087 , 0.91304348,\n",
+       "        0.82608696, 0.82608696, 0.69565217, 0.86956522, 0.91304348,\n",
+       "        0.82608696, 0.86956522, 0.73913043]),\n",
+       " 'split1_test_score': array([0.91304348, 0.73913043, 0.86956522, 0.91304348, 0.91304348,\n",
+       "        0.91304348, 0.7826087 , 0.91304348, 0.95652174, 0.91304348,\n",
+       "        0.86956522, 0.91304348, 0.82608696]),\n",
+       " 'split2_test_score': array([1.        , 0.86363636, 0.90909091, 0.90909091, 0.81818182,\n",
+       "        0.95454545, 0.72727273, 0.86363636, 0.95454545, 0.95454545,\n",
+       "        1.        , 0.90909091, 0.95454545]),\n",
+       " 'split3_test_score': array([0.95454545, 0.95454545, 0.86363636, 0.90909091, 0.90909091,\n",
+       "        0.72727273, 0.81818182, 0.90909091, 0.95454545, 0.90909091,\n",
+       "        0.95454545, 0.95454545, 0.81818182]),\n",
+       " 'split4_test_score': array([1.        , 0.72727273, 0.77272727, 0.77272727, 0.81818182,\n",
+       "        0.77272727, 0.77272727, 1.        , 0.77272727, 0.95454545,\n",
+       "        0.77272727, 0.95454545, 0.95454545]),\n",
+       " 'mean_test_score': array([0.94743083, 0.83083004, 0.856917  , 0.85731225, 0.8743083 ,\n",
+       "        0.83873518, 0.78537549, 0.87628458, 0.90158103, 0.92885375,\n",
+       "        0.88458498, 0.9201581 , 0.85849802]),\n",
+       " 'std_test_score': array([0.05064227, 0.08604081, 0.04511127, 0.0651203 , 0.0458498 ,\n",
+       "        0.08470495, 0.03543231, 0.10051967, 0.07246688, 0.02102678,\n",
+       "        0.08291544, 0.0319303 , 0.08411268]),\n",
+       " 'rank_test_score': array([ 1, 12, 10,  9,  7, 11, 13,  6,  4,  2,  5,  3,  8], dtype=int32)}"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Combinaciones usadas de hiperparámetros\n",
+    "#\n",
+    "clf.cv_results_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "SGDClassifier(alpha=0.0001, average=False, class_weight=None,\n",
+       "              early_stopping=False, epsilon=0.1, eta0=0.0, fit_intercept=True,\n",
+       "              l1_ratio=0.15, learning_rate='optimal', loss='hinge',\n",
+       "              max_iter=1000, n_iter_no_change=5, n_jobs=None, penalty='none',\n",
+       "              power_t=0.5, random_state=None, shuffle=True, tol=0.001,\n",
+       "              validation_fraction=0.1, verbose=0, warm_start=False)"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Mejor modelo\n",
+    "#\n",
+    "clf.best_estimator_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[-17.11345065,  13.34621913, -19.44408516, -19.37956468],\n",
+       "       [ -3.57221559,  -3.50681797,  14.01690648,  -8.24023211],\n",
+       "       [ -2.3230746 , -11.98231611,  39.19242903,  42.88226925]])"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Coeficientes del mejor modelo\n",
+    "#\n",
+    "clf.best_estimator_.coef_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([-10.11758215,  -0.85261756, -58.61404576])"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Interceptos del mejor modelo\n",
+    "#\n",
+    "clf.best_estimator_.intercept_"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Evaluación del mejor modelo encontrado"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9642857142857143"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn import metrics\n",
+    "\n",
+    "#\n",
+    "# Pronóstico para el conjunto de entrenamiento\n",
+    "#\n",
+    "y_train_pred = clf.predict(X_train)\n",
+    "\n",
+    "# Precisión para el conjunto de entrenamiento\n",
+    "metrics.accuracy_score(y_train, y_train_pred)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9736842105263158"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Precisión para el conjunto de prueba\n",
+    "y_pred = clf.predict(X_test)\n",
+    "metrics.accuracy_score(y_test, y_pred)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "              precision    recall  f1-score   support\n",
+      "\n",
+      "      setosa       1.00      1.00      1.00         8\n",
+      "  versicolor       0.92      1.00      0.96        11\n",
+      "   virginica       1.00      0.95      0.97        19\n",
+      "\n",
+      "    accuracy                           0.97        38\n",
+      "   macro avg       0.97      0.98      0.98        38\n",
+      "weighted avg       0.98      0.97      0.97        38\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# \n",
+    "# Métricas de evaluación\n",
+    "#\n",
+    "print(metrics.classification_report(y_test, y_pred, target_names=data.target_names))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[ 8,  0,  0],\n",
+       "       [ 0, 11,  0],\n",
+       "       [ 0,  1, 18]])"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Matriz de confusión\n",
+    "#\n",
+    "metrics.confusion_matrix(y_test, y_pred)\n",
+    "\n",
+    "#\n",
+    "# Note que en el ejemplo del tutorial anterior.\n",
+    "#\n",
+    "# array([[ 8,  0,  0],\n",
+    "#        [ 5,  1,  5],\n",
+    "#        [ 0,  0, 19]])\n",
+    "#"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 2 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import plot_confusion_matrix\n",
+    "\n",
+    "#\n",
+    "# Note que la función computa internamente\n",
+    "# el pronósitco del clasificador\n",
+    "#\n",
+    "plot_confusion_matrix(\n",
+    "    clf,        # clasificador entrenado\n",
+    "    X_test,     # matriz de variables de entrada\n",
+    "    y_test);    # valor real "
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  },
+  "nteract": {
+   "version": "0.7.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

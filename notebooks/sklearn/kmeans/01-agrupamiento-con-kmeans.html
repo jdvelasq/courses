@@ -1,0 +1,948 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="es" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Algoritmo de agrupamiento K-means &mdash; documentación de --- Cursos --- - </title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Índice" href="../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../search.html" />
+    <link rel="next" title="Segmentación del mercado de adolecentes" href="02-segmentacion-del-mercado-adolecente-con-kmeans.html" />
+    <link rel="prev" title="Taller — Sistema de recomendación de paquetes en R usando kNN" href="../knn/05-taller.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> --- Cursos ---
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Configuración</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../setup.html">Instalación de Vagrant y Docker</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Cursos</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../analitica-de-grandes-datos/index.html">Analítica de grandes datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analitica-financiera/index.html">Analítica Financiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analitica-predictiva/index.html">Analítica Predictiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ciencia-de-los-datos/index.html">Ciencia de los Datos</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../fundamentos-de-analitica/index.html">Fundamentos de Analítica</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../../fundamentos-de-analitica/content.html">Sesiones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fundamentos-de-analitica/grades.html">Laboratorios de Programación</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../fundamentos-de-analitica/course-info.html">Información del curso</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../productos-de-datos/index.html">Productos de Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/index.html">Redes Neuronales Artificiales</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">--- Cursos ---</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../analitica-predictiva/index.html">Analítica Predictiva</a> &raquo;</li>
+        
+          <li><a href="../../../analitica-predictiva/content.html">Sesiones</a> &raquo;</li>
+        
+      <li>Algoritmo de agrupamiento K-means</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/notebooks/sklearn/kmeans/01-agrupamiento-con-kmeans.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Algoritmo-de-agrupamiento-K-means">
+<h1>Algoritmo de agrupamiento K-means<a class="headerlink" href="#Algoritmo-de-agrupamiento-K-means" title="Enlazar permanentemente con este título">¶</a></h1>
+<ul class="simple">
+<li><p><em>60 min</em> | Ultima modificación: Junio 22, 2019</p></li>
+</ul>
+<p>Las técnicas de agrupamiento se utilizan para dividir un conjunto de datos en grupos de características homogéneas. Las aplicaciones a nivel organizacional incluyen la detección del tipo de clientes, la obtención de series de comportamiento similar en diferentes tipos de mercados, caracterización de fuerzas de venta, detección del tipo de productos similares, entre muchos otros. En este tutorial se aborda el algoritmo <a class="reference external" href="https://es.wikipedia.org/wiki/K-medias">K-means</a>, el cuál es uno de los
+más conocidos tanto en el área de estadística como de aprendizaje automático.</p>
+<div class="section" id="Descripción-del-problema">
+<h2>Descripción del problema<a class="headerlink" href="#Descripción-del-problema" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Se desea detectar los tipos de clientes existentes en una empresa con el fin de poder definir políticas para su manejo en una etapa posterior.</p>
+<p>Se tienen 60 observaciones para las variables <span class="math notranslate nohighlight">\(x_1\)</span> y <span class="math notranslate nohighlight">\(x_2\)</span> las cuales podrían ser utilizadas para caracterizar los clientes. En términos de los datos, se desea determinar si existen grupos de comportamento homogéneo.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> data.csv
+<span class="n">x1</span><span class="p">,</span><span class="n">x2</span>
+<span class="mf">10.67</span><span class="p">,</span><span class="mf">14.7</span>
+<span class="mf">10.87</span><span class="p">,</span><span class="mf">6.91</span>
+<span class="mf">13.27</span><span class="p">,</span><span class="mf">13.92</span>
+<span class="mf">9.74</span><span class="p">,</span><span class="mf">13.79</span>
+<span class="mf">11.95</span><span class="p">,</span><span class="mf">6.05</span>
+<span class="mf">14.4</span><span class="p">,</span><span class="mf">16.58</span>
+<span class="mf">10.23</span><span class="p">,</span><span class="mf">14.3</span>
+<span class="mf">12.77</span><span class="p">,</span><span class="mf">7.97</span>
+<span class="mf">14.5</span><span class="p">,</span><span class="mf">17.39</span>
+<span class="mf">11.17</span><span class="p">,</span><span class="mf">15.53</span>
+<span class="mf">13.25</span><span class="p">,</span><span class="mf">8.03</span>
+<span class="mf">14.2</span><span class="p">,</span><span class="mf">16.7</span>
+<span class="mf">10.41</span><span class="p">,</span><span class="mf">15.08</span>
+<span class="mf">14.42</span><span class="p">,</span><span class="mf">9.25</span>
+<span class="mf">14.62</span><span class="p">,</span><span class="mf">17.22</span>
+<span class="mf">11.14</span><span class="p">,</span><span class="mf">14.45</span>
+<span class="mf">16.03</span><span class="p">,</span><span class="mf">9.88</span>
+<span class="mf">13.05</span><span class="p">,</span><span class="mf">12.2</span>
+<span class="mf">10.12</span><span class="p">,</span><span class="mf">12.95</span>
+<span class="mf">12.23</span><span class="p">,</span><span class="mf">6.97</span>
+<span class="mf">14.43</span><span class="p">,</span><span class="mf">16.31</span>
+<span class="mf">9.58</span><span class="p">,</span><span class="mf">13.76</span>
+<span class="mf">13.24</span><span class="p">,</span><span class="mf">8.58</span>
+<span class="mf">13.51</span><span class="p">,</span><span class="mf">15.12</span>
+<span class="mf">11.16</span><span class="p">,</span><span class="mf">15.21</span>
+<span class="mf">10.88</span><span class="p">,</span><span class="mf">6.15</span>
+<span class="mf">14.63</span><span class="p">,</span><span class="mf">17.0</span>
+<span class="mf">10.08</span><span class="p">,</span><span class="mf">13.53</span>
+<span class="mf">15.85</span><span class="p">,</span><span class="mf">9.51</span>
+<span class="mf">15.36</span><span class="p">,</span><span class="mf">16.95</span>
+<span class="mf">9.96</span><span class="p">,</span><span class="mf">13.31</span>
+<span class="mf">11.63</span><span class="p">,</span><span class="mf">7.28</span>
+<span class="mf">14.24</span><span class="p">,</span><span class="mf">17.55</span>
+<span class="mf">9.17</span><span class="p">,</span><span class="mf">12.41</span>
+<span class="mf">13.41</span><span class="p">,</span><span class="mf">8.35</span>
+<span class="mf">13.82</span><span class="p">,</span><span class="mf">15.46</span>
+<span class="mf">11.52</span><span class="p">,</span><span class="mf">16.01</span>
+<span class="mf">11.71</span><span class="p">,</span><span class="mf">6.37</span>
+<span class="mf">14.52</span><span class="p">,</span><span class="mf">18.9</span>
+<span class="mf">11.27</span><span class="p">,</span><span class="mf">15.41</span>
+<span class="mf">12.49</span><span class="p">,</span><span class="mf">7.6</span>
+<span class="mf">15.43</span><span class="p">,</span><span class="mf">19.0</span>
+<span class="mf">8.72</span><span class="p">,</span><span class="mf">11.66</span>
+<span class="mf">14.46</span><span class="p">,</span><span class="mf">8.21</span>
+<span class="mf">14.58</span><span class="p">,</span><span class="mf">17.01</span>
+<span class="mf">11.3</span><span class="p">,</span><span class="mf">15.11</span>
+<span class="mf">15.0</span><span class="p">,</span><span class="mf">10.11</span>
+<span class="mf">12.87</span><span class="p">,</span><span class="mf">14.26</span>
+<span class="mf">9.7</span><span class="p">,</span><span class="mf">13.56</span>
+<span class="mf">12.24</span><span class="p">,</span><span class="mf">7.16</span>
+<span class="mf">15.37</span><span class="p">,</span><span class="mf">18.91</span>
+<span class="mf">8.69</span><span class="p">,</span><span class="mf">11.81</span>
+<span class="mf">13.68</span><span class="p">,</span><span class="mf">8.12</span>
+<span class="mf">15.61</span><span class="p">,</span><span class="mf">19.0</span>
+<span class="mf">10.99</span><span class="p">,</span><span class="mf">16.28</span>
+<span class="mf">15.06</span><span class="p">,</span><span class="mf">8.47</span>
+<span class="mf">15.12</span><span class="p">,</span><span class="mf">17.84</span>
+<span class="mf">10.82</span><span class="p">,</span><span class="mf">14.41</span>
+<span class="mf">12.78</span><span class="p">,</span><span class="mf">8.74</span>
+<span class="mf">13.64</span><span class="p">,</span><span class="mf">15.49</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing data.csv
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Definición-metamática-del-problema-de-agrupameinto">
+<h2>Definición metamática del problema de agrupameinto<a class="headerlink" href="#Definición-metamática-del-problema-de-agrupameinto" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Este es el problema inverso al de clasificación. En la siguiente figura se desea determinar cuántos grupos existen en un conjunto de datos y los centroides de dichos grupos, tal que los miembros de cada grupo tengan unas características similares. El centroide de cada grupo representa a los miembros de su grupo.</p>
+<p><img alt="assets/agrupamiento-1.jpg" src="../../../_images/agrupamiento-1.jpg" /></p>
+<p>Nóte que en este ejemplo resulta fácil de visualizar ya que es un problema de dos dimensiones. En la realidad esto es completamente inusual y no hay una forma simple de detectar los grupos visualmente.</p>
+</div>
+<div class="section" id="Algoritmo-K-means">
+<h2>Algoritmo K-means<a class="headerlink" href="#Algoritmo-K-means" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>El algoritmo K-means se basa en asignar <span class="math notranslate nohighlight">\(n\)</span> ejemplos a uno de <span class="math notranslate nohighlight">\(K\)</span> grupos posibles. La notación usada es la siguiente:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span> representa el punto <span class="math notranslate nohighlight">\(i\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_{ij}\)</span> representa las componentes del punto <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span>, con <span class="math notranslate nohighlight">\(j=1,...,P\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P\)</span> es el número de dimensiones (cantidad de variables).</p></li>
+<li><p><span class="math notranslate nohighlight">\(S_k\)</span> representa el conjunto de patrones del grupo <span class="math notranslate nohighlight">\(k\)</span>.</p></li>
+<li><p>La pertenencia del ejemplo (patrón) <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span> al grupo <span class="math notranslate nohighlight">\(S_k\)</span> se representa como <span class="math notranslate nohighlight">\(\mathbf{x}_i \in S_k\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathbf{u}_k\)</span> representa el centro del grupo <span class="math notranslate nohighlight">\(k\)</span>, con componentes <span class="math notranslate nohighlight">\(u_{kj}\)</span>; <span class="math notranslate nohighlight">\(j=1,...,P\)</span> y <span class="math notranslate nohighlight">\(k=1,...,K\)</span>.</p></li>
+</ul>
+<p>El algoritmo asigna el ejemplo <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span> al grupo al que pertenece el centroide más cercano <span class="math notranslate nohighlight">\(\mathbf{u}_k\)</span>. Si se tienen tres grupos (<span class="math notranslate nohighlight">\(K=3\)</span>), cuyos centroides (representados por los rectángulos) son generados aleatoriamente, los puntos serían asignados a cada grupo de la siguiente forma:</p>
+<p><img alt="assets/agrupamiento-2.jpg" src="../../../_images/agrupamiento-2.jpg" /></p>
+<p><strong>Actividad.–</strong> Para los siguientes centros de clusters (9.96, 13.31), (13.24, 8.58) y (14.58, 17.01) asigne cada patrón a uno de los clusters (los datos se encuentran en el archivo de Microsoft Excel).</p>
+<p>En el algoritmo K-means, se pretende minimizar la distancia entre los miembros de cada grupo y maximizar la distancia entre grupos. Para ello, en este algoritmo se minimiza:</p>
+<div class="math notranslate nohighlight">
+\[\sum_{i=1}^k \sum_{\mathbf{x}_j \in S_i} \text{dist}( \mathbf{x}_j, \mathbf{u}_i)\]</div>
+<p>Si se usa la norma euclidiana:</p>
+<div class="math notranslate nohighlight">
+\[\text{dist}( \mathbf{x}_j, \mathbf{u}_i) = \| \mathbf{x}_j - \mathbf{u}_i \|^2 = \sum_{p=1}^P (x_{jp} - u_{ip})^2\]</div>
+<p>Este proceso se realiza en dos fases:</p>
+<ul class="simple">
+<li><p>Paso 1: Dados los centros de los clusters <span class="math notranslate nohighlight">\(\mathbf{u}_i\)</span>, cada punto <span class="math notranslate nohighlight">\(\mathbf{x}_j\)</span> se asigna al cluster más cercano. En esta fase se asignan todos los ejemplos de la muestra de datos a un cluster (Ejercicio anterior).</p></li>
+<li><p>Paso 2: Se recalcula cada centro <span class="math notranslate nohighlight">\(\mathbf{u}_i\)</span> como el promedio de los puntos <span class="math notranslate nohighlight">\(\mathbf{x}_j\)</span> que pertenecen a él; es decir, la componente <span class="math notranslate nohighlight">\(u_{ip}\)</span> del centroide <span class="math notranslate nohighlight">\(i\)</span> es el promedio de las componentes <span class="math notranslate nohighlight">\(x_{jp}\)</span>.</p></li>
+</ul>
+<p>El algoritmo se detiene cuando ningún punto cambia de cluster. Este caso es ejemplificado en la siguiente figura.</p>
+<p><img alt="assets/agrupamiento-3.jpg" src="../../../_images/agrupamiento-3.jpg" /></p>
+<p><strong>Actividad.—</strong> Compute los nuevos centros de los clusters y asigne nuevamente los ejemplos a los clusters hasta que el algoritmo converja.</p>
+</div>
+<div class="section" id="Métricas-de-distancia">
+<h2>Métricas de distancia<a class="headerlink" href="#Métricas-de-distancia" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Existen distintas métricas para computar la distancia entre puntos.</p>
+<p><strong>Euclidiana.</strong></p>
+<div class="math notranslate nohighlight">
+\[\text{dist}(\mathbf{x}_i, \mathbf{x}_j) =\left\{ \sum_k (x_{ik} - x_{jk})^2 \right\}^\frac{1}{2}\]</div>
+<p><strong>Manhattan.</strong></p>
+<div class="math notranslate nohighlight">
+\[\text{dist}(\mathbf{x}_i, \mathbf{x}_j) = \sum_k \left|x_{ik} - x_{jk}\right|\]</div>
+<p><strong>Chebychev</strong>.</p>
+<div class="math notranslate nohighlight">
+\[\text{dist}(\mathbf{x}_i, \mathbf{x}_j) = \max_k \left|x_{ik} - x_{jk}\right|\]</div>
+</div>
+<div class="section" id="Agrupamiento-usando-KMeans-en-Python">
+<h2>Agrupamiento usando KMeans en Python<a class="headerlink" href="#Agrupamiento-usando-KMeans-en-Python" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Preparación</span>
+<span class="c1">##</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="o">%</span><span class="k">load_ext</span> rpy2.ipython
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="s2">&quot;data.csv&quot;</span><span class="p">,</span>
+    <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>         <span class="c1"># separador de campos</span>
+    <span class="n">thousands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># separador de miles para números</span>
+    <span class="n">decimal</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>     <span class="c1"># separador de los decimales para números</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+
+<span class="c1">## Crea el clasificador</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1">## Construye los clusters</span>
+<span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+<span class="c1">## Pronostica los clusters para la muestra de datos</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+<span class="n">p</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([0, 2, 0, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 0, 0, 2, 1, 0,
+       2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2,
+       1, 0, 2, 0, 0, 2, 1, 0, 2, 1, 0, 2, 1, 0, 2, 1], dtype=int32)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Número de elementos por cluster</span>
+<span class="c1">##</span>
+<span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">p</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0    23
+2    20
+1    17
+Name: 0, dtype: int64
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Centros de los clusters</span>
+<span class="c1">##</span>
+<span class="n">m</span><span class="o">.</span><span class="n">cluster_centers_</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[10.67956522, 14.07173913],
+       [14.58705882, 17.20176471],
+       [13.1975    ,  7.9855    ]])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Promedio de x1 y x2 por cluster</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">&#39;cluster&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+<span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cluster&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>x2</th>
+    </tr>
+    <tr>
+      <th>cluster</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>10.679565</td>
+      <td>14.071739</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>14.587059</td>
+      <td>17.201765</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>13.197500</td>
+      <td>7.985500</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Gráfico de los clusters</span>
+<span class="c1">##</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">p</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_sklearn_kmeans_01-agrupamiento-con-kmeans_22_0.png" src="../../../_images/notebooks_sklearn_kmeans_01-agrupamiento-con-kmeans_22_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Escalamiento-y-transformación-de-variables">
+<h2>Escalamiento y transformación de variables<a class="headerlink" href="#Escalamiento-y-transformación-de-variables" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>El algoritmo K-means se ve afectado por la escala de las variables. Por ello, se debe realizar la transformación de las variables antes de aplicar K-means. En las siguientes ecuaciones, <span class="math notranslate nohighlight">\(x\)</span> representa cualquiera de las componentes de <span class="math notranslate nohighlight">\(\mathbf{x}\)</span>.</p>
+<p><strong>Normalización max-min.</strong></p>
+<div class="math notranslate nohighlight">
+\[x_* = \frac{x-\min(x)}{\max(x) - \min(x)}\]</div>
+<p><strong>Estandarización z-score.</strong></p>
+<div class="math notranslate nohighlight">
+\[z_* = \frac{x-\mu_x}{\sigma_x}\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu_x\)</span> es la media de <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma_x\)</span> es la desviación estándar de <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+</ul>
+<p><strong>Variables nominales.</strong> Una variable nominal con categorías <span class="math notranslate nohighlight">\(C_1\)</span>, <span class="math notranslate nohighlight">\(C_2\)</span>, …, <span class="math notranslate nohighlight">\(C_n\)</span> se codifica con <span class="math notranslate nohighlight">\(n-1\)</span> niveles, <span class="math notranslate nohighlight">\(L_i\)</span>, <span class="math notranslate nohighlight">\(i=1,...,n-1\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}L_i =
+  \begin{cases}
+     1, &amp; \text{if $\mathbf{x} \in C_i$.} \\
+     0, &amp;\text{En caso contrario.}
+  \end{cases}\end{split}\]</div>
+<p>Si las categorías están ordenadas se codifica como:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}L_i =
+  \begin{cases}
+     i, &amp; \text{if $\mathbf{x} \in C_i$.} \\
+     0, &amp;\text{En caso contrario.}
+  \end{cases}\end{split}\]</div>
+<p>y luego es realiza la normalización.</p>
+</div>
+<div class="section" id="Otras-técnicas-de-agrupamiento">
+<h2>Otras técnicas de agrupamiento<a class="headerlink" href="#Otras-técnicas-de-agrupamiento" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="section" id="Clustering-Jerárquico-Divisivo">
+<h3>Clustering Jerárquico Divisivo<a class="headerlink" href="#Clustering-Jerárquico-Divisivo" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>El algoritmo se inicia con un solo cluster que contiene todos los datos. Cada cluster es dividido recursivamente en dos clusters de máxima disimilitud. El algoritmo finaliza cuando hay un cluster por cada observación.</p>
+</div>
+<div class="section" id="Clustering-Jerárquico-Aglomerativo">
+<h3>Clustering Jerárquico Aglomerativo<a class="headerlink" href="#Clustering-Jerárquico-Aglomerativo" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>En esta algoritmo, cada cluster contiene un solo dato.</p>
+<ol class="arabic simple">
+<li><p>Se calcula la métrica de distancia entre todos los clusters.</p></li>
+<li><p>Se unen los dos clusters con menor distancia en uno solo.</p></li>
+<li><p>Se retorna al paso 1.</p></li>
+</ol>
+<p>El algoritmo se detiene cuando se llegue a un solo cluster que contiene todos los datos.</p>
+</div>
+<div class="section" id="Bisecting-K-means">
+<h3>Bisecting K-means<a class="headerlink" href="#Bisecting-K-means" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Este es un procedimiento constructivo a medias entre el agrupamiento jerárquico y K-means. El algoritmo se inicia con un solo cluster que contiene todos los datos y se ejecuta de la siguiente forma:</p>
+<ol class="arabic simple">
+<li><p>Se selecciona un cluster para dividir.</p></li>
+<li><p>Se divide el cluster seleccionado en dos clusters usando K-means. Este es el paso de bisección.</p></li>
+<li><p>Repita el paso 2 por un número fijo de veces y seleccione la partición con la mejor métrica de desempeño.</p></li>
+<li><p>Repita los pasos 1, 2 y 3 hasta alcanzar el número deseado de clusters.</p></li>
+</ol>
+<p><strong>Actividad.—</strong> Para el conjunto de datos que aparece al final de este tutorial, aplique este método hasta obtener 3 clusters.</p>
+</div>
+<div class="section" id="K-medoids">
+<h3>K-medoids<a class="headerlink" href="#K-medoids" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>En esta variación del algoritmo, los centros (medoids) de cada cluster son puntos de la muestra de datos; esto es, el centro de cada cluster es uno de los puntos asignados al cluster. El algoritmo opera de forma similar a K-means:</p>
+<ul class="simple">
+<li><p>Paso 1: Se seleccionan <span class="math notranslate nohighlight">\(k\)</span> puntos como centros de los clusters.</p></li>
+<li><p>Paso 2: Para todos los clusters se verifica si alguno de los miembros del cluster disminuye la métrica de distancia utilizada. En caso afirmativo, este punto pasa a ser el nuevo centro del cluster. En caso negativo, hay convergencia del algoritmo.</p></li>
+<li><p>Paso 3: Se asignan los puntos al cluster con centro más cercano y se retorna al Paso 2.</p></li>
+</ul>
+<p><strong>Actividad.—</strong> Para el conjunto de datos que aparece al final de este tutorial, use los puntos 1, 21 y 41 como medoids. Asigne los puntos restantes a cada uno de los clusters y determine cuál punto debe ser el siguiente medoid para cada cluster.</p>
+</div>
+<div class="section" id="K-means++">
+<h3>K-means++<a class="headerlink" href="#K-means++" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Este algoritmo es similar al algoritmo K-means, con la diferencia que los nuevos centros de los clusters son generados de forma aleatoria.</p>
+</div>
+<div class="section" id="Mini-batch-K-means">
+<h3>Mini batch K-means<a class="headerlink" href="#Mini-batch-K-means" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Este método se basa en tomar un subconjunto de los datos disponibles para estimar los clusters. Se usa para grandes conjuntos de datos.</p>
+<p>Para un número <span class="math notranslate nohighlight">\(T\)</span> de iteraciones y unos centros iniciales aleatorios se realiza el siguiente procedimiento:</p>
+<ol class="arabic simple">
+<li><p>Se seleccionan <span class="math notranslate nohighlight">\(b\)</span> puntos aleatoriamente del conjunto de datos.</p></li>
+<li><p>Se asignan los puntos a los clusters actuales como en K-means.</p></li>
+<li><p>Por cada uno de los <span class="math notranslate nohighlight">\(b\)</span> puntos se ajusta el centro del correspondiente cluster uno a uno.</p></li>
+</ol>
+<p>Este algoritmo usa una regla de ajuste similar a la regla de aprendizaje del perceptrón.</p>
+</div>
+<div class="section" id="Canopy-Clustering">
+<h3>Canopy Clustering<a class="headerlink" href="#Canopy-Clustering" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Es un método para crear grupos de elementos cercanos y se puede usar como una fase preliminar antes de usar otros métodos como k-means. El método requiere definir dos distancias <code class="docutils literal notranslate"><span class="pre">T1</span></code> y <code class="docutils literal notranslate"><span class="pre">T2</span></code>. El método funciona como se indica a continuación:</p>
+<ul class="simple">
+<li><p>Se colocan todos los puntos en el conjunto <span class="math notranslate nohighlight">\(S\)</span>.</p></li>
+<li><p>Mientras <span class="math notranslate nohighlight">\(S\)</span> no este vacio:</p></li>
+<li><p>Seleccione aleatoriamente un punto <span class="math notranslate nohighlight">\(\mathbf{r}\)</span> del conjunto <span class="math notranslate nohighlight">\(S\)</span> y remuevalo. Este el centro de un nuevo canopy.</p></li>
+<li><p>Para cada punto <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> en <span class="math notranslate nohighlight">\(S\)</span> compute la distancia <span class="math notranslate nohighlight">\(d\)</span> entre <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> y <span class="math notranslate nohighlight">\(\mathbf{r}\)</span>.</p></li>
+<li><p>Si <span class="math notranslate nohighlight">\(d\)</span> &lt; <code class="docutils literal notranslate"><span class="pre">T1</span></code>, agregue el punto <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> al canopy con centro en <span class="math notranslate nohighlight">\(\mathbf{r}\)</span>.</p></li>
+<li><p>Si <span class="math notranslate nohighlight">\(d\)</span> &lt; <code class="docutils literal notranslate"><span class="pre">T2</span></code>, remueva <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> de <span class="math notranslate nohighlight">\(S\)</span>.</p></li>
+</ul>
+<p>Note que un punto podría pertenecer a más de un canopy. Para el ejemplo desarrollado, cada canopy es representado por un circulo.</p>
+<p><img alt="assets/agrupamiento-4.jpg" src="../../../_images/agrupamiento-4.jpg" /></p>
+<p><strong>Actividad.—</strong> Para el conjunto de datos que aparece al final de este tutorial:</p>
+<ul class="simple">
+<li><p>Use el punto No. 1 como centro del primer canopy y determine cuales puntos deben ser asignados a este canopy.</p></li>
+<li><p>Use el punto No. 21 como centro del segundo canopy y determine cuales puntos deben ser asignados a este canopy.</p></li>
+</ul>
+<p>usando <code class="docutils literal notranslate"><span class="pre">T1</span></code> = 0.18 y <code class="docutils literal notranslate"><span class="pre">T2</span></code>= 0.22.</p>
+</div>
+<div class="section" id="Fuzzy-Clustering">
+<h3>Fuzzy Clustering<a class="headerlink" href="#Fuzzy-Clustering" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Mientras que en el caso tradicional un punto pertence o no a un cluster, en el agrupamiento difuso se permite la pertenencia parcial. Esto implica, que un punto podría pertenecer simultaneamente a varios cluster. El nivel de pertenencia se mide mediante un número real en el intevalo [0, 1], donde el cero indica la absoluta certeza de que el punto no pertence al cluster; y donde el uno indica la absoluta certeza de que el punto si pertenece al cluster.</p>
+<p>El algoritmo requere que se definan los siguientes parámetros para us uso:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(K\)</span>: la cantidad de clusters.</p></li>
+<li><p><span class="math notranslate nohighlight">\(m\)</span>: un valor entero, donde 1 genera una partición con una pertenencia (prácticamente) exclusiva de cada punto a un cluster; y <span class="math notranslate nohighlight">\(m\)</span> &gt; 30, genera valores de pertenencia cercanos a 1 / <span class="math notranslate nohighlight">\(K\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(d^2_{ij}\)</span>: la métrica de distancia entre los puntos <span class="math notranslate nohighlight">\(i\)</span> y <span class="math notranslate nohighlight">\(j\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(u_k, k = 1,...,K\)</span>: centros de los clusters, generados de forma aleatoria al inicio del algoritmo.</p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{ik}\)</span>: es la pertenencia del punto <span class="math notranslate nohighlight">\(i\)</span> al cluster <span class="math notranslate nohighlight">\(k\)</span>.</p></li>
+</ul>
+<p>El algoritmo es el siguiente:</p>
+<ul class="simple">
+<li><p>Se computa la matriz de pertenencia difusa, donde <span class="math notranslate nohighlight">\(w_{ij}\)</span> representa la pertenencia del punto <span class="math notranslate nohighlight">\(i\)</span> al cluster <span class="math notranslate nohighlight">\(j\)</span>.</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[w_{ik} = \left\{
+\sum_{k=1}^K \left(
+\frac{\|\mathbf{x}_i - \mathbf{u}_j\|}{|\mathbf{x}_i - \mathbf{u}_k\|}
+\right) ^\frac{2}{m-1}
+\right\}^{-1}\]</div>
+<ul class="simple">
+<li><p>Se computan los nuevos centros como:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\mathbf{u}_{k} = \frac{\sum_i (w_{ik})^m \; \mathbf{x}_k}{\sum_i (w_{ik})^m}\]</div>
+<p>El algoritmo se detiene cuando se alcanza un máximo de iteraciones o los valores de <span class="math notranslate nohighlight">\(w_{ij}\)</span> cambian muy poco de una interacción a la siguiente.</p>
+<p><strong>Actividad.—</strong> Para los siguientes centros de clusters (9.96, 13.31), (13.24, 8.58) y (14.58, 17.01) asigne cada patrón a uno de los clusters y compute los siguientes centros usando fuzzy K-means, con <span class="math notranslate nohighlight">\(m=1.2\)</span>.</p>
+</div>
+<div class="section" id="Spectal-K-means">
+<h3>Spectal K-means<a class="headerlink" href="#Spectal-K-means" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>En este caso se aplica el algoritmo K-means a los vectores y valores propios de la matriz de similitud de los datos. El algoritmo procede como se indica a continuación:</p>
+<ul class="simple">
+<li><p>Se calcula la matriz de distancias entre los puntos; <span class="math notranslate nohighlight">\(A_{ij} = A_{ji}\)</span> representa la distancia entre los puntos <span class="math notranslate nohighlight">\(\mathbf{x}_i\)</span> y <span class="math notranslate nohighlight">\(\mathbf{x}_j\)</span>.</p></li>
+<li><p>Se computa el Laplaciano <span class="math notranslate nohighlight">\(\mathbf{L}\)</span> de la matriz <span class="math notranslate nohighlight">\(A\)</span>.</p></li>
+<li><p>Se calculan los primeros <span class="math notranslate nohighlight">\(K\)</span> vectores y valores propios de <span class="math notranslate nohighlight">\(\mathbf{L}\)</span>.</p></li>
+<li><p>Los <span class="math notranslate nohighlight">\(K\)</span> vectores propios son usandos en el algoritmo K-means.</p></li>
+</ul>
+<hr class="docutils" />
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>rm data.csv
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Juan D. Velasquez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-XXXXXXX-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>

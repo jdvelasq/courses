@@ -1,0 +1,2327 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Funciones para la transformación de datos en SQL\n",
+    "===\n",
+    "\n",
+    "* *90 min* | Última modificación: Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## conexión a la base de datos\n",
+    "%load_ext sql\n",
+    "%sql mysql+pymysql://root:@localhost\n",
+    "%config SqlMagic.autopandas = True\n",
+    "import pandas\n",
+    "pandas.set_option('display.notebook_repr_html', False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "1 rows affected.\n",
+      "0 rows affected.\n",
+      "0 rows affected.\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "Empty DataFrame\n",
+       "Columns: []\n",
+       "Index: []"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "DROP DATABASE IF EXISTS SQLdb;\n",
+    "CREATE DATABASE SQLdb;\n",
+    "USE SQLdb;\n",
+    "\n",
+    "CREATE TABLE persons (\n",
+    "    id INT,\n",
+    "    firstname VARCHAR(10),\n",
+    "    surname VARCHAR(10),\n",
+    "    birthday DATE,\n",
+    "    color VARCHAR(10),\n",
+    "    quantity INT\n",
+    ");\n",
+    "\n",
+    "INSERT INTO persons VALUES\n",
+    "    (1,\"Vivian\",\"Hamilton\",\"1971-07-08\",\"green\",1),\n",
+    "    (2,\"Karen\",\"Holcomb\",\"1974-05-23\",\"green\",4),\n",
+    "    (3,\"Cody\",\"Garrett\",\"1973-04-22\",\"orange\",1),\n",
+    "    (4,\"Roth\",\"Fry\",\"1975-01-29\",\"black\",1),\n",
+    "    (5,\"Zoe\",\"Conway\",\"1974-07-03\",\"blue\",2),\n",
+    "    (6,\"Gretchen\",\"Kinney\",\"1974-10-18\",\"viole\",1),\n",
+    "    (7,\"Driscoll\",\"Klein\",\"1970-10-05\",\"blue\",5),\n",
+    "    (8,\"Karyn\",\"Diaz\",\"1969-02-24\",\"red\",1),\n",
+    "    (9,\"Merritt\",\"Guy\",\"1974-10-17\",\"indigo\",4),\n",
+    "    (10,\"Kylan\",\"Sexton\",\"1975-02-28\",\"black\",4),\n",
+    "    (11,\"Jordan\",\"Estes\",\"1969-12-07\",\"indigo\",4),\n",
+    "    (12,\"Hope\",\"Coffey\",\"1973-12-24\",\"green\",5),\n",
+    "    (13,\"Vivian\",\"Crane\",\"1970-08-27\",\"gray\",5),\n",
+    "    (14,\"Clio\",\"Noel\",\"1972-12-12\",\"red\",5),\n",
+    "    (15,\"Hope\",\"Silva\",\"1970-07-01\",\"blue\",5),\n",
+    "    (16,\"Ayanna\",\"Jarvis\",\"1974-02-11\",\"orange\",5),\n",
+    "    (17,\"Chanda\",\"Boyer\",\"1973-04-01\",\"green\",4),\n",
+    "    (18,\"Chadwick\",\"Knight\",\"1973-04-29\",\"yellow\",1);\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "> Haga click [aquí](https://dev.mysql.com/doc/refman/5.7/en/functions.html) para acceder al listado completo de funciones de MySQL."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Strings"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### CONCAT()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   CONCAT(firstname,'@',surname)  quantity\n",
+       "0                Vivian@Hamilton         1\n",
+       "1                  Karen@Holcomb         4\n",
+       "2                   Cody@Garrett         1\n",
+       "3                       Roth@Fry         1\n",
+       "4                     Zoe@Conway         2\n",
+       "5                Gretchen@Kinney         1\n",
+       "6                 Driscoll@Klein         5\n",
+       "7                     Karyn@Diaz         1\n",
+       "8                    Merritt@Guy         4\n",
+       "9                   Kylan@Sexton         4\n",
+       "10                  Jordan@Estes         4\n",
+       "11                   Hope@Coffey         5\n",
+       "12                  Vivian@Crane         5\n",
+       "13                     Clio@Noel         5\n",
+       "14                    Hope@Silva         5\n",
+       "15                 Ayanna@Jarvis         5\n",
+       "16                  Chanda@Boyer         4\n",
+       "17               Chadwick@Knight         1"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT \n",
+    "    CONCAT(firstname,'@',surname),  \n",
+    "    quantity \n",
+    "FROM \n",
+    "    persons;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### LENGTH()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    surname  LENGTH(surname)  CHAR_LENGTH(surname)\n",
+       "0  Hamilton                8                     8\n",
+       "1   Holcomb                7                     7\n",
+       "2   Garrett                7                     7\n",
+       "3       Fry                3                     3\n",
+       "4    Conway                6                     6"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT surname, LENGTH(surname), CHAR_LENGTH(surname) FROM persons LIMIT 5;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### UPPER(), LOWER()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    surname UPPER(surname) LOWER(surname)\n",
+       "0  Hamilton       HAMILTON       hamilton\n",
+       "1   Holcomb        HOLCOMB        holcomb\n",
+       "2   Garrett        GARRETT        garrett\n",
+       "3       Fry            FRY            fry\n",
+       "4    Conway         CONWAY         conway"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT surname, UPPER(surname), LOWER(surname) FROM persons LIMIT 5;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    surname  surname BETWEEN 'c' AND 'k'\n",
+       "0  Hamilton                            1\n",
+       "1   Holcomb                            1\n",
+       "2   Garrett                            1\n",
+       "3       Fry                            1\n",
+       "4    Conway                            1"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Condicional para strings\n",
+    "--\n",
+    "SELECT surname, surname BETWEEN 'c' AND 'k' FROM persons LIMIT 5;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### LIKE"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La función LIKE permite buscar patrones específicos dentro de cadenas de caracteres.\n",
+    "\n",
+    "    > LIKE 'a%'   : Encuentra los valores que inician con 'a'\n",
+    "    > LIKE '%a'   : Encuentra los valores que terminan con 'a'\n",
+    "    > LIKE '%a%'  : Encuentra los valores que contengan 'a' en cualquier posición\n",
+    "    > LIKE '_a%'  : Encuentra los valores que contengan 'a' en la segunda posición\n",
+    "    > LIKE 'a_%_%': Encuentra los valores que inician con 'a' y tienen al menos 3 caracteres\n",
+    "    > LIKE 'a%o'  : Encuentra los valores que inician con 'a' y terminan con 'o'"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname surname    birthday  color  quantity\n",
+       "0   4      Roth     Fry  1975-01-29  black         1\n",
+       "1   5       Zoe  Conway  1974-07-03   blue         2\n",
+       "2   7  Driscoll   Klein  1970-10-05   blue         5\n",
+       "3  10     Kylan  Sexton  1975-02-28  black         4\n",
+       "4  15      Hope   Silva  1970-07-01   blue         5"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT * FROM persons WHERE color LIKE 'b%';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "13 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0    1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "1    2     Karen   Holcomb  1974-05-23   green         4\n",
+       "2    3      Cody   Garrett  1973-04-22  orange         1\n",
+       "3    6  Gretchen    Kinney  1974-10-18   viole         1\n",
+       "4    8     Karyn      Diaz  1969-02-24     red         1\n",
+       "5    9   Merritt       Guy  1974-10-17  indigo         4\n",
+       "6   11    Jordan     Estes  1969-12-07  indigo         4\n",
+       "7   12      Hope    Coffey  1973-12-24   green         5\n",
+       "8   13    Vivian     Crane  1970-08-27    gray         5\n",
+       "9   14      Clio      Noel  1972-12-12     red         5\n",
+       "10  16    Ayanna    Jarvis  1974-02-11  orange         5\n",
+       "11  17    Chanda     Boyer  1973-04-01   green         4\n",
+       "12  18  Chadwick    Knight  1973-04-29  yellow         1"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT * FROM persons WHERE color NOT LIKE 'b%';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname surname    birthday color  quantity\n",
+       "0   5       Zoe  Conway  1974-07-03  blue         2"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Conectores lógicos (AND).\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color = 'blue' AND firstname LIKE 'Z%';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "6 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname  surname    birthday  color  quantity\n",
+       "0   2     Karen  Holcomb  1974-05-23  green         4\n",
+       "1   5       Zoe   Conway  1974-07-03   blue         2\n",
+       "2   7  Driscoll    Klein  1970-10-05   blue         5\n",
+       "3   8     Karyn     Diaz  1969-02-24    red         1\n",
+       "4  10     Kylan   Sexton  1975-02-28  black         4\n",
+       "5  15      Hope    Silva  1970-07-01   blue         5"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Conectores lógicos (OR).\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color = 'blue' OR firstname LIKE 'K%';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname surname    birthday  color  quantity\n",
+       "0   4      Roth     Fry  1975-01-29  black         1\n",
+       "1   5       Zoe  Conway  1974-07-03   blue         2\n",
+       "2   7  Driscoll   Klein  1970-10-05   blue         5\n",
+       "3  10     Kylan  Sexton  1975-02-28  black         4\n",
+       "4  15      Hope   Silva  1970-07-01   blue         5"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Condicional para campos string\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color IN ('blue','black');"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "13 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0    1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "1    2     Karen   Holcomb  1974-05-23   green         4\n",
+       "2    3      Cody   Garrett  1973-04-22  orange         1\n",
+       "3    6  Gretchen    Kinney  1974-10-18   viole         1\n",
+       "4    8     Karyn      Diaz  1969-02-24     red         1\n",
+       "5    9   Merritt       Guy  1974-10-17  indigo         4\n",
+       "6   11    Jordan     Estes  1969-12-07  indigo         4\n",
+       "7   12      Hope    Coffey  1973-12-24   green         5\n",
+       "8   13    Vivian     Crane  1970-08-27    gray         5\n",
+       "9   14      Clio      Noel  1972-12-12     red         5\n",
+       "10  16    Ayanna    Jarvis  1974-02-11  orange         5\n",
+       "11  17    Chanda     Boyer  1973-04-01   green         4\n",
+       "12  18  Chadwick    Knight  1973-04-29  yellow         1"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Condicional para campos string\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color NOT IN ('blue','black');"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### REGEXP"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname surname    birthday  color  quantity\n",
+       "0   4      Roth     Fry  1975-01-29  black         1\n",
+       "1   5       Zoe  Conway  1974-07-03   blue         2\n",
+       "2   7  Driscoll   Klein  1970-10-05   blue         5\n",
+       "3  10     Kylan  Sexton  1975-02-28  black         4\n",
+       "4  15      Hope   Silva  1970-07-01   blue         5"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- El primer caracter es una 'b'\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color REGEXP '^b';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "13 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0    1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "1    2     Karen   Holcomb  1974-05-23   green         4\n",
+       "2    3      Cody   Garrett  1973-04-22  orange         1\n",
+       "3    6  Gretchen    Kinney  1974-10-18   viole         1\n",
+       "4    8     Karyn      Diaz  1969-02-24     red         1\n",
+       "5    9   Merritt       Guy  1974-10-17  indigo         4\n",
+       "6   11    Jordan     Estes  1969-12-07  indigo         4\n",
+       "7   12      Hope    Coffey  1973-12-24   green         5\n",
+       "8   13    Vivian     Crane  1970-08-27    gray         5\n",
+       "9   14      Clio      Noel  1972-12-12     red         5\n",
+       "10  16    Ayanna    Jarvis  1974-02-11  orange         5\n",
+       "11  17    Chanda     Boyer  1973-04-01   green         4\n",
+       "12  18  Chadwick    Knight  1973-04-29  yellow         1"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- El primer caracter no es una 'b'\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color REGEXP '^[^b]';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "7 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname   surname    birthday  color  quantity\n",
+       "0   1    Vivian  Hamilton  1971-07-08  green         1\n",
+       "1   2     Karen   Holcomb  1974-05-23  green         4\n",
+       "2   5       Zoe    Conway  1974-07-03   blue         2\n",
+       "3   7  Driscoll     Klein  1970-10-05   blue         5\n",
+       "4  12      Hope    Coffey  1973-12-24  green         5\n",
+       "5  15      Hope     Silva  1970-07-01   blue         5\n",
+       "6  17    Chanda     Boyer  1973-04-01  green         4"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- El primer caracter no es una 'b'\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color REGEXP 'blue|green';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "7 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname   surname    birthday   color  quantity\n",
+       "0   1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "1   2     Karen   Holcomb  1974-05-23   green         4\n",
+       "2   3      Cody   Garrett  1973-04-22  orange         1\n",
+       "3  12      Hope    Coffey  1973-12-24   green         5\n",
+       "4  13    Vivian     Crane  1970-08-27    gray         5\n",
+       "5  16    Ayanna    Jarvis  1974-02-11  orange         5\n",
+       "6  17    Chanda     Boyer  1973-04-01   green         4"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- El segundo caracter es una 'r'\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color REGEXP '.r';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "8 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname  surname    birthday   color  quantity\n",
+       "0   3      Cody  Garrett  1973-04-22  orange         1\n",
+       "1   5       Zoe   Conway  1974-07-03    blue         2\n",
+       "2   6  Gretchen   Kinney  1974-10-18   viole         1\n",
+       "3   7  Driscoll    Klein  1970-10-05    blue         5\n",
+       "4   9   Merritt      Guy  1974-10-17  indigo         4\n",
+       "5  11    Jordan    Estes  1969-12-07  indigo         4\n",
+       "6  15      Hope    Silva  1970-07-01    blue         5\n",
+       "7  16    Ayanna   Jarvis  1974-02-11  orange         5"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Finaliza en una vocal\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color REGEXP '[aeiou]$';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0    1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "1    2     Karen   Holcomb  1974-05-23   green         4\n",
+       "2    3      Cody   Garrett  1973-04-22  orange         1\n",
+       "3    4      Roth       Fry  1975-01-29   black         1\n",
+       "4    5       Zoe    Conway  1974-07-03    blue         2\n",
+       "5    6  Gretchen    Kinney  1974-10-18   viole         1\n",
+       "6    7  Driscoll     Klein  1970-10-05    blue         5\n",
+       "7    8     Karyn      Diaz  1969-02-24     red         1\n",
+       "8    9   Merritt       Guy  1974-10-17  indigo         4\n",
+       "9   10     Kylan    Sexton  1975-02-28   black         4\n",
+       "10  11    Jordan     Estes  1969-12-07  indigo         4\n",
+       "11  12      Hope    Coffey  1973-12-24   green         5\n",
+       "12  13    Vivian     Crane  1970-08-27    gray         5\n",
+       "13  14      Clio      Noel  1972-12-12     red         5\n",
+       "14  15      Hope     Silva  1970-07-01    blue         5\n",
+       "15  16    Ayanna    Jarvis  1974-02-11  orange         5\n",
+       "16  17    Chanda     Boyer  1973-04-01   green         4\n",
+       "17  18  Chadwick    Knight  1973-04-29  yellow         1"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Inicia con una mayúscula\n",
+    "--\n",
+    "SELECT * FROM persons WHERE color REGEXP '^[[:upper:]]';"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### LEFT(), MID(), SUBSTRING(), RIGHT()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   firstname LEFT(firstname, 2) MID(firstname, 3, 2)  \\\n",
+       "0     Vivian                 Vi                   vi   \n",
+       "1      Karen                 Ka                   re   \n",
+       "2       Cody                 Co                   dy   \n",
+       "3       Roth                 Ro                   th   \n",
+       "4        Zoe                 Zo                    e   \n",
+       "5   Gretchen                 Gr                   et   \n",
+       "6   Driscoll                 Dr                   is   \n",
+       "7      Karyn                 Ka                   ry   \n",
+       "8    Merritt                 Me                   rr   \n",
+       "9      Kylan                 Ky                   la   \n",
+       "10    Jordan                 Jo                   rd   \n",
+       "11      Hope                 Ho                   pe   \n",
+       "12    Vivian                 Vi                   vi   \n",
+       "13      Clio                 Cl                   io   \n",
+       "14      Hope                 Ho                   pe   \n",
+       "15    Ayanna                 Ay                   an   \n",
+       "16    Chanda                 Ch                   an   \n",
+       "17  Chadwick                 Ch                   ad   \n",
+       "\n",
+       "   SUBSTRING(firstname, 3, 2) RIGHT(firstname, 2)  \n",
+       "0                          vi                  an  \n",
+       "1                          re                  en  \n",
+       "2                          dy                  dy  \n",
+       "3                          th                  th  \n",
+       "4                           e                  oe  \n",
+       "5                          et                  en  \n",
+       "6                          is                  ll  \n",
+       "7                          ry                  yn  \n",
+       "8                          rr                  tt  \n",
+       "9                          la                  an  \n",
+       "10                         rd                  an  \n",
+       "11                         pe                  pe  \n",
+       "12                         vi                  an  \n",
+       "13                         io                  io  \n",
+       "14                         pe                  pe  \n",
+       "15                         an                  na  \n",
+       "16                         an                  da  \n",
+       "17                         ad                  ck  "
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "--\n",
+    "--\n",
+    "SELECT \n",
+    "    firstname, \n",
+    "    LEFT(firstname, 2), \n",
+    "    MID(firstname, 3, 2), \n",
+    "    SUBSTRING(firstname, 3, 2), \n",
+    "    RIGHT(firstname, 2) \n",
+    "FROM \n",
+    "    persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   firstname SUBSTRING_INDEX(firstname, 'a', 1)  \\\n",
+       "0     Vivian                               Vivi   \n",
+       "1      Karen                                  K   \n",
+       "2       Cody                               Cody   \n",
+       "3       Roth                               Roth   \n",
+       "4        Zoe                                Zoe   \n",
+       "5   Gretchen                           Gretchen   \n",
+       "6   Driscoll                           Driscoll   \n",
+       "7      Karyn                                  K   \n",
+       "8    Merritt                            Merritt   \n",
+       "9      Kylan                                Kyl   \n",
+       "10    Jordan                               Jord   \n",
+       "11      Hope                               Hope   \n",
+       "12    Vivian                               Vivi   \n",
+       "13      Clio                               Clio   \n",
+       "14      Hope                               Hope   \n",
+       "15    Ayanna                                 Ay   \n",
+       "16    Chanda                                 Ch   \n",
+       "17  Chadwick                                 Ch   \n",
+       "\n",
+       "   SUBSTRING_INDEX(firstname, 'a', -1)  \n",
+       "0                                    n  \n",
+       "1                                  ren  \n",
+       "2                                 Cody  \n",
+       "3                                 Roth  \n",
+       "4                                  Zoe  \n",
+       "5                             Gretchen  \n",
+       "6                             Driscoll  \n",
+       "7                                  ryn  \n",
+       "8                              Merritt  \n",
+       "9                                    n  \n",
+       "10                                   n  \n",
+       "11                                Hope  \n",
+       "12                                   n  \n",
+       "13                                Clio  \n",
+       "14                                Hope  \n",
+       "15                                      \n",
+       "16                                      \n",
+       "17                               dwick  "
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Por posición\n",
+    "--\n",
+    "SELECT  \n",
+    "    firstname,\n",
+    "    SUBSTRING_INDEX(firstname, 'a', 1),\n",
+    "    SUBSTRING_INDEX(firstname, 'a', -1)\n",
+    "FROM \n",
+    "    persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "  firstname\n",
+       "0    Vivian\n",
+       "1      Roth\n",
+       "2       Zoe\n",
+       "3   Merritt\n",
+       "4    Vivian"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Operadores relacionales con strings\n",
+    "--\n",
+    "SELECT firstname FROM persons WHERE LEFT(firstname, 1) >= 'm';"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### LOCATE()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   firstname  LOCATE('ia', firstname)\n",
+       "0     Vivian                        4\n",
+       "1      Karen                        0\n",
+       "2       Cody                        0\n",
+       "3       Roth                        0\n",
+       "4        Zoe                        0\n",
+       "5   Gretchen                        0\n",
+       "6   Driscoll                        0\n",
+       "7      Karyn                        0\n",
+       "8    Merritt                        0\n",
+       "9      Kylan                        0\n",
+       "10    Jordan                        0\n",
+       "11      Hope                        0\n",
+       "12    Vivian                        4\n",
+       "13      Clio                        0\n",
+       "14      Hope                        0\n",
+       "15    Ayanna                        0\n",
+       "16    Chanda                        0\n",
+       "17  Chadwick                        0"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Retorna la posición del substring\n",
+    "--\n",
+    "SELECT firstname, LOCATE('ia', firstname) FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Fecha y hora"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### DATE_FORMAT()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "     birthday DATE_FORMAT(birthday, \"%Y   %y\")\n",
+       "0  1971-07-08                        1971   71\n",
+       "1  1974-05-23                        1974   74\n",
+       "2  1973-04-22                        1973   73\n",
+       "3  1975-01-29                        1975   75\n",
+       "4  1974-07-03                        1974   74"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Formatos para el año\n",
+    "--\n",
+    "SELECT \n",
+    "    birthday, \n",
+    "    DATE_FORMAT(birthday, \"%Y   %y\")\n",
+    "FROM \n",
+    "    persons\n",
+    "LIMIT\n",
+    "    5;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "     birthday DATE_FORMAT(birthday, \"%M  %m %c\")\n",
+       "0  1971-07-08                         July  07 7\n",
+       "1  1974-05-23                          May  05 5\n",
+       "2  1973-04-22                        April  04 4\n",
+       "3  1975-01-29                      January  01 1\n",
+       "4  1974-07-03                         July  07 7"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Formatos para el mes\n",
+    "--\n",
+    "SELECT \n",
+    "    birthday, \n",
+    "    DATE_FORMAT(birthday, \"%M  %m %c\")\n",
+    "FROM \n",
+    "    persons\n",
+    "LIMIT\n",
+    "    5;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "5 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "     birthday DATE_FORMAT(birthday, \"%e  %W\")\n",
+       "0  1971-07-08                     8  Thursday\n",
+       "1  1974-05-23                    23  Thursday\n",
+       "2  1973-04-22                      22  Sunday\n",
+       "3  1975-01-29                   29  Wednesday\n",
+       "4  1974-07-03                    3  Wednesday"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Formatos para el dia\n",
+    "--\n",
+    "SELECT \n",
+    "    birthday, \n",
+    "    DATE_FORMAT(birthday, \"%e  %W\")\n",
+    "FROM \n",
+    "    persons\n",
+    "LIMIT\n",
+    "    5;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### CURDATE(), CURTIME(), NOW()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    CURDATE() CURTIME()               NOW()\n",
+       "0  2018-12-20  02:26:39 2018-12-20 02:26:39"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT CURDATE(), CURTIME(), NOW();"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### YEAR(), MONTH(), DAYNAME(), ..."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "0 rows affected.\n",
+      "0 rows affected.\n",
+      "3 rows affected.\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/usr/local/lib/python3.6/dist-packages/pymysql/cursors.py:170: Warning: (1051, \"Unknown table 'SQLdb.tbltime'\")\n",
+      "  result = self._query(query)\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "         t                  ts           d\n",
+       "0 14:23:18 2018-08-23 14:23:18  2018-08-23\n",
+       "1 05:45:23 2016-05-14 05:45:23  2016-05-14\n",
+       "2 11:10:45 2017-07-01 11:10:45  2017-07-01"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "DROP TABLE IF EXISTS tbltime; \n",
+    "CREATE TABLE tbltime (t TIME, ts TIMESTAMP, d DATE);\n",
+    "INSERT INTO tbltime VALUES\n",
+    "    (\"14:23:18\", \"2018-08-23 14:23:18\", \"2018-08-23\"),\n",
+    "    (\"05:45:23\", \"2016-05-14 05:45:23\", \"2016-05-14\"),\n",
+    "    (\"11:10:45\", \"2017-07-01 11:10:45\", \"2017-07-01\");\n",
+    "SELECT * FROM tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "                   ts  YEAR(ts)  MONTH(ts) MONTHNAME(ts)\n",
+       "0 2018-08-23 14:23:18      2018          8        August\n",
+       "1 2016-05-14 05:45:23      2016          5           May\n",
+       "2 2017-07-01 11:10:45      2017          7          July"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    ts,\n",
+    "    YEAR(ts),\n",
+    "    MONTH(ts),\n",
+    "    MONTHNAME(ts)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "                   ts  DAYOFMONTH(ts) DAYNAME(ts)  DAYOFWEEK(ts)  WEEKDAY(ts)  \\\n",
+       "0 2018-08-23 14:23:18              23    Thursday              5            3   \n",
+       "1 2016-05-14 05:45:23              14    Saturday              7            5   \n",
+       "2 2017-07-01 11:10:45               1    Saturday              7            5   \n",
+       "\n",
+       "   DAYOFYEAR(ts)  \n",
+       "0            235  \n",
+       "1            135  \n",
+       "2            182  "
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    ts,\n",
+    "    DAYOFMONTH(ts),\n",
+    "    DAYNAME(ts),\n",
+    "    DAYOFWEEK(ts),\n",
+    "    WEEKDAY(ts),\n",
+    "    DAYOFYEAR(ts)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "                   ts  HOUR(ts)  MINUTE(ts)  SECOND(ts)\n",
+       "0 2018-08-23 14:23:18        14          23          18\n",
+       "1 2016-05-14 05:45:23         5          45          23\n",
+       "2 2017-07-01 11:10:45        11          10          45"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    ts,\n",
+    "    HOUR(ts),\n",
+    "    MINUTE(ts),\n",
+    "    SECOND(ts)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "                   ts  EXTRACT(YEAR FROM ts)  EXTRACT(MONTH FROM ts)  \\\n",
+       "0 2018-08-23 14:23:18                   2018                       8   \n",
+       "1 2016-05-14 05:45:23                   2016                       5   \n",
+       "2 2017-07-01 11:10:45                   2017                       7   \n",
+       "\n",
+       "   EXTRACT(HOUR FROM ts)  EXTRACT(HOUR FROM ts)  EXTRACT(MINUTE FROM ts)  \\\n",
+       "0                     14                     14                       23   \n",
+       "1                      5                      5                       45   \n",
+       "2                     11                     11                       10   \n",
+       "\n",
+       "   EXTRACT(SECOND FROM ts)  \n",
+       "0                       18  \n",
+       "1                       23  \n",
+       "2                       45  "
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    ts,\n",
+    "    EXTRACT(YEAR FROM ts),\n",
+    "    EXTRACT(MONTH FROM ts),\n",
+    "    EXTRACT(HOUR FROM ts),\n",
+    "    EXTRACT(HOUR FROM ts),\n",
+    "    EXTRACT(MINUTE FROM ts),\n",
+    "    EXTRACT(SECOND FROM ts)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### TIME_TO_SEC(), SEC_TO_TIME()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "         t  TIME_TO_SEC(t) SEC_TO_TIME(TIME_TO_SEC(t))\n",
+       "0 14:23:18           51798                    14:23:18\n",
+       "1 05:45:23           20723                    05:45:23\n",
+       "2 11:10:45           40245                    11:10:45"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    t,\n",
+    "    TIME_TO_SEC(t),\n",
+    "    SEC_TO_TIME(TIME_TO_SEC(t))\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### FROM_DAYS(), TO_DAYS()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "                   ts  TO_DAYS(ts) FROM_DAYS(TO_DAYS(ts))\n",
+       "0 2018-08-23 14:23:18       737294             2018-08-23\n",
+       "1 2016-05-14 05:45:23       736463             2016-05-14\n",
+       "2 2017-07-01 11:10:45       736876             2017-07-01"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    ts,\n",
+    "    TO_DAYS(ts),\n",
+    "    FROM_DAYS(TO_DAYS(ts))\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### UNIX_TIMESTAMP, FROM_UNIXTIME()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "                   ts  UNIX_TIMESTAMP(ts) FROM_UNIXTIME(UNIX_TIMESTAMP(ts))\n",
+       "0 2018-08-23 14:23:18          1535034198               2018-08-23 14:23:18\n",
+       "1 2016-05-14 05:45:23          1463204723               2016-05-14 05:45:23\n",
+       "2 2017-07-01 11:10:45          1498907445               2017-07-01 11:10:45"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT \n",
+    "    ts,\n",
+    "    UNIX_TIMESTAMP(ts),\n",
+    "    FROM_UNIXTIME(UNIX_TIMESTAMP(ts))\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### TIMEDIFF(), DATEDIFF(), TIMESTAMPDIFF()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "            d  DATEDIFF(\"2018-12-30\", d)\n",
+       "0  2018-08-23                        129\n",
+       "1  2016-05-14                        960\n",
+       "2  2017-07-01                        547"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    d,\n",
+    "    DATEDIFF(\"2018-12-30\", d)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "         t TIMEDIFF(\"23:05:18\", t)\n",
+       "0 14:23:18                08:42:00\n",
+       "1 05:45:23                17:19:55\n",
+       "2 11:10:45                11:54:33"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    t,\n",
+    "    TIMEDIFF(\"23:05:18\", t)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "                   ts  TIMESTAMPDIFF(YEAR, ts, \"2018-12-31 23:05:18\")  \\\n",
+       "0 2018-08-23 14:23:18                                               0   \n",
+       "1 2016-05-14 05:45:23                                               2   \n",
+       "2 2017-07-01 11:10:45                                               1   \n",
+       "\n",
+       "   TIMESTAMPDIFF(MONTH, ts, \"2018-12-31 23:05:18\")  \\\n",
+       "0                                                4   \n",
+       "1                                               31   \n",
+       "2                                               17   \n",
+       "\n",
+       "   TIMESTAMPDIFF(WEEK, ts, \"2018-12-31 23:05:18\")  \n",
+       "0                                              18  \n",
+       "1                                             137  \n",
+       "2                                              78  "
+      ]
+     },
+     "execution_count": 37,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    ts,\n",
+    "    TIMESTAMPDIFF(YEAR, ts, \"2018-12-31 23:05:18\"),\n",
+    "    TIMESTAMPDIFF(MONTH, ts, \"2018-12-31 23:05:18\"),\n",
+    "    TIMESTAMPDIFF(WEEK, ts, \"2018-12-31 23:05:18\")\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### ADDTIME()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "         t ADDTIME(\"23:05:18\", t)\n",
+       "0 14:23:18               37:28:36\n",
+       "1 05:45:23               28:50:41\n",
+       "2 11:10:45               34:16:03"
+      ]
+     },
+     "execution_count": 38,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    t,\n",
+    "    ADDTIME(\"23:05:18\", t)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "            d DATE_ADD(d, INTERVAL 3 DAY) DATE_SUB(d, INTERVAL 3 DAY)\n",
+       "0  2018-08-23                  2018-08-26                  2018-08-20\n",
+       "1  2016-05-14                  2016-05-17                  2016-05-11\n",
+       "2  2017-07-01                  2017-07-04                  2017-06-28"
+      ]
+     },
+     "execution_count": 39,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    d,\n",
+    "    DATE_ADD(d, INTERVAL 3 DAY),\n",
+    "    DATE_SUB(d, INTERVAL 3 DAY)\n",
+    "FROM\n",
+    "    tbltime;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "            d\n",
+       "0  2017-07-01"
+      ]
+     },
+     "execution_count": 40,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT\n",
+    "    d\n",
+    "FROM\n",
+    "    tbltime\n",
+    "WHERE \n",
+    "    d BETWEEN \"2017-01-01\" AND \"2017-12-31\";"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## ORDER BY"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0    4      Roth       Fry  1975-01-29   black         1\n",
+       "1   10     Kylan    Sexton  1975-02-28   black         4\n",
+       "2   15      Hope     Silva  1970-07-01    blue         5\n",
+       "3    5       Zoe    Conway  1974-07-03    blue         2\n",
+       "4    7  Driscoll     Klein  1970-10-05    blue         5\n",
+       "5   13    Vivian     Crane  1970-08-27    gray         5\n",
+       "6    2     Karen   Holcomb  1974-05-23   green         4\n",
+       "7   17    Chanda     Boyer  1973-04-01   green         4\n",
+       "8   12      Hope    Coffey  1973-12-24   green         5\n",
+       "9    1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "10   9   Merritt       Guy  1974-10-17  indigo         4\n",
+       "11  11    Jordan     Estes  1969-12-07  indigo         4\n",
+       "12   3      Cody   Garrett  1973-04-22  orange         1\n",
+       "13  16    Ayanna    Jarvis  1974-02-11  orange         5\n",
+       "14   8     Karyn      Diaz  1969-02-24     red         1\n",
+       "15  14      Clio      Noel  1972-12-12     red         5\n",
+       "16   6  Gretchen    Kinney  1974-10-18   viole         1\n",
+       "17  18  Chadwick    Knight  1973-04-29  yellow         1"
+      ]
+     },
+     "execution_count": 41,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT * FROM persons ORDER BY color;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "         t                  ts           d\n",
+       "0 05:45:23 2016-05-14 05:45:23  2016-05-14\n",
+       "1 11:10:45 2017-07-01 11:10:45  2017-07-01\n",
+       "2 14:23:18 2018-08-23 14:23:18  2018-08-23"
+      ]
+     },
+     "execution_count": 42,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT * FROM tbltime ORDER BY t;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "         t                  ts           d\n",
+       "0 05:45:23 2016-05-14 05:45:23  2016-05-14\n",
+       "1 11:10:45 2017-07-01 11:10:45  2017-07-01\n",
+       "2 14:23:18 2018-08-23 14:23:18  2018-08-23"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT * FROM tbltime ORDER BY ts;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "         t                  ts           d\n",
+       "0 11:10:45 2017-07-01 11:10:45  2017-07-01\n",
+       "1 05:45:23 2016-05-14 05:45:23  2016-05-14\n",
+       "2 14:23:18 2018-08-23 14:23:18  2018-08-23"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT * FROM tbltime ORDER BY DAY(ts);"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "18 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0   10     Kylan    Sexton  1975-02-28   black         4\n",
+       "1   18  Chadwick    Knight  1973-04-29  yellow         1\n",
+       "2   17    Chanda     Boyer  1973-04-01   green         4\n",
+       "3   16    Ayanna    Jarvis  1974-02-11  orange         5\n",
+       "4   14      Clio      Noel  1972-12-12     red         5\n",
+       "5   13    Vivian     Crane  1970-08-27    gray         5\n",
+       "6   12      Hope    Coffey  1973-12-24   green         5\n",
+       "7   11    Jordan     Estes  1969-12-07  indigo         4\n",
+       "8    1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "9    9   Merritt       Guy  1974-10-17  indigo         4\n",
+       "10   8     Karyn      Diaz  1969-02-24     red         1\n",
+       "11   6  Gretchen    Kinney  1974-10-18   viole         1\n",
+       "12   4      Roth       Fry  1975-01-29   black         1\n",
+       "13   3      Cody   Garrett  1973-04-22  orange         1\n",
+       "14   2     Karen   Holcomb  1974-05-23   green         4\n",
+       "15   7  Driscoll     Klein  1970-10-05    blue         5\n",
+       "16   5       Zoe    Conway  1974-07-03    blue         2\n",
+       "17  15      Hope     Silva  1970-07-01    blue         5"
+      ]
+     },
+     "execution_count": 45,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Se altera el orden del ordenamiento\n",
+    "--\n",
+    "SELECT * FROM persons ORDER BY FIELD(color, 'blue');"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## GROUP BY"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### COUNT()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   COUNT(*)\n",
+       "0        18"
+      ]
+     },
+     "execution_count": 46,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Cuenta cuantos registros hay en la tabla.\n",
+    "--\n",
+    "SELECT COUNT(*) FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "  SUMA\n",
+       "0  820"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Calcula la suma de edades en personas\n",
+    "--\n",
+    "SELECT SUM(TIMESTAMPDIFF(YEAR,birthday,CURDATE())) AS SUMA FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "7 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   YEAR(birthday)  COUNT(*)\n",
+       "0            1969         2\n",
+       "1            1970         3\n",
+       "2            1971         1\n",
+       "3            1972         1\n",
+       "4            1973         4\n",
+       "5            1974         5\n",
+       "6            1975         2"
+      ]
+     },
+     "execution_count": 48,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Cuenta cuantas veces aparece cada año\n",
+    "-- de nacimiento en la tabla.\n",
+    "--\n",
+    "SELECT YEAR(birthday), COUNT(*) FROM persons GROUP BY YEAR(birthday);"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "7 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   YEAR(birthday)  COUNT(*)\n",
+       "0            1969         2\n",
+       "1            1970         3\n",
+       "2            1971         1\n",
+       "3            1972         1\n",
+       "4            1973         4\n",
+       "5            1974         5\n",
+       "6            1975         2"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Cuenta cuantas veces aparece cada año\n",
+    "-- de nacimiento en la tabla.\n",
+    "--\n",
+    "SELECT YEAR(birthday), COUNT(*) FROM persons GROUP BY YEAR(birthday);"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### MAX(), MIN(), SUM(), AVG()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "9 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    color  MAX(quantity)  MIN(quantity) SUM(quantity) AVG(quantity)\n",
+       "0   black              4              1             5        2.5000\n",
+       "1    blue              5              2            12        4.0000\n",
+       "2    gray              5              5             5        5.0000\n",
+       "3   green              5              1            14        3.5000\n",
+       "4  indigo              4              4             8        4.0000\n",
+       "5  orange              5              1             6        3.0000\n",
+       "6     red              5              1             6        3.0000\n",
+       "7   viole              1              1             1        1.0000\n",
+       "8  yellow              1              1             1        1.0000"
+      ]
+     },
+     "execution_count": 50,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "SELECT \n",
+    "    color,\n",
+    "    MAX(quantity),\n",
+    "    MIN(quantity),\n",
+    "    SUM(quantity),\n",
+    "    AVG(quantity)\n",
+    "FROM\n",
+    "    persons\n",
+    "GROUP BY\n",
+    "    color;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "6 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    color  quantity\n",
+       "0   green         1\n",
+       "1  orange         1\n",
+       "2   black         1\n",
+       "3   viole         1\n",
+       "4     red         1\n",
+       "5  yellow         1"
+      ]
+     },
+     "execution_count": 51,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Selecciona los colores que tengan una cantidad\n",
+    "-- igual a la minima\n",
+    "--\n",
+    "SELECT \n",
+    "    color,\n",
+    "    quantity\n",
+    "FROM\n",
+    "    persons\n",
+    "WHERE\n",
+    "    quantity = (SELECT MIN(quantity) FROM persons);"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  },
+  "nteract": {
+   "version": "0.12.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

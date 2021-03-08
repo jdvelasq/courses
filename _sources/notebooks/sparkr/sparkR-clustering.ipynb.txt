@@ -1,0 +1,924 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Segmentación del mercado de adolecentes en SparkR\n",
+    "===\n",
+    "\n",
+    "* *30 min* | Última modificación: Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este tutorial se aplica el algoritmo K-means para clasificar un grupo de adolecentes con base en sus intéreses, con el fin de diseñar estrategias publicitarias y servicios encaminados a cada grupo de interés usando SparkR. Este tutorial se enfoca en la programación de SparkR y no en el análisis del problema. Para abordar este tutorial, el lector debe tener suficiencia en los módulos correspondientes de analítica predictiva."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Definición del problema"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Un vendedor desea enviar publicidad electrónica a una población de adolecentes y adultos jóvenes con el fin de maximizar sus ventas. Para ello, desea poder clasificar a sus clientes potenciales por grupos de interés de acuerdo con sus intereses y consecuentemente enviar publicidad específica a cada uno de ellos.   "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este problema se desea determina que grupos de interés existen en una población de clientes a partir de los mensajes enviados por un servicio de redes sociales. La información disponible consiste en 30000 observaciones de 40 variables que podrían caracterizar los intereses de la población analizada. Estas variables corresponden a palabras que pueden asociarse a un interés de la poblaión analizada. Cada variable mide la frecuencia con que una determinada palabra aparece en los mensajes de texto; adicionalmente, dentro de estas variables se incluye  información como el sexo, la edad y la cantidad de contactos de la persona. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Solución"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Preparación"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Esta función se usará para ejecutar comandos en el \n",
+    "## sistema operativo y capturar la salida.\n",
+    "##\n",
+    "systemp <- function(command) cat(system(command, intern = TRUE), sep = '\\n')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "Attaching package: ‘SparkR’\n",
+      "\n",
+      "The following objects are masked from ‘package:stats’:\n",
+      "\n",
+      "    cov, filter, lag, na.omit, predict, sd, var, window\n",
+      "\n",
+      "The following objects are masked from ‘package:base’:\n",
+      "\n",
+      "    as.data.frame, colnames, colnames<-, drop, endsWith, intersect,\n",
+      "    rank, rbind, sample, startsWith, subset, summary, transform, union\n",
+      "\n",
+      "Spark package found in SPARK_HOME: /usr/local/spark\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Launching java with spark-submit command /usr/local/spark/bin/spark-submit   sparkr-shell /tmp/RtmpcPFt5S/backend_port1a8066ac96d4 \n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "Java ref type org.apache.spark.sql.SparkSession id 1 "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Se procede a la carga de la librería\n",
+    "##\n",
+    "library(SparkR)\n",
+    "sparkR.session(enableHiveSupport = TRUE)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Carga de datos"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El archivo con los datos se encuentra en la carpeta actual de trabajo en la máquina local."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Warning message in system(command, intern = TRUE):\n",
+      "“running command 'hdfs dfs -copyFromLocal snsdata.csv /tmp/snsdata.csv' had status 1”"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "## copia el archivo al HDFS\n",
+    "systemp('hdfs dfs -copyFromLocal snsdata.csv /tmp/snsdata.csv') "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 6 x 40</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>gradyear</th><th scope=col>gender</th><th scope=col>age</th><th scope=col>friends</th><th scope=col>basketball</th><th scope=col>football</th><th scope=col>soccer</th><th scope=col>softball</th><th scope=col>volleyball</th><th scope=col>swimming</th><th scope=col>...</th><th scope=col>blonde</th><th scope=col>mall</th><th scope=col>shopping</th><th scope=col>clothes</th><th scope=col>hollister</th><th scope=col>abercrombie</th><th scope=col>die</th><th scope=col>death</th><th scope=col>drunk</th><th scope=col>drugs</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>...</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>2006</td><td>M </td><td>18.982</td><td>7  </td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>\n",
+       "\t<tr><td>2006</td><td>F </td><td>18.801</td><td>0  </td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>\n",
+       "\t<tr><td>2006</td><td>M </td><td>18.335</td><td>69 </td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>\n",
+       "\t<tr><td>2006</td><td>F </td><td>18.875</td><td>0  </td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>\n",
+       "\t<tr><td>2006</td><td>NA</td><td>18.995</td><td>10 </td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td><td>0</td><td>2</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td></tr>\n",
+       "\t<tr><td>2006</td><td>F </td><td>NA    </td><td>142</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>...</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 6 x 40\n",
+       "\\begin{tabular}{r|llllllllllllllllllllllllllllllllllllllll}\n",
+       " gradyear & gender & age & friends & basketball & football & soccer & softball & volleyball & swimming & cheerleading & baseball & tennis & sports & cute & sex & sexy & hot & kissed & dance & band & marching & music & rock & god & church & jesus & bible & hair & dress & blonde & mall & shopping & clothes & hollister & abercrombie & die & death & drunk & drugs\\\\\n",
+       " <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr>\\\\\n",
+       "\\hline\n",
+       "\t 2006 & M  & 18.982 & 7   & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\\\\n",
+       "\t 2006 & F  & 18.801 & 0   & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 2 & 2 & 1 & 0 & 0 & 0 & 6 & 4 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\\\\n",
+       "\t 2006 & M  & 18.335 & 69  & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 2 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0\\\\\n",
+       "\t 2006 & F  & 18.875 & 0   & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0\\\\\n",
+       "\t 2006 & NA & 18.995 & 10  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 5 & 1 & 1 & 0 & 3 & 0 & 1 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 2 & 0 & 0 & 0 & 0 & 0 & 1 & 1\\\\\n",
+       "\t 2006 & F  & NA     & 142 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 2 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 6 x 40\n",
+       "\n",
+       "| gradyear &lt;chr&gt; | gender &lt;chr&gt; | age &lt;chr&gt; | friends &lt;chr&gt; | basketball &lt;chr&gt; | football &lt;chr&gt; | soccer &lt;chr&gt; | softball &lt;chr&gt; | volleyball &lt;chr&gt; | swimming &lt;chr&gt; | ... ... | blonde &lt;chr&gt; | mall &lt;chr&gt; | shopping &lt;chr&gt; | clothes &lt;chr&gt; | hollister &lt;chr&gt; | abercrombie &lt;chr&gt; | die &lt;chr&gt; | death &lt;chr&gt; | drunk &lt;chr&gt; | drugs &lt;chr&gt; |\n",
+       "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n",
+       "| 2006 | M  | 18.982 | 7   | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |\n",
+       "| 2006 | F  | 18.801 | 0   | 0 | 1 | 0 | 0 | 0 | 0 | ... | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |\n",
+       "| 2006 | M  | 18.335 | 69  | 0 | 1 | 0 | 0 | 0 | 0 | ... | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 0 | 0 |\n",
+       "| 2006 | F  | 18.875 | 0   | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |\n",
+       "| 2006 | NA | 18.995 | 10  | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 0 | 2 | 0 | 0 | 0 | 0 | 0 | 1 | 1 |\n",
+       "| 2006 | F  | NA     | 142 | 0 | 0 | 0 | 0 | 0 | 0 | ... | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 1 | 0 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  gradyear gender age    friends basketball football soccer softball volleyball\n",
+       "1 2006     M      18.982 7       0          0        0      0        0         \n",
+       "2 2006     F      18.801 0       0          1        0      0        0         \n",
+       "3 2006     M      18.335 69      0          1        0      0        0         \n",
+       "4 2006     F      18.875 0       0          0        0      0        0         \n",
+       "5 2006     NA     18.995 10      0          0        0      0        0         \n",
+       "6 2006     F      NA     142     0          0        0      0        0         \n",
+       "  swimming ... blonde mall shopping clothes hollister abercrombie die death\n",
+       "1 0        ... 0      0    0        0       0         0           0   0    \n",
+       "2 0        ... 0      1    0        0       0         0           0   0    \n",
+       "3 0        ... 0      0    0        0       0         0           0   1    \n",
+       "4 0        ... 0      0    0        0       0         0           0   0    \n",
+       "5 0        ... 0      0    2        0       0         0           0   0    \n",
+       "6 0        ... 0      0    1        0       0         0           0   0    \n",
+       "  drunk drugs\n",
+       "1 0     0    \n",
+       "2 0     0    \n",
+       "3 0     0    \n",
+       "4 0     0    \n",
+       "5 1     1    \n",
+       "6 1     0    "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "df <- read.df(\n",
+    "    '/tmp/snsdata.csv',    # ubicación y nombre del archivo\n",
+    "    'csv',                 # formato\n",
+    "    header = TRUE)         # encabeamiento\n",
+    "\n",
+    "head(df)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "30000"
+      ],
+      "text/latex": [
+       "30000"
+      ],
+      "text/markdown": [
+       "30000"
+      ],
+      "text/plain": [
+       "[1] 30000"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Cantidad de registros leidos\n",
+    "##\n",
+    "count(df)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "root\n",
+      " |-- gradyear: string (nullable = true)\n",
+      " |-- gender: string (nullable = true)\n",
+      " |-- age: string (nullable = true)\n",
+      " |-- friends: string (nullable = true)\n",
+      " |-- basketball: string (nullable = true)\n",
+      " |-- football: string (nullable = true)\n",
+      " |-- soccer: string (nullable = true)\n",
+      " |-- softball: string (nullable = true)\n",
+      " |-- volleyball: string (nullable = true)\n",
+      " |-- swimming: string (nullable = true)\n",
+      " |-- cheerleading: string (nullable = true)\n",
+      " |-- baseball: string (nullable = true)\n",
+      " |-- tennis: string (nullable = true)\n",
+      " |-- sports: string (nullable = true)\n",
+      " |-- cute: string (nullable = true)\n",
+      " |-- sex: string (nullable = true)\n",
+      " |-- sexy: string (nullable = true)\n",
+      " |-- hot: string (nullable = true)\n",
+      " |-- kissed: string (nullable = true)\n",
+      " |-- dance: string (nullable = true)\n",
+      " |-- band: string (nullable = true)\n",
+      " |-- marching: string (nullable = true)\n",
+      " |-- music: string (nullable = true)\n",
+      " |-- rock: string (nullable = true)\n",
+      " |-- god: string (nullable = true)\n",
+      " |-- church: string (nullable = true)\n",
+      " |-- jesus: string (nullable = true)\n",
+      " |-- bible: string (nullable = true)\n",
+      " |-- hair: string (nullable = true)\n",
+      " |-- dress: string (nullable = true)\n",
+      " |-- blonde: string (nullable = true)\n",
+      " |-- mall: string (nullable = true)\n",
+      " |-- shopping: string (nullable = true)\n",
+      " |-- clothes: string (nullable = true)\n",
+      " |-- hollister: string (nullable = true)\n",
+      " |-- abercrombie: string (nullable = true)\n",
+      " |-- die: string (nullable = true)\n",
+      " |-- death: string (nullable = true)\n",
+      " |-- drunk: string (nullable = true)\n",
+      " |-- drugs: string (nullable = true)\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Tipos de datos de los campos del DataFrame\n",
+    "##\n",
+    "printSchema(df)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Análisis exploratorio"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A continuación se ejemplifican algunos cómputos típicos para el análisis exploratorio."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 3 x 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>gender</th><th scope=col>count</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>F </td><td>22054</td></tr>\n",
+       "\t<tr><td>NA</td><td>    0</td></tr>\n",
+       "\t<tr><td>M </td><td> 5222</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 3 x 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " gender & count\\\\\n",
+       " <chr> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t F  & 22054\\\\\n",
+       "\t NA &     0\\\\\n",
+       "\t M  &  5222\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 3 x 2\n",
+       "\n",
+       "| gender &lt;chr&gt; | count &lt;dbl&gt; |\n",
+       "|---|---|\n",
+       "| F  | 22054 |\n",
+       "| NA |     0 |\n",
+       "| M  |  5222 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  gender count\n",
+       "1 F      22054\n",
+       "2 NA         0\n",
+       "3 M       5222"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Conteo por género\n",
+    "##\n",
+    "collect(\n",
+    "    summarize(\n",
+    "        groupBy(df,          ## DataFrame\n",
+    "                df$gender),  ## Columna para realizar la agregación\n",
+    "        count=n(df$gender))) ## Cuenta la cantidad de registros"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\n",
+       "    F     M \n",
+       "22054  5222 "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Conteo por género\n",
+    "##\n",
+    "table(collect(select(df, 'gender')))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 8 x 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>summary</th><th scope=col>age</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>count </td><td>24914             </td></tr>\n",
+       "\t<tr><td>mean  </td><td>17.993949546439772</td></tr>\n",
+       "\t<tr><td>stddev</td><td>7.858054477853863 </td></tr>\n",
+       "\t<tr><td>min   </td><td>10.842            </td></tr>\n",
+       "\t<tr><td>25%   </td><td>16.309            </td></tr>\n",
+       "\t<tr><td>50%   </td><td>17.287            </td></tr>\n",
+       "\t<tr><td>75%   </td><td>18.259            </td></tr>\n",
+       "\t<tr><td>max   </td><td>98.708            </td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 8 x 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " summary & age\\\\\n",
+       " <chr> & <chr>\\\\\n",
+       "\\hline\n",
+       "\t count  & 24914             \\\\\n",
+       "\t mean   & 17.993949546439772\\\\\n",
+       "\t stddev & 7.858054477853863 \\\\\n",
+       "\t min    & 10.842            \\\\\n",
+       "\t 25\\%    & 16.309            \\\\\n",
+       "\t 50\\%    & 17.287            \\\\\n",
+       "\t 75\\%    & 18.259            \\\\\n",
+       "\t max    & 98.708            \\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 8 x 2\n",
+       "\n",
+       "| summary &lt;chr&gt; | age &lt;chr&gt; |\n",
+       "|---|---|\n",
+       "| count  | 24914              |\n",
+       "| mean   | 17.993949546439772 |\n",
+       "| stddev | 7.858054477853863  |\n",
+       "| min    | 10.842             |\n",
+       "| 25%    | 16.309             |\n",
+       "| 50%    | 17.287             |\n",
+       "| 75%    | 18.259             |\n",
+       "| max    | 98.708             |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  summary age               \n",
+       "1 count   24914             \n",
+       "2 mean    17.993949546439772\n",
+       "3 stddev  7.858054477853863 \n",
+       "4 min     10.842            \n",
+       "5 25%     16.309            \n",
+       "6 50%     17.287            \n",
+       "7 75%     18.259            \n",
+       "8 max     98.708            "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Estadísticos por rango de edades\n",
+    "##\n",
+    "collect(summary(select(df, 'age')))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Los métodos que pueden aplicarse a las columnas están listados en: https://spark.apache.org/docs/latest/api/R/column_nonaggregate_functions.html"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "5086"
+      ],
+      "text/latex": [
+       "5086"
+      ],
+      "text/markdown": [
+       "5086"
+      ],
+      "text/plain": [
+       "[1] 5086"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Cantidad de nulos en la columna age\n",
+    "##\n",
+    "count(filter(df, isNull(df$age)))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 5 x 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>summary</th><th scope=col>age1319</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>count </td><td>24477             </td></tr>\n",
+       "\t<tr><td>mean  </td><td>17.25242893328433 </td></tr>\n",
+       "\t<tr><td>stddev</td><td>1.1574649278955391</td></tr>\n",
+       "\t<tr><td>min   </td><td>13.027            </td></tr>\n",
+       "\t<tr><td>max   </td><td>19.995            </td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 5 x 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " summary & age1319\\\\\n",
+       " <chr> & <chr>\\\\\n",
+       "\\hline\n",
+       "\t count  & 24477             \\\\\n",
+       "\t mean   & 17.25242893328433 \\\\\n",
+       "\t stddev & 1.1574649278955391\\\\\n",
+       "\t min    & 13.027            \\\\\n",
+       "\t max    & 19.995            \\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 5 x 2\n",
+       "\n",
+       "| summary &lt;chr&gt; | age1319 &lt;chr&gt; |\n",
+       "|---|---|\n",
+       "| count  | 24477              |\n",
+       "| mean   | 17.25242893328433  |\n",
+       "| stddev | 1.1574649278955391 |\n",
+       "| min    | 13.027             |\n",
+       "| max    | 19.995             |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  summary age1319           \n",
+       "1 count   24477             \n",
+       "2 mean    17.25242893328433 \n",
+       "3 stddev  1.1574649278955391\n",
+       "4 min     13.027            \n",
+       "5 max     19.995            "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Se agrega una columna con las edades entre 13 y 19,\n",
+    "## reemplazando por null los valores por fuera de este\n",
+    "## rango\n",
+    "##\n",
+    "df <- withColumn(\n",
+    "    df, \n",
+    "    'age1319',\n",
+    "    otherwise(when((df$age >= 13) & (df$age < 20), \n",
+    "                   df$age),\n",
+    "             lit(NaN)))\n",
+    "\n",
+    "##\n",
+    "## Se verifican los valores en la nueva columna\n",
+    "##\n",
+    "collect(describe(select(df, 'age1319')))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 4 x 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>gradyear</th><th scope=col>avgage</th></tr>\n",
+       "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>2009</td><td>15.81957</td></tr>\n",
+       "\t<tr><td>2006</td><td>18.65586</td></tr>\n",
+       "\t<tr><td>2008</td><td>16.76770</td></tr>\n",
+       "\t<tr><td>2007</td><td>17.70617</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 4 x 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " gradyear & avgage\\\\\n",
+       " <chr> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t 2009 & 15.81957\\\\\n",
+       "\t 2006 & 18.65586\\\\\n",
+       "\t 2008 & 16.76770\\\\\n",
+       "\t 2007 & 17.70617\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 4 x 2\n",
+       "\n",
+       "| gradyear &lt;chr&gt; | avgage &lt;dbl&gt; |\n",
+       "|---|---|\n",
+       "| 2009 | 15.81957 |\n",
+       "| 2006 | 18.65586 |\n",
+       "| 2008 | 16.76770 |\n",
+       "| 2007 | 17.70617 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  gradyear avgage  \n",
+       "1 2009     15.81957\n",
+       "2 2006     18.65586\n",
+       "3 2008     16.76770\n",
+       "4 2007     17.70617"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Se calcula la edad promedio por año \n",
+    "## de graduación para la muestra en el\n",
+    "## rango de edades considerado\n",
+    "##\n",
+    "\n",
+    "age_df <- \n",
+    "summarize(\n",
+    "    groupBy(df,             ## DataFrame\n",
+    "            df$gradyear),   ## Columna para realizar la agregación\n",
+    "    avgage=avg(df$age1319)) ## Cuenta la cantidad de registros por valor en quantity\n",
+    "\n",
+    "collect(age_df)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Entrenamiento del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model <- spark.kmeans(\n",
+    "    df,\n",
+    "    ~ friends + basketball + football + soccer + softball + \n",
+    "      volleyball + swimming + cheerleading + baseball + tennis + \n",
+    "      sports + cute + sex + sexy + hot + kissed + dance + band + \n",
+    "      marching + music + rock + god + church + jesus + bible + \n",
+    "      hair + dress + blonde + mall + shopping + clothes + hollister + \n",
+    "      abercrombie + die + death + drunk + drugs,\n",
+    "    k = 5\n",
+    ")\n",
+    "\n",
+    "## summary(model)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Pronostica a que cluster pertenece cada patrón\n",
+    "##\n",
+    "df <- predict(model, df)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Análisis del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 5 x 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>prediction</th><th scope=col>count</th></tr>\n",
+       "\t<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>1</td><td> 3563</td></tr>\n",
+       "\t<tr><td>3</td><td> 4837</td></tr>\n",
+       "\t<tr><td>4</td><td> 7141</td></tr>\n",
+       "\t<tr><td>2</td><td> 2587</td></tr>\n",
+       "\t<tr><td>0</td><td>11872</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 5 x 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " prediction & count\\\\\n",
+       " <int> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t 1 &  3563\\\\\n",
+       "\t 3 &  4837\\\\\n",
+       "\t 4 &  7141\\\\\n",
+       "\t 2 &  2587\\\\\n",
+       "\t 0 & 11872\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 5 x 2\n",
+       "\n",
+       "| prediction &lt;int&gt; | count &lt;dbl&gt; |\n",
+       "|---|---|\n",
+       "| 1 |  3563 |\n",
+       "| 3 |  4837 |\n",
+       "| 4 |  7141 |\n",
+       "| 2 |  2587 |\n",
+       "| 0 | 11872 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  prediction count\n",
+       "1 1           3563\n",
+       "2 3           4837\n",
+       "3 4           7141\n",
+       "4 2           2587\n",
+       "5 0          11872"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "collect(count(groupBy(df, 'prediction')))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<caption>A data.frame: 5 x 2</caption>\n",
+       "<thead>\n",
+       "\t<tr><th scope=col>prediction</th><th scope=col>ave_age_by_cluster</th></tr>\n",
+       "\t<tr><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+       "</thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>1</td><td>17.10497</td></tr>\n",
+       "\t<tr><td>3</td><td>17.22490</td></tr>\n",
+       "\t<tr><td>4</td><td>17.32426</td></tr>\n",
+       "\t<tr><td>2</td><td>17.02875</td></tr>\n",
+       "\t<tr><td>0</td><td>17.31829</td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "A data.frame: 5 x 2\n",
+       "\\begin{tabular}{r|ll}\n",
+       " prediction & ave\\_age\\_by\\_cluster\\\\\n",
+       " <int> & <dbl>\\\\\n",
+       "\\hline\n",
+       "\t 1 & 17.10497\\\\\n",
+       "\t 3 & 17.22490\\\\\n",
+       "\t 4 & 17.32426\\\\\n",
+       "\t 2 & 17.02875\\\\\n",
+       "\t 0 & 17.31829\\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "A data.frame: 5 x 2\n",
+       "\n",
+       "| prediction &lt;int&gt; | ave_age_by_cluster &lt;dbl&gt; |\n",
+       "|---|---|\n",
+       "| 1 | 17.10497 |\n",
+       "| 3 | 17.22490 |\n",
+       "| 4 | 17.32426 |\n",
+       "| 2 | 17.02875 |\n",
+       "| 0 | 17.31829 |\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  prediction ave_age_by_cluster\n",
+       "1 1          17.10497          \n",
+       "2 3          17.22490          \n",
+       "3 4          17.32426          \n",
+       "4 2          17.02875          \n",
+       "5 0          17.31829          "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Características demográficas de los clusters.\n",
+    "## Edad por cluster.\n",
+    "##\n",
+    "collect(\n",
+    "    summarize(\n",
+    "        groupBy(df,             ## DataFrame\n",
+    "                df$prediction), ## Columna para realizar la agregación\n",
+    "        ave_age_by_cluster=avg(df$age1319)))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "3.6.0"
+  },
+  "nteract": {
+   "version": "0.7.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

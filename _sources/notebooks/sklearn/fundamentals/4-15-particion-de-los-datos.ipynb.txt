@@ -1,0 +1,600 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Esquemas de partición de los datos\n",
+    "===\n",
+    "\n",
+    "* *15 min* | Ultima modificación: Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Los resultados de un modelo son dependientes de la forma en que se partan los datos. En este tutorial se presentan diferentes esquemas para la partición de los datos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Conjuntos de calibración, prueba y predicción"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Los resultados de la evaluación de los modelos es dependiente de los datos usados. En la práctica, los datos se suelen partir en tres conjuntos, tal como muestra la gráfica de abajo:\n",
+    "\n",
+    "\n",
+    "* Conjunto de calibración de parámetros del modelo.\n",
+    "\n",
+    "\n",
+    "* Conjunto de prueba, usado comunmente para determinar la complejidad del modelo o el valor óptimo de alguno de sus parámetros.\n",
+    "\n",
+    "\n",
+    "* Conjunto de pronóstico, en el que se intenta reproducir el comportamiento del modelo en productivo."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![alt text](assets/data-partition.jpg)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En la figura anterior, los datos se dividen secuencialmente, pero podría construirse cada conjunto aletaoriamente. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Si se tiene en cuenta que hay muchas particiones aleatorias posibles, una mejor estimación de la matriz de confusión (o cualquier otro estadístico que se calcule para un conjunto de datos) podría ser tomando los valores esperados de cada métrica. Es decir, si se repite el experimento $N$ veces, se tendrían $N$ valores posibles para cada uno de los elementos de la matriz de confusión y por lo tanto se podría tener su valor medio. Esta sería una métrica mucho más apropiada."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Esquemas de partición de los datos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import warnings\n",
+    "warnings.filterwarnings(\"ignore\")\n",
+    "\n",
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import seaborn as sns\n",
+    "import matplotlib.pyplot as plt\n",
+    "import altair as alt\n",
+    "\n",
+    "%matplotlib inline\n",
+    "%load_ext rpy2.ipython"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Muestra de datos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se usaran dos listas para representar los\n",
+    "# indices de los patrones de la muestra de datos\n",
+    "#\n",
+    "X, y = list(range(20)), list(range(20))\n",
+    "X"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### train_test_split"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[15, 1, 8, 5, 11, 3, 18, 16, 13, 2, 9, 19, 4, 12, 7, 10, 14, 6]"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Permite dividir la muestra en tres conjuntos de datos\n",
+    "#\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "X_train, X_test, y_train, y_test = train_test_split(\n",
+    "    X,\n",
+    "    y,  ## datos originales\n",
+    "    test_size=2,  ## float/int, tamaño de la muestra de prueba\n",
+    "    random_state=42,\n",
+    ")  ## semilla del generador aleatorio\n",
+    "\n",
+    "#\n",
+    "# Muestra de entrenamiento\n",
+    "#\n",
+    "X_train"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[15, 1, 8, 5, 11, 3, 18, 16, 13, 2, 9, 19, 4, 12, 7, 10, 14, 6]"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Datos de entrenamiento para la variable respuesta\n",
+    "#\n",
+    "y_train"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0, 17]"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Muestra de prueba\n",
+    "#\n",
+    "X_test"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[0, 17]"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Datos de prueba para la variable respuesta\n",
+    "#\n",
+    "y_test"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### K-fold crossvalidation"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este método, el conjunto de datos para entrenamiento (ajuste + prueba) es dividido en $K$ grupos. Este es un proceso iterativo que opera de la siguiente forma (véase la figura de abajo). \n",
+    "\n",
+    "\n",
+    "* Se toma el grupo 1 como conjunto de datos de prueba (grupo rojo) y se entrena el modelo con los grupos restantes {2, ..., K} (grupo negro).\n",
+    "\n",
+    "\n",
+    "* Se toma el grupo 2 como conjunto de datos de prueba (grupo rojo) y se entrena el modelo con los grupos restantes {1, 3, ..., K} (grupo negro).\n",
+    "\n",
+    "\n",
+    "* Se continua de esta forma hasta que se usa el grupo K para prueba, mientras que se usan los grupos 1 hasta K-1 para entrenamiento.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/k-fold-crossval.jpg](assets/k-fold-crossval.jpg)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "De esta forma, se tienen K valores posibles para el estadístico de interés. Usualmente se reporta su valor promedio.\n",
+    "\n",
+    "Note que una mejor opción sería distribuir los datos en cada grupo de forma aleatoria."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[ 7  8  9 10 11 12 13 14 15 16 17 18 19] [0 1 2 3 4 5 6]\n",
+      "[ 0  1  2  3  4  5  6 14 15 16 17 18 19] [ 7  8  9 10 11 12 13]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13] [14 15 16 17 18 19]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import KFold\n",
+    "\n",
+    "kf = KFold(n_splits=3)  ## se generan tres grupos\n",
+    "for train, test in kf.split(X):\n",
+    "    print(\"%s %s\" % (train, test))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Repeated KFold"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[ 0  1  2  3  6  7  9 10 11 12 13 15 16 18 19] [ 4  5  8 14 17]\n",
+      "[ 1  2  3  4  5  6  8  9 10 11 13 14 16 17 18] [ 0  7 12 15 19]\n",
+      "[ 0  1  2  4  5  6  7  8 12 13 14 15 17 18 19] [ 3  9 10 11 16]\n",
+      "[ 0  3  4  5  7  8  9 10 11 12 14 15 16 17 19] [ 1  2  6 13 18]\n",
+      "[ 0  1  2  3  4  7  9 10 12 14 15 16 17 18 19] [ 5  6  8 11 13]\n",
+      "[ 0  1  2  3  4  5  6  7  8 11 13 14 16 17 19] [ 9 10 12 15 18]\n",
+      "[ 0  4  5  6  8  9 10 11 12 13 14 15 16 18 19] [ 1  2  3  7 17]\n",
+      "[ 1  2  3  5  6  7  8  9 10 11 12 13 15 17 18] [ 0  4 14 16 19]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import RepeatedKFold\n",
+    "\n",
+    "rkf = RepeatedKFold(n_splits=4, n_repeats=2, random_state=123)\n",
+    "\n",
+    "for train, test in rkf.split(X):\n",
+    "    print(\"%s %s\" % (train, test))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Leave-One-Out "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Este es el K-fold con K=1."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/leave-one-out.jpg](assets/leave-one-out.jpg)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [0]\n",
+      "[ 0  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [1]\n",
+      "[ 0  1  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [2]\n",
+      "[ 0  1  2  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [3]\n",
+      "[ 0  1  2  3  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [4]\n",
+      "[ 0  1  2  3  4  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [5]\n",
+      "[ 0  1  2  3  4  5  7  8  9 10 11 12 13 14 15 16 17 18 19] [6]\n",
+      "[ 0  1  2  3  4  5  6  8  9 10 11 12 13 14 15 16 17 18 19] [7]\n",
+      "[ 0  1  2  3  4  5  6  7  9 10 11 12 13 14 15 16 17 18 19] [8]\n",
+      "[ 0  1  2  3  4  5  6  7  8 10 11 12 13 14 15 16 17 18 19] [9]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 11 12 13 14 15 16 17 18 19] [10]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 12 13 14 15 16 17 18 19] [11]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 13 14 15 16 17 18 19] [12]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 14 15 16 17 18 19] [13]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 15 16 17 18 19] [14]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 16 17 18 19] [15]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 17 18 19] [16]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 18 19] [17]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 19] [18]\n",
+      "[ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18] [19]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import LeaveOneOut\n",
+    "\n",
+    "loo = LeaveOneOut()\n",
+    "\n",
+    "for train, test in loo.split(X):\n",
+    "    print(\"%s %s\" % (train, test))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Leave-P-Out"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[ 3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [0 1 2]\n",
+      "[ 2  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [0 1 3]\n",
+      "[ 2  3  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [0 1 4]\n",
+      "[ 2  3  4  6  7  8  9 10 11 12 13 14 15 16 17 18 19] [0 1 5]\n",
+      "[ 2  3  4  5  7  8  9 10 11 12 13 14 15 16 17 18 19] [0 1 6]\n",
+      "[ 2  3  4  5  6  8  9 10 11 12 13 14 15 16 17 18 19] [0 1 7]\n",
+      "[ 2  3  4  5  6  7  9 10 11 12 13 14 15 16 17 18 19] [0 1 8]\n",
+      "[ 2  3  4  5  6  7  8 10 11 12 13 14 15 16 17 18 19] [0 1 9]\n",
+      "[ 2  3  4  5  6  7  8  9 11 12 13 14 15 16 17 18 19] [ 0  1 10]\n",
+      "[ 2  3  4  5  6  7  8  9 10 12 13 14 15 16 17 18 19] [ 0  1 11]\n",
+      "[ 2  3  4  5  6  7  8  9 10 11 13 14 15 16 17 18 19] [ 0  1 12]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import LeavePOut\n",
+    "\n",
+    "lpo = LeavePOut(p=3)\n",
+    "\n",
+    "n = 0\n",
+    "for train, test in lpo.split(X):\n",
+    "    print(\"%s %s\" % (train, test))\n",
+    "    n += 1\n",
+    "    if n > 10:\n",
+    "        break"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### ShuffleSplit"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[17  6 13  4  2  5 14  9  7 16 11  3  0 15 12] [18  1 19  8 10]\n",
+      "[12 19 16 10  0  3  4 15  8 13  9  5 14  7  6] [11  1 18 17  2]\n",
+      "[ 2  8  6  3 17  4 10 16 18  9  1  0  7 14 19] [15 13 12  5 11]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import ShuffleSplit\n",
+    "\n",
+    "ss = ShuffleSplit(\n",
+    "    n_splits=3,  ## número de particiones\n",
+    "    test_size=0.25,  ## porcentaje de prueba\n",
+    "    random_state=0,\n",
+    ")  ## semilla aleatoria 0\n",
+    "\n",
+    "for train_index, test_index in ss.split(X):\n",
+    "    print(\"%s %s\" % (train_index, test_index))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Stratifed k-fold"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Se usa en problemas de clasificación en los que la distribución porcentual de las clases en los grupos de entrenamiento y prueba son similares a los de la muestra original."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[2 3 6 7 8 9] [0 1 4 5]\n",
+      "[0 1 3 4 5 8 9] [2 6 7]\n",
+      "[0 1 2 4 5 6 7] [3 8 9]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import StratifiedKFold\n",
+    "\n",
+    "Xk = np.ones(10)\n",
+    "yk = [0, 0, 0, 0, 1, 1, 1, 1, 1, 1]\n",
+    "\n",
+    "skf = StratifiedKFold(n_splits=3)  ## número de particiones\n",
+    "\n",
+    "for train, test in skf.split(Xk, yk):\n",
+    "    print(\"%s %s\" % (train, test))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Repeated KFold"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[ 0  1  2  3  6  7  9 10 11 12 13 15 16 18 19] [ 4  5  8 14 17]\n",
+      "[ 1  2  3  4  5  6  8  9 10 11 13 14 16 17 18] [ 0  7 12 15 19]\n",
+      "[ 0  1  2  4  5  6  7  8 12 13 14 15 17 18 19] [ 3  9 10 11 16]\n",
+      "[ 0  3  4  5  7  8  9 10 11 12 14 15 16 17 19] [ 1  2  6 13 18]\n",
+      "[ 0  1  2  3  4  7  9 10 12 14 15 16 17 18 19] [ 5  6  8 11 13]\n",
+      "[ 0  1  2  3  4  5  6  7  8 11 13 14 16 17 19] [ 9 10 12 15 18]\n",
+      "[ 0  4  5  6  8  9 10 11 12 13 14 15 16 18 19] [ 1  2  3  7 17]\n",
+      "[ 1  2  3  5  6  7  8  9 10 11 12 13 15 17 18] [ 0  4 14 16 19]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sklearn.model_selection import RepeatedKFold\n",
+    "\n",
+    "#\n",
+    "# Se repite K-Fold n veces\n",
+    "#\n",
+    "rkf = RepeatedKFold(n_splits=4, n_repeats=2, random_state=123)\n",
+    "\n",
+    "for train, test in rkf.split(X):\n",
+    "    print(\"%s %s\" % (train, test))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  },
+  "nteract": {
+   "version": "0.7.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

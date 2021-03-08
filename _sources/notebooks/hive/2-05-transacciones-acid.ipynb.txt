@@ -1,0 +1,967 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Transacciones ACID (Insert/ Update / Delete) en Hive\n",
+    "===\n",
+    "\n",
+    "* *30 min* | Última modificación: Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El lenguaje SQL estándar provee directivas para la insertar, actualizar y borrar registros en una tabla. En este tutorial se presentan ejemplos representativos de estas instrucciones en Hive. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Ejecución de Hive en un contenedor de Docker"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Usando el directorio de trabajo de la máquina local:\n",
+    "\n",
+    "```\n",
+    "docker run --rm -it -v \"$PWD\":/datalake  --name hive -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/hive:2.3.6-pseudo\n",
+    "```\n",
+    "\n",
+    "* Usando un volumen de Docker (llamado `datalake`):\n",
+    "\n",
+    "```\n",
+    "docker run --rm -it -v datalake:/datalake --name hive  -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/hive:2.3.6-pseudo\n",
+    "```\n",
+    "\n",
+    "\n",
+    "* Consola conectada a un contendor que ya está corriendo:\n",
+    "\n",
+    "```\n",
+    "docker exec -it hive bash\n",
+    "```\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%load_ext bigdata\n",
+    "%timeout 300"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Creación de la tabla"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "DROP DATABASE IF EXISTS demo CASCADE;\n",
+      "OK\n",
+      "Time taken: 3.867 seconds\n",
+      "CREATE DATABASE demo;\n",
+      "OK\n",
+      "Time taken: 0.302 seconds\n",
+      "USE demo;\n",
+      "OK\n",
+      "Time taken: 0.012 seconds\n",
+      "CREATE TABLE persons (\n",
+      "    id        INT,\n",
+      "    firstname STRING,\n",
+      "    surname   STRING,\n",
+      "    birthday  TIMESTAMP,\n",
+      "    quantity  INT\n",
+      ")\n",
+      "PARTITIONED BY (color STRING)\n",
+      "CLUSTERED BY(id) INTO 3 BUCKETS\n",
+      "STORED AS ORC \n",
+      "LOCATION '/tmp/hive-partitioned'\n",
+      "TBLPROPERTIES ('transactional'='true');\n",
+      "OK\n",
+      "Time taken: 0.476 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "DROP DATABASE IF EXISTS demo CASCADE;\n",
+    "CREATE DATABASE demo;\n",
+    "USE demo;\n",
+    "\n",
+    "CREATE TABLE persons (\n",
+    "    id        INT,\n",
+    "    firstname STRING,\n",
+    "    surname   STRING,\n",
+    "    birthday  TIMESTAMP,\n",
+    "    quantity  INT\n",
+    ")\n",
+    "PARTITIONED BY (color STRING)\n",
+    "CLUSTERED BY(id) INTO 3 BUCKETS\n",
+    "STORED AS ORC \n",
+    "LOCATION '/tmp/hive-partitioned'\n",
+    "TBLPROPERTIES ('transactional'='true');"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preparación"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Se deben habilitar las características de Hive para manejo de transacciones ACID."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SET hive.txn.manager=org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;\n",
+      "SET hive.support.concurrency=true;\n",
+      "SET hive.enforce.bucketing=true;\n",
+      "SET hive.exec.dynamic.partition.mode=nonstrict;\n",
+      "SET hive.compactor.initiator.on=true;\n",
+      "SET hive.compactor.worker.threads=1;\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SET hive.txn.manager=org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;\n",
+    "SET hive.support.concurrency=true;\n",
+    "SET hive.enforce.bucketing=true;\n",
+    "SET hive.exec.dynamic.partition.mode=nonstrict;\n",
+    "SET hive.compactor.initiator.on=true;\n",
+    "SET hive.compactor.worker.threads=1;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## INSERT\n",
+    "\n",
+    "    INSERT INTO TABLE tablename VALUES PARTITION () values_row [, values_row ...]\n",
+    "    \n",
+    "    values_row: \n",
+    "       (value [, value ...])\n",
+    "       \n",
+    "Note que a diferencia de SQL, aca no es posible indicar para que columnas se van a insertar los valores, de tal manera que siempre se deben dar valores para todas las columnas.       "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "--\n",
+      "-- Inserta el registro en la tabla.\n",
+      "-- Los valores est??n en el mismo orden de los campos.\n",
+      "--\n",
+      "INSERT INTO persons PARTITION (color='green') VALUES\n",
+      "    (1,\"Vivian\",\"Hamilton\",\"1971-07-08\",1),\n",
+      "    (2,\"Karen\",\"Holcomb\",\"1974-05-23\",4),\n",
+      "    (12,\"Hope\",\"Coffey\",\"1973-12-24\",5),\n",
+      "    (17,\"Chanda\",\"Boyer\",\"1973-04-01\",4);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114234858_9367c926-6f03-4376-87f2-5a11f2ab9c15\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0017, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0017/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0017\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:49:06,750 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:49:11,080 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.67 sec\n",
+      "2019-11-14 23:49:17,416 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.1 sec\n",
+      "2019-11-14 23:49:19,552 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.83 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 830 msec\n",
+      "Ended Job = job_1573774297554_0017\n",
+      "Loading data to table demo.persons partition (color=green)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.83 sec   HDFS Read: 20555 HDFS Write: 2970 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 830 msec\n",
+      "OK\n",
+      "Time taken: 24.288 seconds\n",
+      "INSERT INTO persons PARTITION (color='black') VALUES    \n",
+      "    (4,\"Roth\",\"Fry\",\"1975-01-29\",1),\n",
+      "    (10,\"Kylan\",\"Sexton\",\"1975-02-28\",4);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114234922_626824c0-d438-4ff9-a955-6859cb285d61\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0018, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0018/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0018\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:49:31,060 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:49:36,272 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.7 sec\n",
+      "2019-11-14 23:49:42,673 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 3.98 sec\n",
+      "2019-11-14 23:49:44,753 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.36 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 360 msec\n",
+      "Ended Job = job_1573774297554_0018\n",
+      "Loading data to table demo.persons partition (color=black)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.36 sec   HDFS Read: 20491 HDFS Write: 1567 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 360 msec\n",
+      "OK\n",
+      "Time taken: 23.563 seconds\n",
+      "INSERT INTO persons PARTITION (color='blue') VALUES\n",
+      "    (5,\"Zoe\",\"Conway\",\"1974-07-03\",2),\n",
+      "    (7,\"Driscoll\",\"Klein\",\"1970-10-05\",5),\n",
+      "    (15,\"Hope\",\"Silva\",\"1970-07-01\",5);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114234946_729aa277-2210-4c32-92e1-b2eca6853961\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0019, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0019/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0019\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:49:56,395 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:50:00,612 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.62 sec\n",
+      "2019-11-14 23:50:06,928 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.0 sec\n",
+      "2019-11-14 23:50:08,017 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 6.48 sec\n",
+      "2019-11-14 23:50:10,116 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.76 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 760 msec\n",
+      "Ended Job = job_1573774297554_0019\n",
+      "Loading data to table demo.persons partition (color=blue)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.76 sec   HDFS Read: 20572 HDFS Write: 2884 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 760 msec\n",
+      "OK\n",
+      "Time taken: 25.156 seconds\n",
+      "INSERT INTO persons PARTITION (color='orange') VALUES    \n",
+      "    (3,\"Cody\",\"Garrett\",\"1973-04-22\",1),\n",
+      "    (16,\"Ayanna\",\"Jarvis\",\"1974-02-11\",5);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235011_5913bc7f-7288-4f9a-86b0-99962579d6cb\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0020, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0020/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0020\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:50:21,282 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:50:26,490 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.75 sec\n",
+      "2019-11-14 23:50:31,721 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.17 sec\n",
+      "2019-11-14 23:50:33,824 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.8 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 800 msec\n",
+      "Ended Job = job_1573774297554_0020\n",
+      "Loading data to table demo.persons partition (color=orange)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.8 sec   HDFS Read: 20586 HDFS Write: 2202 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 800 msec\n",
+      "OK\n",
+      "Time taken: 23.494 seconds\n",
+      "INSERT INTO persons PARTITION (color='violet') VALUES    \n",
+      "    (6,\"Gretchen\",\"Kinney\",\"1974-10-18\",1);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235035_55ec79d4-54f8-409d-93ee-6200ddfa6ded\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0021, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0021/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0021\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:50:46,066 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:50:50,281 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 2.06 sec\n",
+      "2019-11-14 23:50:58,671 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.43 sec\n",
+      "2019-11-14 23:50:59,708 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.78 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 780 msec\n",
+      "Ended Job = job_1573774297554_0021\n",
+      "Loading data to table demo.persons partition (color=violet)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.78 sec   HDFS Read: 20559 HDFS Write: 1531 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 780 msec\n",
+      "OK\n",
+      "Time taken: 25.72 seconds\n",
+      "INSERT INTO persons PARTITION (color='red') VALUES    \n",
+      "    (8,\"Karyn\",\"Diaz\",\"1969-02-24\",1),\n",
+      "    (14,\"Clio\",\"Noel\",\"1972-12-12\",5);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235101_689df048-7a4f-4b02-8c91-d6f56481f86f\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0022, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0022/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0022\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:51:11,326 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:51:16,571 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.75 sec\n",
+      "2019-11-14 23:51:21,829 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 3.98 sec\n",
+      "2019-11-14 23:51:23,938 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 6.26 sec\n",
+      "2019-11-14 23:51:24,974 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.63 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 630 msec\n",
+      "Ended Job = job_1573774297554_0022\n",
+      "Loading data to table demo.persons partition (color=red)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.63 sec   HDFS Read: 20535 HDFS Write: 1570 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 630 msec\n",
+      "OK\n",
+      "Time taken: 25.103 seconds\n",
+      "INSERT INTO persons PARTITION (color='indigo') VALUES    \n",
+      "    (9,\"Merritt\",\"Guy\",\"1974-10-17\",4),\n",
+      "    (11,\"Jordan\",\"Estes\",\"1969-12-07\",4);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235126_20926518-bd17-444c-ae99-df84873c7793\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0023, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0023/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0023\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:51:36,337 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:51:41,566 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.65 sec\n",
+      "2019-11-14 23:51:47,860 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 3.94 sec\n",
+      "2019-11-14 23:51:48,894 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 6.21 sec\n",
+      "2019-11-14 23:51:49,930 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.63 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 630 msec\n",
+      "Ended Job = job_1573774297554_0023\n",
+      "Loading data to table demo.persons partition (color=indigo)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.63 sec   HDFS Read: 20575 HDFS Write: 2207 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 630 msec\n",
+      "OK\n",
+      "Time taken: 24.719 seconds\n",
+      "INSERT INTO persons PARTITION (color='gray') VALUES    \n",
+      "    (13,\"Vivian\",\"Crane\",\"1970-08-27\",5);\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235151_aaeccc14-1770-4498-9b5d-e22209c47733\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0024, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0024/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0024\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:52:01,253 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:52:06,449 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.67 sec\n",
+      "2019-11-14 23:52:12,779 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.07 sec\n",
+      "2019-11-14 23:52:13,826 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 6.45 sec\n",
+      "2019-11-14 23:52:14,860 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.8 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 800 msec\n",
+      "Ended Job = job_1573774297554_0024\n",
+      "Loading data to table demo.persons partition (color=gray)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.8 sec   HDFS Read: 20527 HDFS Write: 1520 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 800 msec\n",
+      "OK\n",
+      "Time taken: 24.823 seconds\n",
+      "INSERT INTO persons PARTITION (color='yellow') VALUES\n",
+      "    (18,\"Chadwick\",\"Knight\",\"1973-04-29\",1);    \n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235216_0c9d6f0e-9ed3-4238-9c3c-909b054ce8a9\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0025, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0025/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0025\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3\n",
+      "2019-11-14 23:52:26,824 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:52:31,073 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.71 sec\n",
+      "2019-11-14 23:52:37,378 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.17 sec\n",
+      "2019-11-14 23:52:39,497 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 6.54 sec\n",
+      "2019-11-14 23:52:40,533 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.73 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 730 msec\n",
+      "Ended Job = job_1573774297554_0025\n",
+      "Loading data to table demo.persons partition (color=yellow)\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 8.73 sec   HDFS Read: 20560 HDFS Write: 1539 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 730 msec\n",
+      "OK\n",
+      "Time taken: 25.509 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "--\n",
+    "-- Inserta el registro en la tabla.\n",
+    "-- Los valores están en el mismo orden de los campos.\n",
+    "--\n",
+    "INSERT INTO persons PARTITION (color='green') VALUES\n",
+    "    (1,\"Vivian\",\"Hamilton\",\"1971-07-08\",1),\n",
+    "    (2,\"Karen\",\"Holcomb\",\"1974-05-23\",4),\n",
+    "    (12,\"Hope\",\"Coffey\",\"1973-12-24\",5),\n",
+    "    (17,\"Chanda\",\"Boyer\",\"1973-04-01\",4);\n",
+    "    \n",
+    "INSERT INTO persons PARTITION (color='black') VALUES    \n",
+    "    (4,\"Roth\",\"Fry\",\"1975-01-29\",1),\n",
+    "    (10,\"Kylan\",\"Sexton\",\"1975-02-28\",4);\n",
+    "\n",
+    "INSERT INTO persons PARTITION (color='blue') VALUES\n",
+    "    (5,\"Zoe\",\"Conway\",\"1974-07-03\",2),\n",
+    "    (7,\"Driscoll\",\"Klein\",\"1970-10-05\",5),\n",
+    "    (15,\"Hope\",\"Silva\",\"1970-07-01\",5);\n",
+    "\n",
+    "INSERT INTO persons PARTITION (color='orange') VALUES    \n",
+    "    (3,\"Cody\",\"Garrett\",\"1973-04-22\",1),\n",
+    "    (16,\"Ayanna\",\"Jarvis\",\"1974-02-11\",5);\n",
+    "    \n",
+    "INSERT INTO persons PARTITION (color='violet') VALUES    \n",
+    "    (6,\"Gretchen\",\"Kinney\",\"1974-10-18\",1);\n",
+    "\n",
+    "INSERT INTO persons PARTITION (color='red') VALUES    \n",
+    "    (8,\"Karyn\",\"Diaz\",\"1969-02-24\",1),\n",
+    "    (14,\"Clio\",\"Noel\",\"1972-12-12\",5);\n",
+    "    \n",
+    "INSERT INTO persons PARTITION (color='indigo') VALUES    \n",
+    "    (9,\"Merritt\",\"Guy\",\"1974-10-17\",4),\n",
+    "    (11,\"Jordan\",\"Estes\",\"1969-12-07\",4);\n",
+    "\n",
+    "INSERT INTO persons PARTITION (color='gray') VALUES    \n",
+    "    (13,\"Vivian\",\"Crane\",\"1970-08-27\",5);\n",
+    "\n",
+    "INSERT INTO persons PARTITION (color='yellow') VALUES\n",
+    "    (18,\"Chadwick\",\"Knight\",\"1973-04-29\",1);    \n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT * FROM persons;\n",
+      "OK\n",
+      "10\tKylan\tSexton\t1975-02-28 00:00:00\t4\tblack\n",
+      "4\tRoth\tFry\t1975-01-29 00:00:00\t1\tblack\n",
+      "15\tHope\tSilva\t1970-07-01 00:00:00\t5\tblue\n",
+      "7\tDriscoll\tKlein\t1970-10-05 00:00:00\t5\tblue\n",
+      "5\tZoe\tConway\t1974-07-03 00:00:00\t2\tblue\n",
+      "13\tVivian\tCrane\t1970-08-27 00:00:00\t5\tgray\n",
+      "12\tHope\tCoffey\t1973-12-24 00:00:00\t5\tgreen\n",
+      "1\tVivian\tHamilton\t1971-07-08 00:00:00\t1\tgreen\n",
+      "17\tChanda\tBoyer\t1973-04-01 00:00:00\t4\tgreen\n",
+      "2\tKaren\tHolcomb\t1974-05-23 00:00:00\t4\tgreen\n",
+      "9\tMerritt\tGuy\t1974-10-17 00:00:00\t4\tindigo\n",
+      "11\tJordan\tEstes\t1969-12-07 00:00:00\t4\tindigo\n",
+      "3\tCody\tGarrett\t1973-04-22 00:00:00\t1\torange\n",
+      "16\tAyanna\tJarvis\t1974-02-11 00:00:00\t5\torange\n",
+      "14\tClio\tNoel\t1972-12-12 00:00:00\t5\tred\n",
+      "8\tKaryn\tDiaz\t1969-02-24 00:00:00\t1\tred\n",
+      "6\tGretchen\tKinney\t1974-10-18 00:00:00\t1\tviolet\n",
+      "18\tChadwick\tKnight\t1973-04-29 00:00:00\t1\tyellow\n",
+      "Time taken: 0.282 seconds, Fetched: 18 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SELECT * FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 9 items\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:49 /tmp/hive-partitioned/color=black\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:50 /tmp/hive-partitioned/color=blue\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:52 /tmp/hive-partitioned/color=gray\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:49 /tmp/hive-partitioned/color=green\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:51 /tmp/hive-partitioned/color=indigo\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:50 /tmp/hive-partitioned/color=orange\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:51 /tmp/hive-partitioned/color=red\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:51 /tmp/hive-partitioned/color=violet\n",
+      "drwxrwxrwx   - root supergroup          0 2019-11-14 23:52 /tmp/hive-partitioned/color=yellow\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hdfs dfs -ls /tmp/hive-partitioned"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 1 items\n",
+      "drwxr-xr-x   - root supergroup          0 2019-11-14 23:49 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hdfs dfs -ls /tmp/hive-partitioned/color=black"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 3 items\n",
+      "-rw-r--r--   1 root supergroup        223 2019-11-14 23:49 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000/bucket_00000\n",
+      "-rw-r--r--   1 root supergroup        929 2019-11-14 23:49 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000/bucket_00001\n",
+      "-rw-r--r--   1 root supergroup        223 2019-11-14 23:49 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000/bucket_00002\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hdfs dfs -ls /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## UPDATE\n",
+    "\n",
+    "    UPDATE tablename SET column = value [, column = value ...] [WHERE expression]\n",
+    "\n",
+    "Véase https://cwiki.apache.org/confluence/display/Hive/Hive+Transactions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE persons SET quantity = 100 WHERE color = 'red';\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235249_60126600-c670-4da0-a008-cca13d6b8d14\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0026, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0026/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0026\n",
+      "Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 3\n",
+      "2019-11-14 23:52:56,474 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:53:01,714 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 1.37 sec\n",
+      "2019-11-14 23:53:02,726 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 3.02 sec\n",
+      "2019-11-14 23:53:03,768 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 4.96 sec\n",
+      "2019-11-14 23:53:07,995 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.34 sec\n",
+      "2019-11-14 23:53:09,028 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 8.81 sec\n",
+      "MapReduce Total cumulative CPU time: 8 seconds 810 msec\n",
+      "Ended Job = job_1573774297554_0026\n",
+      "Loading data to table demo.persons partition (color=null)\n",
+      "\n",
+      "\n",
+      "\t Time taken to load dynamic partitions: 0.2 seconds\n",
+      "\t Time taken for adding to write entity : 0.001 seconds\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 3  Reduce: 3   Cumulative CPU: 8.81 sec   HDFS Read: 33081 HDFS Write: 1056 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 8 seconds 810 msec\n",
+      "OK\n",
+      "Time taken: 20.748 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "UPDATE persons SET quantity = 100 WHERE color = 'red';"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT * FROM persons;\n",
+      "OK\n",
+      "10\tKylan\tSexton\t1975-02-28 00:00:00\t4\tblack\n",
+      "4\tRoth\tFry\t1975-01-29 00:00:00\t1\tblack\n",
+      "15\tHope\tSilva\t1970-07-01 00:00:00\t5\tblue\n",
+      "7\tDriscoll\tKlein\t1970-10-05 00:00:00\t5\tblue\n",
+      "5\tZoe\tConway\t1974-07-03 00:00:00\t2\tblue\n",
+      "13\tVivian\tCrane\t1970-08-27 00:00:00\t5\tgray\n",
+      "12\tHope\tCoffey\t1973-12-24 00:00:00\t5\tgreen\n",
+      "1\tVivian\tHamilton\t1971-07-08 00:00:00\t1\tgreen\n",
+      "17\tChanda\tBoyer\t1973-04-01 00:00:00\t4\tgreen\n",
+      "2\tKaren\tHolcomb\t1974-05-23 00:00:00\t4\tgreen\n",
+      "9\tMerritt\tGuy\t1974-10-17 00:00:00\t4\tindigo\n",
+      "11\tJordan\tEstes\t1969-12-07 00:00:00\t4\tindigo\n",
+      "3\tCody\tGarrett\t1973-04-22 00:00:00\t1\torange\n",
+      "16\tAyanna\tJarvis\t1974-02-11 00:00:00\t5\torange\n",
+      "14\tClio\tNoel\t1972-12-12 00:00:00\t100\tred\n",
+      "8\tKaryn\tDiaz\t1969-02-24 00:00:00\t100\tred\n",
+      "6\tGretchen\tKinney\t1974-10-18 00:00:00\t1\tviolet\n",
+      "18\tChadwick\tKnight\t1973-04-29 00:00:00\t1\tyellow\n",
+      "Time taken: 0.151 seconds, Fetched: 18 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SELECT * FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## DELETE\n",
+    "\n",
+    "    DELETE FROM tablename [WHERE expression]\n",
+    "    \n",
+    "Véase https://cwiki.apache.org/confluence/display/Hive/Hive+Transactions    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "DELETE FROM persons WHERE id = 10;\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235311_03b2dcc3-d721-4400-9113-07d02c42cb00\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 3\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0027, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0027/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0027\n",
+      "Hadoop job information for Stage-1: number of mappers: 27; number of reducers: 3\n",
+      "2019-11-14 23:53:20,532 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:53:26,844 Stage-1 map = 4%,  reduce = 0%, Cumulative CPU 2.23 sec\n",
+      "2019-11-14 23:53:28,981 Stage-1 map = 7%,  reduce = 0%, Cumulative CPU 4.48 sec\n",
+      "2019-11-14 23:53:32,231 Stage-1 map = 11%,  reduce = 0%, Cumulative CPU 6.71 sec\n",
+      "2019-11-14 23:53:34,384 Stage-1 map = 15%,  reduce = 0%, Cumulative CPU 9.25 sec\n",
+      "2019-11-14 23:53:35,436 Stage-1 map = 19%,  reduce = 0%, Cumulative CPU 11.83 sec\n",
+      "2019-11-14 23:53:36,486 Stage-1 map = 22%,  reduce = 0%, Cumulative CPU 14.08 sec\n",
+      "2019-11-14 23:53:37,591 Stage-1 map = 26%,  reduce = 0%, Cumulative CPU 16.18 sec\n",
+      "2019-11-14 23:53:38,649 Stage-1 map = 30%,  reduce = 0%, Cumulative CPU 18.35 sec\n",
+      "2019-11-14 23:53:41,972 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 20.65 sec\n",
+      "2019-11-14 23:53:44,136 Stage-1 map = 37%,  reduce = 0%, Cumulative CPU 22.99 sec\n",
+      "2019-11-14 23:53:45,191 Stage-1 map = 41%,  reduce = 0%, Cumulative CPU 25.28 sec\n",
+      "2019-11-14 23:53:47,302 Stage-1 map = 48%,  reduce = 0%, Cumulative CPU 30.18 sec\n",
+      "2019-11-14 23:53:51,667 Stage-1 map = 52%,  reduce = 0%, Cumulative CPU 32.51 sec\n",
+      "2019-11-14 23:53:53,824 Stage-1 map = 56%,  reduce = 0%, Cumulative CPU 34.91 sec\n",
+      "2019-11-14 23:53:54,904 Stage-1 map = 59%,  reduce = 0%, Cumulative CPU 37.3 sec\n",
+      "2019-11-14 23:53:55,978 Stage-1 map = 63%,  reduce = 0%, Cumulative CPU 39.78 sec\n",
+      "2019-11-14 23:53:57,082 Stage-1 map = 63%,  reduce = 7%, Cumulative CPU 40.0 sec\n",
+      "2019-11-14 23:53:58,157 Stage-1 map = 67%,  reduce = 7%, Cumulative CPU 42.55 sec\n",
+      "2019-11-14 23:54:01,332 Stage-1 map = 70%,  reduce = 7%, Cumulative CPU 44.92 sec\n",
+      "2019-11-14 23:54:02,352 Stage-1 map = 74%,  reduce = 16%, Cumulative CPU 47.58 sec\n",
+      "2019-11-14 23:54:04,485 Stage-1 map = 78%,  reduce = 16%, Cumulative CPU 49.73 sec\n",
+      "2019-11-14 23:54:06,573 Stage-1 map = 81%,  reduce = 16%, Cumulative CPU 52.02 sec\n",
+      "2019-11-14 23:54:08,671 Stage-1 map = 85%,  reduce = 18%, Cumulative CPU 54.27 sec\n",
+      "2019-11-14 23:54:10,788 Stage-1 map = 89%,  reduce = 28%, Cumulative CPU 56.88 sec\n",
+      "2019-11-14 23:54:12,902 Stage-1 map = 93%,  reduce = 28%, Cumulative CPU 58.98 sec\n",
+      "2019-11-14 23:54:13,934 Stage-1 map = 96%,  reduce = 28%, Cumulative CPU 61.07 sec\n",
+      "2019-11-14 23:54:14,968 Stage-1 map = 96%,  reduce = 31%, Cumulative CPU 61.2 sec\n",
+      "2019-11-14 23:54:16,018 Stage-1 map = 100%,  reduce = 31%, Cumulative CPU 63.32 sec\n",
+      "2019-11-14 23:54:17,056 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 68.22 sec\n",
+      "MapReduce Total cumulative CPU time: 1 minutes 8 seconds 220 msec\n",
+      "Ended Job = job_1573774297554_0027\n",
+      "Loading data to table demo.persons partition (color=null)\n",
+      "\n",
+      "\n",
+      "\t Time taken to load dynamic partitions: 0.138 seconds\n",
+      "\t Time taken for adding to write entity : 0.001 seconds\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 27  Reduce: 3   Cumulative CPU: 68.22 sec   HDFS Read: 215526 HDFS Write: 602 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 1 minutes 8 seconds 220 msec\n",
+      "OK\n",
+      "Time taken: 68.349 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "DELETE FROM persons WHERE id = 10;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT * FROM persons ORDER BY id;\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20191114235419_402662f8-e827-4917-97fe-e736001b7943\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 1\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "  set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "  set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "  set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1573774297554_0028, Tracking URL = http://0982451e3758:8088/proxy/application_1573774297554_0028/\n",
+      "Kill Command = /usr/local/hadoop/bin/hadoop job  -kill job_1573774297554_0028\n",
+      "Hadoop job information for Stage-1: number of mappers: 27; number of reducers: 1\n",
+      "2019-11-14 23:54:29,073 Stage-1 map = 0%,  reduce = 0%\n",
+      "2019-11-14 23:54:34,302 Stage-1 map = 4%,  reduce = 0%, Cumulative CPU 1.35 sec\n",
+      "2019-11-14 23:54:36,455 Stage-1 map = 7%,  reduce = 0%, Cumulative CPU 3.03 sec\n",
+      "2019-11-14 23:54:38,728 Stage-1 map = 11%,  reduce = 0%, Cumulative CPU 4.32 sec\n",
+      "2019-11-14 23:54:40,884 Stage-1 map = 15%,  reduce = 0%, Cumulative CPU 6.03 sec\n",
+      "2019-11-14 23:54:43,114 Stage-1 map = 22%,  reduce = 0%, Cumulative CPU 9.21 sec\n",
+      "2019-11-14 23:54:44,167 Stage-1 map = 26%,  reduce = 0%, Cumulative CPU 10.63 sec\n",
+      "2019-11-14 23:54:45,270 Stage-1 map = 30%,  reduce = 0%, Cumulative CPU 12.06 sec\n",
+      "2019-11-14 23:54:47,400 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 13.98 sec\n",
+      "2019-11-14 23:54:49,561 Stage-1 map = 37%,  reduce = 0%, Cumulative CPU 15.62 sec\n",
+      "2019-11-14 23:54:51,685 Stage-1 map = 44%,  reduce = 0%, Cumulative CPU 18.9 sec\n",
+      "2019-11-14 23:54:54,888 Stage-1 map = 48%,  reduce = 0%, Cumulative CPU 20.56 sec\n",
+      "2019-11-14 23:54:55,957 Stage-1 map = 52%,  reduce = 0%, Cumulative CPU 22.11 sec\n",
+      "2019-11-14 23:54:58,089 Stage-1 map = 56%,  reduce = 0%, Cumulative CPU 23.7 sec\n",
+      "2019-11-14 23:55:00,263 Stage-1 map = 59%,  reduce = 0%, Cumulative CPU 25.12 sec\n",
+      "2019-11-14 23:55:01,320 Stage-1 map = 63%,  reduce = 0%, Cumulative CPU 26.78 sec\n",
+      "2019-11-14 23:55:02,368 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 28.48 sec\n",
+      "2019-11-14 23:55:03,471 Stage-1 map = 70%,  reduce = 22%, Cumulative CPU 30.21 sec\n",
+      "2019-11-14 23:55:06,681 Stage-1 map = 74%,  reduce = 22%, Cumulative CPU 31.61 sec\n",
+      "2019-11-14 23:55:08,830 Stage-1 map = 81%,  reduce = 25%, Cumulative CPU 35.08 sec\n",
+      "2019-11-14 23:55:09,885 Stage-1 map = 85%,  reduce = 25%, Cumulative CPU 36.62 sec\n",
+      "2019-11-14 23:55:10,973 Stage-1 map = 89%,  reduce = 25%, Cumulative CPU 38.18 sec\n",
+      "2019-11-14 23:55:13,138 Stage-1 map = 93%,  reduce = 25%, Cumulative CPU 39.74 sec\n",
+      "2019-11-14 23:55:15,240 Stage-1 map = 100%,  reduce = 31%, Cumulative CPU 42.89 sec\n",
+      "2019-11-14 23:55:16,274 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 44.17 sec\n",
+      "MapReduce Total cumulative CPU time: 44 seconds 170 msec\n",
+      "Ended Job = job_1573774297554_0028\n",
+      "MapReduce Jobs Launched: \n",
+      "Stage-Stage-1: Map: 27  Reduce: 1   Cumulative CPU: 44.17 sec   HDFS Read: 201083 HDFS Write: 1030 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 44 seconds 170 msec\n",
+      "OK\n",
+      "1\tVivian\tHamilton\t1971-07-08 00:00:00\t1\tgreen\n",
+      "2\tKaren\tHolcomb\t1974-05-23 00:00:00\t4\tgreen\n",
+      "3\tCody\tGarrett\t1973-04-22 00:00:00\t1\torange\n",
+      "4\tRoth\tFry\t1975-01-29 00:00:00\t1\tblack\n",
+      "5\tZoe\tConway\t1974-07-03 00:00:00\t2\tblue\n",
+      "6\tGretchen\tKinney\t1974-10-18 00:00:00\t1\tviolet\n",
+      "7\tDriscoll\tKlein\t1970-10-05 00:00:00\t5\tblue\n",
+      "8\tKaryn\tDiaz\t1969-02-24 00:00:00\t100\tred\n",
+      "9\tMerritt\tGuy\t1974-10-17 00:00:00\t4\tindigo\n",
+      "11\tJordan\tEstes\t1969-12-07 00:00:00\t4\tindigo\n",
+      "12\tHope\tCoffey\t1973-12-24 00:00:00\t5\tgreen\n",
+      "13\tVivian\tCrane\t1970-08-27 00:00:00\t5\tgray\n",
+      "14\tClio\tNoel\t1972-12-12 00:00:00\t100\tred\n",
+      "15\tHope\tSilva\t1970-07-01 00:00:00\t5\tblue\n",
+      "16\tAyanna\tJarvis\t1974-02-11 00:00:00\t5\torange\n",
+      "17\tChanda\tBoyer\t1973-04-01 00:00:00\t4\tgreen\n",
+      "18\tChadwick\tKnight\t1973-04-29 00:00:00\t1\tyellow\n",
+      "Time taken: 57.715 seconds, Fetched: 17 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SELECT * FROM persons ORDER BY id;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## MERGE\n",
+    "\n",
+    "    MERGE INTO <target table> AS T USING <source expression/table> AS S\n",
+    "    ON <boolean expression1>\n",
+    "    WHEN MATCHED [AND <boolean expression2>] THEN UPDATE SET <set clause list>\n",
+    "    WHEN MATCHED [AND <boolean expression3>] THEN DELETE\n",
+    "    WHEN NOT MATCHED [AND <boolean expression4>] THEN INSERT VALUES<value list>\n",
+    "    \n",
+    "Véase https://community.hortonworks.com/articles/97113/hive-acid-merge-by-example.html    "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "-- limpia la base de datos\n",
+      "DROP DATABASE IF EXISTS demo CASCADE;\n",
+      "OK\n",
+      "Time taken: 0.493 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "-- limpia la base de datos\n",
+    "DROP DATABASE IF EXISTS demo CASCADE;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!rm *.log"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": false,
+   "sideBar": true,
+   "skip_h1_title": true,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
+  },
+  "toc-autonumbering": false
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

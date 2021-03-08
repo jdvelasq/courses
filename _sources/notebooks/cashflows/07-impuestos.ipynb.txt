@@ -1,0 +1,455 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "Impuestos Corporativos\n",
+    "===\n",
+    "\n",
+    "* *60 min* | Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Preparación**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Tipos de Impuestos**.\n",
+    "\n",
+    "* Impuestos sobre activos tangibles o intangibles.\n",
+    "* Licencias para establecimiento de negocios.\n",
+    "* Impuestos al consumo sobre productos básicos.\n",
+    "* Impuestos a las ventas.\n",
+    "* Impuestos a la renta.\n",
+    "\n",
+    "**Deducciones.**\n",
+    "\n",
+    "El impuesto de renta es calculado como el ingreso bruto menos las deducciones permitidas:\n",
+    "\n",
+    "* Salarios.\n",
+    "* Rentas.\n",
+    "* Intereses pagados.\n",
+    "* Publicidad.\n",
+    "* Planes de pensión.\n",
+    "* Gastos de investigación.\n",
+    "* Depreciación, amortización y agotamiento."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Notas sobre el mercado eléctrico colombiano\n",
+    "\n",
+    "\n",
+    "* Impuesto de industria y comercio: pagado a una tarifa fija por la capacidad instalada del proyecto indexado por la inflación (`$` 5 de 1981 por kilovatio) \n",
+    "\n",
+    "\n",
+    "* Artículo 22, Ley 143 de 1994 (Ley Eléctrica): 0.1% de los gastos de administración de los proyectos de generación  (cubrimiento del costo del servicio de regulación).\n",
+    "\n",
+    "\n",
+    "* Artículo 222, Ley 1450 de 2011. Transferencias del Sector Eléctrico: 6% de las ventas brutas para centrales hidroeléctricas (incluye la tasa por utilización de aguas) y 4% para centrales térmicas. \n",
+    "\n",
+    "\n",
+    "* Impuesto predial.\n",
+    "\n",
+    "\n",
+    "* Sobretasa predial.\n",
+    "\n",
+    "\n",
+    "* Costos CND, ASIC y otros.\n",
+    "\n",
+    "\n",
+    "* Costos FAZNI.\n",
+    "\n",
+    "\n",
+    "* Para las fuentes no convecionales de energía, el Artículo 11 de la Ley 1715 de 2014 permite descontar del impuesto de renta hasta el 50% de las inversiones durante los cinco años siguientes al año de causación, sin superar el 50% del impuesto a pagar si no se tiene en cuenta este incentivo.\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "`after_tax_cashflow(cflo, tax_rate)`\n",
+    "\n",
+    "* `cflo`-- flujo de efectivo\n",
+    "* `tax_rate` -- tasa de interés.\n",
+    "\n",
+    "Permite calcular el flujo de efectivo correspondiente a los impuestos expresados como una tasa sobre el flujo de efectivo.\n",
+    "\n",
+    "Retorna el flujo de efectivo después de impuestos. Nóte que los impuestos sólo se calculan para valores positivos. \n",
+    "\n",
+    "* `cflo` -- flujo de efectivo.\n",
+    "* `tax_rate` -- tasa impositiva.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** Sea un flujo constante de `$` 1000 para los períodos 1 a 5 y `$` -90 para los períodos 6 a 10. Calcule el impuesto de renta para una tasa impositiva del 30%.  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import cashflows as cf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "-"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "time     value +------------------+------------------+\n",
+      "2016   1000.00                    ********************\n",
+      "2017   1000.00                    ********************\n",
+      "2018   1000.00                    ********************\n",
+      "2019   1000.00                    ********************\n",
+      "2020   1000.00                    ********************\n",
+      "2021   -500.00           **********\n",
+      "2022   -500.00           **********\n",
+      "2023   -500.00           **********\n",
+      "2024   -500.00           **********\n",
+      "2025   -500.00           **********\n"
+     ]
+    }
+   ],
+   "source": [
+    "# representación del flujo de fondos\n",
+    "cflo = cf.cashflow(const_value=[1000]*5+[-500]*5,  \n",
+    "                   start='2016',\n",
+    "                   freq='A')\n",
+    "cf.textplot(cflo) "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "time    value +------------------+------------------+\n",
+      "2016   300.00                    ********************\n",
+      "2017   300.00                    ********************\n",
+      "2018   300.00                    ********************\n",
+      "2019   300.00                    ********************\n",
+      "2020   300.00                    ********************\n",
+      "2021     0.00                    *\n",
+      "2022     0.00                    *\n",
+      "2023     0.00                    *\n",
+      "2024     0.00                    *\n",
+      "2025     0.00                    *\n"
+     ]
+    }
+   ],
+   "source": [
+    "## cómputo del impuesto\n",
+    "tax_rate = cf.interest_rate(const_value=[30]*10, start=2016, freq='A')\n",
+    "\n",
+    "x = cf.after_tax_cashflow(cflo,              # flujo de efectivo\n",
+    "                          tax_rate=tax_rate) # impuesto de renta\n",
+    "cf.textplot(x)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** Considere un flujo de caja de `$` 100, y una duración de 10 períodos. Calcule el impuesto de renta si la tasa es del 30% para los períodos 1 a 5 y del 35% para los períodos restantes. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "scrolled": false,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "time   value +------------------+------------------+\n",
+      "2000   25.00                    **************\n",
+      "2001   25.00                    **************\n",
+      "2002   25.00                    **************\n",
+      "2003   25.00                    **************\n",
+      "2004   25.00                    **************\n",
+      "2005   35.00                    ********************\n",
+      "2006   35.00                    ********************\n",
+      "2007   35.00                    ********************\n",
+      "2008   35.00                    ********************\n",
+      "2009   35.00                    ********************\n"
+     ]
+    }
+   ],
+   "source": [
+    "cflo     = cf.cashflow(const_value=[100]*10, start=2000)\n",
+    "tax_rate = cf.interest_rate(const_value=[25]*10, start=2000, chgpts={5:35})\n",
+    "x        = cf.after_tax_cashflow(cflo,              # flujo de efectivo\n",
+    "                                 tax_rate=tax_rate) # impuesto de renta\n",
+    "cf.textplot(x)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** En el año 0 se compra un terreno por `$` 500 para la construcción de una central térmica. Si el avalúo para efectos del cálculo del impuesto predíal es del 80% del valor de compra y el impuesto es del 0.3% del avalúo, construya el flujo de efectivo que representa el pago del impuesto predial para los siguientes 10 años."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000    400.0\n",
+       "2001      0.0\n",
+       "2002      0.0\n",
+       "2003      0.0\n",
+       "2004      0.0\n",
+       "2005      0.0\n",
+       "2006      0.0\n",
+       "2007      0.0\n",
+       "2008      0.0\n",
+       "2009      0.0\n",
+       "2010      0.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## costo de la inversión, se hace al final del año 0\n",
+    "avaluo = cf.cashflow([0.8 * 500] + [0] * 10, start = 2000)\n",
+    "avaluo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000    400.0\n",
+       "2001    400.0\n",
+       "2002    400.0\n",
+       "2003    400.0\n",
+       "2004    400.0\n",
+       "2005    400.0\n",
+       "2006    400.0\n",
+       "2007    400.0\n",
+       "2008    400.0\n",
+       "2009    400.0\n",
+       "2010    400.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## valor en libros\n",
+    "bookval = avaluo.cumsum()\n",
+    "bookval"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000    0.0\n",
+       "2001    3.0\n",
+       "2002    3.0\n",
+       "2003    3.0\n",
+       "2004    3.0\n",
+       "2005    3.0\n",
+       "2006    3.0\n",
+       "2007    3.0\n",
+       "2008    3.0\n",
+       "2009    3.0\n",
+       "2010    3.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## tasa de impuesto predial\n",
+    "trate = cf.interest_rate([0] + [3] * 10, start=2000)\n",
+    "trate"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000     0.0\n",
+       "2001    12.0\n",
+       "2002    12.0\n",
+       "2003    12.0\n",
+       "2004    12.0\n",
+       "2005    12.0\n",
+       "2006    12.0\n",
+       "2007    12.0\n",
+       "2008    12.0\n",
+       "2009    12.0\n",
+       "2010    12.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## impuesto predial\n",
+    "cf.after_tax_cashflow(bookval, tax_rate=trate)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejercicio.--***  Si el flujo neto de efectivo es `$` 1000 por trimestre para el primer año, `$` 1300 por trimestre para el segundo y `$` 1600 por trimestre para el tercer año, calcule el flujo de efectivo correspodiente a los impuestos pagados, si la tasa es del 30% para el primer año, y 35% para los años restantes."
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "celltoolbar": "Slideshow",
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

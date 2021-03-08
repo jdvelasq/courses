@@ -1,0 +1,638 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Manipulación de datos en SQL\n",
+    "===\n",
+    "\n",
+    "* *30 min* | Última modificación: Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [],
+   "source": [
+    "## conexión a la base de datos\n",
+    "%load_ext sql\n",
+    "%sql mysql+pymysql://root:@localhost\n",
+    "%config SqlMagic.autopandas = True\n",
+    "import pandas\n",
+    "pandas.set_option('display.notebook_repr_html', False)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "1 rows affected.\n",
+      "0 rows affected.\n",
+      "0 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "Empty DataFrame\n",
+       "Columns: []\n",
+       "Index: []"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "DROP DATABASE IF EXISTS DMLdb;\n",
+    "CREATE DATABASE DMLdb;\n",
+    "USE DMLdb;\n",
+    "\n",
+    "CREATE TABLE persons (\n",
+    "    id INT,\n",
+    "    firstname VARCHAR(10),\n",
+    "    surname VARCHAR(10),\n",
+    "    birthday DATE,\n",
+    "    color VARCHAR(9),\n",
+    "    quantity INT\n",
+    ");\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "----"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## SOURCE\n",
+    "\n",
+    "Permite ejecutar scripts de SQL.\n",
+    "\n",
+    "     SOURCE filename\n",
+    "     \n",
+    "(no funciona dentro de Jupyter)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## INSERT\n",
+    "\n",
+    "    INSERT [INTO] tbl_name [(column_name,...)]\n",
+    "    {VALUES | VALUE}\n",
+    "    ({expression|DEFAULT},...)[,(...),...];"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "1 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname   surname    birthday  color  quantity\n",
+       "0   1    Vivian  Hamilton  1971-07-08  green         1"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Inserta el registro en la tabla.\n",
+    "-- Los valores están en el mismo orden de los campos.\n",
+    "--\n",
+    "INSERT INTO persons VALUES\n",
+    "   (1,\"Vivian\",\"Hamilton\",\"1971-07-08\",\"green\",1);\n",
+    "    \n",
+    "SELECT * FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "2 rows affected.\n",
+      "3 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "   id firstname   surname    birthday   color  quantity\n",
+       "0   1    Vivian  Hamilton  1971-07-08   green         1\n",
+       "1   2     Karen   Holcomb  1974-05-23   green         4\n",
+       "2   3      Cody   Garrett  1973-04-22  orange         1"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Inserta varios registros a la vez.\n",
+    "-- Los valores deben estar en el mismo orden de los campos.\n",
+    "--\n",
+    "INSERT INTO persons VALUES\n",
+    "    (2,\"Karen\",\"Holcomb\",\"1974-05-23\",\"green\",4),\n",
+    "    (3,\"Cody\",\"Garrett\",\"1973-04-22\",\"orange\",1);\n",
+    "    \n",
+    "SELECT * FROM persons;   "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "3 rows affected.\n",
+      "6 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0  1.0    Vivian  Hamilton  1971-07-08   green       1.0\n",
+       "1  2.0     Karen   Holcomb  1974-05-23   green       4.0\n",
+       "2  3.0      Cody   Garrett  1973-04-22  orange       1.0\n",
+       "3  NaN    Vivian    Kinney        None  violet       NaN\n",
+       "4  NaN      Hope  Kingston        None    blue       NaN\n",
+       "5  NaN     Kylan   Bigelow        None     red       NaN"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Inserta registros con información parcial.\n",
+    "-- Se indica en cuales campos se inserta la información.\n",
+    "--\n",
+    "INSERT INTO persons (color,firstname,surname) VALUES\n",
+    "    (\"violet\",\"Vivian\", \"Kinney\"),\n",
+    "    (\"blue\",\"Hope\",\"Kingston\"),\n",
+    "    (\"red\",\"Kylan\",\"Bigelow\");\n",
+    "    \n",
+    "SELECT * FROM persons; "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "7 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0  1.0    Vivian  Hamilton  1971-07-08   green       1.0\n",
+       "1  2.0     Karen   Holcomb  1974-05-23   green       4.0\n",
+       "2  3.0      Cody   Garrett  1973-04-22  orange       1.0\n",
+       "3  NaN    Vivian    Kinney        None  violet       NaN\n",
+       "4  NaN      Hope  Kingston        None    blue       NaN\n",
+       "5  NaN     Kylan   Bigelow        None     red       NaN\n",
+       "6  NaN     Camil      None        None    None       NaN"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Inserta un registro con información en un solo campo.\n",
+    "-- Se indica en cual campo se inserta la información\n",
+    "--\n",
+    "INSERT persons (firstname) VALUE (\"Camil\");\n",
+    "SELECT * FROM persons; "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "8 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0  1.0    Vivian  Hamilton  1971-07-08   green       1.0\n",
+       "1  2.0     Karen   Holcomb  1974-05-23   green       4.0\n",
+       "2  3.0      Cody   Garrett  1973-04-22  orange       1.0\n",
+       "3  NaN    Vivian    Kinney        None  violet       NaN\n",
+       "4  NaN      Hope  Kingston        None    blue       NaN\n",
+       "5  NaN     Kylan   Bigelow        None     red       NaN\n",
+       "6  NaN     Camil      None        None    None       NaN\n",
+       "7  NaN      Kate      Bond  1974-05-23    None       NaN"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Se inserta información en un registro.\n",
+    "-- No se indican los nombres de los campos.\n",
+    "-- Se usa NULL para los campos que no tienen información.\n",
+    "--\n",
+    "INSERT INTO \n",
+    "    persons \n",
+    "VALUES\n",
+    "    (NULL,\"Kate\",\"Bond\",\"1974-05-23\",NULL,NULL);\n",
+    "SELECT * FROM persons; "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## UPDATE\n",
+    "\n",
+    "     UPDATE tbl_name\n",
+    "     (SET col_name={expression|DEFAULT}, ...)\n",
+    "     [WHERE where_conditions];\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "8 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0  1.0    Vivian  Hamilton  1971-07-08   green       1.0\n",
+       "1  2.0     Karen   Holcomb  1974-05-23   green       4.0\n",
+       "2  3.0      Cody   Garrett  1973-04-22  orange       1.0\n",
+       "3  NaN    Vivian    Kinney        None  violet       NaN\n",
+       "4  NaN      Hope  Kingston        None    blue       NaN\n",
+       "5  NaN     Kylan   Bigelow        None     red       NaN\n",
+       "6  NaN     Camil      None        None    None       NaN\n",
+       "7  8.0      Kate      Bond  1974-05-23    gray       NaN"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--\n",
+    "-- Se actualiza la información de los campos de registros existentes.\n",
+    "-- Se indica explictamente el valor de cada campo.\n",
+    "-- Si no se introduce la clausura WHERE se cambian todos los \n",
+    "-- los registros de la tabla.\n",
+    "--\n",
+    "UPDATE persons SET\n",
+    "    id = 8, \n",
+    "    color = \"gray\"\n",
+    "WHERE \n",
+    "    firstname = \"Kate\";\n",
+    "    \n",
+    "SELECT * FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "8 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0  1.0    Vivian  Hamilton  1971-07-08   green       1.0\n",
+       "1  2.0     Karen   Holcomb  1974-05-23   green       4.0\n",
+       "2  3.0      Cody   Garrett  1973-04-22  orange       1.0\n",
+       "3  NaN    Vivian    Kinney        None  violet       NaN\n",
+       "4  NaN      Hope  Kingston        None    blue       NaN\n",
+       "5  NaN     Kylan   Bigelow        None     red       NaN\n",
+       "6  NaN     Camil      None        None    None       NaN\n",
+       "7  8.0      Kate      Bond  1974-05-23   black       NaN"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "##\n",
+    "## Se actualiza el campo con base en el indicador.\n",
+    "##\n",
+    "UPDATE \n",
+    "    persons \n",
+    "SET \n",
+    "   color = \"black\" \n",
+    "WHERE \n",
+    "   id = 8;\n",
+    "\n",
+    "SELECT * FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## DELETE\n",
+    "\n",
+    "    DELETE FROM tbl_name [WHERE where_conditions];"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " * mysql+pymysql://root:***@localhost\n",
+      "1 rows affected.\n",
+      "7 rows affected.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "    id firstname   surname    birthday   color  quantity\n",
+       "0  1.0    Vivian  Hamilton  1971-07-08   green       1.0\n",
+       "1  2.0     Karen   Holcomb  1974-05-23   green       4.0\n",
+       "2  3.0      Cody   Garrett  1973-04-22  orange       1.0\n",
+       "3  NaN      Hope  Kingston        None    blue       NaN\n",
+       "4  NaN     Kylan   Bigelow        None     red       NaN\n",
+       "5  NaN     Camil      None        None    None       NaN\n",
+       "6  8.0      Kate      Bond  1974-05-23   black       NaN"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "%%sql\n",
+    "--  \n",
+    "-- Se borran registros de la tabla.\n",
+    "-- Si no se usa WHERE se borran todos los registros de la tabla.\n",
+    "--\n",
+    "DELETE FROM \n",
+    "  persons\n",
+    "WHERE \n",
+    "  firstname=\"Vivian\" AND color=\"violet\";\n",
+    "\n",
+    "SELECT * FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## LOAD DATA\n",
+    "\n",
+    "    LOAD DATA [LOW_PRIORITY | CONCURRENT] [LOCAL] INFILE 'file_name'\n",
+    "        [REPLACE | IGNORE]\n",
+    "        INTO TABLE tbl_name\n",
+    "        [PARTITION (partition_name [, partition_name] ...)]\n",
+    "        [CHARACTER SET charset_name]\n",
+    "        [{FIELDS | COLUMNS}\n",
+    "            [TERMINATED BY 'string']\n",
+    "            [[OPTIONALLY] ENCLOSED BY 'char']\n",
+    "            [ESCAPED BY 'char']\n",
+    "        ]\n",
+    "        [LINES\n",
+    "           [STARTING BY 'string']\n",
+    "           [TERMINATED BY 'string']\n",
+    "        ]\n",
+    "        [IGNORE number {LINES | ROWS}]\n",
+    "        [(col_name_or_user_var\n",
+    "        [, col_name_or_user_var] ...)]\n",
+    "        [SET col_name={expr | DEFAULT},\n",
+    "            [, col_name={expr | DEFAULT}] ...]\n",
+    "            \n",
+    "  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting DMLpersons.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile DMLpersons.csv\n",
+    "1,Vivian,Hamilton,1971-07-08,green,1\n",
+    "2,Karen,Holcomb,1974-05-07,green,4\n",
+    "3,Cody,Garrett,1973-04-22,orange,1\n",
+    "4,Roth,Fry,1975-01-29,black,1\n",
+    "5,Zoe,Conway,1969-07-03,blue,2\n",
+    "6,Gretchen,Kinney,1974-10-18,viole,1\n",
+    "7,Driscoll,Klein,1970-10-05,blue,5\n",
+    "8,Karyn,Diaz,1969-02-24,red,1\n",
+    "9,Merritt,Guy,1974-10-17,indigo,4\n",
+    "10,Kylan,Sexton,1975-02-28,black,4\n",
+    "11,Jordan,Estes,1969-12-07,indigo,4\n",
+    "12,Hope,Coffey,1973-12-24,green,5\n",
+    "13,Vivian,Crane,1970-08-27,gray,5\n",
+    "14,Clio,Noel,1972-12-12,red,5\n",
+    "15,Hope,Silva,1970-07-01,blue,5\n",
+    "16,Ayanna,Jarvis,1974-02-11,orange,5\n",
+    "17,Chanda,Boyer,1973-04-01,green,4\n",
+    "18,Chadwick,Knight,1973-04-29,yellow,1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "scrolled": false
+   },
+   "outputs": [],
+   "source": [
+    "## %%sql\n",
+    "## --\n",
+    "## -- Permite cargar datos desde el disco duro.\n",
+    "## -- Es e## ## ## l##  complemento de SELECT ... INTO ...\n",
+    "## -- La B## ## ## D de## be estar configurada para permitir carga de datos.\n",
+    "## -- Se d## ## ## ebe ## indicar el orden de los campos en el archivo en \n",
+    "## -- el c## ## ## omando.\n",
+    "## -- El a## ## rchivo no contiene cabecera.\n",
+    "##  --\n",
+    "## \n",
+    "## -- NO FUNCIONA DENTRO DE JUPYTER\n",
+    "## \n",
+    "## --LOAD DATA LOCAL INFILE\n",
+    "## --    '/vagrant/source/sesion-05/DMLpersons.csv'\n",
+    "## --INTO TABLE \n",
+    "## --    persons\n",
+    "## --FIELDS TERMINATED BY ',' \n",
+    "## --IGNORE 1 LINES \n",
+    "## --    (id,firstname,surname,birthday,color,quantity);\n",
+    "## \n",
+    "## --SELECT * FROM persons;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!rm DMLpersons.csv"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  },
+  "nteract": {
+   "version": "0.12.3"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": false,
+   "sideBar": true,
+   "skip_h1_title": true,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

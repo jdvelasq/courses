@@ -1,0 +1,710 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Vecinos próximos para clasificación\n",
+    "===\n",
+    "\n",
+    "* *30 min* | Ultima modificación: Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Descripción del problema"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Se desea determinar a cuál clase ($A$, $B$ o $C$) pertenece un elemento, a partir de resultados previamente recolectados. Para ello, se tiene una muestra de 15 ejemplos para los cuales se han medido sus características $x_1$ y $x_2$ y su respectiva clase.\n",
+    "\n",
+    "    #     x1      x2   Clase\n",
+    "    ------------------------\n",
+    "     1  10.67   14.70    A\n",
+    "     2   9.74   13.79    A \n",
+    "     3  10.23   14.30    A\n",
+    "     4  11.17   15.53    A\n",
+    "     5  10.41   15.08    A\n",
+    "     6  10.87    6.81    A\n",
+    "     7  11.95    6.05    B\n",
+    "     8  12.77    7.97    B\n",
+    "     9  14.42    9.25    B\n",
+    "    10  13.25    8.03    B\n",
+    "    11  13.27   13.92    C\n",
+    "    12  14.40   16.58    C\n",
+    "    13  14.50   17.39    C\n",
+    "    14  14.20   16.70    C\n",
+    "    15  14.62   17.22    C\n",
+    "\n",
+    "Se desea determinar a que clase pertenece un nuevo punto con $x_1$ = 10.18 y $x_2$ = 6.38."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Metodología kNN"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El problema en términos matemáticos se define de la siguiente forma. \n",
+    "\n",
+    "* Se tienen $M$ ejemplos.  \n",
+    "* Cada ejemplo esta definido por un conjunto de variables ($x_1$, $x_2$, ..., $x_N$).\n",
+    "* Cada ejemplo pertenece a una clase y hay $P$ clases diferentes. \n",
+    "* Para un nuevo caso no clasificado y con base en los $M$ ejemplos disponibles, se desea pronosticar a que clase pertenece este. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El método k-NN asigna una clase (de las $P$ posibles) al nuevo ejemplo en dos pasos. En el primer paso, determina los $k$ ejemplos más cercanos (distancia) al nuevo ejemplo; en el segundo paso, asigna la clase al nuevo punto por mayoría; es decir, asigna la clase con mayor frecuencia entre los $k$ vecinos más cercanos. Por ejemplo, si se consideran 7 vecinos, de los cuales 5 pertenecen a $P_1$ y 2 pertencen a $P_2$ entonces el nuevo punto es clasificado como $P_1$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La lógica de este método se basa en el siguiente razonamiento: Si un nuevo patrón (ejemplo) es más cercano en distancia a los ejemplos de la clase azul que a los ejemplos del resto de clases, entonces pertenece a la clase A. En la siguiente figura se considera $k=8$ y cada punto rectángular es asignado a la clase que tenga más puntos cercanos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/knn-1.jpg](assets/knn-1.jpg)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Desafortunadamente, el método no es capaz de detectar si un nuevo punto es lejano de los ejemplos de la muestra de datos.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Si $k$  es igual a la cantidad de ejemplos disponibles, un nuevo punto es asignado simplemente a la clase que aparezca con mayor frecuencia en la muestra de datos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** Compute la matriz de distancias entre los puntos de la muestra, y la precisión para $k$ desde 1 hasta 5."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** ¿A que clase se debe asignar el punto $x_1$ = 10.18 y $x_2$ = 6.38, si $k=3$?."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Cómputo en Python"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "import numpy as np\n",
+    "import seaborn as sns\n",
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline\n",
+    "%load_ext rpy2.ipython"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>x1</th>\n",
+       "      <th>x2</th>\n",
+       "      <th>y</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>10.67</td>\n",
+       "      <td>14.70</td>\n",
+       "      <td>A</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>9.74</td>\n",
+       "      <td>13.79</td>\n",
+       "      <td>A</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>10.23</td>\n",
+       "      <td>14.30</td>\n",
+       "      <td>A</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>11.17</td>\n",
+       "      <td>15.53</td>\n",
+       "      <td>A</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>10.41</td>\n",
+       "      <td>15.08</td>\n",
+       "      <td>A</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      x1     x2  y\n",
+       "0  10.67  14.70  A\n",
+       "1   9.74  13.79  A\n",
+       "2  10.23  14.30  A\n",
+       "3  11.17  15.53  A\n",
+       "4  10.41  15.08  A"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df = pd.DataFrame({\n",
+    "    'x1': [10.67,  9.74, 10.23, 11.17, 10.41,\n",
+    "           10.87, 11.95, 12.77, 14.42, 13.25,\n",
+    "           13.27, 14.40, 14.50, 14.20, 14.62],\n",
+    "    'x2': [14.70, 13.79, 14.30, 15.53, 15.08, \n",
+    "           6.81,  6.05,  7.97,  9.25,  8.03, \n",
+    "           13.92, 16.58, 17.39, 16.70, 17.22],\n",
+    "    'y':  ['A', 'A', 'A', 'A', 'A', \n",
+    "           'A', 'B', 'B', 'B', 'B', \n",
+    "           'C', 'C', 'C', 'C', 'C'] } )\n",
+    "\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['A', 'A', 'A', 'A', 'A', 'B', 'B', 'B', 'B', 'B', 'A', 'C', 'C',\n",
+       "       'C', 'C'], dtype=object)"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.neighbors import KNeighborsClassifier\n",
+    "knn = KNeighborsClassifier(n_neighbors=4)\n",
+    "\n",
+    "X = df[['x1', 'x2']].values\n",
+    "y = df.y.values\n",
+    "knn.fit(X, y)\n",
+    "y_pred = knn.predict(X)\n",
+    "y_pred"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "A    6\n",
+       "B    5\n",
+       "C    4\n",
+       "Name: 0, dtype: int64"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pd.DataFrame(y_pred)[0].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[5, 1, 0],\n",
+       "       [0, 4, 0],\n",
+       "       [1, 0, 4]])"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import confusion_matrix\n",
+    "confusion_matrix(\n",
+    "    y,\n",
+    "    y_pred\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "   y_pred\n",
+      "y   A B C\n",
+      "  A 5 1 0\n",
+      "  B 0 4 0\n",
+      "  C 1 0 4\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R -i y -i y_pred\n",
+    "##\n",
+    "## Se calcula la matriz de confusión.\n",
+    "## La tabla indica la cantidad de ejemplos\n",
+    "## clasificados para cada caso. Por ejemplo,\n",
+    "## 5 casos fueron pronosticados como A, y \n",
+    "## efectivamente erán A; 1 caso era A y fue\n",
+    "## pronosticado como B y así sucesivamente.\n",
+    "##\n",
+    "table(y, y_pred)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Cómputo en R"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      " [1] A A A A A B B B B B A C C C C\n",
+      "Levels: A B C\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R -i X -i y\n",
+    "library(class)\n",
+    "\n",
+    "y_pred <- knn(train = X,   # conjunto de entrenamiento\n",
+    "              test = X,\n",
+    "              cl = y,      # clases \n",
+    "              k = 3)       # número de vecinos\n",
+    "\n",
+    "y_pred"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Métricas de distancia."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Existen distintas métricas para computar la distancia entre puntos. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Euclidiana.** \n",
+    "\n",
+    "$$ \\text{dist}(x_i, x_j) =\\left\\{ \\sum_k (x_{ik} - x_{jk})^2 \\right\\}^\\frac{1}{2}$$\n",
+    "\n",
+    "**Manhattan.**\n",
+    "\n",
+    "$$ \\text{dist}(x_i, x_j) = \\sum_k \\left|x_{ik} - x_{jk}\\right| $$\n",
+    "\n",
+    "\n",
+    "**Chebychev**.\n",
+    "\n",
+    "$$ \\text{dist}(x_i, x_j) = \\max_k \\left|x_{ik} - x_{jk}\\right| $$\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Escalamiento y transformación de variables"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Al igual que otros algoritmos basados en métricas de distancia, el algoritmo kNN se ve afectado por la escala de las variables. Por ello, se debe realizar la transformación de las variables antes de dicho algoritmo."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Normalización max-min.** \n",
+    "\n",
+    "$$x_* = \\frac{x-\\min(x)}{\\max(x) - \\min(x)}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Estandarización z-score.**\n",
+    "\n",
+    "$$z_* = \\frac{x-\\mu_x}{\\sigma_x}$$\n",
+    "\n",
+    "* $\\mu_x$ es la media de $x$.\n",
+    "* $\\sigma_x$ es la desviación estándar de $x$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Variables nominales.** Una variable nominal con categorías $C_1$, $C_2$, ..., $C_n$ se codifica con $n-1$ niveles, $L_i$, $i=1,...,n-1$:\n",
+    "\n",
+    "$$ L_i =\n",
+    "   \\begin{cases}\n",
+    "      1, & \\text{if $x \\in C_i$.} \\\\\n",
+    "      0, &\\text{En caso contrario.}\n",
+    "   \\end{cases}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Si las categorías de una variable $x$ están ordenadas, entonces dicha variable se recodifica como:\n",
+    "\n",
+    "$$ L_i =\n",
+    "   \\begin{cases}\n",
+    "      i, & \\text{if $x \\in C_i$.} \\\\\n",
+    "      0, &\\text{En caso contrario.}\n",
+    "   \\end{cases}\n",
+    "$$\n",
+    "\n",
+    "y luego es realiza la normalización."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Evaluación del modelo"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para evaluar el desempeño en problemas de clasificación dicotómicos (dos clases mutuamente excluyentes) se usa la siguiente tabla:\n",
+    "\n",
+    "\n",
+    "             | Pronostico\n",
+    "             |  P     N\n",
+    "    ---------|------------  \n",
+    "          P  |  TP    FN          \n",
+    "    Real     |\n",
+    "          N  |  FP    TN\n",
+    "    \n",
+    "    TP - Verdadero positivo (correcto)\n",
+    "    TN - Verdadero negativo (correcto)\n",
+    "    FN - Falso negativo (mal clasificado)\n",
+    "    FP - Falso positivo (mal clasificado)\n",
+    "    \n",
+    "La medición de la precisión del modelo permite estimar el desempeño del modelo ante nuevos datos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** Si de la tabla inicial, se separan los dos primeros puntos de cada clase como conjunto de prueba, compute la matriz de confusión para dichos elementos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A partir de la matriz de confusión es posible calcular diferentes métricas de error."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Tasa de éxito (porcentaje de patrones clasificados correctamente):\n",
+    "\n",
+    "\n",
+    "$$\\text{success rate} = \\frac{\\text{TP} + \\text{TN}}{\\text{TP} + \\text{TN} + \\text{FP} + \\text{FN}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Tasa de error (porcentaje total de patrones clasificados incorrectamente):\n",
+    "\n",
+    "$$\\text{error rate} = \\frac{\\text{FP} + \\text{FN}}{\\text{TP} + \\text{TN} + \\text{FP} + \\text{FN}} = 1 - \\text{accuracy}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Predominio: número total de casos positivos pronósticados respecto al número total de casos.\n",
+    "\n",
+    "\n",
+    "$$\\text{prevalence} = \\frac{\\text{TP} + \\text{FN}}{\\text{TP} + \\text{TN} + \\text{FP} + \\text{FN}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Las siguientes dos métricas representan un balance entre lo conservador y agresivo de un clasificador. Es decir, se podría desear que se clasifique correctamente todas las masas mamarias benignas, pero esto implica que también se clasificarán como benignas masas cancerosas. De forma inversa, se puede desear que se clasifiquen correctamente todas las masas cancerosas, pero esto a su vez implica que algunas masas benignas se clasifiquen como cancerosas. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Sensibilidad, tasa verdadera positiva, recall, sensibilidad: mide la proporción de ejemplos positivos que fueron correctamente clasificados.\n",
+    "\n",
+    "\n",
+    "$$\\text{sensitibity} = \\frac{\\text{TP}}{\\text{TP}  + \\text{FN}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Especifidad o tasa verdadera negativa: mide la proporción de ejemplos negativos correctamente clasificados.\n",
+    "\n",
+    "\n",
+    "$$\\text{specifity} = \\frac{\\text{TN}}{\\text{TN}  + \\text{FP}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Precisión o valor predictivo positivo: Proporción de casos positivos que fueron verdaderamente positivos.\n",
+    "\n",
+    "\n",
+    "$$\\text{precision} = \\frac{\\text{TP}}{\\text{TP}  + \\text{FP}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Valor predictivo negativo: Proporción de casos negativos que fueron verdaderamente negativos.\n",
+    "\n",
+    "\n",
+    "$$\\text{negative predictive value} = \\frac{\\text{TN}}{\\text{TN}  + \\text{FN}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* La medida F permite comparar varios modelos entre si, combinando la precisión y el recall en una sola medida.\n",
+    "\n",
+    "\n",
+    "$$\\text{F-measure} = \\frac{2 * \\text{TP}}{2 * \\text{TP} + \\text{FP} + \\text{FN}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** Compute las primeras cuatro métricas de precisión."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Estadístico Kappa.** Se usa para conjuntos de datos que tienen un fuerte desbalance entre los ejemplos de cada clase; en este caso, se obtiene una alta precisión del clasificador pronosticando siempre que un nueva patrón pertenece a la clase más frecuente. Esta métrica considera la proporción entre los ejemplos de cada clase."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Este estadístico se define como:\n",
+    "\n",
+    "$$\\kappa = \\frac{\\text{Pr}(a) - \\text{Pr}(e)}{1-\\text{Pr}(e)}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Donde $\\text{Pr}(a)$ es la tasa de éxito:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "$$\\text{Pr}(a)= \\frac{\\text{TP} + \\text{TN}}{\\text{TP} + \\text{TN} + \\text{FP} + \\text{FN}}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Y $\\text{Pr}(e)$ representa el valor esperado del éxito; es decir, la probabilidad de que se pronostique que un elemento pertenece a una clase, cuando el realmente pertenece."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "$$\\text{Pr}(e)= \\frac{(\\text{TP} + \\text{FN})\n",
+    "                      (\\text{TP} + \\text{FP}) + \n",
+    "                      (\\text{FP} + \\text{TN})\n",
+    "                      (\\text{FN} + \\text{TN}) }{\\text{TP} + \\text{TN} + \\text{FP} + \\text{FN}}$$"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "ir"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  },
+  "nteract": {
+   "version": "0.8.3"
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

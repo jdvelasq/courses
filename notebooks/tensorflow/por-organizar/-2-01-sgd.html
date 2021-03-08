@@ -1,0 +1,1253 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="es" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="es" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Implementación del SGD en TensorFlow &mdash; documentación de --- Cursos --- - </title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script type="text/javascript" src="../../../_static/translations.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Índice" href="../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> --- Cursos ---
+          
+
+          
+          </a>
+
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Configuración</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../setup.html">Instalación de Vagrant y Docker</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Cursos</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../analitica-de-grandes-datos/index.html">Analítica de grandes datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analitica-financiera/index.html">Analítica Financiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../analitica-predictiva/index.html">Analítica Predictiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../ciencia-de-los-datos/index.html">Ciencia de los Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../fundamentos-de-analitica/index.html">Fundamentos de Analítica</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../productos-de-datos/index.html">Productos de Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/index.html">Redes Neuronales Artificiales</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">--- Cursos ---</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content style-external-links">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Implementación del SGD en TensorFlow</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../../_sources/notebooks/tensorflow/por-organizar/-2-01-sgd.ipynb.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container,
+div.nbinput.container div.prompt,
+div.nbinput.container div.input_area,
+div.nbinput.container div[class*=highlight],
+div.nbinput.container div[class*=highlight] pre,
+div.nboutput.container,
+div.nboutput.container div.prompt,
+div.nboutput.container div.output_area,
+div.nboutput.container div[class*=highlight],
+div.nboutput.container div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    min-width: 5ex;
+    padding-top: 0.3rem;
+    padding-right: 0.3rem;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    background: #f5f5f5;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 0.3rem;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Implementación-del-SGD-en-TensorFlow">
+<h1>Implementación del SGD en TensorFlow<a class="headerlink" href="#Implementación-del-SGD-en-TensorFlow" title="Enlazar permanentemente con este título">¶</a></h1>
+<ul class="simple">
+<li><p><em>30 min</em> | Ultima modificación: Junio 22, 2019</p></li>
+</ul>
+<div class="section" id="Función-objetivo">
+<h2>Función objetivo<a class="headerlink" href="#Función-objetivo" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Función de Rosenbrock:</p>
+<div class="math notranslate nohighlight">
+\[f(x, y) = 100(x^2 - y)^2 + (1 - x)^2\]</div>
+<p>con <span class="math notranslate nohighlight">\(x \in [-2.048, 2.048]\)</span> y <span class="math notranslate nohighlight">\(y \in [-1.000, 4.000\)</span>] y punto de mínima <span class="math notranslate nohighlight">\(f(1.0, 1.0) = 0.0\)</span>.</p>
+</div>
+<div class="section" id="Método-del-gradiente-descendente">
+<h2>Método del gradiente descendente<a class="headerlink" href="#Método-del-gradiente-descendente" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_k = \mathbf{x}_{k-1} - \mu * \frac{\partial}{\partial \mathbf{x}} f(\mathbf{x}_{k-1})\]</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">improve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+    <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">gx</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">gy</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Implementación-usando-TensorFlow">
+<h2>Implementación usando TensorFlow<a class="headerlink" href="#Implementación-usando-TensorFlow" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">##  Preparación</span>
+<span class="c1">##</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">+</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
+<span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">**</span> <span class="mi">2</span>
+
+
+<span class="c1">## Inicializa el optimizador</span>
+<span class="c1">## Crea un objeto gradiente descendente.</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="n">f</span><span class="p">,</span> <span class="n">var_list</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="n">grad_loss</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+    <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_f</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+
+<span class="n">plot_contour</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
+<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
+<span class="ansi-green-fg">&lt;ipython-input-5-56b89a389a35&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
+<span class="ansi-green-intense-fg ansi-bold">     21</span>
+<span class="ansi-green-intense-fg ansi-bold">     22</span> <span class="ansi-red-fg">## Minimiza la función de error</span>
+<span class="ansi-green-fg">---&gt; 23</span><span class="ansi-red-fg"> </span>opt <span class="ansi-blue-fg">=</span> optimizer<span class="ansi-blue-fg">.</span>minimize<span class="ansi-blue-fg">(</span>loss<span class="ansi-blue-fg">=</span>f<span class="ansi-blue-fg">,</span> var_list<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">[</span>x<span class="ansi-blue-fg">,</span> y<span class="ansi-blue-fg">]</span><span class="ansi-blue-fg">,</span> grad_loss<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">None</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">     24</span>
+<span class="ansi-green-intense-fg ansi-bold">     25</span> <span class="ansi-red-fg">## estima el modelo</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/keras/optimizer_v2/optimizer_v2.py</span> in <span class="ansi-cyan-fg">minimize</span><span class="ansi-blue-fg">(self, loss, var_list, grad_loss, name)</span>
+<span class="ansi-green-intense-fg ansi-bold">    314</span>     &#34;&#34;&#34;
+<span class="ansi-green-intense-fg ansi-bold">    315</span>     grads_and_vars = self._compute_gradients(
+<span class="ansi-green-fg">--&gt; 316</span><span class="ansi-red-fg">         loss, var_list=var_list, grad_loss=grad_loss)
+</span><span class="ansi-green-intense-fg ansi-bold">    317</span>
+<span class="ansi-green-intense-fg ansi-bold">    318</span>     <span class="ansi-green-fg">return</span> self<span class="ansi-blue-fg">.</span>apply_gradients<span class="ansi-blue-fg">(</span>grads_and_vars<span class="ansi-blue-fg">,</span> name<span class="ansi-blue-fg">=</span>name<span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/keras/optimizer_v2/optimizer_v2.py</span> in <span class="ansi-cyan-fg">_compute_gradients</span><span class="ansi-blue-fg">(self, loss, var_list, grad_loss)</span>
+<span class="ansi-green-intense-fg ansi-bold">    348</span>       <span class="ansi-green-fg">if</span> <span class="ansi-green-fg">not</span> callable<span class="ansi-blue-fg">(</span>var_list<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    349</span>         tape<span class="ansi-blue-fg">.</span>watch<span class="ansi-blue-fg">(</span>var_list<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">--&gt; 350</span><span class="ansi-red-fg">       </span>loss_value <span class="ansi-blue-fg">=</span> loss<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    351</span>     <span class="ansi-green-fg">if</span> callable<span class="ansi-blue-fg">(</span>var_list<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    352</span>       var_list <span class="ansi-blue-fg">=</span> var_list<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/eager/def_function.py</span> in <span class="ansi-cyan-fg">__call__</span><span class="ansi-blue-fg">(self, *args, **kwds)</span>
+<span class="ansi-green-intense-fg ansi-bold">    566</span>         xla_context<span class="ansi-blue-fg">.</span>Exit<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    567</span>     <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 568</span><span class="ansi-red-fg">       </span>result <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_call<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>args<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwds<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    569</span>
+<span class="ansi-green-intense-fg ansi-bold">    570</span>     <span class="ansi-green-fg">if</span> tracing_count <span class="ansi-blue-fg">==</span> self<span class="ansi-blue-fg">.</span>_get_tracing_count<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/eager/def_function.py</span> in <span class="ansi-cyan-fg">_call</span><span class="ansi-blue-fg">(self, *args, **kwds)</span>
+<span class="ansi-green-intense-fg ansi-bold">    613</span>       <span class="ansi-red-fg"># This is the first call of __call__, so we have to initialize.</span>
+<span class="ansi-green-intense-fg ansi-bold">    614</span>       initializers <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">]</span>
+<span class="ansi-green-fg">--&gt; 615</span><span class="ansi-red-fg">       </span>self<span class="ansi-blue-fg">.</span>_initialize<span class="ansi-blue-fg">(</span>args<span class="ansi-blue-fg">,</span> kwds<span class="ansi-blue-fg">,</span> add_initializers_to<span class="ansi-blue-fg">=</span>initializers<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    616</span>     <span class="ansi-green-fg">finally</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    617</span>       <span class="ansi-red-fg"># At this point we know that the initialization is complete (or less</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/eager/def_function.py</span> in <span class="ansi-cyan-fg">_initialize</span><span class="ansi-blue-fg">(self, args, kwds, add_initializers_to)</span>
+<span class="ansi-green-intense-fg ansi-bold">    495</span>     self._concrete_stateful_fn = (
+<span class="ansi-green-intense-fg ansi-bold">    496</span>         self._stateful_fn._get_concrete_function_internal_garbage_collected(  # pylint: disable=protected-access
+<span class="ansi-green-fg">--&gt; 497</span><span class="ansi-red-fg">             *args, **kwds))
+</span><span class="ansi-green-intense-fg ansi-bold">    498</span>
+<span class="ansi-green-intense-fg ansi-bold">    499</span>     <span class="ansi-green-fg">def</span> invalid_creator_scope<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>unused_args<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>unused_kwds<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/eager/function.py</span> in <span class="ansi-cyan-fg">_get_concrete_function_internal_garbage_collected</span><span class="ansi-blue-fg">(self, *args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2387</span>       args<span class="ansi-blue-fg">,</span> kwargs <span class="ansi-blue-fg">=</span> <span class="ansi-green-fg">None</span><span class="ansi-blue-fg">,</span> <span class="ansi-green-fg">None</span>
+<span class="ansi-green-intense-fg ansi-bold">   2388</span>     <span class="ansi-green-fg">with</span> self<span class="ansi-blue-fg">.</span>_lock<span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">-&gt; 2389</span><span class="ansi-red-fg">       </span>graph_function<span class="ansi-blue-fg">,</span> _<span class="ansi-blue-fg">,</span> _ <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_maybe_define_function<span class="ansi-blue-fg">(</span>args<span class="ansi-blue-fg">,</span> kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2390</span>     <span class="ansi-green-fg">return</span> graph_function
+<span class="ansi-green-intense-fg ansi-bold">   2391</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/eager/function.py</span> in <span class="ansi-cyan-fg">_maybe_define_function</span><span class="ansi-blue-fg">(self, args, kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2701</span>
+<span class="ansi-green-intense-fg ansi-bold">   2702</span>       self<span class="ansi-blue-fg">.</span>_function_cache<span class="ansi-blue-fg">.</span>missed<span class="ansi-blue-fg">.</span>add<span class="ansi-blue-fg">(</span>call_context_key<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-fg">-&gt; 2703</span><span class="ansi-red-fg">       </span>graph_function <span class="ansi-blue-fg">=</span> self<span class="ansi-blue-fg">.</span>_create_graph_function<span class="ansi-blue-fg">(</span>args<span class="ansi-blue-fg">,</span> kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2704</span>       self<span class="ansi-blue-fg">.</span>_function_cache<span class="ansi-blue-fg">.</span>primary<span class="ansi-blue-fg">[</span>cache_key<span class="ansi-blue-fg">]</span> <span class="ansi-blue-fg">=</span> graph_function
+<span class="ansi-green-intense-fg ansi-bold">   2705</span>       <span class="ansi-green-fg">return</span> graph_function<span class="ansi-blue-fg">,</span> args<span class="ansi-blue-fg">,</span> kwargs
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/eager/function.py</span> in <span class="ansi-cyan-fg">_create_graph_function</span><span class="ansi-blue-fg">(self, args, kwargs, override_flat_arg_shapes)</span>
+<span class="ansi-green-intense-fg ansi-bold">   2591</span>             arg_names<span class="ansi-blue-fg">=</span>arg_names<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   2592</span>             override_flat_arg_shapes<span class="ansi-blue-fg">=</span>override_flat_arg_shapes<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-fg">-&gt; 2593</span><span class="ansi-red-fg">             capture_by_value=self._capture_by_value),
+</span><span class="ansi-green-intense-fg ansi-bold">   2594</span>         self<span class="ansi-blue-fg">.</span>_function_attributes<span class="ansi-blue-fg">,</span>
+<span class="ansi-green-intense-fg ansi-bold">   2595</span>         <span class="ansi-red-fg"># Tell the ConcreteFunction to clean up its graph once it goes out of</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/framework/func_graph.py</span> in <span class="ansi-cyan-fg">func_graph_from_py_func</span><span class="ansi-blue-fg">(name, python_func, args, kwargs, signature, func_graph, autograph, autograph_options, add_control_dependencies, arg_names, op_return_value, collections, capture_by_value, override_flat_arg_shapes)</span>
+<span class="ansi-green-intense-fg ansi-bold">    976</span>                                           converted_func)
+<span class="ansi-green-intense-fg ansi-bold">    977</span>
+<span class="ansi-green-fg">--&gt; 978</span><span class="ansi-red-fg">       </span>func_outputs <span class="ansi-blue-fg">=</span> python_func<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>func_args<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>func_kwargs<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    979</span>
+<span class="ansi-green-intense-fg ansi-bold">    980</span>       <span class="ansi-red-fg"># invariant: `func_outputs` contains only Tensors, CompositeTensors,</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/eager/def_function.py</span> in <span class="ansi-cyan-fg">wrapped_fn</span><span class="ansi-blue-fg">(*args, **kwds)</span>
+<span class="ansi-green-intense-fg ansi-bold">    437</span>         <span class="ansi-red-fg"># __wrapped__ allows AutoGraph to swap in a converted function. We give</span>
+<span class="ansi-green-intense-fg ansi-bold">    438</span>         <span class="ansi-red-fg"># the function a weak reference to itself to avoid a reference cycle.</span>
+<span class="ansi-green-fg">--&gt; 439</span><span class="ansi-red-fg">         </span><span class="ansi-green-fg">return</span> weak_wrapped_fn<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">.</span>__wrapped__<span class="ansi-blue-fg">(</span><span class="ansi-blue-fg">*</span>args<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>kwds<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    440</span>     weak_wrapped_fn <span class="ansi-blue-fg">=</span> weakref<span class="ansi-blue-fg">.</span>ref<span class="ansi-blue-fg">(</span>wrapped_fn<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    441</span>
+
+<span class="ansi-green-fg">/usr/local/lib/python3.6/dist-packages/tensorflow_core/python/framework/func_graph.py</span> in <span class="ansi-cyan-fg">wrapper</span><span class="ansi-blue-fg">(*args, **kwargs)</span>
+<span class="ansi-green-intense-fg ansi-bold">    966</span>           <span class="ansi-green-fg">except</span> Exception <span class="ansi-green-fg">as</span> e<span class="ansi-blue-fg">:</span>  <span class="ansi-red-fg"># pylint:disable=broad-except</span>
+<span class="ansi-green-intense-fg ansi-bold">    967</span>             <span class="ansi-green-fg">if</span> hasattr<span class="ansi-blue-fg">(</span>e<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#34;ag_error_metadata&#34;</span><span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-fg">--&gt; 968</span><span class="ansi-red-fg">               </span><span class="ansi-green-fg">raise</span> e<span class="ansi-blue-fg">.</span>ag_error_metadata<span class="ansi-blue-fg">.</span>to_exception<span class="ansi-blue-fg">(</span>e<span class="ansi-blue-fg">)</span>
+<span class="ansi-green-intense-fg ansi-bold">    969</span>             <span class="ansi-green-fg">else</span><span class="ansi-blue-fg">:</span>
+<span class="ansi-green-intense-fg ansi-bold">    970</span>               <span class="ansi-green-fg">raise</span>
+
+<span class="ansi-red-fg">TypeError</span>: in converted code:
+
+
+    TypeError: tf__f() missing 1 required positional argument: &#39;x&#39;
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Variaciones-del-método-del-gradiente">
+<h2>Variaciones del método del gradiente<a class="headerlink" href="#Variaciones-del-método-del-gradiente" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="section" id="Regla-Delta-Generalizada">
+<h3>Regla Delta Generalizada<a class="headerlink" href="#Regla-Delta-Generalizada" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Existen distintas mejoras que han sido propuestas al método básico del gradiente descendente; muchas de ellas se encuentran implementadas en diferentes herramientas y librerías. A continuación se describe la variación conocida como Regla Delta Generalizada, la cual es implementada en la función <code class="docutils literal notranslate"><span class="pre">MomentumOptimizer</span></code> en TensorFlow.</p>
+<p><strong>MomentumOptimizer</strong>. Esta variación es conocida comunmente como Regla Delta Generalizada en la literatura de redes neuronales artificiales y como gradiente con memoria en la literatura sobre optimización numérica. La dirección actual de descenso es la suma ponderada entre la dirección dada por el gradiente en el punto actual y la correción en la iteración anterior.</p>
+<p>La ecuación del método del gradiente descendente</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_k = \mathbf{x}_{k-1} - \mu \frac{\partial}{\partial \mathbf{x}} f(\mathbf{x}_{k-1})\]</div>
+<p>puede escribirse como:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_k = \mathbf{x}_{k-1} + \mu \Delta \mathbf{x}_{k-1}\]</div>
+<p>donde</p>
+<div class="math notranslate nohighlight">
+\[\Delta \mathbf{x}_{k-1} = - \frac{\partial}{\partial \mathbf{x}} f(\mathbf{x}_{k-1})\]</div>
+<p>Si se tiene en cuenta que en el caso numérico analizado el gradiente oscila en direcciones contrarias, una mejor decisión sería tomar un promedio de las direcciones anteriores con el fin de avanzar con más facilidad hacia el punto de óptima. En este caso, en la Regla Delta se propone</p>
+<div class="math notranslate nohighlight">
+\[\Delta \mathbf{x}_{k-1} = - \frac{\partial}{\partial \mathbf{x}} f(\mathbf{x}_{k-1}) + \beta \Delta \mathbf{x}_{k-2}\]</div>
+<p>El parámetro <span class="math notranslate nohighlight">\(\beta\)</span> es llamado <code class="docutils literal notranslate"><span class="pre">momentum</span></code> en TensorFlow. A continuación se ejemplifica su uso.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">+</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Función de Rosenbrock</span>
+<span class="c1">##</span>
+<span class="c1">##   f(x, y) = 100(x^2 - y)^2 + (1 - x)^2</span>
+<span class="c1">##</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">100.</span><span class="p">),</span>
+                       <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="mi">2</span><span class="p">)),</span>
+           <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Inicializa el optimizador con momentum</span>
+<span class="c1">##</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">MomentumOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+    <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_f</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+
+<span class="n">plot_contour</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.31488508 0.09604079
+0.4703508
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_15_1.png" src="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_15_1.png" />
+</div>
+</div>
+<p>Note que ya no se producen las oscilaciones que aparecian en el método del gradiente descendente.</p>
+<p>En la literatura de optimización, el método es generalizado como gradiente con supermemoria:</p>
+<div class="math notranslate nohighlight">
+\[\Delta \mathbf{x}_{k-1} = - \frac{\partial}{\partial \mathbf{x}} f(\mathbf{x}_{k-1}) + \sum_{n=0}^N \beta_n \Delta \mathbf{x}_{k-n-2}\]</div>
+</div>
+<div class="section" id="ADAGRAD">
+<h3>ADAGRAD<a class="headerlink" href="#ADAGRAD" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Esta es una variación basada en la observación de que la corrección de los parámetros <span class="math notranslate nohighlight">\(\Delta \mathbf{x}_{k-1}\)</span> puede ser muy grande en la cercanía del punto de óptima haciendo que el algoritmo oscile en las inmediaciones del punto de mínima. Recapitulando que</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_k = \mathbf{x}_{k-1} - \mu \frac{\partial}{\partial \mathbf{x}} f(\mathbf{x}_{k-1})\]</div>
+<p>y que el gradiente es:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{g}_{k-1}(\mathbf{x}_{k-1}) = \frac{\partial}{\partial \mathbf{x}} f(\mathbf{x}_{k-1})\]</div>
+<p>puede escribirse como:</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_k = \mathbf{x}_{k-1} - \mu \mathbf{g}( \mathbf{x}_{k-1})\]</div>
+<p>Si</p>
+<div class="math notranslate nohighlight">
+\[\Delta \mathbf{x}_{k-1} = - \mu \mathbf{g}( \mathbf{x}_{k-1})\]</div>
+<p>entonces</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{x}_k = \mathbf{x}_{k-1} + \Delta \mathbf{x}_{k-1}\]</div>
+<p>En ADAGRAD, la actulización se realiza individualmente para cada una de las componentes del vector <span class="math notranslate nohighlight">\(\mathbf{x}\)</span> como:</p>
+<div class="math notranslate nohighlight">
+\[\Delta x_{i,k-1} = - \frac{\mu}{\sqrt{\sum_{\tau = 1}^{k-1} g_{i,\tau}^2 }} g_{i,k-1}\]</div>
+<p>Para la función de Rosenbrock, esto seria:</p>
+<div class="math notranslate nohighlight">
+\[g_{x,t} = \frac{d}{dx}f(x_t,y_t) = 400 x (x_t^2-y_t) - 2(1 - x_t)\]</div>
+<div class="math notranslate nohighlight">
+\[g_{y,t} = \frac{d}{dy}f(x_t,y_t) = -200(x_t^2 - y_t)\]</div>
+<p>El término <span class="math notranslate nohighlight">\(\sum_{\tau = 1}^{k-1} g_{x,\tau}^2\)</span> en el denominador es la suma del gradiente de <span class="math notranslate nohighlight">\(x\)</span> (al cuadrado) calculado sobre todas las iteraciones del algoritmo. Esto causa que la tasa efectiva de aprendizaje vaya disminuyendo con las iteraciones del algoritmo. El método presenta dos problemas: 1) que la tasa de aprendizaje decae con las iteraciones; y 2) que el parámetro <span class="math notranslate nohighlight">\(\mu\)</span> debe ser fijado manualmente (de forma externa al algoritmo).</p>
+<p>El método se encuentra implementado en la función <strong>AdagradOptimizer</strong> de TensorFlow.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">+</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Función de Rosenbrock</span>
+<span class="c1">##</span>
+<span class="c1">##   f(x, y) = 100(x^2 - y)^2 + (1 - x)^2</span>
+<span class="c1">##</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">100.</span><span class="p">),</span>
+                       <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="mi">2</span><span class="p">)),</span>
+           <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Inicializa el optimizador</span>
+<span class="c1">##</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdagradOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">1.00</span><span class="p">,</span>
+                                      <span class="n">initial_accumulator_value</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+    <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_f</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+
+<span class="n">plot_contour</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-0.68165344 0.47107196
+2.8320808
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_23_1.png" src="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_23_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="ADADELTA">
+<h3>ADADELTA<a class="headerlink" href="#ADADELTA" title="Enlazar permanentemente con este título">¶</a></h3>
+<p>Esta es una mejora sobre el método anterior. Se parte del cómputo del promedio del gradiente para cada componente como:</p>
+<div class="math notranslate nohighlight">
+\[E[g_i^2]_k = \rho E[g_i^2]_{k-1} + (1 - \rho) g_{i,k}^2\]</div>
+<p>el cual equivale a un promedio ponderado entre el gradiente actual y los valores previos del gradiente. El método ADADELTA se basa en corregir los pesos con la raíz cuadrada de la cantidad anterior:</p>
+<div class="math notranslate nohighlight">
+\[\text{RMS} [g_i]_k = \sqrt{E[g_i^2]_k + \epsilon}\]</div>
+<p>donde <span class="math notranslate nohighlight">\(\epsilon\)</span> es una constante. La corrección inicial propuesta por el método es:</p>
+<div class="math notranslate nohighlight">
+\[\Delta x_{i,k-1} = - \frac{\mu}{\text{RMS} [g_i]_{k-1}} g_{i,k-1}\]</div>
+<p>Para eliminar la necesidad de fijar un valor de <span class="math notranslate nohighlight">\(\mu\)</span>, el método propone cambiar la ecuación anterior por:</p>
+<div class="math notranslate nohighlight">
+\[\Delta x_{i,k-1} = - \frac{\text{RMS} [\Delta x_i]_{k-1}}
+                            {\text{RMS} [g_i]_{k-1}} g_{i,k-1}\]</div>
+<p>El método se encuentra implementado en la clase <strong>AdadeltaOptimizer</strong>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="o">+</span><span class="mf">3.5</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Función de Rosenbrock</span>
+<span class="c1">##</span>
+<span class="c1">##   f(x, y) = 100(x^2 - y)^2 + (1 - x)^2</span>
+<span class="c1">##</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">100.</span><span class="p">),</span>
+                       <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="mi">2</span><span class="p">)),</span>
+           <span class="n">tf</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Inicializa el optimizador</span>
+<span class="c1">##</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdadeltaOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">1.00</span><span class="p">,</span>
+                                       <span class="n">rho</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
+                                       <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">sess</span><span class="p">:</span>
+    <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="n">history_f</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+        <span class="n">history_f</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">eval</span><span class="p">())</span>
+
+
+<span class="n">plot_contour</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="s1">&#39;.-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0.43580675 0.2554228
+0.74727726
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_28_1.png" src="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_28_1.png" />
+</div>
+</div>
+<p><strong>Otros métodos</strong>. Otras metodologías implementadas incluyen <code class="docutils literal notranslate"><span class="pre">AdamOptimizer</span></code> y <code class="docutils literal notranslate"><span class="pre">RMSPropOptimizer</span></code>.</p>
+</div>
+</div>
+<div class="section" id="Opcional-----Implementación-usando-TensorFlow-for-R">
+<h2>Opcional — Implementación usando TensorFlow-for-R<a class="headerlink" href="#Opcional-----Implementación-usando-TensorFlow-for-R" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="n">R</span>
+<span class="c1">##</span>
+<span class="c1">## Se importa la librería</span>
+<span class="c1">##</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">tensorflow</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="n">R</span>
+<span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">-0.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">+3.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Función de Rosenbrock</span>
+<span class="c1">##</span>
+<span class="c1">##   f(x, y) = 100(x^2 - y)^2 + (1 - x)^2</span>
+<span class="c1">##</span>
+
+<span class="c1">##</span>
+<span class="c1">##    f(x, y) = +</span>
+<span class="c1">##              +---- *</span>
+<span class="c1">##              |     +---- 100</span>
+<span class="c1">##              |     +---- pow</span>
+<span class="c1">##              |            +---- -</span>
+<span class="c1">##              |            |     +---- pow</span>
+<span class="c1">##              |            |     |      +---- x</span>
+<span class="c1">##              |            |     |      +---- 2</span>
+<span class="c1">##              |            |     |</span>
+<span class="c1">##              |            |     +---- y</span>
+<span class="c1">##              |            |</span>
+<span class="c1">##              |            +---- 2</span>
+<span class="c1">##              |</span>
+<span class="c1">##              +---- pow</span>
+<span class="c1">##                     +---- -</span>
+<span class="c1">##                     |     +---- 1</span>
+<span class="c1">##                     |     +---- x</span>
+<span class="c1">##                     |</span>
+<span class="c1">##                     +---- 2</span>
+<span class="c1">##</span>
+<span class="n">r</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">add</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">multiply</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">100</span><span class="n">.)</span><span class="p">,</span>
+                        <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="m">2</span><span class="p">)),</span>
+            <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">1.0</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="m">2</span><span class="p">))</span>
+
+<span class="c1">## Inicializa el optimizador</span>
+<span class="c1">## Crea un objeto gradiente descendente.</span>
+<span class="n">optimizer</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="n">train</span><span class="o">$</span><span class="nf">GradientDescentOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="m">0.001</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">$</span><span class="nf">minimize</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="nf">with</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">Session</span><span class="p">()</span> <span class="o">%as%</span> <span class="n">sess</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_r</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="m">100</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_y</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_y</span><span class="p">,</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_f</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_r</span><span class="p">,</span> <span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="p">}</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+<span class="p">})</span>
+
+<span class="nf">f.2D</span><span class="p">()</span>
+<span class="nf">lines</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">pch</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1] -1.4
+[1] 5.941726
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_32_1.png" src="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_32_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="n">R</span>
+<span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">-0.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">+3.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Función de Rosenbrock</span>
+<span class="c1">##</span>
+<span class="c1">##   f(x, y) = 100(x^2 - y)^2 + (1 - x)^2</span>
+<span class="c1">##</span>
+
+<span class="c1">##</span>
+<span class="c1">##    f(x, y) = +</span>
+<span class="c1">##              +---- *</span>
+<span class="c1">##              |     +---- 100</span>
+<span class="c1">##              |     +---- pow</span>
+<span class="c1">##              |            +---- -</span>
+<span class="c1">##              |            |     +---- pow</span>
+<span class="c1">##              |            |     |      +---- x</span>
+<span class="c1">##              |            |     |      +---- 2</span>
+<span class="c1">##              |            |     |</span>
+<span class="c1">##              |            |     +---- y</span>
+<span class="c1">##              |            |</span>
+<span class="c1">##              |            +---- 2</span>
+<span class="c1">##              |</span>
+<span class="c1">##              +---- pow</span>
+<span class="c1">##                     +---- -</span>
+<span class="c1">##                     |     +---- 1</span>
+<span class="c1">##                     |     +---- x</span>
+<span class="c1">##                     |</span>
+<span class="c1">##                     +---- 2</span>
+<span class="c1">##</span>
+<span class="n">r</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">add</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">multiply</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">100</span><span class="n">.)</span><span class="p">,</span>
+                        <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="m">2</span><span class="p">)),</span>
+            <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">1.0</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="m">2</span><span class="p">))</span>
+
+<span class="c1">## Inicializa el optimizador</span>
+<span class="c1">## Crea un objeto gradiente descendente.</span>
+<span class="n">optimizer</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="n">train</span><span class="o">$</span><span class="nf">MomentumOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="m">0.001</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="m">0.5</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">$</span><span class="nf">minimize</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="nf">with</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">Session</span><span class="p">()</span> <span class="o">%as%</span> <span class="n">sess</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_r</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="m">100</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_y</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_y</span><span class="p">,</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_f</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_r</span><span class="p">,</span> <span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="p">}</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+<span class="p">})</span>
+
+<span class="nf">f.2D</span><span class="p">()</span>
+<span class="nf">lines</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">pch</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1] 0
+[1] 0.4703508
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_34_1.png" src="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_34_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="n">R</span>
+<span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">-0.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">+3.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Función de Rosenbrock</span>
+<span class="c1">##</span>
+<span class="c1">##   f(x, y) = 100(x^2 - y)^2 + (1 - x)^2</span>
+<span class="c1">##</span>
+
+<span class="c1">##</span>
+<span class="c1">##    f(x, y) = +</span>
+<span class="c1">##              +---- *</span>
+<span class="c1">##              |     +---- 100</span>
+<span class="c1">##              |     +---- pow</span>
+<span class="c1">##              |            +---- -</span>
+<span class="c1">##              |            |     +---- pow</span>
+<span class="c1">##              |            |     |      +---- x</span>
+<span class="c1">##              |            |     |      +---- 2</span>
+<span class="c1">##              |            |     |</span>
+<span class="c1">##              |            |     +---- y</span>
+<span class="c1">##              |            |</span>
+<span class="c1">##              |            +---- 2</span>
+<span class="c1">##              |</span>
+<span class="c1">##              +---- pow</span>
+<span class="c1">##                     +---- -</span>
+<span class="c1">##                     |     +---- 1</span>
+<span class="c1">##                     |     +---- x</span>
+<span class="c1">##                     |</span>
+<span class="c1">##                     +---- 2</span>
+<span class="c1">##</span>
+<span class="n">r</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">add</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">multiply</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">100</span><span class="n">.)</span><span class="p">,</span>
+                        <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="m">2</span><span class="p">)),</span>
+            <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">1.0</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="m">2</span><span class="p">))</span>
+
+<span class="c1">## Inicializa el optimizador</span>
+<span class="c1">## Crea un objeto gradiente.</span>
+<span class="n">optimizer</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="n">train</span><span class="o">$</span><span class="nf">AdagradOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="m">1.00</span><span class="p">,</span>
+                                       <span class="n">initial_accumulator_value</span> <span class="o">=</span> <span class="m">1.0</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">$</span><span class="nf">minimize</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="nf">with</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">Session</span><span class="p">()</span> <span class="o">%as%</span> <span class="n">sess</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_r</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="m">1000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_y</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_y</span><span class="p">,</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_f</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_r</span><span class="p">,</span> <span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="p">}</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+<span class="p">})</span>
+
+<span class="nf">f.2D</span><span class="p">()</span>
+<span class="nf">lines</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">pch</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1] -1
+[1] 2.832081
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_36_1.png" src="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_36_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="n">R</span>
+<span class="c1">##</span>
+<span class="c1">##  Variables del modelo</span>
+<span class="c1">##</span>
+<span class="n">x</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">-0.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">Variable</span><span class="p">(</span><span class="m">+3.5</span><span class="p">,</span> <span class="n">tf</span><span class="o">$</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Función de Rosenbrock</span>
+<span class="c1">##</span>
+<span class="c1">##   f(x, y) = 100(x^2 - y)^2 + (1 - x)^2</span>
+<span class="c1">##</span>
+<span class="n">r</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="nf">add</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">multiply</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">100</span><span class="n">.)</span><span class="p">,</span>
+                        <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="m">2</span><span class="p">),</span> <span class="n">y</span><span class="p">),</span> <span class="m">2</span><span class="p">)),</span>
+            <span class="n">tf</span><span class="o">$</span><span class="nf">pow</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">subtract</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">constant</span><span class="p">(</span><span class="m">1.0</span><span class="p">),</span> <span class="n">x</span><span class="p">),</span> <span class="m">2</span><span class="p">))</span>
+
+<span class="c1">## Inicializa el optimizador</span>
+<span class="c1">## Crea un objeto gradiente.</span>
+<span class="n">optimizer</span> <span class="o">&lt;-</span> <span class="n">tf</span><span class="o">$</span><span class="n">train</span><span class="o">$</span><span class="nf">AdadeltaOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="m">1.00</span><span class="p">,</span>
+                                        <span class="n">rho</span> <span class="o">=</span> <span class="m">0.9</span><span class="p">,</span>
+                                        <span class="n">epsilon</span> <span class="o">=</span> <span class="m">1e-5</span><span class="p">)</span>
+
+<span class="c1">## Minimiza la función de error</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">$</span><span class="nf">minimize</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+<span class="c1">## estima el modelo</span>
+<span class="nf">with</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">Session</span><span class="p">()</span> <span class="o">%as%</span> <span class="n">sess</span><span class="p">,</span> <span class="p">{</span>
+    <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">tf</span><span class="o">$</span><span class="nf">global_variables_initializer</span><span class="p">())</span>
+    <span class="n">history_x</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_y</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="n">history_r</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="m">1000</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sess</span><span class="o">$</span><span class="nf">run</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span>
+        <span class="n">history_x</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_y</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_y</span><span class="p">,</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+        <span class="n">history_f</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="n">history_r</span><span class="p">,</span> <span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="p">}</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="o">$</span><span class="nf">eval</span><span class="p">(),</span> <span class="n">y</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">r</span><span class="o">$</span><span class="nf">eval</span><span class="p">())</span>
+<span class="p">})</span>
+
+<span class="nf">f.2D</span><span class="p">()</span>
+<span class="nf">lines</span><span class="p">(</span><span class="n">history_x</span><span class="p">,</span> <span class="n">history_y</span><span class="p">,</span> <span class="n">type</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">pch</span><span class="o">=</span><span class="s">&#39;o&#39;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="s">&#39;blue&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1] 0
+[1] 0.7472773
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_38_1.png" src="../../../_images/notebooks_tensorflow_por-organizar_-2-01-sgd_38_1.png" />
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Juan D. Velasquez
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    <!-- Theme Analytics -->
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-XXXXXXX-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,822 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Tasa atractiva mínima (MARR)\n",
+    "===\n",
+    "\n",
+    "* *60 min* | Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Preparación**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# Importa la librería financiera.\n",
+    "# Solo es necesario ejecutar la importación una sola vez.\n",
+    "import cashflows as cf"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Problema del costo de capital\n",
+    "\n",
+    "* A medida que se invierte más capital los rendimientos obtenidos son menores (es más dificil acceder a inversiones con rentabilidades altas).\n",
+    "\n",
+    "* A medida que se presta más capital los interses son más altos (es más dificil acceder a créditos baratos)\n",
+    "\n",
+    "* Si se tiene un proyecto cuyos fondos provienen del aporte de los socios y de diferentes esquemas de financiación, ¿cómo se calculá el costo de dichos fondos?."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/wacc-explain.png](assets/wacc-explain.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Caso práctico"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Una compañía eléctrica tiene las siguientes fuentes de financiamiento:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Un total de `$` 4000 por la emisión de 4.000 acciones. Se espera un dividendo de `$` 0.25 por acción para los próximos años."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Un préstamo bancario (Préstamo 1) de `$` 2.000. El préstamo se paga en 4 cuotas iguales a capital más intereses sobre el saldo total de deuda liquidados a una tasa efectiva de interés del 20%. En el momento del desembolso se cobró una comisión bancaria de `$` 50."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Un préstamo bancario (Préstamo 2) de `$` 1.000 con descuento de 24 puntos. El préstamo se paga en 4 cuotas totales iguales que incluyen intereses más capital. La tasa de interés es del 20%."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* La venta de un bono con pago principal de `$` 5.000, el cual fue vendido por `$` 4.000. El capital se dedimirá en 4 períodos y se pagarán intereses a una tasa del 7%. El bono tiene un costo de venta de `$` 50."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El impuesto de renta es del 30%."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Solución**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "import cashflows as cf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Se tienen cuatro fuentes de capital con diferentes costos\n",
+    "## sus datos se almacenarar en las siguientes listas:\n",
+    "##\n",
+    "monto   = [0] * 4\n",
+    "interes = [0] * 4"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## emision de acciones\n",
+    "## --------------------------------------\n",
+    "monto[0]   = 4000\n",
+    "interes[0] = 25.0 / 1.0  # tasa de descueto de la acción"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beg_Ppal_Amount</th>\n",
+       "      <th>Nom_Rate</th>\n",
+       "      <th>Tot_Payment</th>\n",
+       "      <th>Int_Payment</th>\n",
+       "      <th>Ppal_Payment</th>\n",
+       "      <th>End_Ppal_Amount</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>2000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019</th>\n",
+       "      <td>2000.0</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>900.0</td>\n",
+       "      <td>400.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>1500.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2020</th>\n",
+       "      <td>1500.0</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>800.0</td>\n",
+       "      <td>300.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>1000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2021</th>\n",
+       "      <td>1000.0</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>700.0</td>\n",
+       "      <td>200.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>500.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022</th>\n",
+       "      <td>500.0</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>600.0</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>500.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Beg_Ppal_Amount  Nom_Rate  Tot_Payment  Int_Payment  Ppal_Payment  \\\n",
+       "2018              0.0      20.0         50.0          0.0           0.0   \n",
+       "2019           2000.0      20.0        900.0        400.0         500.0   \n",
+       "2020           1500.0      20.0        800.0        300.0         500.0   \n",
+       "2021           1000.0      20.0        700.0        200.0         500.0   \n",
+       "2022            500.0      20.0        600.0        100.0         500.0   \n",
+       "\n",
+       "      End_Ppal_Amount  \n",
+       "2018           2000.0  \n",
+       "2019           1500.0  \n",
+       "2020           1000.0  \n",
+       "2021            500.0  \n",
+       "2022              0.0  "
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## préstamo 1.\n",
+    "## -------------------------------------------------------\n",
+    "## \n",
+    "nrate = cf.interest_rate(const_value=[20]*5, start=2018)\n",
+    "credito1 = cf.fixed_ppal_loan(amount    = 2000,     # monto\n",
+    "                              nrate     = nrate,    # tasa de interés\n",
+    "                              orgpoints = 50/2000)  # costos de originación\n",
+    "credito1           "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En la modelación de créditos con **`cashflow`** se consideran dos tipos de costos:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Los puntos de descuento (dispoints) como porcentaje sobre el monto de la deuda. Estos son una forma de pago de intereses por anticipado con el fin de bajar la tasa de interés del crédito. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Los puntos de constitución (orgpoints) como porcentaje del monto de deuda. Son los costos de constitución del crédito y no son considerados como intereses."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Ya que los intereses de los créditos pueden descontarse como costos financieros, estos disminuyen el pago del impuesto de renta. Por consiguiente, en el análisis de los créditos debe tenerse en cuenta el beneficio por pago de intereses el cual equivale a los impuestos pagados por período multiplicados por la tasa del impuesto de renta. Ya que los puntos de descuento son intereses, estos se tienen en cuenta en el cálculo de este beneficio."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018    1950.0\n",
+       "2019   -1420.0\n",
+       "2020   -1190.0\n",
+       "2021    -960.0\n",
+       "2022    -730.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## flujo de caja para el crédito antes de impuestos\n",
+    "tax_rate = cf.interest_rate(const_value=[30]*5, start=2018)\n",
+    "credito1.tocashflow(tax_rate=tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "48.0427598437442"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## la tasa efectiva pagada por el crédito es \n",
+    "## aquella que hace el valor presente cero para\n",
+    "## el flujo de caja anterior (antes o después de \n",
+    "## impuestos)\n",
+    "credito1.true_rate(tax_rate = tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## se almacenan los datos para este credito\n",
+    "monto[1]   = 2000\n",
+    "interes[1] = credito1.true_rate(tax_rate = tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beg_Ppal_Amount</th>\n",
+       "      <th>Nom_Rate</th>\n",
+       "      <th>Tot_Payment</th>\n",
+       "      <th>Int_Payment</th>\n",
+       "      <th>Ppal_Payment</th>\n",
+       "      <th>End_Ppal_Amount</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018</th>\n",
+       "      <td>1000.000000</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>240.000000</td>\n",
+       "      <td>240.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>1000.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019</th>\n",
+       "      <td>1000.000000</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>386.289121</td>\n",
+       "      <td>200.000000</td>\n",
+       "      <td>186.289121</td>\n",
+       "      <td>813.710879</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2020</th>\n",
+       "      <td>813.710879</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>386.289121</td>\n",
+       "      <td>162.742176</td>\n",
+       "      <td>223.546945</td>\n",
+       "      <td>590.163934</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2021</th>\n",
+       "      <td>590.163934</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>386.289121</td>\n",
+       "      <td>118.032787</td>\n",
+       "      <td>268.256334</td>\n",
+       "      <td>321.907601</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022</th>\n",
+       "      <td>321.907601</td>\n",
+       "      <td>20.0</td>\n",
+       "      <td>386.289121</td>\n",
+       "      <td>64.381520</td>\n",
+       "      <td>321.907601</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Beg_Ppal_Amount  Nom_Rate  Tot_Payment  Int_Payment  Ppal_Payment  \\\n",
+       "2018      1000.000000      20.0   240.000000   240.000000      0.000000   \n",
+       "2019      1000.000000      20.0   386.289121   200.000000    186.289121   \n",
+       "2020       813.710879      20.0   386.289121   162.742176    223.546945   \n",
+       "2021       590.163934      20.0   386.289121   118.032787    268.256334   \n",
+       "2022       321.907601      20.0   386.289121    64.381520    321.907601   \n",
+       "\n",
+       "      End_Ppal_Amount  \n",
+       "2018      1000.000000  \n",
+       "2019       813.710879  \n",
+       "2020       590.163934  \n",
+       "2021       321.907601  \n",
+       "2022         0.000000  "
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## préstamo 2.\n",
+    "## -------------------------------------------------------\n",
+    "## \n",
+    "credito2 = cf.fixed_rate_loan(amount    = 1000,     # monto\n",
+    "                              nrate     =   20,     # tasa de interés\n",
+    "                              start     = 2018,\n",
+    "                              grace     =    0,\n",
+    "                              life      =    4,     # número de cuotas\n",
+    "                              dispoints =    0.24)  # costos de constitución\n",
+    "credito2 "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018    448.000000\n",
+       "2019   -646.289121\n",
+       "2020   -597.853949\n",
+       "2021   -539.731744\n",
+       "2022   -469.985097\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "credito2.tocashflow(tax_rate = tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "132.36608595206968"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "credito2.true_rate(tax_rate = tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## se almacenan los datos para este credito\n",
+    "monto[2]   = 1000\n",
+    "interes[2] = credito2.true_rate(tax_rate = tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beg_Ppal_Amount</th>\n",
+       "      <th>Nom_Rate</th>\n",
+       "      <th>Tot_Payment</th>\n",
+       "      <th>Int_Payment</th>\n",
+       "      <th>Ppal_Payment</th>\n",
+       "      <th>End_Ppal_Amount</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2018</th>\n",
+       "      <td>0.0</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>1050.0</td>\n",
+       "      <td>1000.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>5000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2019</th>\n",
+       "      <td>5000.0</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>5000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2020</th>\n",
+       "      <td>5000.0</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>5000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2021</th>\n",
+       "      <td>5000.0</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>5000.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2022</th>\n",
+       "      <td>5000.0</td>\n",
+       "      <td>7.0</td>\n",
+       "      <td>5350.0</td>\n",
+       "      <td>350.0</td>\n",
+       "      <td>5000.0</td>\n",
+       "      <td>0.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "      Beg_Ppal_Amount  Nom_Rate  Tot_Payment  Int_Payment  Ppal_Payment  \\\n",
+       "2018              0.0       7.0       1050.0       1000.0           0.0   \n",
+       "2019           5000.0       7.0        350.0        350.0           0.0   \n",
+       "2020           5000.0       7.0        350.0        350.0           0.0   \n",
+       "2021           5000.0       7.0        350.0        350.0           0.0   \n",
+       "2022           5000.0       7.0       5350.0        350.0        5000.0   \n",
+       "\n",
+       "      End_Ppal_Amount  \n",
+       "2018           5000.0  \n",
+       "2019           5000.0  \n",
+       "2020           5000.0  \n",
+       "2021           5000.0  \n",
+       "2022              0.0  "
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## préstamo 3.\n",
+    "## -------------------------------------------------------\n",
+    "## \n",
+    "nrate = cf.interest_rate(const_value=[7]*5, start=2018)\n",
+    "credito3 = cf.bullet_loan(amount     = 5000,     # monto\n",
+    "                          nrate      =   nrate,  # tasa de interés\n",
+    "                          orgpoints  =    0.01,  # costos de originación\n",
+    "                          dispoints  =    0.20)  # puntos de descuento\n",
+    "credito3 "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2018    2650.0\n",
+       "2019    -805.0\n",
+       "2020    -805.0\n",
+       "2021    -805.0\n",
+       "2022   -5805.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "credito3.tocashflow(tax_rate=tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "42.451661086842819"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "credito3.true_rate(tax_rate=tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "## se almacenan los datos de este crédito\n",
+    "monto[3]   = 5000\n",
+    "interes[3] = credito3.true_rate(tax_rate=tax_rate)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[4000, 2000, 1000, 5000]"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## montos\n",
+    "monto"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[25.0, 48.0427598437442, 132.36608595206968, 42.451661086842819]"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## tasas\n",
+    "interes"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "45.05915925614768"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## Costo ponderado del capital (WACC)\n",
+    "## -------------------------------------------------------------\n",
+    "## es el promdio ponderado de las tasas por \n",
+    "## el porcentaje de capital correspondiente a cada fuente\n",
+    "##\n",
+    "s    = sum(monto)           # capital total\n",
+    "wacc = sum([x*r/s for x, r in zip(monto, interes)])\n",
+    "wacc"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Bibliografía utilizada\n",
+    "\n",
+    "* [1] SAS/ETS 14.1 User's Guide, 2015.   \n",
+    "* [2] **hp** 12c platinum financial calculator. User's guide. \n",
+    "* [3] HP Business Consultant II Owner's manual.\n",
+    "* [4] C.S. Park and G.P. Sharp-Bette. Advanced Engineering Economics. John Wiley & Sons, Inc., 1990."
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

@@ -1,0 +1,340 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "Conversión de Monedas\n",
+    "===\n",
+    "\n",
+    "* *60 min* | Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Preparación**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true
+   },
+   "outputs": [],
+   "source": [
+    "# Importa la librería financiera.\n",
+    "# Solo es necesario ejecutar la importación una sola vez.\n",
+    "import cashflows as cf"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Devaluación\n",
+    "\n",
+    "![assets/devaluacion.png](assets/devaluacion.png)\n",
+    "\n",
+    "$$d=\\frac{f-f_e}{1+f_e},~~~~1+d=\\frac{1+f}{1+f_e}$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Cálculos con moneda extranjera\n",
+    "\n",
+    "* $i$ -- tasa equivalente de interés en moneda local.  \n",
+    "* $i_e$ -- tasa de interés en moneda extranjera.\n",
+    "* $d$ -- tasa de devaluación de la moneda local frente a la moneda extranjera.    \n",
+    "* $f$ -- tasa de inflación interna. \n",
+    "* $f_e$ -- tasa de inflación externa.\n",
+    "\n",
+    "Interés equivalente para un préstamo en moneda extranjera:\n",
+    "\n",
+    "$$1+i=(1+i_e)(1+d)$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** ¿Cuál es la rentabilidad en pesos de un proyecto extranjero que ofrece una rentabilidad del 1.5% mensual?, se estima una devaluación mensual de 2.0%"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.0353"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "round((1 + 0.015) * (1 + 0.020) - 1, 4)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "`currency_conversion(cflo, exchange_rate=1, \n",
+    "  devaluation=None, base_date=0)`\n",
+    "\n",
+    "Convierte un flujo de efectivo de moneda extranjera a moneda local usando la tasa de cambio especificada.\n",
+    "\n",
+    "* `cflo`-- flujo de efectivo en moneda extranjera.\n",
+    "* `exchange_rate` -- tasa de cambio.\n",
+    "* `devaluation` -- devaluación de la moneda local frente a la extranjera expresada como una tasa nominal.\n",
+    "* `base_date` -- período base para realizar los cálculos de devaluación."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** Considere un flujo de efectivo constante de `$` 1000 durante 10 períodos. Conviértalo a moneda extranjera si la tasa de cambio es de `$` 2. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016    2000.0\n",
+       "2017    2000.0\n",
+       "2018    2000.0\n",
+       "2019    2000.0\n",
+       "2020    2000.0\n",
+       "2021    2000.0\n",
+       "2022    2000.0\n",
+       "2023    2000.0\n",
+       "2024    2000.0\n",
+       "2025    2000.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.currency_conversion(cflo=cf.cashflow([1000]*10, start=2016), \n",
+    "                       exchange_rate=2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** Considere el mismo caso anterior con una devaluación por período del 1%."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016    2000.000000\n",
+       "2017    2020.000000\n",
+       "2018    2040.200000\n",
+       "2019    2060.602000\n",
+       "2020    2081.208020\n",
+       "2021    2102.020100\n",
+       "2022    2123.040301\n",
+       "2023    2144.270704\n",
+       "2024    2165.713411\n",
+       "2025    2187.370545\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.currency_conversion(cflo=cf.cashflow([1000]*10, start=2016), \n",
+    "                       exchange_rate=2, \n",
+    "                       devaluation=cf.interest_rate(const_value=[1]*10, start=2016))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejemplo.--*** Considere el mismo caso anterior pero usando el período 10 como base. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016    1828.679648\n",
+       "2017    1846.966445\n",
+       "2018    1865.436109\n",
+       "2019    1884.090471\n",
+       "2020    1902.931375\n",
+       "2021    1921.960689\n",
+       "2022    1941.180296\n",
+       "2023    1960.592099\n",
+       "2024    1980.198020\n",
+       "2025    2000.000000\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.currency_conversion(cflo=cf.cashflow([1000]*10, start=2016), \n",
+    "                       exchange_rate=2, \n",
+    "                       devaluation=cf.interest_rate(const_value=[1]*10, start=2016),\n",
+    "                       base_date=9)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016    1828.679648\n",
+       "2017    1846.966445\n",
+       "2018    1865.436109\n",
+       "2019    1884.090471\n",
+       "2020    1902.931375\n",
+       "2021    1921.960689\n",
+       "2022    1941.180296\n",
+       "2023    1960.592099\n",
+       "2024    1980.198020\n",
+       "2025    2000.000000\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.currency_conversion(cflo=cf.cashflow([1000]*10, start=2016), \n",
+    "                       exchange_rate=2, \n",
+    "                       devaluation=cf.interest_rate(const_value=[1]*10, start=2016),\n",
+    "                       base_date='2025')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "***Ejercicio.--*** Un proyecto de generación de energía eléctrica genera ventas trimestrales totales de `$` 100 durante el primer año, `$` 112 para el segundo y `$` 120 para el tercer año. Si la tasa de cambio es de 3 para el primer trimestre, se devalua al 0.75% durante los primeros 7 trimestres primer año; se revalua al 0.42% durante el resto del período de análisis, compute las ventas trimestrales totales en moneda extranjera. "
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "celltoolbar": "Slideshow",
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

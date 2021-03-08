@@ -1,0 +1,1135 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "Ahorros\n",
+    "===\n",
+    "\n",
+    "* *60 min* | Junio 22, 2019"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Preparación**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "-"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "# Importa la librería financiera.\n",
+    "# Solo es necesario ejecutar la importación una sola vez.\n",
+    "import cashflows as cf"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Ejercicio.--** Usando Microsoft Excel u otra herramienta solucione el siguiente problema: Se abre una cuenta de ahorro que paga el 24% nominal, y durante 12 meses se hacen depósitos de `$` 100 al principio del mes. A partir del mes 12 (final del mes) realiza retiros mensuales de `$` 60 hasta que no quede dinero en la cuenta. ¿Cuánto es la suma aritmética de los intereses recibidos?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "`savings(deposits, nrate, initbal=0)`\n",
+    "\n",
+    "Permite modelar cuentas de ahorro.\n",
+    "\n",
+    "* `deposits`-- flujo de efectivo que representa los depósitos/retiros.\n",
+    "* `nrate` -- tasa nominal de interés.\n",
+    "* `initbal` -- balance inicial de la cuenta."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Ejemplo.--** Se abre una cuenta de ahorro que paga el 24% nominal, y durante 12 meses se hacen depósitos de `$` 100 al principio del mes. ¿Cuánto es la suma aritmética de los intereses recibidos?"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016-01    100.0\n",
+       "2016-02    100.0\n",
+       "2016-03    100.0\n",
+       "2016-04    100.0\n",
+       "2016-05    100.0\n",
+       "2016-06    100.0\n",
+       "2016-07    100.0\n",
+       "2016-08    100.0\n",
+       "2016-09    100.0\n",
+       "2016-10    100.0\n",
+       "2016-11    100.0\n",
+       "2016-12      0.0\n",
+       "Freq: M, dtype: float64"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cflo = cf.cashflow(const_value=[100] * 11 + [0], start='2016-1', freq='M')\n",
+    "cflo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016-01    24.0\n",
+       "2016-02    24.0\n",
+       "2016-03    24.0\n",
+       "2016-04    24.0\n",
+       "2016-05    24.0\n",
+       "2016-06    24.0\n",
+       "2016-07    24.0\n",
+       "2016-08    24.0\n",
+       "2016-09    24.0\n",
+       "2016-10    24.0\n",
+       "2016-11    24.0\n",
+       "2016-12    24.0\n",
+       "Freq: M, dtype: float64"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "nrate = cf.interest_rate([24] * 12, start='2016-1', freq='M')\n",
+    "nrate"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "scrolled": false,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beginning_Balance</th>\n",
+       "      <th>Deposits</th>\n",
+       "      <th>Earned_Interest</th>\n",
+       "      <th>Ending_Balance</th>\n",
+       "      <th>Nominal_Rate</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2016-01</th>\n",
+       "      <td>100.000000</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>202.000000</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-02</th>\n",
+       "      <td>202.000000</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>4.040000</td>\n",
+       "      <td>306.040000</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-03</th>\n",
+       "      <td>306.040000</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>6.120800</td>\n",
+       "      <td>412.160800</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-04</th>\n",
+       "      <td>412.160800</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>8.243216</td>\n",
+       "      <td>520.404016</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-05</th>\n",
+       "      <td>520.404016</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>10.408080</td>\n",
+       "      <td>630.812096</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-06</th>\n",
+       "      <td>630.812096</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>12.616242</td>\n",
+       "      <td>743.428338</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-07</th>\n",
+       "      <td>743.428338</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>14.868567</td>\n",
+       "      <td>858.296905</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-08</th>\n",
+       "      <td>858.296905</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>17.165938</td>\n",
+       "      <td>975.462843</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-09</th>\n",
+       "      <td>975.462843</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>19.509257</td>\n",
+       "      <td>1094.972100</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-10</th>\n",
+       "      <td>1094.972100</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>21.899442</td>\n",
+       "      <td>1216.871542</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-11</th>\n",
+       "      <td>1216.871542</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>24.337431</td>\n",
+       "      <td>1341.208973</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-12</th>\n",
+       "      <td>1341.208973</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>26.824179</td>\n",
+       "      <td>1368.033152</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         Beginning_Balance  Deposits  Earned_Interest  Ending_Balance  \\\n",
+       "2016-01         100.000000     100.0         2.000000      202.000000   \n",
+       "2016-02         202.000000     100.0         4.040000      306.040000   \n",
+       "2016-03         306.040000     100.0         6.120800      412.160800   \n",
+       "2016-04         412.160800     100.0         8.243216      520.404016   \n",
+       "2016-05         520.404016     100.0        10.408080      630.812096   \n",
+       "2016-06         630.812096     100.0        12.616242      743.428338   \n",
+       "2016-07         743.428338     100.0        14.868567      858.296905   \n",
+       "2016-08         858.296905     100.0        17.165938      975.462843   \n",
+       "2016-09         975.462843     100.0        19.509257     1094.972100   \n",
+       "2016-10        1094.972100     100.0        21.899442     1216.871542   \n",
+       "2016-11        1216.871542     100.0        24.337431     1341.208973   \n",
+       "2016-12        1341.208973       0.0        26.824179     1368.033152   \n",
+       "\n",
+       "         Nominal_Rate  \n",
+       "2016-01          24.0  \n",
+       "2016-02          24.0  \n",
+       "2016-03          24.0  \n",
+       "2016-04          24.0  \n",
+       "2016-05          24.0  \n",
+       "2016-06          24.0  \n",
+       "2016-07          24.0  \n",
+       "2016-08          24.0  \n",
+       "2016-09          24.0  \n",
+       "2016-10          24.0  \n",
+       "2016-11          24.0  \n",
+       "2016-12          24.0  "
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cf.savings(deposits =  cflo,      # depósito periodico     \n",
+    "           initbal  =   100,      # balance inicial\n",
+    "           nrate    = nrate)      # tasa de interés nominal"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "outputs": [],
+   "source": [
+    "x = cf.savings(deposits =  cflo,  # depósito períodico     \n",
+    "               initbal  =   100,  # balance inicial\n",
+    "               nrate    = nrate)  # tasa de interés nominal  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2016-01     2.000000\n",
+       "2016-02     4.040000\n",
+       "2016-03     6.120800\n",
+       "2016-04     8.243216\n",
+       "2016-05    10.408080\n",
+       "2016-06    12.616242\n",
+       "2016-07    14.868567\n",
+       "2016-08    17.165938\n",
+       "2016-09    19.509257\n",
+       "2016-10    21.899442\n",
+       "2016-11    24.337431\n",
+       "2016-12    26.824179\n",
+       "Freq: M, Name: Earned_Interest, dtype: float64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "x.Earned_Interest"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {
+    "scrolled": false,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[2.0,\n",
+       " 4.04,\n",
+       " 6.1208,\n",
+       " 8.243215999999999,\n",
+       " 10.408080319999998,\n",
+       " 12.616241926399999,\n",
+       " 14.868566764927998,\n",
+       " 17.16593810022656,\n",
+       " 19.509256862231087,\n",
+       " 21.89944199947571,\n",
+       " 24.337430839465224,\n",
+       " 26.824179456254527]"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## intereses como lista \n",
+    "x.Earned_Interest.tolist()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "168.0331522689811"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## suma aritmética de los intereses\n",
+    "sum(x.Earned_Interest)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1368.033152268981"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# balance final\n",
+    "x.Ending_Balance[-1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "****Ejemplo.--**** Realice el mismo ejemplo anterior, pero considerando que la tasa de interés es del 16% nominal a partir de 2016-06."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beginning_Balance</th>\n",
+       "      <th>Deposits</th>\n",
+       "      <th>Earned_Interest</th>\n",
+       "      <th>Ending_Balance</th>\n",
+       "      <th>Nominal_Rate</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2016-01</th>\n",
+       "      <td>100.000000</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>2.000000</td>\n",
+       "      <td>202.000000</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-02</th>\n",
+       "      <td>202.000000</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>4.040000</td>\n",
+       "      <td>306.040000</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-03</th>\n",
+       "      <td>306.040000</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>6.120800</td>\n",
+       "      <td>412.160800</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-04</th>\n",
+       "      <td>412.160800</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>8.243216</td>\n",
+       "      <td>520.404016</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-05</th>\n",
+       "      <td>520.404016</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>10.408080</td>\n",
+       "      <td>630.812096</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-06</th>\n",
+       "      <td>630.812096</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>8.410828</td>\n",
+       "      <td>739.222924</td>\n",
+       "      <td>16.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-07</th>\n",
+       "      <td>739.222924</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>9.856306</td>\n",
+       "      <td>849.079230</td>\n",
+       "      <td>16.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-08</th>\n",
+       "      <td>849.079230</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>11.321056</td>\n",
+       "      <td>960.400286</td>\n",
+       "      <td>16.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-09</th>\n",
+       "      <td>960.400286</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>12.805337</td>\n",
+       "      <td>1073.205623</td>\n",
+       "      <td>16.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-10</th>\n",
+       "      <td>1073.205623</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>14.309408</td>\n",
+       "      <td>1187.515032</td>\n",
+       "      <td>16.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-11</th>\n",
+       "      <td>1187.515032</td>\n",
+       "      <td>100.0</td>\n",
+       "      <td>15.833534</td>\n",
+       "      <td>1303.348566</td>\n",
+       "      <td>16.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2016-12</th>\n",
+       "      <td>1303.348566</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>17.377981</td>\n",
+       "      <td>1320.726546</td>\n",
+       "      <td>16.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         Beginning_Balance  Deposits  Earned_Interest  Ending_Balance  \\\n",
+       "2016-01         100.000000     100.0         2.000000      202.000000   \n",
+       "2016-02         202.000000     100.0         4.040000      306.040000   \n",
+       "2016-03         306.040000     100.0         6.120800      412.160800   \n",
+       "2016-04         412.160800     100.0         8.243216      520.404016   \n",
+       "2016-05         520.404016     100.0        10.408080      630.812096   \n",
+       "2016-06         630.812096     100.0         8.410828      739.222924   \n",
+       "2016-07         739.222924     100.0         9.856306      849.079230   \n",
+       "2016-08         849.079230     100.0        11.321056      960.400286   \n",
+       "2016-09         960.400286     100.0        12.805337     1073.205623   \n",
+       "2016-10        1073.205623     100.0        14.309408     1187.515032   \n",
+       "2016-11        1187.515032     100.0        15.833534     1303.348566   \n",
+       "2016-12        1303.348566       0.0        17.377981     1320.726546   \n",
+       "\n",
+       "         Nominal_Rate  \n",
+       "2016-01          24.0  \n",
+       "2016-02          24.0  \n",
+       "2016-03          24.0  \n",
+       "2016-04          24.0  \n",
+       "2016-05          24.0  \n",
+       "2016-06          16.0  \n",
+       "2016-07          16.0  \n",
+       "2016-08          16.0  \n",
+       "2016-09          16.0  \n",
+       "2016-10          16.0  \n",
+       "2016-11          16.0  \n",
+       "2016-12          16.0  "
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## tasa de interés\n",
+    "nrate = cf.interest_rate([24] * 12, start='2016-1', freq='M', chgpts={5:16})\n",
+    "\n",
+    "## depósitos\n",
+    "cflo = cf.cashflow(const_value=[100]*11 + [0], start='2016-1', freq='M')\n",
+    "\n",
+    "## modelado\n",
+    "x = cf.savings(deposits =  cflo,  # deposito periodico     \n",
+    "               initbal  =   100,  # balance inicial\n",
+    "               nrate    = nrate)  # tasa de interes mensual    \n",
+    "x"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "****Ejemplo.--**** Se tiene una cuenta con un saldo inicial de `$` 100. Se hacen depósitos  al final de cada trimestre por `$` 50 (se hará el primer depósito en 3 meses). La tasa nominal es del 36% con capitalización mensual y cambiará a 24% a partir del 13avo mes (incluido). ¿Cuál será el saldo al final de mes 24?. "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000-01    36.0\n",
+       "2000-02    36.0\n",
+       "2000-03    36.0\n",
+       "2000-04    36.0\n",
+       "2000-05    36.0\n",
+       "2000-06    36.0\n",
+       "2000-07    36.0\n",
+       "2000-08    36.0\n",
+       "2000-09    36.0\n",
+       "2000-10    36.0\n",
+       "2000-11    36.0\n",
+       "2000-12    36.0\n",
+       "2001-01    24.0\n",
+       "2001-02    24.0\n",
+       "2001-03    24.0\n",
+       "2001-04    24.0\n",
+       "2001-05    24.0\n",
+       "2001-06    24.0\n",
+       "2001-07    24.0\n",
+       "2001-08    24.0\n",
+       "2001-09    24.0\n",
+       "2001-10    24.0\n",
+       "2001-11    24.0\n",
+       "2001-12    24.0\n",
+       "Freq: M, dtype: float64"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "nrate = cf.interest_rate(const_value=[36]*24, start='2000-01', freq='M', chgpts={'2001-01':24})\n",
+    "nrate"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2000-01     0.0\n",
+       "2000-02     0.0\n",
+       "2000-03    50.0\n",
+       "2000-04     0.0\n",
+       "2000-05     0.0\n",
+       "2000-06    50.0\n",
+       "2000-07     0.0\n",
+       "2000-08     0.0\n",
+       "2000-09    50.0\n",
+       "2000-10     0.0\n",
+       "2000-11     0.0\n",
+       "2000-12    50.0\n",
+       "2001-01     0.0\n",
+       "2001-02     0.0\n",
+       "2001-03    50.0\n",
+       "2001-04     0.0\n",
+       "2001-05     0.0\n",
+       "2001-06    50.0\n",
+       "2001-07     0.0\n",
+       "2001-08     0.0\n",
+       "2001-09    50.0\n",
+       "2001-10     0.0\n",
+       "2001-11     0.0\n",
+       "2001-12    50.0\n",
+       "Freq: M, dtype: float64"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cflo = cf.cashflow(const_value=0, periods=24, start='2000-01', freq='M') \n",
+    "cflo[[3*t-1 for t in range(1, 9)]] = 50                   \n",
+    "cflo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {
+    "scrolled": false,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style>\n",
+       "    .dataframe thead tr:only-child th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: left;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Beginning_Balance</th>\n",
+       "      <th>Deposits</th>\n",
+       "      <th>Earned_Interest</th>\n",
+       "      <th>Ending_Balance</th>\n",
+       "      <th>Nominal_Rate</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2000-01</th>\n",
+       "      <td>100.000000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>3.000000</td>\n",
+       "      <td>103.000000</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-02</th>\n",
+       "      <td>103.000000</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>3.090000</td>\n",
+       "      <td>106.090000</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-03</th>\n",
+       "      <td>106.090000</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>3.182700</td>\n",
+       "      <td>159.272700</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-04</th>\n",
+       "      <td>159.272700</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>4.778181</td>\n",
+       "      <td>164.050881</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-05</th>\n",
+       "      <td>164.050881</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>4.921526</td>\n",
+       "      <td>168.972407</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-06</th>\n",
+       "      <td>168.972407</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>5.069172</td>\n",
+       "      <td>224.041580</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-07</th>\n",
+       "      <td>224.041580</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>6.721247</td>\n",
+       "      <td>230.762827</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-08</th>\n",
+       "      <td>230.762827</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>6.922885</td>\n",
+       "      <td>237.685712</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-09</th>\n",
+       "      <td>237.685712</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>7.130571</td>\n",
+       "      <td>294.816283</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-10</th>\n",
+       "      <td>294.816283</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>8.844488</td>\n",
+       "      <td>303.660772</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-11</th>\n",
+       "      <td>303.660772</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>9.109823</td>\n",
+       "      <td>312.770595</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2000-12</th>\n",
+       "      <td>312.770595</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>9.383118</td>\n",
+       "      <td>372.153713</td>\n",
+       "      <td>36.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-01</th>\n",
+       "      <td>372.153713</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>7.443074</td>\n",
+       "      <td>379.596787</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-02</th>\n",
+       "      <td>379.596787</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>7.591936</td>\n",
+       "      <td>387.188723</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-03</th>\n",
+       "      <td>387.188723</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>7.743774</td>\n",
+       "      <td>444.932497</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-04</th>\n",
+       "      <td>444.932497</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>8.898650</td>\n",
+       "      <td>453.831147</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-05</th>\n",
+       "      <td>453.831147</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>9.076623</td>\n",
+       "      <td>462.907770</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-06</th>\n",
+       "      <td>462.907770</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>9.258155</td>\n",
+       "      <td>522.165925</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-07</th>\n",
+       "      <td>522.165925</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>10.443319</td>\n",
+       "      <td>532.609244</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-08</th>\n",
+       "      <td>532.609244</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>10.652185</td>\n",
+       "      <td>543.261429</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-09</th>\n",
+       "      <td>543.261429</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>10.865229</td>\n",
+       "      <td>604.126657</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-10</th>\n",
+       "      <td>604.126657</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.082533</td>\n",
+       "      <td>616.209191</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-11</th>\n",
+       "      <td>616.209191</td>\n",
+       "      <td>0.0</td>\n",
+       "      <td>12.324184</td>\n",
+       "      <td>628.533374</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2001-12</th>\n",
+       "      <td>628.533374</td>\n",
+       "      <td>50.0</td>\n",
+       "      <td>12.570667</td>\n",
+       "      <td>691.104042</td>\n",
+       "      <td>24.0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "         Beginning_Balance  Deposits  Earned_Interest  Ending_Balance  \\\n",
+       "2000-01         100.000000       0.0         3.000000      103.000000   \n",
+       "2000-02         103.000000       0.0         3.090000      106.090000   \n",
+       "2000-03         106.090000      50.0         3.182700      159.272700   \n",
+       "2000-04         159.272700       0.0         4.778181      164.050881   \n",
+       "2000-05         164.050881       0.0         4.921526      168.972407   \n",
+       "2000-06         168.972407      50.0         5.069172      224.041580   \n",
+       "2000-07         224.041580       0.0         6.721247      230.762827   \n",
+       "2000-08         230.762827       0.0         6.922885      237.685712   \n",
+       "2000-09         237.685712      50.0         7.130571      294.816283   \n",
+       "2000-10         294.816283       0.0         8.844488      303.660772   \n",
+       "2000-11         303.660772       0.0         9.109823      312.770595   \n",
+       "2000-12         312.770595      50.0         9.383118      372.153713   \n",
+       "2001-01         372.153713       0.0         7.443074      379.596787   \n",
+       "2001-02         379.596787       0.0         7.591936      387.188723   \n",
+       "2001-03         387.188723      50.0         7.743774      444.932497   \n",
+       "2001-04         444.932497       0.0         8.898650      453.831147   \n",
+       "2001-05         453.831147       0.0         9.076623      462.907770   \n",
+       "2001-06         462.907770      50.0         9.258155      522.165925   \n",
+       "2001-07         522.165925       0.0        10.443319      532.609244   \n",
+       "2001-08         532.609244       0.0        10.652185      543.261429   \n",
+       "2001-09         543.261429      50.0        10.865229      604.126657   \n",
+       "2001-10         604.126657       0.0        12.082533      616.209191   \n",
+       "2001-11         616.209191       0.0        12.324184      628.533374   \n",
+       "2001-12         628.533374      50.0        12.570667      691.104042   \n",
+       "\n",
+       "         Nominal_Rate  \n",
+       "2000-01          36.0  \n",
+       "2000-02          36.0  \n",
+       "2000-03          36.0  \n",
+       "2000-04          36.0  \n",
+       "2000-05          36.0  \n",
+       "2000-06          36.0  \n",
+       "2000-07          36.0  \n",
+       "2000-08          36.0  \n",
+       "2000-09          36.0  \n",
+       "2000-10          36.0  \n",
+       "2000-11          36.0  \n",
+       "2000-12          36.0  \n",
+       "2001-01          24.0  \n",
+       "2001-02          24.0  \n",
+       "2001-03          24.0  \n",
+       "2001-04          24.0  \n",
+       "2001-05          24.0  \n",
+       "2001-06          24.0  \n",
+       "2001-07          24.0  \n",
+       "2001-08          24.0  \n",
+       "2001-09          24.0  \n",
+       "2001-10          24.0  \n",
+       "2001-11          24.0  \n",
+       "2001-12          24.0  "
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "x = cf.savings(deposits =  cflo, # depósito períodico     \n",
+    "               initbal  =   100, # balance inicial\n",
+    "               nrate    = nrate) # tasa de interés mensual\n",
+    "x"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Ejercicio.--** Tesorería realiza el siguiente programa de inversión para los próximos 24 meses con el fin de invertir los excedentes de capital de las ventas de electricidad. El programa inicia en enero de 2018. Todos los depósitos se realizan al final de cada periodo.\n",
+    "\n",
+    "* Una cuenta de ahorro que paga el 18% nominal, con depósitos de `$` 100 mensuales al principio de cada mes. La tasa cambia el 19.5% en 2019-01.\n",
+    "\n",
+    "\n",
+    "* Una cuenta de ahorro que paga el 23% nominal y capitalización mensual, con depósitos trimestrales de `300` al inicio de cada trimestre, iniciando en enero. La tasa cambia al 22%  en 2018-06, y al 21% en 2019-01. \n",
+    "\n",
+    "\n",
+    "Grafique el saldo total por trimestre.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Bibliografía**\n",
+    "\n",
+    "> * [1] SAS/ETS 14.1 User's Guide, 2015.   \n",
+    "* [2] **hp** 12c platinum financial calculator. User's guide. \n",
+    "* [3] HP Business Consultant II Owner's manual.\n",
+    "* [4] C.S. Park and G.P. Sharp-Bette. Advanced Engineering Economics. John Wiley & Sons, Inc., 1990."
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
