@@ -34,6 +34,9 @@ Sesión 1---02
         :maxdepth: 1
         :glob:
 
+        .. highlight:: python
+            :linenos:
+            
         /notebooks/bash/1-*
 
 

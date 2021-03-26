@@ -2,6 +2,9 @@
 Material de apoyo para cursos
 =======================================
 
+.. highlight:: python
+    :linenos:
+
 .. toctree::
     :caption: Configuración
     :hidden:
