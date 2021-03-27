@@ -1,6 +1,6 @@
 Página de los cursos
 
-##Reporte de Issues
+## Reporte de Issues
 
 En la sección Issues, puede reportar los problemas, dudas, observaciones con las que requiera ayuda.
 Cualquiera de los miembros del curso puede responder los issues reportaados. Los monitores del curso podrán dar respuesta o reforzar los aportes de la comunidad.
