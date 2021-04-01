@@ -415,7 +415,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Inducción-de-Reglas-de-Asociación-usando-1R">
 <h1>Inducción de Reglas de Asociación usando 1R<a class="headerlink" href="#Inducción-de-Reglas-de-Asociación-usando-1R" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>90 min</em> | Ultima modificación: Junio 25, 2019</p></li>
+<li><p>34:49 min | Ultima modificación: Marzo 21, 2021 | <a class="reference external" href="https://youtu.be/EpAipFpdKPYhttps://youtu.be/EpAipFpdKPY">YouTube</a></p></li>
 </ul>
 <p>Las técnicas de clasificación son utilizadas para resolver problemas en los cuales se debe determinar a cual clase pertenece una instancia a partir de los valores de sus atributos; entre los casos prácticos de aplicación se encuentran: el diagnóstico de enfermedades (el paciente tiene o no la enfermedad), la detección de fraudes, los sistemas de reconocimiento (el objeto es o no es una persona), el riesgo crediticio (el solicitante pagará o no pagará la deuda). En este tutorial se presenta el
 algoritmo 1R, el cual permite construir un clasificador de referencia basado en reglas de asociación, y contra el cual se pueden contrastar los resultados de otros algoritmos más complejos.</p>
@@ -612,12 +612,10 @@ Overwriting data.csv
 <span class="c1">## Preparación</span>
 <span class="c1">##</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">altair</span> <span class="k">as</span> <span class="nn">alt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> rpy2.ipython
+
+<span class="c1">#  import numpy as np</span>
+<span class="c1"># import seaborn as sns</span>
+<span class="c1">#  import matplotlib.pyplot as plt</span>
 </pre></div>
 </div>
 </div>
@@ -631,9 +629,10 @@ Overwriting data.csv
 <span class="c1">##</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
     <span class="s2">&quot;data.csv&quot;</span><span class="p">,</span>
-    <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>         <span class="c1"># separador de campos</span>
-    <span class="n">thousands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># separador de miles para números</span>
-    <span class="n">decimal</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>     <span class="c1"># separador de los decimales para números</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>  <span class="c1"># separador de campos</span>
+    <span class="n">thousands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># separador de miles para números</span>
+    <span class="n">decimal</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># separador de los decimales para números</span>
 
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
@@ -711,12 +710,636 @@ Overwriting data.csv
 </div>
 <div class="section" id="Generación-de-las-reglas">
 <h3>Generación de las reglas<a class="headerlink" href="#Generación-de-las-reglas" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>x2</th>
+      <th>x3</th>
+      <th>y</th>
+      <th>counter</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>a</td>
+      <td>e</td>
+      <td>h</td>
+      <td>A</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>a</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>a</td>
+      <td>e</td>
+      <td>j</td>
+      <td>B</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>a</td>
+      <td>f</td>
+      <td>h</td>
+      <td>A</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>a</td>
+      <td>f</td>
+      <td>i</td>
+      <td>A</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>A</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>b</td>
+      <td>e</td>
+      <td>i</td>
+      <td>B</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>b</td>
+      <td>f</td>
+      <td>i</td>
+      <td>B</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>b</td>
+      <td>f</td>
+      <td>j</td>
+      <td>B</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>b</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>c</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>c</td>
+      <td>f</td>
+      <td>j</td>
+      <td>C</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>c</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>c</td>
+      <td>g</td>
+      <td>i</td>
+      <td>B</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>c</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>d</td>
+      <td>f</td>
+      <td>j</td>
+      <td>A</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>d</td>
+      <td>g</td>
+      <td>j</td>
+      <td>A</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>y</th>
+      <th>counter</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>a</td>
+      <td>A</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>a</td>
+      <td>B</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>a</td>
+      <td>C</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>b</td>
+      <td>B</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>b</td>
+      <td>C</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>c</td>
+      <td>B</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>c</td>
+      <td>C</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>d</td>
+      <td>A</td>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]]</span>
+    <span class="n">df0_max_counter</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df0_max_counter</span>
+
+
+<span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>counter</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>2</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]]</span>
+    <span class="n">df0_max_counter</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+    <span class="n">df0_idx</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df0_max_counter</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">df0_idx</span>
+
+
+<span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0     True
+1    False
+2    False
+3     True
+4    False
+5    False
+6     True
+7     True
+Name: counter, dtype: bool
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]]</span>
+    <span class="n">df0_max_counter</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+    <span class="n">df0_idx</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df0_max_counter</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df0_idx</span><span class="p">,</span> <span class="p">[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>a</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>b</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>c</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>d</td>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]]</span>
+    <span class="n">df0_max_counter</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+    <span class="n">df0_idx</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df0_max_counter</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df0_idx</span><span class="p">,</span> <span class="p">[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">]]</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>y</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>a</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>b</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>c</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>d</td>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]]</span>
+    <span class="n">df0_max_counter</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+    <span class="n">df0_idx</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df0_max_counter</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df0_idx</span><span class="p">,</span> <span class="p">[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">]]</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>y</th>
+    </tr>
+    <tr>
+      <th>x1</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>a</th>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>d</th>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Versión final con comentarios</span>
+<span class="c1">#</span>
+<span class="k">def</span> <span class="nf">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
     <span class="c1"># df: pandas DataFrame</span>
     <span class="c1"># var: nombre de la columna para construir el clasificador</span>
     <span class="c1"># target: columna con las clases</span>
@@ -725,16 +1348,16 @@ Overwriting data.csv
     <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="c1">## Columna para contar la cantidad de ocurrencias del target</span>
-    <span class="n">df0</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="c1">## conteo</span>
-    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;counter&#39;</span><span class="p">]]</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()[[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="s2">&quot;counter&quot;</span><span class="p">]]</span>
 
     <span class="c1">## genera un vector con el maximo conteo por cada valor de var</span>
-    <span class="n">df0_max_counter</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s1">&#39;counter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
+    <span class="n">df0_max_counter</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="n">var</span><span class="p">],</span> <span class="n">as_index</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="nb">max</span><span class="p">)</span>
 
     <span class="c1">## vector de T/F indicando si la fila contiene el valor maximo del conteo</span>
-    <span class="n">df0_idx</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df0_max_counter</span><span class="p">[</span><span class="s1">&#39;counter&#39;</span><span class="p">]</span>
+    <span class="n">df0_idx</span> <span class="o">=</span> <span class="n">df0</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">df0_max_counter</span><span class="p">[</span><span class="s2">&quot;counter&quot;</span><span class="p">]</span>
 
     <span class="c1">## Seleccionar var y target para los maximos</span>
     <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df0_idx</span><span class="p">,</span> <span class="p">[</span><span class="n">var</span><span class="p">,</span> <span class="n">target</span><span class="p">]]</span>
@@ -751,18 +1374,18 @@ Overwriting data.csv
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">## reglas para x1</span>
-<span class="n">rules_x1</span> <span class="o">=</span> <span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">rules_x1</span> <span class="o">=</span> <span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x1&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
 <span class="n">rules_x1</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -813,18 +1436,18 @@ Overwriting data.csv
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">## reglas para x2</span>
-<span class="n">rules_x2</span> <span class="o">=</span> <span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">rules_x2</span> <span class="o">=</span> <span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x2&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
 <span class="n">rules_x2</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -871,18 +1494,18 @@ Overwriting data.csv
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">## reglas para x3</span>
-<span class="n">rules_x3</span> <span class="o">=</span> <span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s1">&#39;x3&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
+<span class="n">rules_x3</span> <span class="o">=</span> <span class="n">oneR_fit</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="s2">&quot;x3&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
 <span class="n">rules_x3</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -931,12 +1554,596 @@ Overwriting data.csv
 </div>
 <div class="section" id="Predicción">
 <h3>Predicción<a class="headerlink" href="#Predicción" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">def</span> <span class="nf">oneR_predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rules</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">rules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_predict</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">rules_x1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>x2</th>
+      <th>x3</th>
+      <th>y</th>
+    </tr>
+    <tr>
+      <th>x1</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>e</td>
+      <td>h</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>e</td>
+      <td>j</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>f</td>
+      <td>h</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>f</td>
+      <td>i</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>e</td>
+      <td>i</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>f</td>
+      <td>i</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>f</td>
+      <td>j</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>f</td>
+      <td>j</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>g</td>
+      <td>i</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>d</th>
+      <td>d</td>
+      <td>f</td>
+      <td>j</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>d</th>
+      <td>d</td>
+      <td>g</td>
+      <td>j</td>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rules</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">rules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s2">&quot;_predicted_&quot;</span> <span class="o">+</span> <span class="n">rules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_predict</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">rules_x1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>x2</th>
+      <th>x3</th>
+      <th>y</th>
+      <th>y_predicted_x1</th>
+    </tr>
+    <tr>
+      <th>x1</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>e</td>
+      <td>h</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>e</td>
+      <td>j</td>
+      <td>B</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>f</td>
+      <td>h</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>f</td>
+      <td>i</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>a</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>e</td>
+      <td>i</td>
+      <td>B</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>f</td>
+      <td>i</td>
+      <td>B</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>f</td>
+      <td>j</td>
+      <td>B</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>b</th>
+      <td>b</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>f</td>
+      <td>j</td>
+      <td>C</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>g</td>
+      <td>i</td>
+      <td>B</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>c</th>
+      <td>c</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>d</th>
+      <td>d</td>
+      <td>f</td>
+      <td>j</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>d</th>
+      <td>d</td>
+      <td>g</td>
+      <td>j</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">oneR_predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rules</span><span class="p">):</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">rules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s2">&quot;_predicted_&quot;</span> <span class="o">+</span> <span class="n">rules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">df0</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">df0</span>
+
+
+<span class="n">oneR_predict</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">rules_x1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>x1</th>
+      <th>x2</th>
+      <th>x3</th>
+      <th>y</th>
+      <th>y_predicted_x1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>a</td>
+      <td>e</td>
+      <td>h</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>a</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>a</td>
+      <td>e</td>
+      <td>j</td>
+      <td>B</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>a</td>
+      <td>f</td>
+      <td>h</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>a</td>
+      <td>f</td>
+      <td>i</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>a</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>b</td>
+      <td>e</td>
+      <td>i</td>
+      <td>B</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>b</td>
+      <td>f</td>
+      <td>i</td>
+      <td>B</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>b</td>
+      <td>f</td>
+      <td>j</td>
+      <td>B</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>b</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+      <td>B</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>c</td>
+      <td>e</td>
+      <td>i</td>
+      <td>C</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>c</td>
+      <td>f</td>
+      <td>j</td>
+      <td>C</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>c</td>
+      <td>g</td>
+      <td>h</td>
+      <td>B</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>c</td>
+      <td>g</td>
+      <td>i</td>
+      <td>B</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>c</td>
+      <td>g</td>
+      <td>j</td>
+      <td>C</td>
+      <td>C</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>d</td>
+      <td>f</td>
+      <td>j</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>d</td>
+      <td>g</td>
+      <td>j</td>
+      <td>A</td>
+      <td>A</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Versión final comentada</span>
+<span class="c1">#</span>
+<span class="k">def</span> <span class="nf">oneR_predict</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">rules</span><span class="p">):</span>
     <span class="c1">## genera una copia del DataFrame</span>
     <span class="n">df0</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
@@ -946,7 +2153,7 @@ Overwriting data.csv
 
     <span class="c1">## hace un left join con base en los valores de los</span>
     <span class="c1">## indices de las filas del df y rules</span>
-    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s1">&#39;_predicted_&#39;</span> <span class="o">+</span> <span class="n">rules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">df0</span> <span class="o">=</span> <span class="n">df0</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rules</span><span class="p">,</span> <span class="n">rsuffix</span><span class="o">=</span><span class="s2">&quot;_predicted_&quot;</span> <span class="o">+</span> <span class="n">rules</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
     <span class="n">df0</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">df0</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">df0</span>
@@ -954,7 +2161,7 @@ Overwriting data.csv
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -967,7 +2174,7 @@ Overwriting data.csv
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1187,14 +2394,14 @@ Overwriting data.csv
 <div class="section" id="Precisión">
 <h3>Precisión<a class="headerlink" href="#Precisión" title="Enlazar permanentemente con este título">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">## cantidad de aciertos</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x1 : &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">df0</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">df0</span><span class="o">.</span><span class="n">y_predicted_x1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x2 : &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">df0</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">df0</span><span class="o">.</span><span class="n">y_predicted_x2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x3 : &#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">df0</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">df0</span><span class="o">.</span><span class="n">y_predicted_x3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x1 : &quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">df0</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">df0</span><span class="o">.</span><span class="n">y_predicted_x1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x2 : &quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">df0</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">df0</span><span class="o">.</span><span class="n">y_predicted_x2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x3 : &quot;</span><span class="p">,</span> <span class="p">(</span><span class="n">df0</span><span class="o">.</span><span class="n">y</span> <span class="o">==</span> <span class="n">df0</span><span class="o">.</span><span class="n">y_predicted_x3</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
@@ -1212,7 +2419,7 @@ x3 :  9
 <div class="section" id="Matriz-de-confusión">
 <h3>Matriz de confusión<a class="headerlink" href="#Matriz-de-confusión" title="Enlazar permanentemente con este título">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1223,7 +2430,7 @@ x3 :  9
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1234,7 +2441,7 @@ array([[6, 0, 0],
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1243,7 +2450,7 @@ array([[6, 0, 0],
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1254,7 +2461,7 @@ array([[3, 3, 0],
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1263,7 +2470,7 @@ array([[3, 3, 0],
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1273,177 +2480,6 @@ array([[3, 1, 2],
        [0, 2, 3]])
 </pre></div></div>
 </div>
-</div>
-</div>
-<div class="section" id="Solución-usando-el-lenguaje-R">
-<h2>Solución usando el lenguaje R<a class="headerlink" href="#Solución-usando-el-lenguaje-R" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span> <span class="o">-</span><span class="n">i</span> <span class="n">df</span>
-<span class="c1">##</span>
-<span class="c1">## Instalación del paquete:</span>
-<span class="c1">##</span>
-<span class="c1">##       install.packages(&quot;OneR&quot;)</span>
-<span class="c1">##</span>
-
-<span class="c1">##</span>
-<span class="c1">## Carga la librería.</span>
-<span class="c1">##</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">OneR</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## Crea el clasificador. La librería reporta la precisión</span>
-<span class="c1">## del clasificador si se usa cada uno de los atributos</span>
-<span class="c1">## (variables x) y el sistema de reglas obtenido.</span>
-<span class="c1">## La notación y ~ . indica que la variable y del dataframe es función de las restantes</span>
-<span class="c1">##</span>
-<span class="n">clf</span> <span class="o">&lt;-</span> <span class="nf">OneR</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">.,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## la salida del modelo indica la tasa de éxito para los clasificadores de todas las clases</span>
-<span class="c1">## Igualmente se imprimen las reglas de decisión para el mejor clasificador</span>
-<span class="c1">##</span>
-<span class="n">clf</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-    Attribute Accuracy
-1 * x1        66.67%
-2   x3        50%
-3   x2        44.44%
----
-Chosen attribute due to accuracy
-and ties method (if applicable): &#39;*&#39;
-
-
-Call:
-OneR.formula(formula = y ~ ., data = df, verbose = TRUE)
-
-Rules:
-If x1 = a then y = A
-If x1 = b then y = B
-If x1 = c then y = C
-If x1 = d then y = A
-
-Accuracy:
-12 of 18 instances classified correctly (66.67%)
-
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## La función summary reporta información detallada</span>
-<span class="c1">## de los resultados del modelo, junto con la matriz</span>
-<span class="c1">## de confusión</span>
-<span class="c1">##</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">clf</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Call:
-OneR.formula(formula = y ~ ., data = df, verbose = TRUE)
-
-Rules:
-If x1 = a then y = A
-If x1 = b then y = B
-If x1 = c then y = C
-If x1 = d then y = A
-
-Accuracy:
-12 of 18 instances classified correctly (66.67%)
-
-Contingency table:
-     x1
-y       a   b   c   d Sum
-  A   * 4   0   0 * 2   6
-  B     2 * 3   2   0   7
-  C     1   1 * 3   0   5
-  Sum   7   4   5   2  18
----
-Maximum in each column: &#39;*&#39;
-
-Pearson&#39;s Chi-squared test:
-X-squared = 12.064, df = 6, p-value = 0.06056
-
-</pre></div></div>
-</div>
-<p><strong>Matriz de confusión</strong></p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">gmodels</span><span class="p">)</span>
-<span class="nf">CrossTable</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="o">$</span><span class="n">y</span><span class="p">,</span>
-           <span class="n">y</span> <span class="o">=</span> <span class="nf">predict</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span><span class="n">df</span><span class="p">),</span>
-           <span class="n">prop.chisq</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-
-   Cell Contents
-|-------------------------|
-|                       N |
-|           N / Row Total |
-|           N / Col Total |
-|         N / Table Total |
-|-------------------------|
-
-
-Total Observations in Table:  18
-
-
-             | predict(clf, df)
-        df$y |         A |         B |         C | Row Total |
--------------|-----------|-----------|-----------|-----------|
-           A |         6 |         0 |         0 |         6 |
-             |     1.000 |     0.000 |     0.000 |     0.333 |
-             |     0.667 |     0.000 |     0.000 |           |
-             |     0.333 |     0.000 |     0.000 |           |
--------------|-----------|-----------|-----------|-----------|
-           B |         2 |         3 |         2 |         7 |
-             |     0.286 |     0.429 |     0.286 |     0.389 |
-             |     0.222 |     0.750 |     0.400 |           |
-             |     0.111 |     0.167 |     0.111 |           |
--------------|-----------|-----------|-----------|-----------|
-           C |         1 |         1 |         3 |         5 |
-             |     0.200 |     0.200 |     0.600 |     0.278 |
-             |     0.111 |     0.250 |     0.600 |           |
-             |     0.056 |     0.056 |     0.167 |           |
--------------|-----------|-----------|-----------|-----------|
-Column Total |         9 |         4 |         5 |        18 |
-             |     0.500 |     0.222 |     0.278 |           |
--------------|-----------|-----------|-----------|-----------|
-
-
-</pre></div></div>
 </div>
 </div>
 </div>
