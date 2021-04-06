@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Filtrado de spam en mensajes de texto (SMS) &mdash; documentación de --- Cursos --- - </title>
+  <title>Filtrado de spam en mensajes de texto SMS &mdash; documentación de --- Cursos --- - </title>
   
 
   
@@ -150,7 +150,7 @@
         
           <li><a href="../../../analitica-predictiva/content.html">Sesiones</a> &raquo;</li>
         
-      <li>Filtrado de spam en mensajes de texto (SMS)</li>
+      <li>Filtrado de spam en mensajes de texto SMS</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -411,10 +411,10 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Filtrado-de-spam-en-mensajes-de-texto-(SMS)">
-<h1>Filtrado de spam en mensajes de texto (SMS)<a class="headerlink" href="#Filtrado-de-spam-en-mensajes-de-texto-(SMS)" title="Enlazar permanentemente con este título">¶</a></h1>
+<div class="section" id="Filtrado-de-spam-en-mensajes-de-texto-SMS">
+<h1>Filtrado de spam en mensajes de texto SMS<a class="headerlink" href="#Filtrado-de-spam-en-mensajes-de-texto-SMS" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>45 min</em> | Última modificación: Junio 22, 2019</p></li>
+<li><p>31:12 min | Última modificación: Abril 5, 2021 | <a class="reference external" href="https://youtu.be/bl361y9rFNUhttps://youtu.be/bl361y9rFNU">YouTube</a></p></li>
 </ul>
 <p><strong>Bibliografía.</strong> Machine Learning with R. Brett Lantz, Packt Publishing, Second Edition, 2015.</p>
 <p>Los clasificadores Bayesianos ingenuos son herramientas de gran utilidad para la construcción de sistemas de clasificación, como ya se discutio en los tutoriales anteriores. En este tutorial se utiliza un clasificador Bayesiano ingenuo para determinar si un mensaje SMS es válido o es spam.</p>
@@ -425,43 +425,27 @@ para realizar la clasificación, en comparación con textos más largos (como lo
 <p>La muestra contiene 5574 mensajes en inglés, no codificados y clasificados como legítimos (ham) o spam (<a class="reference external" href="http://www.dt.fee.unicamp.br/~tiago/smsspamcollection/">http://www.dt.fee.unicamp.br/~tiago/smsspamcollection/</a>). El problema en términos de los datos consiste en clasificar si un mensaje SMS es legítico o spam, a partir del análisis de las palabras que contiente, partiendo del supuesto de que ciertas palabras que son más frecuentes dependiendo del tipo de mensaje. Esto implica que en la fase de preparación de los datos se deben extraer las palabras
 que contiene cada mensaje para poder realizar el análsis.</p>
 </div>
-<div class="section" id="Preparación">
-<h2>Preparación<a class="headerlink" href="#Preparación" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput nblast docutils container">
+<div class="section" id="Carga-de-datos">
+<h2>Carga de datos<a class="headerlink" href="#Carga-de-datos" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> rpy2.ipython
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Carga-de-datos">
-<h2>Carga de datos<a class="headerlink" href="#Carga-de-datos" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
     <span class="s2">&quot;https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/sms-spam.csv&quot;</span><span class="p">,</span>
-    <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
-    <span class="n">thousands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">decimal</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
-    <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;latin-1&#39;</span><span class="p">)</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+    <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;latin-1&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -518,19 +502,19 @@ que contiene cada mensaje para poder realizar el análsis.</p>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Verifica la lectura de los datos</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Verifica la lectura de los datos</span>
+<span class="c1">#</span>
 <span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -585,20 +569,20 @@ que contiene cada mensaje para poder realizar el análsis.</p>
 <div class="section" id="Conteo-de-cantidad-de-mensajes-por-tipo">
 <h2>Conteo de cantidad de mensajes por tipo<a class="headerlink" href="#Conteo-de-cantidad-de-mensajes-por-tipo" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Se obtiene la cantidad de casos para</span>
-<span class="c1">## cada tipo de mensaje.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se obtiene la cantidad de casos para</span>
+<span class="c1"># cada tipo de mensaje.</span>
+<span class="c1">#</span>
 <span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -609,7 +593,7 @@ Name: type, dtype: int64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -621,23 +605,23 @@ Name: type, dtype: int64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_bayes_02-filtrado-de-mensajes-sms_13_0.png" src="../../../_images/notebooks_sklearn_bayes_02-filtrado-de-mensajes-sms_13_0.png" />
+<img alt="../../../_images/notebooks_sklearn_bayes_02-filtrado-de-mensajes-sms_11_0.png" src="../../../_images/notebooks_sklearn_bayes_02-filtrado-de-mensajes-sms_11_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Se convierte el conteo anterior en probabilidades.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se convierte el conteo anterior en probabilidades.</span>
+<span class="c1">#</span>
 <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -651,21 +635,25 @@ Name: type, dtype: float64
 <div class="section" id="Stemmer">
 <h2>Stemmer<a class="headerlink" href="#Stemmer" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">nltk.stem.porter</span> <span class="kn">import</span> <span class="n">PorterStemmer</span>
+
+<span class="c1">#</span>
+<span class="c1"># Se construye un stemmer que reduce una palabra a su raiz o &#39;stem&#39;.</span>
+<span class="c1"># {llorar, lloramos, lloraron} -&gt; llorar</span>
+<span class="c1"># {biblioteca, bibliotecario} -&gt; bibliotec</span>
+<span class="c1">#</span>
 <span class="n">stemmer</span> <span class="o">=</span> <span class="n">PorterStemmer</span><span class="p">()</span>
-
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;stemmed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="p">]))</span>
-
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;stemmed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">stemmer</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">()]))</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -761,39 +749,56 @@ Name: type, dtype: float64
 <div class="section" id="Matriz-de-Términos-del-Documento">
 <h2>Matriz de Términos del Documento<a class="headerlink" href="#Matriz-de-Términos-del-Documento" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Matriz de términos del documento en Python</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Matriz de términos del documento en Python</span>
+<span class="c1">#</span>
 <span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">CountVectorizer</span>
 
+<span class="c1">#</span>
+<span class="c1"># Stopwords:</span>
+<span class="c1">#   i  me  my  myself  we  our  ours  ourselves ....</span>
+<span class="c1">#   am  is  are  was  were  be  been  being  have</span>
+<span class="c1">#   has  had  having  do  does  did  doing  ...</span>
+<span class="c1">#   a  an  the  and  but  if  or  because  as  until</span>
+<span class="c1">#   while  of  at  by  for  with  about  against ...</span>
+<span class="c1">#   ...</span>
+<span class="c1">#</span>
+<span class="c1"># token_pattern:</span>
+<span class="c1"># https://docs.python.org/3/howto/regex.html#regex-howto</span>
+<span class="c1">#</span>
+<span class="c1">#   \w cualquier caracter alfanumerico [a-zA-Z0-9_]</span>
+<span class="c1">#   \w\w+ cadenas de dos o mas caracteres</span>
+<span class="c1">#   \b  word boundary</span>
+<span class="c1">#</span>
 <span class="n">count_vect</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span>
-    <span class="n">analyzer</span><span class="o">=</span><span class="s1">&#39;word&#39;</span><span class="p">,</span>        <span class="c1"># a nivel de palabra</span>
-    <span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>         <span class="c1"># convierte a minúsculas</span>
-    <span class="n">stop_words</span><span class="o">=</span><span class="s1">&#39;english&#39;</span><span class="p">,</span>   <span class="c1"># stop_words en inglés</span>
-    <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>            <span class="c1"># Los valores distintos de cero son fijados en 1</span>
-    <span class="n">min_df</span><span class="o">=</span><span class="mi">5</span>                <span class="c1"># ignora palabras con baja freq</span>
+    <span class="n">analyzer</span><span class="o">=</span><span class="s2">&quot;word&quot;</span><span class="p">,</span>                <span class="c1"># a nivel de palabra</span>
+    <span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                 <span class="c1"># convierte a minúsculas</span>
+    <span class="n">stop_words</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">,</span>           <span class="c1"># stop_words en inglés</span>
+    <span class="n">token_pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;(?u)\b\w\w+\b&quot;</span><span class="p">,</span> <span class="c1"># patrones a reconocer</span>
+    <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>                    <span class="c1"># Los valores distintos de cero son fijados en 1</span>
+    <span class="n">max_df</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>                     <span class="c1"># máxima frecuencia a considerar</span>
+    <span class="n">min_df</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>                       <span class="c1"># ignora palabras con baja frecuencia</span>
 <span class="p">)</span>
 
-
-<span class="c1">##</span>
-<span class="c1">## Aplica la función al texto</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Aplica la función al texto</span>
+<span class="c1">#</span>
 <span class="n">dtm</span> <span class="o">=</span> <span class="n">count_vect</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">stemmed</span><span class="p">)</span>
 
-<span class="c1">##</span>
-<span class="c1">## Las filas contienen los mensajes</span>
-<span class="c1">## y las clomunas los términos</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Las filas contienen los mensajes</span>
+<span class="c1"># y las clomunas los términos</span>
+<span class="c1">#</span>
 <span class="n">dtm</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -802,20 +807,20 @@ Name: type, dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Palabras aprendidas de los mensajes de texto</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Palabras aprendidas de los mensajes de texto</span>
+<span class="c1">#</span>
 <span class="n">vocabulary</span> <span class="o">=</span> <span class="n">count_vect</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
 <span class="nb">len</span><span class="p">(</span><span class="n">vocabulary</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -824,19 +829,19 @@ Name: type, dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Primeras palabras del vocabulario</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Primeras palabras del vocabulario</span>
+<span class="c1">#</span>
 <span class="n">vocabulary</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -854,25 +859,92 @@ Name: type, dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se puede mejorar diciendo que solo se reconozcan</span>
+<span class="c1"># palabras formadas por letras</span>
+<span class="c1">#</span>
+<span class="n">count_vect</span> <span class="o">=</span> <span class="n">CountVectorizer</span><span class="p">(</span>
+    <span class="n">analyzer</span><span class="o">=</span><span class="s2">&quot;word&quot;</span><span class="p">,</span>
+    <span class="n">lowercase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">stop_words</span><span class="o">=</span><span class="s2">&quot;english&quot;</span><span class="p">,</span>
+    <span class="n">token_pattern</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;(?u)\b[a-zA-Z][a-zA-Z]+\b&quot;</span><span class="p">,</span>
+    <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">max_df</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">min_df</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dtm</span> <span class="o">=</span> <span class="n">count_vect</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">stemmed</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Las filas contienen los mensajes</span>
+<span class="c1"># y las clomunas los términos</span>
+<span class="c1">#</span>
+<span class="n">dtm</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(5574, 1423)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Recupera los mensajes de la dtm</span>
-<span class="c1">##</span>
+<span></span><span class="n">vocabulary</span> <span class="o">=</span> <span class="n">count_vect</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
+<span class="n">vocabulary</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;aathi&#39;,
+ &#39;abiola&#39;,
+ &#39;abl&#39;,
+ &#39;abt&#39;,
+ &#39;ac&#39;,
+ &#39;acc&#39;,
+ &#39;accept&#39;,
+ &#39;access&#39;,
+ &#39;account&#39;,
+ &#39;act&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Recupera los mensajes de la dtm</span>
+<span class="c1">#</span>
 <span class="k">def</span> <span class="nf">dtm2words</span><span class="p">(</span><span class="n">dtm</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-    <span class="n">as_list</span> <span class="o">=</span> <span class="n">dtm</span><span class="p">[</span><span class="n">index</span><span class="p">,:]</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">as_list</span> <span class="o">=</span> <span class="n">dtm</span><span class="p">[</span><span class="n">index</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">toarray</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="n">docs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
         <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="n">vocabulary</span><span class="p">[</span><span class="n">iword</span><span class="p">]</span> <span class="k">for</span> <span class="n">iword</span><span class="p">,</span> <span class="n">ifreq</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">as_list</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">if</span> <span class="n">ifreq</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
         <span class="n">docs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">k</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">docs</span>
 
+
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dtm2words</span><span class="p">(</span><span class="n">dtm</span><span class="p">,</span> <span class="n">vocabulary</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">])):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Org: &#39;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Mod: &#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Org: &quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mod: &quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -897,7 +969,7 @@ Org:  Nah I don&#39;t think he goes to usf, he lives around here though
 Mod:  don goe live nah think usf
 
 Org:  FreeMsg Hey there darling it&#39;s been 3 week&#39;s now and no word back! I&#39;d like some fun you up for it still? Tb ok! XxX std chgs to send, Â£1.50 to rcv
-Mod:  50 darl freemsg fun hey like ok send std week word xxx
+Mod:  darl freemsg fun hey like ok send std week word xxx
 
 Org:  Even my brother is not like to speak with me. They treat me like aids patent.
 Mod:  brother like speak treat
@@ -906,10 +978,10 @@ Org:  As per your request &#39;Melle Melle (Oru Minnaminunginte Nurungu Vettam)&
 Mod:  callers callertun copi friend ha press request set
 
 Org:  WINNER!! As a valued network customer you have been selected to receivea Â£900 prize reward! To claim call 09061701461. Claim code KL341. Valid 12 hours only.
-Mod:  12 900 claim code custom hour network prize reward select valid valu winner
+Mod:  claim code custom hour network prize reward select valid valu winner
 
 Org:  Had your mobile 11 months or more? U R entitled to Update to the latest colour mobiles with camera for Free! Call The Mobile Update Co FREE on 08002986030
-Mod:  11 camera colour entitl free latest mobil month updat
+Mod:  camera colour entitl free latest mobil month updat
 
 Org:  I&#39;m gonna be home soon and i don&#39;t want to talk about this stuff anymore tonight, k? I&#39;ve cried enough today.
 Mod:  don gonna home soon stuff talk thi today tonight want
@@ -919,29 +991,27 @@ Mod:  don gonna home soon stuff talk thi today tonight want
 </div>
 <div class="section" id="Conjuntos-de-entrenamiento-y-prueba">
 <h2>Conjuntos de entrenamiento y prueba<a class="headerlink" href="#Conjuntos-de-entrenamiento-y-prueba" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Creación de los conjuntos de entrenamiento y prueba.</span>
-<span class="c1">##</span>
-<span class="n">X_train</span>      <span class="o">=</span> <span class="n">dtm</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4168</span><span class="p">,]</span>
-<span class="n">X_test</span>       <span class="o">=</span> <span class="n">dtm</span><span class="p">[</span><span class="mi">4169</span><span class="p">:,]</span>
-<span class="n">y_train_true</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4168</span><span class="p">]</span>
-<span class="n">y_test_true</span>  <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="mi">4169</span><span class="p">:]</span>
-</pre></div>
-</div>
-</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Distribución de los datos en el conjunto de entrenamiento.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Creación de los conjuntos de entrenamiento y prueba.</span>
+<span class="c1">#</span>
+<span class="n">X_train</span> <span class="o">=</span> <span class="n">dtm</span><span class="p">[</span>
+    <span class="mi">0</span><span class="p">:</span><span class="mi">4168</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">X_test</span> <span class="o">=</span> <span class="n">dtm</span><span class="p">[</span>
+    <span class="mi">4169</span><span class="p">:,</span>
+<span class="p">]</span>
+
+<span class="n">y_train_true</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4168</span><span class="p">]</span>
+<span class="n">y_test_true</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">type</span><span class="p">[</span><span class="mi">4169</span><span class="p">:]</span>
+
+<span class="c1">#</span>
+<span class="c1"># Distribución de los datos en el conjunto de entrenamiento.</span>
+<span class="c1">#</span>
 <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">y_train_true</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y_train_true</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -962,9 +1032,9 @@ Name: type, dtype: float64
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Distribución de los datos en el conjunto de entrenamiento.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Distribución de los datos en el conjunto de entrenamiento.</span>
+<span class="c1">#</span>
 <span class="nb">round</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">y_test_true</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y_test_true</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -988,22 +1058,16 @@ Name: type, dtype: float64
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Entrena el modelo</span>
-<span class="c1">##</span>
-<span class="c1">##</span>
-<span class="c1">## Se importa la libreria</span>
-<span class="c1">##</span>
-<span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">BernoulliNB</span>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.naive_bayes</span> <span class="kn">import</span> <span class="n">BernoulliNB</span>
 
-<span class="c1">##</span>
-<span class="c1">## Se crea un clasificador Naive Bayes (NB)</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Se crea un clasificador Naive Bayes (NB)</span>
+<span class="c1">#</span>
 <span class="n">clf</span> <span class="o">=</span> <span class="n">BernoulliNB</span><span class="p">()</span>
 
-<span class="c1">##</span>
-<span class="c1">## Se entrena el clasificador</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Se entrena el clasificador</span>
+<span class="c1">#</span>
 <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="o">.</span><span class="n">toarray</span><span class="p">(),</span> <span class="n">y_train_true</span><span class="p">)</span>
 <span class="n">clf</span>
 </pre></div>
@@ -1026,9 +1090,9 @@ BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Se pronostica para los datos de prueba.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se pronostica para los datos de prueba.</span>
+<span class="c1">#</span>
 <span class="n">y_test_pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
 <span class="n">y_test_pred_prob</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict_proba</span><span class="p">(</span><span class="n">X_test</span><span class="o">.</span><span class="n">toarray</span><span class="p">())</span>
 <span class="n">y_test_pred</span>
@@ -1049,12 +1113,17 @@ array([&#39;spam&#39;, &#39;ham&#39;, &#39;ham&#39;, ..., &#39;ham&#39;, &#39;ha
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Métricas de desempeño</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Métricas de desempeño</span>
+<span class="c1">#</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
-<span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">y_test_true</span><span class="p">,</span>
-                 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_test_pred</span><span class="p">)</span>
+
+<span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="n">y_test_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_test_pred</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Pronostico en las columnas</span>
+<span class="c1"># Real en las filas</span>
+<span class="c1">#</span>
 </pre></div>
 </div>
 </div>
@@ -1064,93 +1133,12 @@ array([&#39;spam&#39;, &#39;ham&#39;, &#39;ham&#39;, ..., &#39;ham&#39;, &#39;ha
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[1217,    5],
-       [  20,  163]])
+array([[1213,    9],
+       [  17,  166]])
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span> <span class="o">-</span><span class="n">i</span> <span class="n">y_test_true</span> <span class="o">-</span><span class="n">i</span> <span class="n">y_test_pred</span>
-<span class="c1">##</span>
-<span class="c1">## Se calcula la matriz de confusión.</span>
-<span class="c1">##</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">y_test_true</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-           y_test_pred
-y_test_true  ham spam
-       ham  1217    5
-       spam   20  163
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Para el análisis resulta mejor construir la</span>
-<span class="c1">## matriz de confusión</span>
-<span class="c1">##</span>
-<span class="c1"># install.packages(&quot;gmodels&quot;)</span>
-<span class="c1">##</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">gmodels</span><span class="p">)</span>
-<span class="nf">CrossTable</span><span class="p">(</span><span class="n">y_test_pred</span><span class="p">,</span>
-           <span class="n">y_test_true</span><span class="p">,</span>
-           <span class="n">prop.chisq</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
-           <span class="n">prop.t</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">,</span>
-           <span class="n">dnn</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#39;predicted&#39;</span><span class="p">,</span> <span class="s">&#39;actual&#39;</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-
-   Cell Contents
-|-------------------------|
-|                       N |
-|           N / Row Total |
-|           N / Col Total |
-|-------------------------|
-
-
-Total Observations in Table:  1405
-
-
-             | actual
-   predicted |       ham |      spam | Row Total |
--------------|-----------|-----------|-----------|
-         ham |      1217 |        20 |      1237 |
-             |     0.984 |     0.016 |     0.880 |
-             |     0.996 |     0.109 |           |
--------------|-----------|-----------|-----------|
-        spam |         5 |       163 |       168 |
-             |     0.030 |     0.970 |     0.120 |
-             |     0.004 |     0.891 |           |
--------------|-----------|-----------|-----------|
-Column Total |      1222 |       183 |      1405 |
-             |     0.870 |     0.130 |           |
--------------|-----------|-----------|-----------|
-
-
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1159,42 +1147,45 @@ Column Total |      1222 |       183 |      1405 |
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[6.63801021e-15, 1.00000000e+00],
-       [9.99629498e-01, 3.70501972e-04],
-       [9.99665501e-01, 3.34499235e-04],
+array([[2.56782069e-11, 1.00000000e+00],
+       [9.97507164e-01, 2.49283632e-03],
+       [9.97748935e-01, 2.25106470e-03],
        ...,
-       [9.99991808e-01, 8.19235717e-06],
-       [9.99937801e-01, 6.21994279e-05],
-       [9.99977784e-01, 2.22158366e-05]])
+       [9.99944765e-01, 5.52350469e-05],
+       [9.99580765e-01, 4.19235040e-04],
+       [9.99850227e-01, 1.49773007e-04]])
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Resulta más conveniente preparar una nueva tabla que</span>
-<span class="c1">## muestre la clasificación y no únicamente las</span>
-<span class="c1">## probabilidades.</span>
-<span class="c1">##</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;actual_type&#39;</span><span class="p">:</span>  <span class="n">y_test_true</span><span class="p">,</span>
-    <span class="s1">&#39;predict_type&#39;</span><span class="p">:</span> <span class="n">y_test_pred</span><span class="p">,</span>
-    <span class="s1">&#39;prob_ham&#39;</span><span class="p">:</span>     <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">y_test_pred_prob</span><span class="p">],</span>
-    <span class="s1">&#39;prob_spam&#39;</span><span class="p">:</span>    <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">y_test_pred_prob</span><span class="p">]})</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Resulta más conveniente preparar una nueva tabla que</span>
+<span class="c1"># muestre la clasificación y no únicamente las</span>
+<span class="c1"># probabilidades.</span>
+<span class="c1">#</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;actual_type&quot;</span><span class="p">:</span> <span class="n">y_test_true</span><span class="p">,</span>
+        <span class="s2">&quot;predict_type&quot;</span><span class="p">:</span> <span class="n">y_test_pred</span><span class="p">,</span>
+        <span class="s2">&quot;prob_ham&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">y_test_pred_prob</span><span class="p">],</span>
+        <span class="s2">&quot;prob_spam&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">y_test_pred_prob</span><span class="p">],</span>
+    <span class="p">}</span>
+<span class="p">)</span>
 
 <span class="n">results</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1227,57 +1218,57 @@ array([[6.63801021e-15, 1.00000000e+00],
       <th>4169</th>
       <td>spam</td>
       <td>spam</td>
-      <td>6.638010e-15</td>
+      <td>2.567821e-11</td>
       <td>1.000000e+00</td>
     </tr>
     <tr>
       <th>4170</th>
       <td>ham</td>
       <td>ham</td>
-      <td>9.996295e-01</td>
-      <td>3.705020e-04</td>
+      <td>9.975072e-01</td>
+      <td>2.492836e-03</td>
     </tr>
     <tr>
       <th>4171</th>
       <td>ham</td>
       <td>ham</td>
-      <td>9.996655e-01</td>
-      <td>3.344992e-04</td>
+      <td>9.977489e-01</td>
+      <td>2.251065e-03</td>
     </tr>
     <tr>
       <th>4172</th>
       <td>ham</td>
       <td>ham</td>
       <td>1.000000e+00</td>
-      <td>2.050868e-09</td>
+      <td>1.382815e-08</td>
     </tr>
     <tr>
       <th>4173</th>
       <td>ham</td>
       <td>ham</td>
-      <td>9.999999e-01</td>
-      <td>6.130877e-08</td>
+      <td>9.999996e-01</td>
+      <td>4.133793e-07</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Mensajes con clasificación errónea.</span>
-<span class="c1">## Resulta muy importante determinar porque los</span>
-<span class="c1">## mensajes están mal clasificados</span>
-<span class="c1">##</span>
-<span class="n">results</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;actual_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;predict_type&#39;</span><span class="p">]]</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Mensajes con clasificación errónea.</span>
+<span class="c1"># Resulta muy importante determinar porque los</span>
+<span class="c1"># mensajes están mal clasificados</span>
+<span class="c1">#</span>
+<span class="n">results</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;actual_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;predict_type&quot;</span><span class="p">]]</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1310,198 +1301,205 @@ array([[6.63801021e-15, 1.00000000e+00],
       <th>4213</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.999475</td>
-      <td>0.000525</td>
+      <td>0.996469</td>
+      <td>0.003531</td>
     </tr>
     <tr>
-      <th>4249</th>
-      <td>spam</td>
+      <th>4253</th>
       <td>ham</td>
-      <td>0.761034</td>
-      <td>0.238966</td>
+      <td>spam</td>
+      <td>0.137255</td>
+      <td>0.862745</td>
     </tr>
     <tr>
       <th>4256</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.970804</td>
-      <td>0.029196</td>
+      <td>0.831411</td>
+      <td>0.168589</td>
     </tr>
     <tr>
-      <th>4297</th>
+      <th>4295</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.727760</td>
-      <td>0.272240</td>
-    </tr>
-    <tr>
-      <th>4298</th>
-      <td>spam</td>
-      <td>ham</td>
-      <td>0.631022</td>
-      <td>0.368978</td>
+      <td>0.783809</td>
+      <td>0.216191</td>
     </tr>
     <tr>
       <th>4344</th>
       <td>ham</td>
       <td>spam</td>
-      <td>0.353753</td>
-      <td>0.646247</td>
+      <td>0.075089</td>
+      <td>0.924911</td>
     </tr>
     <tr>
       <th>4373</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.992271</td>
-      <td>0.007729</td>
+      <td>0.950103</td>
+      <td>0.049897</td>
     </tr>
     <tr>
       <th>4394</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.989344</td>
-      <td>0.010656</td>
+      <td>0.932296</td>
+      <td>0.067704</td>
     </tr>
     <tr>
       <th>4399</th>
       <td>ham</td>
       <td>spam</td>
-      <td>0.389774</td>
-      <td>0.610226</td>
+      <td>0.086534</td>
+      <td>0.913466</td>
+    </tr>
+    <tr>
+      <th>4475</th>
+      <td>spam</td>
+      <td>ham</td>
+      <td>0.619568</td>
+      <td>0.380432</td>
     </tr>
     <tr>
       <th>4514</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.999772</td>
-      <td>0.000228</td>
+      <td>0.998462</td>
+      <td>0.001538</td>
     </tr>
     <tr>
       <th>4527</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.938042</td>
-      <td>0.061958</td>
+      <td>0.691872</td>
+      <td>0.308128</td>
     </tr>
     <tr>
       <th>4729</th>
       <td>ham</td>
       <td>spam</td>
-      <td>0.092408</td>
-      <td>0.907592</td>
+      <td>0.014876</td>
+      <td>0.985124</td>
     </tr>
     <tr>
       <th>4773</th>
       <td>ham</td>
       <td>spam</td>
-      <td>0.000699</td>
-      <td>0.999301</td>
-    </tr>
-    <tr>
-      <th>4798</th>
-      <td>spam</td>
-      <td>ham</td>
-      <td>0.622680</td>
-      <td>0.377320</td>
+      <td>0.000104</td>
+      <td>0.999896</td>
     </tr>
     <tr>
       <th>4821</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.904087</td>
-      <td>0.095913</td>
+      <td>0.582984</td>
+      <td>0.417016</td>
     </tr>
     <tr>
       <th>4914</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.988115</td>
-      <td>0.011885</td>
+      <td>0.924987</td>
+      <td>0.075013</td>
     </tr>
     <tr>
       <th>4968</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.969484</td>
-      <td>0.030516</td>
+      <td>0.995243</td>
+      <td>0.004757</td>
     </tr>
     <tr>
       <th>5046</th>
       <td>ham</td>
       <td>spam</td>
-      <td>0.015027</td>
-      <td>0.984973</td>
+      <td>0.002258</td>
+      <td>0.997742</td>
+    </tr>
+    <tr>
+      <th>5056</th>
+      <td>ham</td>
+      <td>spam</td>
+      <td>0.443998</td>
+      <td>0.556002</td>
+    </tr>
+    <tr>
+      <th>5106</th>
+      <td>ham</td>
+      <td>spam</td>
+      <td>0.266868</td>
+      <td>0.733132</td>
     </tr>
     <tr>
       <th>5112</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.998642</td>
-      <td>0.001358</td>
+      <td>0.990915</td>
+      <td>0.009085</td>
     </tr>
     <tr>
-      <th>5372</th>
-      <td>spam</td>
+      <th>5326</th>
       <td>ham</td>
-      <td>0.537354</td>
-      <td>0.462646</td>
-    </tr>
-    <tr>
-      <th>5379</th>
       <td>spam</td>
-      <td>ham</td>
-      <td>0.586516</td>
-      <td>0.413484</td>
+      <td>0.161439</td>
+      <td>0.838561</td>
     </tr>
     <tr>
       <th>5383</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.999802</td>
-      <td>0.000198</td>
+      <td>0.998667</td>
+      <td>0.001333</td>
     </tr>
     <tr>
       <th>5429</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.999816</td>
-      <td>0.000184</td>
+      <td>0.998762</td>
+      <td>0.001238</td>
     </tr>
     <tr>
       <th>5451</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.993828</td>
-      <td>0.006172</td>
+      <td>0.959811</td>
+      <td>0.040189</td>
     </tr>
     <tr>
       <th>5468</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.968063</td>
-      <td>0.031937</td>
+      <td>0.818033</td>
+      <td>0.181967</td>
+    </tr>
+    <tr>
+      <th>5542</th>
+      <td>spam</td>
+      <td>ham</td>
+      <td>0.998118</td>
+      <td>0.001882</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Sin embargo, es mucho más intersante extraer</span>
-<span class="c1">## mensajes con probabilidades numéricamente</span>
-<span class="c1">## cercanas a 0.5. Estos podrían generar ambiguedad</span>
-<span class="c1">## en la clasificación.</span>
-<span class="c1">##</span>
-<span class="n">results</span><span class="p">[(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;prob_spam&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;prob_spam&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.6</span><span class="p">)]</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Sin embargo, es mucho más intersante extraer</span>
+<span class="c1"># mensajes con probabilidades numéricamente</span>
+<span class="c1"># cercanas a 0.5. Estos podrían generar ambiguedad</span>
+<span class="c1"># en la clasificación.</span>
+<span class="c1">#</span>
+<span class="n">results</span><span class="p">[(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;prob_spam&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;prob_spam&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.6</span><span class="p">)]</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1531,60 +1529,48 @@ array([[6.63801021e-15, 1.00000000e+00],
   </thead>
   <tbody>
     <tr>
-      <th>4253</th>
-      <td>ham</td>
-      <td>ham</td>
-      <td>0.517533</td>
-      <td>0.482467</td>
-    </tr>
-    <tr>
-      <th>4931</th>
-      <td>spam</td>
-      <td>spam</td>
-      <td>0.463595</td>
-      <td>0.536405</td>
-    </tr>
-    <tr>
-      <th>5326</th>
-      <td>ham</td>
-      <td>ham</td>
-      <td>0.564854</td>
-      <td>0.435146</td>
-    </tr>
-    <tr>
-      <th>5372</th>
+      <th>4821</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.537354</td>
-      <td>0.462646</td>
+      <td>0.582984</td>
+      <td>0.417016</td>
     </tr>
     <tr>
-      <th>5379</th>
-      <td>spam</td>
+      <th>5056</th>
       <td>ham</td>
-      <td>0.586516</td>
-      <td>0.413484</td>
+      <td>spam</td>
+      <td>0.443998</td>
+      <td>0.556002</td>
+    </tr>
+    <tr>
+      <th>5122</th>
+      <td>spam</td>
+      <td>spam</td>
+      <td>0.462431</td>
+      <td>0.537569</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Mensajes mal clasificados con probabilidad cercana a 0.5</span>
-<span class="c1">##</span>
-<span class="n">results</span><span class="p">[(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;prob_spam&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">)</span> <span class="o">&amp;</span>
-        <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;prob_spam&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.6</span><span class="p">)</span> <span class="o">&amp;</span>
-        <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;actual_type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;predict_type&#39;</span><span class="p">])]</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Mensajes mal clasificados con probabilidad cercana a 0.5</span>
+<span class="c1">#</span>
+<span class="n">results</span><span class="p">[</span>
+    <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;prob_spam&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.4</span><span class="p">)</span>
+    <span class="o">&amp;</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;prob_spam&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.6</span><span class="p">)</span>
+    <span class="o">&amp;</span> <span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;actual_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">results</span><span class="p">[</span><span class="s2">&quot;predict_type&quot;</span><span class="p">])</span>
+<span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1614,277 +1600,24 @@ array([[6.63801021e-15, 1.00000000e+00],
   </thead>
   <tbody>
     <tr>
-      <th>5372</th>
+      <th>4821</th>
       <td>spam</td>
       <td>ham</td>
-      <td>0.537354</td>
-      <td>0.462646</td>
+      <td>0.582984</td>
+      <td>0.417016</td>
     </tr>
     <tr>
-      <th>5379</th>
-      <td>spam</td>
+      <th>5056</th>
       <td>ham</td>
-      <td>0.586516</td>
-      <td>0.413484</td>
+      <td>spam</td>
+      <td>0.443998</td>
+      <td>0.556002</td>
     </tr>
   </tbody>
 </table>
 </div></div>
 </div>
-</div>
-<div class="section" id="Mejora-del-modelo">
-<h2>Mejora del modelo<a class="headerlink" href="#Mejora-del-modelo" title="Enlazar permanentemente con este título">¶</a></h2>
-<p><strong>Actividad.—</strong> Si en la construcción del clasificador se hace <code class="docutils literal notranslate"><span class="pre">laplace</span> <span class="pre">=</span> <span class="pre">1</span></code>, en cuanto mejora la precisión del modelo.</p>
-</div>
-<div class="section" id="Apéndice-----Solución-en-R">
-<h2>Apéndice — Solución en R<a class="headerlink" href="#Apéndice-----Solución-en-R" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
-</pre></div>
-</div>
-<div class="input_area highlight-sh notranslate"><div class="highlight"><pre>
-<span></span>%%sh
-<span class="nv">PACK</span><span class="o">=</span>tm
-<span class="k">if</span> /usr/bin/test ! -d /usr/local/lib/R/site-library/<span class="nv">$PACK</span><span class="p">;</span>
-<span class="k">then</span>
-    sudo Rscript -e <span class="s1">&#39;install.packages(&quot;&#39;</span><span class="nv">$PACK</span><span class="s1">&#39;&quot;)&#39;</span>
-<span class="k">fi</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
-</pre></div>
-</div>
-<div class="input_area highlight-sh notranslate"><div class="highlight"><pre>
-<span></span>%%sh
-<span class="nv">PACK</span><span class="o">=</span>e1071
-<span class="k">if</span> /usr/bin/test ! -d /usr/local/lib/R/site-library/<span class="nv">$PACK</span><span class="p">;</span>
-<span class="k">then</span>
-    sudo Rscript -e <span class="s1">&#39;install.packages(&quot;&#39;</span><span class="nv">$PACK</span><span class="s1">&#39;&quot;)&#39;</span>
-<span class="k">fi</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
-</pre></div>
-</div>
-<div class="input_area highlight-sh notranslate"><div class="highlight"><pre>
-<span></span>%%sh
-<span class="nv">PACK</span><span class="o">=</span>SnowballC
-<span class="k">if</span> /usr/bin/test ! -d /usr/local/lib/R/site-library/<span class="nv">$PACK</span><span class="p">;</span>
-<span class="k">then</span>
-    sudo Rscript -e <span class="s1">&#39;install.packages(&quot;&#39;</span><span class="nv">$PACK</span><span class="s1">&#39;&quot;)&#39;</span>
-<span class="k">fi</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span> <span class="o">-</span><span class="n">i</span> <span class="n">df</span>
-
-<span class="c1">##</span>
-<span class="c1">## El paquete tm se usa para minería de texto</span>
-<span class="c1">##</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">NLP</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">tm</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">SnowballC</span><span class="p">)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">e1071</span><span class="p">)</span>
-
-<span class="n">corpus</span> <span class="o">&lt;-</span> <span class="nf">VCorpus</span><span class="p">(</span><span class="nf">VectorSource</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">text</span><span class="p">))</span>
-
-<span class="n">dtm</span> <span class="o">&lt;-</span>
-<span class="nf">DocumentTermMatrix</span><span class="p">(</span><span class="n">corpus</span><span class="p">,</span>
-                   <span class="n">control</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">tolower</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
-                                  <span class="n">removeNumbers</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
-                                  <span class="n">stopwords</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
-                                  <span class="n">removePunctuation</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>
-                                  <span class="n">stemming</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">))</span>
-
-<span class="c1">##</span>
-<span class="c1">## Usa las palabras que aparecen por lo menos cinco veces</span>
-<span class="c1">##</span>
-<span class="n">freq_words</span> <span class="o">&lt;-</span> <span class="nf">findFreqTerms</span><span class="p">(</span><span class="n">dtm</span><span class="p">,</span> <span class="m">5</span><span class="p">)</span>
-<span class="n">dtm</span> <span class="o">&lt;-</span> <span class="n">dtm[</span><span class="p">,</span><span class="n">freq_words]</span>
-<span class="n">dtm</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&lt;&lt;DocumentTermMatrix (documents: 5574, terms: 1457)&gt;&gt;
-Non-/sparse entries: 35893/8085425
-Sparsity           : 100%
-Maximal term length: 19
-Weighting          : term frequency (tf)
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se convierte la columna type, que contiene strings, en un factor.</span>
-<span class="c1">##</span>
-<span class="n">df</span><span class="o">$</span><span class="n">type</span> <span class="o">&lt;-</span> <span class="nf">factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">type</span><span class="p">)</span>
-<span class="nf">str</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">type</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
- Factor w/ 2 levels &#34;ham&#34;,&#34;spam&#34;: 1 1 2 1 1 2 1 1 2 2 ...
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Creación de los conjuntos de entrenamiento y prueba.</span>
-<span class="c1">##</span>
-<span class="n">X_train</span>      <span class="o">&lt;-</span> <span class="n">dtm[1</span><span class="o">:</span><span class="m">4169</span><span class="p">,</span> <span class="n">]</span>
-<span class="n">X_test</span>       <span class="o">&lt;-</span> <span class="n">dtm[4170</span><span class="o">:</span><span class="m">5559</span><span class="p">,</span> <span class="n">]</span>
-<span class="n">y_train_true</span> <span class="o">&lt;-</span> <span class="n">df[1</span><span class="o">:</span><span class="m">4169</span><span class="p">,</span> <span class="n">]</span><span class="o">$</span><span class="n">type</span>
-<span class="n">y_test_true</span>  <span class="o">&lt;-</span> <span class="n">df[4170</span><span class="o">:</span><span class="m">5559</span><span class="p">,</span> <span class="n">]</span><span class="o">$</span><span class="n">type</span>
-
-
-<span class="c1">##</span>
-<span class="c1">## Se convierte la frecuencia de ocurrencia a &quot;Yes&quot; y &quot;No&quot;</span>
-<span class="c1">##</span>
-<span class="n">convert_counts</span> <span class="o">&lt;-</span>
-<span class="nf">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">x</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">,</span> <span class="s">&quot;Yes&quot;</span><span class="p">,</span> <span class="s">&quot;No&quot;</span><span class="p">)</span>
-<span class="p">}</span>
-<span class="c1">##</span>
-<span class="n">X_train</span> <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">MARGIN</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">convert_counts</span><span class="p">)</span>
-<span class="n">X_test</span>  <span class="o">&lt;-</span> <span class="nf">apply</span><span class="p">(</span><span class="n">X_test</span><span class="p">,</span>  <span class="n">MARGIN</span> <span class="o">=</span> <span class="m">2</span><span class="p">,</span> <span class="n">convert_counts</span><span class="p">)</span>
-
-
-<span class="c1">##</span>
-<span class="c1">## Distribución de los datos en el conjunto de entrenamiento.</span>
-<span class="c1">##</span>
-<span class="nf">print</span><span class="p">(</span><span class="nf">prop.table</span><span class="p">(</span><span class="nf">table</span><span class="p">(</span><span class="n">y_train_true</span><span class="p">)))</span>
-<span class="nf">cat</span><span class="p">(</span><span class="s">&#39;\n&#39;</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## Distribución de los datos en el conjunto de prueba.</span>
-<span class="c1">##</span>
-<span class="nf">print</span><span class="p">(</span><span class="nf">prop.table</span><span class="p">(</span><span class="nf">table</span><span class="p">(</span><span class="n">y_test_true</span><span class="p">)))</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-y_train_true
-      ham      spam
-0.8647158 0.1352842
-
-y_test_true
-      ham      spam
-0.8697842 0.1302158
-</pre></div></div>
-</div>
-<div class="section" id="id1">
-<h3>Entrenamiento del modelo<a class="headerlink" href="#id1" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Construye y entrena el clasificador</span>
-<span class="c1">##</span>
-<span class="n">clf</span> <span class="o">&lt;-</span> <span class="nf">naiveBayes</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">y_train_true</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="id2">
-<h3>Evaluación del modelo<a class="headerlink" href="#id2" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se pronostica para los datos de prueba.</span>
-<span class="c1">##</span>
-<span class="n">y_test_pred</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">X_test</span><span class="p">)</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">y_test_pred</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-[1] spam ham  ham  ham  ham  ham
-Levels: ham spam
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se calcula la matriz de confusión.</span>
-<span class="c1">##</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">y_test_true</span><span class="p">,</span> <span class="n">y_test_pred</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-           y_test_pred
-y_test_true  ham spam
-       ham  1202    7
-       spam   21  160
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se calcula la probabilidad de que cada mensaje sea</span>
-<span class="c1">## válido o spam para el conjunto de prueba.</span>
-<span class="c1">## Los resultados muestran que los mensajes</span>
-<span class="c1">## son clasificados correctamente.</span>
-<span class="c1">##</span>
-<span class="n">y_test_pred_prob</span> <span class="o">&lt;-</span> <span class="nf">predict</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">type</span> <span class="o">=</span> <span class="s">&quot;raw&quot;</span><span class="p">)</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">y_test_pred_prob</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
+<p><strong>Pregunta.—</strong> Si en la construcción del clasificador se hace <code class="docutils literal notranslate"><span class="pre">laplace</span> <span class="pre">=</span> <span class="pre">1</span></code>, en cuanto mejora la precisión del modelo.</p>
 </div>
 </div>
 

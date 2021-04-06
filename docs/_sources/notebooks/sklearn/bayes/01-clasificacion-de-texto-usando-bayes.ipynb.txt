@@ -11,7 +11,7 @@
     "Introducción a la clasificación de texto usando Naive Bayes\n",
     "===\n",
     "\n",
-    "* *60 min* | Ultima modificación: Junio 22, 2019"
+    "* 40:12 min | Ultima modificación: Abril 5, 2021 | [YouTube](https://youtu.be/T4x6KNfOQek)"
    ]
   },
   {
@@ -245,8 +245,43 @@
     "\n",
     "La probabilidad total indica que la probabilidad de un evento A puede calcularse como la probabilidad de que ocurran los eventos A y B simultáneamente más la probabilidad de que ocurran los evento A y *not* B (el complemento de B:\n",
     "\n",
-    "$$\\text{Pr}(A) = \\text{Pr}(A\\text{ and } B) + \\text{Pr}(A\\text{ and } \\text{not }B) $$ \n",
+    "$$\\text{Pr}(A) = \\text{Pr}(A\\text{ and } B) + \\text{Pr}(A\\text{ and } \\text{not }B) $$ "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para la siguiente figura: \n",
     "\n",
+    "$$\n",
+    "\\begin{split}\n",
+    "\\text{Pr}(V_2) \n",
+    "    & = \\text{Pr}(V_2 \\text{ and } F_1) + \\text{Pr}(V_2 \\text{ and not } F_1) \\\\ \\\\\n",
+    "    & = \\text{Pr}(V_2 \\text{ and } F_1) + \\text{Pr}(V_2 \\text{ and } (F_2 \\cup F_3)) \\\\ \\\\\n",
+    "\\end{split}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "![assets/eventos-conjuntos.jpg](assets/eventos-conjuntos.jpg)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   },
+   "source": [
     "La ecuación anterior puede expresarse en términos de probabilidades condicionales, tal que:\n",
     "\n",
     "$$\\text{Pr}(A) = \\text{Pr}(A \\; | \\; B) \\; \\text{Pr}(B)  \\; + \\;  \\text{Pr}(A \\; | \\; \\text{not }B)\\text{ Pr}(\\text{not }B)$$"
@@ -694,33 +729,12 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Preparación"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 1,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import pandas as pd\n",
-    "import numpy as np\n",
-    "import seaborn as sns\n",
-    "import matplotlib.pyplot as plt\n",
-    "%matplotlib inline\n",
-    "%load_ext rpy2.ipython"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
     "### Creación del archivo"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 2,
+   "execution_count": 1,
    "metadata": {},
    "outputs": [
     {
@@ -750,7 +764,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 3,
+   "execution_count": 2,
    "metadata": {},
    "outputs": [
     {
@@ -817,24 +831,27 @@
        "4      ww2 ww4 ww2   ham"
       ]
      },
-     "execution_count": 3,
+     "execution_count": 2,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
+    "import pandas as pd\n",
+    "\n",
     "df = pd.read_csv(\n",
     "    \"data.csv\",\n",
-    "    sep = ',',         # separador de campos\n",
-    "    thousands = None,  # separador de miles para números\n",
-    "    decimal = '.')     # separador de los decimales para números\n",
+    "    sep=\",\",         # separador de campos\n",
+    "    thousands=None,  # separador de miles para números\n",
+    "    decimal=\".\",     # separador de los decimales para números\n",
+    ")  \n",
     "\n",
     "df"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 4,
+   "execution_count": 3,
    "metadata": {},
    "outputs": [
     {
@@ -848,23 +865,23 @@
        "Name: texto, dtype: object"
       ]
      },
-     "execution_count": 4,
+     "execution_count": 3,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
-    "##\n",
-    "## Se preparan los datos. El conjunto de\n",
-    "## datos es una lista de strings donde cada\n",
-    "## string es un mensaje\n",
-    "##        \n",
+    "#\n",
+    "# Se preparan los datos. El conjunto de\n",
+    "# datos es una lista de strings donde cada\n",
+    "# string es un mensaje\n",
+    "#\n",
     "df.texto"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 5,
+   "execution_count": 4,
    "metadata": {},
    "outputs": [
     {
@@ -878,16 +895,16 @@
        "Name: tipo, dtype: object"
       ]
      },
-     "execution_count": 5,
+     "execution_count": 4,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
-    "##\n",
-    "## La clase a la que pertenece cada mensaje \n",
-    "## también se representa como una lista de strings\n",
-    "##\n",
+    "#\n",
+    "# La clase a la que pertenece cada mensaje\n",
+    "# también se representa como una lista de strings\n",
+    "#\n",
     "df.tipo"
    ]
   },
@@ -900,61 +917,71 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 5,
    "metadata": {},
    "outputs": [],
    "source": [
-    "##\n",
-    "## Se importa la librería\n",
-    "##\n",
+    "#\n",
+    "# Se importa la librería\n",
+    "#\n",
     "from sklearn.feature_extraction.text import CountVectorizer\n",
     "\n",
-    "##\n",
-    "## La representación DocumentTermMatrix es equivalente\n",
-    "## a una bag-of-words, en la que cada fila corresponde\n",
-    "## a un mensaje y cada columna es una palabra.\n",
-    "##\n",
-    "## A continuación se crea un transformador\n",
-    "##\n",
-    "vectorizer = CountVectorizer(input='content')\n",
+    "#\n",
+    "# La representación DocumentTermMatrix corresponde a \n",
+    "# a una matriz en la que cada fila corresponde\n",
+    "# a un mensaje y cada columna es una palabra.\n",
+    "#\n",
+    "#        | ww1 ww2 ww3 ww4 ww5\n",
+    "#  -----------------------------\n",
+    "#  msg 0 |   1   0   1   0   0\n",
+    "#      1 |   2   1   1   0   0\n",
+    "#      2 |   0   1   0   1   0\n",
+    "#      3 |   0   1   0   1   1\n",
+    "#      4 |   0   2   0   1   0\n",
+    "#     \n",
+    "#\n",
+    "# A continuación se crea un transformador\n",
+    "#\n",
+    "vectorizer = CountVectorizer(input=\"content\")\n",
     "\n",
-    "## \n",
-    "## Se aplica el transformador al texto para convertirlo\n",
-    "## a una bag-of-words.\n",
-    "##\n",
+    "#\n",
+    "# Se aplica el transformador al texto para convertirlo\n",
+    "# a DTM.\n",
+    "#\n",
     "X = vectorizer.fit_transform(df.texto)\n",
     "\n",
-    "## \n",
-    "## También se transforma la clase a una\n",
-    "## representación binaria\n",
-    "##\n",
-    "y = [1 if u == 'spam' else 0 for u in df.tipo]\n",
+    "#\n",
+    "# También se genera una variable para el tipo\n",
+    "#\n",
     "y = df.tipo"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
+   "execution_count": 6,
    "metadata": {},
    "outputs": [
     {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "['ww1', 'ww2', 'ww3', 'ww4', 'ww5']\n"
-     ]
+     "data": {
+      "text/plain": [
+       "['ww1', 'ww2', 'ww3', 'ww4', 'ww5']"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
     }
    ],
    "source": [
     "##\n",
     "## Se imprimen los nombres de las columnas\n",
     "##\n",
-    "print(vectorizer.get_feature_names())"
+    "vectorizer.get_feature_names()"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 8,
+   "execution_count": 7,
    "metadata": {},
    "outputs": [
     {
@@ -970,15 +997,15 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Se imprime la matriz de términos y documentos\n",
-    "##\n",
-    "print(X.toarray()) "
+    "#\n",
+    "# Se imprime la matriz de términos y documentos\n",
+    "#\n",
+    "print(X.toarray())"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 9,
+   "execution_count": 8,
    "metadata": {},
    "outputs": [
     {
@@ -991,18 +1018,18 @@
        " [0, 1, 0, 1, 0]]"
       ]
      },
-     "execution_count": 9,
+     "execution_count": 8,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
-    "##\n",
-    "## Ya que interesa es la presencia o no de la palabra\n",
-    "## y no interesa la cantidad de veces que aparece, entonces\n",
-    "## se aplica una transformación a la matriz\n",
-    "##\n",
-    "X = [ [1 if element > 1 else element for element in row] for row in X.toarray()]\n",
+    "#\n",
+    "# Ya que lo que interesa es la presencia o no de la palabra\n",
+    "# y no interesa la cantidad de veces que aparece, entonces\n",
+    "# se aplica una transformación a la matriz\n",
+    "#\n",
+    "X = [[1 if element > 1 else element for element in row] for row in X.toarray()]\n",
     "X"
    ]
   },
@@ -1015,24 +1042,24 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 10,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [],
    "source": [
-    "##\n",
-    "## Se importa la libreria \n",
-    "##\n",
+    "#\n",
+    "# Se importa la libreria\n",
+    "#\n",
     "from sklearn.naive_bayes import BernoulliNB\n",
     "\n",
-    "##\n",
-    "## Se crea un clasificador Gaussiano ingenuo\n",
-    "##\n",
+    "#\n",
+    "# Se crea un clasificador Gaussiano ingenuo\n",
+    "#\n",
     "gnb = BernoulliNB(\n",
-    "    ## Laplace parameter\n",
-    "    alpha=1.0, \n",
-    "    binarize=0.0, \n",
-    "    fit_prior=True, \n",
-    "    class_prior=None)"
+    "    alpha=1.0,        # Laplace parameter\n",
+    "    binarize=0.0,\n",
+    "    fit_prior=True,\n",
+    "    class_prior=None,\n",
+    ")"
    ]
   },
   {
@@ -1044,7 +1071,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 10,
    "metadata": {},
    "outputs": [
     {
@@ -1053,15 +1080,15 @@
        "BernoulliNB(alpha=1.0, binarize=0.0, class_prior=None, fit_prior=True)"
       ]
      },
-     "execution_count": 11,
+     "execution_count": 10,
      "metadata": {},
      "output_type": "execute_result"
     }
    ],
    "source": [
-    "##\n",
-    "## Se entrena el clasificador\n",
-    "##\n",
+    "#\n",
+    "# Se entrena el clasificador\n",
+    "#\n",
     "gnb.fit(X, y)"
    ]
   },
@@ -1074,20 +1101,20 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 11,
    "metadata": {},
    "outputs": [],
    "source": [
-    "##\n",
-    "## Se pronostica la clasificación de los\n",
-    "## mensajes para los datos de entrada\n",
-    "##\n",
-    "df['predicted'] = gnb.predict(X)"
+    "#\n",
+    "# Se pronostica la clasificación de los\n",
+    "# mensajes para los datos de entrada\n",
+    "#\n",
+    "df[\"predicted\"] = gnb.predict(X)"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 12,
    "metadata": {},
    "outputs": [
     {
@@ -1160,7 +1187,7 @@
        "4      ww2 ww4 ww2   ham       ham"
       ]
      },
-     "execution_count": 13,
+     "execution_count": 12,
      "metadata": {},
      "output_type": "execute_result"
     }
@@ -1173,330 +1200,12 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Apéndice --- Solución en R"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "A continuación se presenta la solución del ejercicio anterior usando el lenguaje R."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 14,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%sh\n",
-    "PACK=tm\n",
-    "if /usr/bin/test ! -d /usr/local/lib/R/site-library/$PACK; \n",
-    "then    \n",
-    "    sudo Rscript -e 'install.packages(\"'$PACK'\")'\n",
-    "fi"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 15,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%sh\n",
-    "PACK=e1071\n",
-    "if /usr/bin/test ! -d /usr/local/lib/R/site-library/$PACK; \n",
-    "then    \n",
-    "    sudo Rscript -e 'install.packages(\"'$PACK'\")'\n",
-    "fi"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 16,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "R[write to console]: Loading required package: NLP\n",
-      "\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R\n",
-    "##\n",
-    "## Preparación\n",
-    "##\n",
-    "library(tm)\n",
-    "library(e1071)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 17,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "$`1`\n",
-      "[1] \"ww1 ww3\"\n",
-      "\n",
-      "$`2`\n",
-      "[1] \"ww1 ww2 ww1 ww3\"\n",
-      "\n",
-      "$`3`\n",
-      "[1] \"ww2 ww4\"\n",
-      "\n",
-      "$`4`\n",
-      "[1] \"ww4 ww5 ww2\"\n",
-      "\n",
-      "$`5`\n",
-      "[1] \"ww2 ww4 ww2\"\n",
-      "\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R -i df\n",
-    "##\n",
-    "## Se crea un corpus que es una colección de documentos.\n",
-    "##\n",
-    "data_corpus <- VCorpus(VectorSource(df$texto))\n",
-    "\n",
-    "## \n",
-    "## Para ver los documentos del corpus se usa lapply\n",
-    "##\n",
-    "lapply(data_corpus, as.character)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 18,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "<<PlainTextDocument>>\n",
-      "Metadata:  7\n",
-      "Content:  chars: 7\n",
-      "\n",
-      "ww1 ww3\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R\n",
-    "##\n",
-    "## Se puede consultar un mensaje individual\n",
-    "##\n",
-    "inspect(data_corpus[[1]])"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 19,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "<<DocumentTermMatrix (documents: 5, terms: 5)>>\n",
-      "Non-/sparse entries: 12/13\n",
-      "Sparsity           : 52%\n",
-      "Maximal term length: 3\n",
-      "Weighting          : term frequency (tf)\n",
-      "Sample             :\n",
-      "    Terms\n",
-      "Docs ww1 ww2 ww3 ww4 ww5\n",
-      "   1   1   0   1   0   0\n",
-      "   2   2   1   1   0   0\n",
-      "   3   0   1   0   1   0\n",
-      "   4   0   1   0   1   1\n",
-      "   5   0   2   0   1   0\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R\n",
-    "##\n",
-    "## Se crea la matriz de términos del documento.\n",
-    "## Las filas corresponden a los mensajes..\n",
-    "## Las columnas corresponden a las palabras.\n",
-    "## El contenido representa la cantidad de veces que \n",
-    "## aparece una palabra en un documento determinado.\n",
-    "##\n",
-    "data_dtm <- DocumentTermMatrix(data_corpus)\n",
-    "\n",
-    "##\n",
-    "## A continuación se visualiza el contenido de la \n",
-    "## matriz de términos del documento\n",
-    "##\n",
-    "inspect(data_dtm)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 20,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "    Terms\n",
-      "Docs ww1 ww2 ww3 ww4 ww5\n",
-      "   1   1   0   1   0   0\n",
-      "   2   2   1   1   0   0\n",
-      "   3   0   1   0   1   0\n",
-      "   4   0   1   0   1   1\n",
-      "   5   0   2   0   1   0\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R\n",
-    "##\n",
-    "## La matriz de términos puede convertirse en \n",
-    "## una matriz de R\n",
-    "##\n",
-    "as.matrix(data_dtm)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 21,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "    Terms\n",
-      "Docs ww1   ww2   ww3   ww4   ww5  \n",
-      "   1 \"Yes\" \"No\"  \"Yes\" \"No\"  \"No\" \n",
-      "   2 \"Yes\" \"Yes\" \"Yes\" \"No\"  \"No\" \n",
-      "   3 \"No\"  \"Yes\" \"No\"  \"Yes\" \"No\" \n",
-      "   4 \"No\"  \"Yes\" \"No\"  \"Yes\" \"Yes\"\n",
-      "   5 \"No\"  \"Yes\" \"No\"  \"Yes\" \"No\" \n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R\n",
-    "##\n",
-    "## Se convierte la frecuencia de ocurrencia a \"Yes\" y \"No\"\n",
-    "##\n",
-    "convert_counts <- \n",
-    "function(x) {\n",
-    "    x <- ifelse(x > 0, \"Yes\", \"No\")\n",
-    "}\n",
-    "x <- apply(data_dtm, MARGIN = 2, convert_counts)\n",
-    "x"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 22,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "\n",
-      "Naive Bayes Classifier for Discrete Predictors\n",
-      "\n",
-      "Call:\n",
-      "naiveBayes.default(x = x, y = df$tipo)\n",
-      "\n",
-      "A-priori probabilities:\n",
-      "df$tipo\n",
-      " ham spam \n",
-      " 0.6  0.4 \n",
-      "\n",
-      "Conditional probabilities:\n",
-      "       ww1\n",
-      "df$tipo No Yes\n",
-      "   ham   1   0\n",
-      "   spam  0   1\n",
-      "\n",
-      "       ww2\n",
-      "df$tipo  No Yes\n",
-      "   ham  0.0 1.0\n",
-      "   spam 0.5 0.5\n",
-      "\n",
-      "       ww3\n",
-      "df$tipo No Yes\n",
-      "   ham   1   0\n",
-      "   spam  0   1\n",
-      "\n",
-      "       ww4\n",
-      "df$tipo No Yes\n",
-      "   ham   0   1\n",
-      "   spam  1   0\n",
-      "\n",
-      "       ww5\n",
-      "df$tipo        No       Yes\n",
-      "   ham  0.6666667 0.3333333\n",
-      "   spam 1.0000000 0.0000000\n",
-      "\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R\n",
-    "##\n",
-    "## Construye el clasificador\n",
-    "##\n",
-    "clf <- naiveBayes(x, df$tipo)\n",
-    "\n",
-    "##\n",
-    "## Se imprime un resumen de parámetros\n",
-    "## del clasificador\n",
-    "##\n",
-    "clf"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 23,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "factor(0)\n",
-      "Levels: \n"
-     ]
-    }
-   ],
-   "source": [
-    "%%R\n",
-    "##\n",
-    "## Se pronostica para los datos de prueba.\n",
-    "##\n",
-    "predict(clf, x)"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
     "---"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 24,
+   "execution_count": 13,
    "metadata": {},
    "outputs": [],
    "source": [
@@ -1523,7 +1232,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.8"
+   "version": "3.6.9"
   },
   "nteract": {
    "version": "0.7.1"
@@ -1559,5 +1268,5 @@
   }
  },
  "nbformat": 4,
- "nbformat_minor": 2
+ "nbformat_minor": 4
 }
