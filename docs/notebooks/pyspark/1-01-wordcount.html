@@ -1,23 +1,32 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="es" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="es" > <!--<![endif]-->
+<html class="writer-html5" lang="es" >
 <head>
-  <meta charset="utf-8">
+  <meta charset="utf-8" />
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>WordCount en PySpark &mdash; documentación de --- Cursos --- - </title>
   
 
   
-  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -27,19 +36,14 @@
         <script type="text/javascript" src="../../_static/language_data.js"></script>
         <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
         <script type="text/javascript" src="../../_static/copybutton.js"></script>
-        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script type="text/javascript" src="../../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
         <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
     <link rel="next" title="Desarrollo de Aplicaciones en PySpark" href="1-02-pyspark-app.html" />
@@ -77,6 +81,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -107,6 +112,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -141,11 +147,13 @@
 
 
 
+
+
 <div role="navigation" aria-label="breadcrumbs navigation">
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../../analitica-de-grandes-datos/index.html">Analítica de grandes datos</a> &raquo;</li>
         
@@ -156,7 +164,7 @@
     
       <li class="wy-breadcrumbs-aside">
         
-            
+          
             <a href="../../_sources/notebooks/pyspark/1-01-wordcount.ipynb.txt" rel="nofollow"> View page source</a>
           
         
@@ -175,21 +183,35 @@
 /* CSS for nbsphinx extension */
 
 /* remove conflicting styling from Sphinx themes */
-div.nbinput.container,
-div.nbinput.container div.prompt,
-div.nbinput.container div.input_area,
-div.nbinput.container div[class*=highlight],
-div.nbinput.container div[class*=highlight] pre,
-div.nboutput.container,
-div.nboutput.container div.prompt,
-div.nboutput.container div.output_area,
-div.nboutput.container div[class*=highlight],
-div.nboutput.container div[class*=highlight] pre {
-    background: none;
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
     border: none;
-    padding: 0 0;
+    padding: 0;
     margin: 0;
     box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
 }
 
 /* avoid gaps between output lines */
@@ -236,20 +258,33 @@ div.nboutput.container div.prompt pre {
 /* all prompts */
 div.nbinput.container div.prompt,
 div.nboutput.container div.prompt {
-    min-width: 5ex;
-    padding-top: 0.3rem;
-    padding-right: 0.3rem;
-    text-align: right;
-    flex: 0;
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
 }
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
 @media (max-width: 540px) {
     div.nbinput.container div.prompt,
     div.nboutput.container div.prompt {
+        width: unset;
         text-align: left;
         padding: 0.4em;
     }
     div.nboutput.container div.prompt.empty {
         padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
     }
 }
 
@@ -277,7 +312,7 @@ div.nboutput.container div.output_area {
 div.nbinput.container div.input_area {
     border: 1px solid #e0e0e0;
     border-radius: 2px;
-    background: #f5f5f5;
+    /*background: #f5f5f5;*/
 }
 
 /* override MathJax center alignment in output cells */
@@ -342,7 +377,8 @@ div.nboutput.container div.output_area div[class*=highlight].math,
 div.nboutput.container div.output_area.rendered_html,
 div.nboutput.container div.output_area > div.output_javascript,
 div.nboutput.container div.output_area:not(.rendered_html) > img{
-    padding: 0.3rem;
+    padding: 5px;
+    margin: 0;
 }
 
 /* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
@@ -429,19 +465,19 @@ div.rendered_html tbody tr:hover {
 <ul class="simple">
 <li><p>Usando la máquina local:</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="o">-</span><span class="n">it</span> <span class="o">-</span><span class="n">v</span> <span class="s2">&quot;$PWD&quot;</span><span class="p">:</span><span class="o">/</span><span class="n">datalake</span>  <span class="o">--</span><span class="n">name</span> <span class="n">pyspark</span> <span class="o">-</span><span class="n">p</span> <span class="mi">50070</span><span class="p">:</span><span class="mi">50070</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8088</span><span class="p">:</span><span class="mi">8088</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">p</span> <span class="mi">5000</span><span class="p">:</span><span class="mi">5000</span> <span class="n">jdvelasq</span><span class="o">/</span><span class="n">pyspark</span><span class="p">:</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">pseudo</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker run --rm -it -v &quot;$PWD&quot;:/datalake  --name pyspark -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/pyspark:2.4.4-pseudo
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>Usando un volumen de docker:</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">--</span><span class="n">rm</span> <span class="o">-</span><span class="n">it</span> <span class="o">-</span><span class="n">v</span> <span class="n">datalake</span><span class="p">:</span><span class="o">/</span><span class="n">datalake</span> <span class="o">--</span><span class="n">name</span> <span class="n">pyspark</span>  <span class="o">-</span><span class="n">p</span> <span class="mi">50070</span><span class="p">:</span><span class="mi">50070</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8088</span><span class="p">:</span><span class="mi">8088</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="o">-</span><span class="n">p</span> <span class="mi">5000</span><span class="p">:</span><span class="mi">5000</span> <span class="n">jdvelasq</span><span class="o">/</span><span class="n">pyspark</span><span class="p">:</span><span class="mf">2.4</span><span class="o">.</span><span class="mi">4</span><span class="o">-</span><span class="n">pseudo</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker run --rm -it -v datalake:/datalake --name pyspark  -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/pyspark:2.4.4-pseudo
 </pre></div>
 </div>
 <ul class="simple">
 <li><p>Acceso a un contenedor corriendo:</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">it</span> <span class="n">pyspark</span> <span class="n">bash</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker exec -it pyspark bash
 </pre></div>
 </div>
 </div>
@@ -544,20 +580,20 @@ Writing wordcount/text2.txt
 <h3>Algoritmo MapReduce<a class="headerlink" href="#Algoritmo-MapReduce" title="Enlazar permanentemente con este título">¶</a></h3>
 <p><a class="reference external" href="https://en.wikipedia.org/wiki/MapReduce">MapReduce</a> es el término utilizado para describir un modelo de programación en paralelo que permite el procesamiento de grandes volúmenes de datos o <a class="reference external" href="https://en.wikipedia.org/wiki/Big_data">Big Data</a> que resultan difíciles de procesar en las aplicaciones tradicionales de procesamiento de datos. En el concepto de Big Data convergen las técnicas de almacenamiento distribuido de datos con la computación de alto desempeño mediante clusters.</p>
 <p>Para ejemplificar el proceso, a continuación se presenta el ejemplo del conteo de la frecuencia de las letras que aparecen en el texto:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="n">A</span> <span class="n">C</span>
-<span class="n">C</span> <span class="n">B</span> <span class="n">D</span>
-<span class="n">A</span> <span class="n">C</span> <span class="n">D</span>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>A A C
+C B D
+A C D
 </pre></div>
 </div>
 <p>En la figura de abajo aparece, el esquema de operación de MapReduce.</p>
 <p><img alt="assets/map-reduce.jpg" src="../../_images/map-reduce1.jpg" /></p>
 <p>El proceso está conformado por los siguientes pasos:</p>
 <p><strong>Paso 1.–</strong> Cada línea del archivo es enviada a un proceso diferente (que podría ser un nodo diferente de un clúster); esto permite la operación en paralelo sobre conjuntos muy grandes de datos.</p>
-<p><strong>Paso 2.– MAP</strong>: El mapeo consiste en convertir la información a parejas . La definición de que se toma como clave y que se toma como valor depende de cada problema específico. En el ejemplo presentado, para realizar el conteo de letras, la clave corresponde a la letra y el valor al número 1 (conteo). La función que realiza este proceso se conoce como mapper.</p>
-<p><strong>Paso 3.– SORT</strong>: El sistema ordena las parejas , tal que todas las parejas que tengan la misma clave queden juntas.</p>
+<p><strong>Paso 2.– MAP</strong>: El mapeo consiste en convertir la información a parejas &lt;clave, valor&gt;. La definición de que se toma como clave y que se toma como valor depende de cada problema específico. En el ejemplo presentado, para realizar el conteo de letras, la clave corresponde a la letra y el valor al número 1 (conteo). La función que realiza este proceso se conoce como mapper.</p>
+<p><strong>Paso 3.– SORT</strong>: El sistema ordena las parejas &lt;clave, valor&gt;, tal que todas las parejas que tengan la misma clave queden juntas.</p>
 <p><strong>Paso 4.–REDUCE</strong>: Consiste en reducir todas las parejas que tienen la misma clave a una sola; para ello, se debe definir como se computará (reducirá) el valor final. Para este ejemplo, la reducción consiste en sumar todos los valores que tengan la misma clave. La función que realiza este proceso se conoce como reducer.</p>
 <p><strong>Paso 5.–</strong> El sistema entrega el resultado consolidado.</p>
-<p>El proceso de mapear y reducir se conoce como un trabajo (Job). Un cómputo complejo puede requerir muchos jobs, los cuales pueden ser ordenados en procesos, de acuerdo con los requerimientos. Varios ejemplos de encadenamientos de jobs pueden verse en la siguiente figura, donde la M representa el mapper y R el reducer. SS es <em>shuffle &amp; sort</em> que es donde se ordenan las parejas por claves.</p>
+<p>El proceso de mapear y reducir se conoce como un trabajo (Job). Un cómputo complejo puede requerir muchos jobs, los cuales pueden ser ordenados en procesos, de acuerdo con los requerimientos. Varios ejemplos de encadenamientos de jobs pueden verse en la siguiente figura, donde la M representa el mapper y R el reducer. SS es <em>shuffle &amp; sort</em> que es donde se ordenan las parejas &lt;clave, valor&gt; por claves.</p>
 <p><img alt="assets/map-reduce-jobs.jpg" src="../../_images/map-reduce-jobs1.jpg" /></p>
 <p>En el modelo computacional implementado en Hadoop, el mapper lee del sistema de archivos de Hadoop (HDFS) y el reducer escribe al sistema de archivos, ya que la cantidad de datos es tal que no podrían ser cargados a memoria.</p>
 </div>
@@ -1066,20 +1102,25 @@ Deleted /tmp/output
            
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, Juan D. Velasquez
+        &#169; Derechos de autor 2019, Juan D. Velasquez.
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
-
         </div>
       </div>
 
@@ -1087,7 +1128,6 @@ Deleted /tmp/output
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
@@ -1106,6 +1146,7 @@ Deleted /tmp/output
     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
     ga('create', 'UA-XXXXXXX-1', 'auto');
+    
     ga('send', 'pageview');
     </script>
 
