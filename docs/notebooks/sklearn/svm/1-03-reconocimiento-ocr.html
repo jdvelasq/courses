@@ -452,59 +452,49 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Reconocimiento-de-texto">
 <h1>Reconocimiento de texto<a class="headerlink" href="#Reconocimiento-de-texto" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>30 min</em> | Ultima modificación: Marzo 30, 2020</p></li>
+<li><p>30:00 min | Ultima modificación: Abril 14, 2021 | <a href="#id1"><span class="problematic" id="id2">`YouTube &lt;&gt;`__</span></a></p></li>
 </ul>
 <div class="section" id="Definición-del-problema">
 <h2>Definición del problema<a class="headerlink" href="#Definición-del-problema" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>En los problemas de OCR (optical character recognition), el reconocimiento se realizar mediante la división del documento en una malla tal que cada caracter es aislado en una celda. El problema real consiste en identificar el caracter aislado. La dificultad radica que un mismo caracter puede variar en tamaño, forma de escritura, grosor y orientación; véase la figura de abajo. Se desea construir una herramienta que permita el reconocimiento automático de caracteres.</p>
 <p>Se tiene una base de 20.000 ejemplos de 16 atributos, la cual fue construida con las 26 letras mayúsculas del alfabeto ingles, impresas en blanco y negro distorsionadas y escaladas. Los atributos son los siguientes:</p>
 <ol class="arabic simple">
-<li><p>lettr capital letter (26 values from A to Z)</p></li>
-<li><p>x-box horizontal position of box (integer)</p></li>
-<li><p>y-box vertical position of box (integer)</p></li>
-<li><p>width width of box (integer)</p></li>
-<li><p>high height of box (integer)</p></li>
-<li><p>onpix total # on pixels (integer)</p></li>
-<li><p>x-bar mean x of on pixels in box (integer)</p></li>
-<li><p>y-bar mean y of on pixels in box (integer)</p></li>
-<li><p>x2bar mean x variance (integer)</p></li>
-<li><p>y2bar mean y variance (integer)</p></li>
-<li><p>xybar mean x y correlation (integer)</p></li>
-<li><p>x2ybr mean of x * x * y (integer)</p></li>
-<li><p>xy2br mean of x * y * y (integer)</p></li>
-<li><p>x-ege mean edge count left to right (integer)</p></li>
-<li><p>xegvy correlation of x-ege with y (integer)</p></li>
-<li><p>y-ege mean edge count bottom to top (integer)</p></li>
-<li><p>yegvx correlation of y-ege with x (integer)</p></li>
+<li><p>lettr — capital letter — (26 values from A to Z)</p></li>
+<li><p>x-box — horizontal position of box — (integer)</p></li>
+<li><p>y-box — vertical position of box — (integer)</p></li>
+<li><p>width — width of box — (integer)</p></li>
+<li><p>high — height of box — (integer)</p></li>
+<li><p>onpix — total # on pixels — (integer)</p></li>
+<li><p>x-bar — mean x of on pixels in box — (integer)</p></li>
+<li><p>y-bar — mean y of on pixels in box — (integer)</p></li>
+<li><p>x2bar — mean x variance — (integer)</p></li>
+<li><p>y2bar — mean y variance — (integer)</p></li>
+<li><p>xybar — mean x y correlation — (integer)</p></li>
+<li><p>x2ybr — mean of x * x * y — (integer)</p></li>
+<li><p>xy2br — mean of x * y * y — (integer)</p></li>
+<li><p>x-ege — mean edge count left to right — (integer)</p></li>
+<li><p>xegvy — correlation of x-ege with y — (integer)</p></li>
+<li><p>y-ege — mean edge count bottom to top — (integer)</p></li>
+<li><p>yegvx — correlation of y-ege with x — (integer)</p></li>
 </ol>
 <p>## Solución</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-    <span class="s2">&quot;https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/letterdata.csv&quot;</span><span class="p">)</span>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+    <span class="s2">&quot;https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/letterdata.csv&quot;</span>
+<span class="p">)</span>
 
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -651,7 +641,7 @@ div.rendered_html tbody tr:hover {
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -663,7 +653,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -675,7 +665,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Entrenamiento-del-modelo">
 <h2>Entrenamiento del modelo<a class="headerlink" href="#Entrenamiento-del-modelo" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -684,7 +674,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -693,7 +683,7 @@ RangeIndex(start=0, stop=20000, step=1)
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -703,29 +693,27 @@ RangeIndex(start=0, stop=20000, step=1)
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
 
-<span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+<span class="n">clf</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
-    <span class="n">df_train</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span>
-    <span class="n">df_train</span><span class="p">[</span><span class="s1">&#39;letter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span></span><span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">[</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">df_train</span><span class="p">[</span><span class="s2">&quot;letter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -736,8 +724,11 @@ SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
     tol=0.001, verbose=False)
 </pre></div></div>
 </div>
+</div>
+<div class="section" id="Pronóstico">
+<h2>Pronóstico<a class="headerlink" href="#Pronóstico" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -748,7 +739,7 @@ SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -756,21 +747,22 @@ SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,
 array([&#39;U&#39;, &#39;N&#39;, &#39;V&#39;, &#39;I&#39;, &#39;N&#39;, &#39;H&#39;, &#39;E&#39;, &#39;Y&#39;, &#39;G&#39;, &#39;E&#39;], dtype=object)
 </pre></div></div>
 </div>
+</div>
+<div class="section" id="Evaluación">
+<h2>Evaluación<a class="headerlink" href="#Evaluación" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">metrics</span>
 
-<span class="n">metrics</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span>
-    <span class="n">y_test</span><span class="p">,</span>
-    <span class="n">df_test</span><span class="p">[</span><span class="s1">&#39;letter&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">df_test</span><span class="p">[</span><span class="s2">&quot;letter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">

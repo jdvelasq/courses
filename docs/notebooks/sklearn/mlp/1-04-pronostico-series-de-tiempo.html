@@ -452,26 +452,24 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Pronóstico-de-una-serie-de-tiempo">
 <h1>Pronóstico de una serie de tiempo<a class="headerlink" href="#Pronóstico-de-una-serie-de-tiempo" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>30 min</em> | Última modificación: Marzo 27, 2020.</p></li>
+<li><p>30:00 min | Última modificación: Abril 14, 2021 | <a href="#id1"><span class="problematic" id="id2">`YouTube &lt;&gt;`__</span></a></p></li>
 </ul>
-<div class="section" id="Definición-del-problema">
-<h2>Definición del problema<a class="headerlink" href="#Definición-del-problema" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>La siguiente serie registra el número total de personas empleadas mensualmente como mano de obra en el condado de Sutter (California) entre 1946:1 y 1966:12. Tiene un total de 252 observaciones. Se desea contruir un modelo de pronóstico usando redes neuronales artificiales. Se deben usar los primeros 228 (de 1946:1 a 1964:12) datos para especificar el modelo y los 24 datos restantes (1965:1 a 1966:12) para evaluar el pronóstico un mes adelante por fuera de la muestra de calibración de los
-parámetros.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
+<div class="section" id="Definición-del-problema">
+<h2>Definición del problema<a class="headerlink" href="#Definición-del-problema" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>La siguiente serie registra el número total de personas empleadas mensualmente como mano de obra en el condado de Sutter (California) entre 1946:1 y 1966:12. Tiene un total de 252 observaciones. Se desea contruir un modelo de pronóstico usando redes neuronales artificiales. Se deben usar los primeros 228 (de 1946:1 a 1964:12) datos para especificar el modelo y los 24 datos restantes (1965:1 a 1966:12) para evaluar el pronóstico un mes adelante por fuera de la muestra de calibración de los
+parámetros.</p>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
@@ -497,15 +495,25 @@ parámetros.</p>
      <span class="mi">3284</span><span class="p">,</span> <span class="mi">3278</span><span class="p">,</span> <span class="mi">3424</span><span class="p">,</span> <span class="mi">3843</span><span class="p">,</span> <span class="mi">3614</span><span class="p">,</span> <span class="mi">3536</span><span class="p">,</span> <span class="mi">4505</span><span class="p">,</span> <span class="mi">5456</span><span class="p">,</span> <span class="mi">4881</span><span class="p">,</span> <span class="mi">4041</span><span class="p">,</span> <span class="mi">3724</span><span class="p">,</span> <span class="mi">3525</span><span class="p">,</span>
      <span class="mi">3437</span><span class="p">,</span> <span class="mi">3324</span><span class="p">,</span> <span class="mi">3977</span><span class="p">,</span> <span class="mi">4025</span><span class="p">,</span> <span class="mi">4016</span><span class="p">,</span> <span class="mi">4031</span><span class="p">,</span> <span class="mi">4489</span><span class="p">,</span> <span class="mi">5563</span><span class="p">,</span> <span class="mi">5709</span><span class="p">,</span> <span class="mi">4620</span><span class="p">,</span> <span class="mi">4160</span><span class="p">,</span> <span class="mi">4012</span><span class="p">,</span>
      <span class="mi">3987</span><span class="p">,</span> <span class="mi">4155</span><span class="p">,</span> <span class="mi">4054</span><span class="p">,</span> <span class="mi">4485</span><span class="p">,</span> <span class="mi">4558</span><span class="p">,</span> <span class="mi">4462</span><span class="p">,</span> <span class="mi">4594</span><span class="p">,</span> <span class="mi">6481</span><span class="p">,</span> <span class="mi">6345</span><span class="p">,</span> <span class="mi">5142</span><span class="p">,</span> <span class="mi">4824</span><span class="p">,</span> <span class="mi">4573</span><span class="p">,</span>
-     <span class="mi">4158</span><span class="p">,</span> <span class="mi">4140</span><span class="p">,</span> <span class="mi">4251</span><span class="p">,</span> <span class="mi">4734</span><span class="p">,</span> <span class="mi">4858</span><span class="p">,</span> <span class="mi">4798</span><span class="p">,</span> <span class="mi">5080</span><span class="p">,</span> <span class="mi">6905</span><span class="p">,</span> <span class="mi">5504</span><span class="p">,</span> <span class="mi">5457</span><span class="p">,</span> <span class="mi">5198</span><span class="p">,</span> <span class="mi">4890</span> <span class="p">]</span>
+     <span class="mi">4158</span><span class="p">,</span> <span class="mi">4140</span><span class="p">,</span> <span class="mi">4251</span><span class="p">,</span> <span class="mi">4734</span><span class="p">,</span> <span class="mi">4858</span><span class="p">,</span> <span class="mi">4798</span><span class="p">,</span> <span class="mi">5080</span><span class="p">,</span> <span class="mi">6905</span><span class="p">,</span> <span class="mi">5504</span><span class="p">,</span> <span class="mi">5457</span><span class="p">,</span> <span class="mi">5198</span><span class="p">,</span> <span class="mi">4890</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 
 <span class="c1"># linea vertical para dividir el entrenamiento</span>
-<span class="c1"># del pronóstico</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="c1"># del pronóstico</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -513,12 +521,12 @@ parámetros.</p>
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_mlp_1-04-pronostico-series-de-tiempo_4_0.png" src="../../../_images/notebooks_sklearn_mlp_1-04-pronostico-series-de-tiempo_4_0.png" />
+<img alt="../../../_images/notebooks_sklearn_mlp_1-04-pronostico-series-de-tiempo_5_0.png" src="../../../_images/notebooks_sklearn_mlp_1-04-pronostico-series-de-tiempo_5_0.png" />
 </div>
 </div>
-<p>## Solución</p>
+</div>
 <div class="section" id="Análisis-exploratorio">
-<h3>Análisis exploratorio<a class="headerlink" href="#Análisis-exploratorio" title="Enlazar permanentemente con este título">¶</a></h3>
+<h2>Análisis exploratorio<a class="headerlink" href="#Análisis-exploratorio" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>La inspección visual revela que la serie tiene un componente cíclico con un año de periodo, lo cual se explica porque la contratación de mano de obra es estacionaria (por periodos en el año); la serie presenta también una tendencia creciente en el largo plazo, cuya pendiente cambia aproximadamente sobre la mitad derecha de la gráfica.</p>
 <p>La función de autocorrelación (ACF) simple, definida como:</p>
 <div class="math notranslate nohighlight">
@@ -528,23 +536,26 @@ parámetros.</p>
 \[\bar{z} = \frac{1}{T} \sum_t z_t\]</div>
 <p>presenta el siguiente comportamiento:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="kn">import</span> <span class="n">acf</span><span class="p">,</span> <span class="n">pacf</span>
 
+
 <span class="k">def</span> <span class="nf">acf_plot</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
     <span class="n">acf_data</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">fft</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">acf_data</span><span class="p">)),</span> <span class="n">acf_data</span><span class="p">,</span> <span class="n">use_line_collection</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">();</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
 
 <span class="k">def</span> <span class="nf">pacf_plot</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
     <span class="n">pacf_data</span> <span class="o">=</span> <span class="n">pacf</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pacf_data</span><span class="p">)),</span> <span class="n">pacf_data</span><span class="p">,</span> <span class="n">use_line_collection</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">();</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
 
 <span class="n">acf_plot</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
@@ -570,10 +581,10 @@ parámetros.</p>
 <p>En el pronóstico de series de tiempo, el valor actual de la serie <span class="math notranslate nohighlight">\(z_t\)</span> es función de sus valores pasados <span class="math notranslate nohighlight">\(z_{t-1}\)</span>, …, <span class="math notranslate nohighlight">\(z_{t-P}\)</span>; estos últimos son la entrada a la red neuronal.</p>
 </div>
 <div class="section" id="Modelo-1:-Pronostico-de-la-serie-sin-transformar">
-<h3>Modelo 1: Pronostico de la serie sin transformar<a class="headerlink" href="#Modelo-1:-Pronostico-de-la-serie-sin-transformar" title="Enlazar permanentemente con este título">¶</a></h3>
+<h2>Modelo 1: Pronostico de la serie sin transformar<a class="headerlink" href="#Modelo-1:-Pronostico-de-la-serie-sin-transformar" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>En este caso se tomará a <span class="math notranslate nohighlight">\(P\)</span> = 13. En la práctica deberían tantearse diferentes valores de <span class="math notranslate nohighlight">\(P\)</span>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -581,21 +592,28 @@ parámetros.</p>
 <span class="c1"># Como primer paso se escala la serie al intervalo [0, 1]</span>
 <span class="c1"># ya que esto facilita el entrenamiento del modelo</span>
 <span class="c1">#</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">MinMaxScaler</span>
 
 <span class="c1"># crea el transformador</span>
 <span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
 
 <span class="c1"># escala la serie</span>
-<span class="n">data_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="c1"># z es un array de listas como efecto</span>
+<span class="n">data_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="c1"># z es un array de listas como efecto</span>
 <span class="c1"># del escalamiento</span>
 <span class="n">data_scaled</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">data_scaled</span><span class="p">]</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span>
+    <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)],</span>
+    <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -608,22 +626,22 @@ parámetros.</p>
 </div>
 <p>Ya que la implementación dispobible en <code class="docutils literal notranslate"><span class="pre">sklearn</span></code> es para modelos de regresión, se debe armar una matrix donde las variables independientes son <span class="math notranslate nohighlight">\(z_{t-1}\)</span>, …, <span class="math notranslate nohighlight">\(z_{t-P}\)</span> y la variable dependiente es <span class="math notranslate nohighlight">\(z_t\)</span>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">P</span> <span class="o">=</span> <span class="mi">13</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">252</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">data_scaled</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="p">)</span> <span class="p">])</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">252</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">data_scaled</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="p">)])</span>
 
 <span class="n">observed_scaled</span> <span class="o">=</span> <span class="n">data_scaled</span><span class="p">[</span><span class="n">P</span><span class="p">:]</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -636,7 +654,7 @@ parámetros.</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -645,7 +663,7 @@ parámetros.</p>
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -653,37 +671,44 @@ parámetros.</p>
 
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123456</span><span class="p">)</span>
 
-<span class="n">H</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># Se escoge arbitrariamente</span>
+<span class="n">H</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Se escoge arbitrariamente</span>
 
 <span class="n">mlp</span> <span class="o">=</span> <span class="n">MLPRegressor</span><span class="p">(</span>
-    <span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="p">),</span>
-    <span class="n">activation</span> <span class="o">=</span> <span class="s1">&#39;logistic&#39;</span><span class="p">,</span>
-    <span class="n">learning_rate</span> <span class="o">=</span> <span class="s1">&#39;adaptive&#39;</span><span class="p">,</span>
-    <span class="n">momentum</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="n">learning_rate_init</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
-    <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">)</span>
+    <span class="n">hidden_layer_sizes</span><span class="o">=</span><span class="p">(</span><span class="n">H</span><span class="p">,),</span>
+    <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;logistic&quot;</span><span class="p">,</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="s2">&quot;adaptive&quot;</span><span class="p">,</span>
+    <span class="n">momentum</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">learning_rate_init</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1"># Entrenamiento</span>
-<span class="n">mlp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">215</span><span class="p">],</span>  <span class="c1"># 239 - 24 = 215</span>
-    <span class="n">observed_scaled</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">215</span><span class="p">]</span>
-<span class="p">)</span>
+<span class="n">mlp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">215</span><span class="p">],</span> <span class="n">observed_scaled</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">215</span><span class="p">])</span>  <span class="c1"># 239 - 24 = 215</span>
 
 <span class="c1"># Pronostico</span>
 <span class="n">y_scaled_m1</span> <span class="o">=</span> <span class="n">mlp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 
+<span class="c1">#</span>
 <span class="c1"># No hay pronóstico para los primeros 13 valores</span>
 <span class="c1"># de la serie</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">P</span> <span class="o">+</span> <span class="n">y_scaled_m1</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s1">&#39;-r&#39;</span><span class="p">);</span>
+<span class="c1">#</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">P</span> <span class="o">+</span> <span class="n">y_scaled_m1</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="s2">&quot;-r&quot;</span><span class="p">)</span>
 
+<span class="c1">#</span>
 <span class="c1"># linea vertical para dividir el entrenamiento</span>
-<span class="c1"># del pronóstico. Se ubica en el ultimo dato</span>
+<span class="c1"># del pronóstico. Se ubica en el ultimo dato</span>
 <span class="c1"># usando para entrenamiento</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="c1">#</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span>
+    <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_scaled</span><span class="p">)],</span>
+    <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -695,7 +720,7 @@ parámetros.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -705,11 +730,11 @@ parámetros.</p>
 <span class="n">y_m1</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">([[</span><span class="n">u</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">y_scaled_m1</span><span class="p">])</span>
 <span class="n">y_m1</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">y_m1</span><span class="p">]</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">P</span> <span class="o">+</span> <span class="n">y_m1</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">P</span> <span class="o">+</span> <span class="n">y_m1</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -723,21 +748,26 @@ parámetros.</p>
 <p><strong>Ejercicio.—</strong> Determine el número óptimo de neuronas en la capa oculta y la cantidad de rezagos <span class="math notranslate nohighlight">\(P\)</span>. Recuerde que los resultados son sensibles a los parámetros de la optimización y el punto de arranque.</p>
 </div>
 <div class="section" id="Modelo-2:-Pronóstico-de-la-serie-transformada">
-<h3>Modelo 2: Pronóstico de la serie transformada<a class="headerlink" href="#Modelo-2:-Pronóstico-de-la-serie-transformada" title="Enlazar permanentemente con este título">¶</a></h3>
+<h2>Modelo 2: Pronóstico de la serie transformada<a class="headerlink" href="#Modelo-2:-Pronóstico-de-la-serie-transformada" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>Este es el procedimiento común usado en Estadística Aplicada y Econometría. Acá se juzga el modelo por la precisión, no por el cumplimiento de criterios estadísticos.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Se remueve la tendencia</span>
-<span class="n">data_d1</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))]</span>
+<span class="n">data_d1</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))]</span>
 
 <span class="c1"># En la gráfica queda la componente cíclica</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_d1</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_d1</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data_d1</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_d1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_d1</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">data_d1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span>
+    <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_d1</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_d1</span><span class="p">)],</span>
+    <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -749,18 +779,25 @@ parámetros.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Se remueve la componente cíclica</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se remueve la componente cíclica</span>
 <span class="c1"># restando z[t] - z[t-12]</span>
-<span class="n">data_d1d12</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_d1</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_d1</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">12</span><span class="p">]</span>  <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1</span><span class="p">))]</span>
+<span class="c1">#</span>
+<span class="n">data_d1d12</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_d1</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">-</span> <span class="n">data_d1</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">12</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1</span><span class="p">))]</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span>
+    <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)],</span>
+    <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -772,7 +809,7 @@ parámetros.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -788,7 +825,7 @@ parámetros.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -805,7 +842,7 @@ parámetros.</p>
 </div>
 <p>A partir de la gráfica del PACF, se deduce que un valor apropiado para <span class="math notranslate nohighlight">\(P\)</span> podría ser 12.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -813,16 +850,21 @@ parámetros.</p>
 <span class="c1"># Se escalan los valores como en el caso anaterior</span>
 <span class="c1">#</span>
 <span class="n">scaler</span> <span class="o">=</span> <span class="n">MinMaxScaler</span><span class="p">()</span>
-<span class="n">data_d1d12_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">data_d1d12_scaled</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_d1d12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">data_d1d12_scaled</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">data_d1d12_scaled</span><span class="p">]</span>
 
 <span class="c1">#</span>
 <span class="c1"># Se verifica visualmente el escalamiento</span>
 <span class="c1">#</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">();</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span>
+    <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)],</span>
+    <span class="s2">&quot;--&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -834,7 +876,7 @@ parámetros.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -846,7 +888,7 @@ parámetros.</p>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -855,7 +897,7 @@ parámetros.</p>
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -865,15 +907,15 @@ parámetros.</p>
 <span class="n">P</span> <span class="o">=</span> <span class="mi">13</span>
 
 <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">data_d1d12_scaled</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="p">)])</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_d1d12_scaled</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">data_d1d12_scaled</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">P</span><span class="p">)])</span>
 
 <span class="n">d</span> <span class="o">=</span> <span class="n">data_d1d12_scaled</span><span class="p">[</span><span class="n">P</span><span class="p">:]</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -882,24 +924,6 @@ parámetros.</p>
 <span class="c1"># los datos a un modelo de regresión</span>
 <span class="c1">#</span>
 <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-226
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -914,6 +938,24 @@ parámetros.</p>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+226
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -961,7 +1003,7 @@ parámetros.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -978,43 +1020,43 @@ parámetros.</p>
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
 <span class="c1"># La gráfica anterior no es comparativa. Se realizan las</span>
-<span class="c1"># transformaciones inversas a las realizadas</span>
+<span class="c1">#  transformaciones inversas a las realizadas</span>
 <span class="c1">#</span>
 <span class="n">y_d1d12_scaled_m2</span> <span class="o">=</span> <span class="n">data_d1d12_scaled</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">P</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_d1d12_scaled_m2</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
 <span class="n">y_d1d12_m2</span> <span class="o">=</span> <span class="n">scaler</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">([[</span><span class="n">u</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">y_d1d12_scaled_m2</span><span class="p">])</span>
 <span class="n">y_d1d12_m2</span> <span class="o">=</span> <span class="p">[</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">y_d1d12_m2</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
 
-<span class="n">y_d1_m2</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_d1d12_m2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_d1</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>  <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_d1d12_m2</span><span class="p">))]</span>
+<span class="n">y_d1_m2</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_d1d12_m2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">data_d1</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_d1d12_m2</span><span class="p">))]</span>
 <span class="n">y_d1_m2</span> <span class="o">=</span> <span class="n">data_d1</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">]</span> <span class="o">+</span> <span class="n">y_d1_m2</span>
 
-<span class="n">y_m2</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_d1_m2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>  <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_d1_m2</span><span class="p">))]</span>
+<span class="n">y_m2</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_d1_m2</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_d1_m2</span><span class="p">))]</span>
 
 <span class="n">y_m2</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">y_m2</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;.-k&#39;</span><span class="p">)</span>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;.-k&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_m2</span><span class="p">,</span> <span class="s1">&#39;-r&#39;</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_m2</span><span class="p">,</span> <span class="s2">&quot;-r&quot;</span><span class="p">)</span>
 
 <span class="c1"># linea vertical para dividir el entrenamiento</span>
-<span class="c1"># del pronóstico. Se ubica en el ultimo dato</span>
+<span class="c1"># del pronóstico. Se ubica en el ultimo dato</span>
 <span class="c1"># usando para entrenamiento</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)],</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">-</span> <span class="mi">24</span><span class="p">],</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">)],</span> <span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1026,7 +1068,6 @@ parámetros.</p>
 </div>
 </div>
 <p><strong>Ejercicio.—</strong> Determine el número óptimo de neuronas en la capa oculta y la cantidad de rezagos <span class="math notranslate nohighlight">\(P\)</span>. Recuerde que los resultados son sensibles a los parámetros de la optimización y el punto de arranque.</p>
-</div>
 </div>
 </div>
 
