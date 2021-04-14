@@ -46,7 +46,7 @@
     
     <link rel="index" title="Índice" href="../../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../../search.html" />
-    <link rel="next" title="Predicción de gastos médicos" href="1-03-prediccion-de-gastos-medicos.html" />
+    <link rel="next" title="Predicción de gastos médicos usando regresión lineal" href="1-03-prediccion-de-gastos-medicos.html" />
     <link rel="prev" title="Regresión Lineal" href="1-01-lm.html" /> 
 </head>
 
@@ -451,56 +451,29 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Diagnóstico-de-modelos-usando-StatsModels">
 <h1>Diagnóstico de modelos usando StatsModels<a class="headerlink" href="#Diagnóstico-de-modelos-usando-StatsModels" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>60 min</em> | Ultima modificación: Junio 22, 2019</p></li>
+<li><p>22:03 min | Ultima modificación: Abril 13, 2021 | <a class="reference external" href="https://youtu.be/VdtgkYWbn7o">YouTube</a></p></li>
 </ul>
-<div class="section" id="Preparación">
-<h2>Preparación<a class="headerlink" href="#Preparación" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Preparación</span>
-<span class="c1">##</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">scipy</span>
-<span class="kn">import</span> <span class="nn">statsmodels</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">statsmodels</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-1.3.0
-0.10.0
-</pre></div></div>
 </div>
 </div>
 <div class="section" id="Datos">
 <h2>Datos<a class="headerlink" href="#Datos" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_regression</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
 
 <span class="n">X</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">make_regression</span><span class="p">(</span>
     <span class="n">n_samples</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>         <span class="c1">#</span>
@@ -522,20 +495,20 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_5_0.png" src="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_5_0.png" />
+<img alt="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_3_0.png" src="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_3_0.png" />
 </div>
 </div>
 </div>
 <div class="section" id="Estimación-del-modelo">
 <h2>Estimación del modelo<a class="headerlink" href="#Estimación-del-modelo" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## A partir de las matrices X y d</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># A partir de las matrices X y d</span>
+<span class="c1">#</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
@@ -554,8 +527,8 @@ div.rendered_html tbody tr:hover {
 Dep. Variable:                      y   R-squared (uncentered):                   0.962
 Model:                            OLS   Adj. R-squared (uncentered):              0.962
 Method:                 Least Squares   F-statistic:                              2532.
-Date:                Fri, 12 Jul 2019   Prob (F-statistic):                    2.53e-72
-Time:                        01:28:29   Log-Likelihood:                         -385.32
+Date:                Tue, 13 Apr 2021   Prob (F-statistic):                    2.53e-72
+Time:                        21:27:06   Log-Likelihood:                         -385.32
 No. Observations:                 100   AIC:                                      772.6
 Df Residuals:                      99   BIC:                                      775.2
 Df Model:                           1
@@ -576,24 +549,23 @@ Warnings:
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Regresión usando statsmodels con formulas como en R</span>
-<span class="c1">##</span>
-
+<span></span><span class="c1">#</span>
+<span class="c1"># Regresión usando statsmodels con formulas como en R</span>
+<span class="c1">#</span>
 <span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="k">as</span> <span class="nn">smf</span>
 
-<span class="c1">## crea un dataframe</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">,</span>
-    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">])</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="c1">## Estimación</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;d ~ x&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+<span class="c1"># crea un dataframe</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">])</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
+
+<span class="c1"># Estimación</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s2">&quot;d ~ x&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
 <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
@@ -609,8 +581,8 @@ Warnings:
 Dep. Variable:                      d   R-squared:                       0.962
 Model:                            OLS   Adj. R-squared:                  0.962
 Method:                 Least Squares   F-statistic:                     2502.
-Date:                Fri, 12 Jul 2019   Prob (F-statistic):           1.41e-71
-Time:                        01:28:29   Log-Likelihood:                -385.26
+Date:                Tue, 13 Apr 2021   Prob (F-statistic):           1.41e-71
+Time:                        21:27:06   Log-Likelihood:                -385.26
 No. Observations:                 100   AIC:                             774.5
 Df Residuals:                      98   BIC:                             779.7
 Df Model:                           1
@@ -638,18 +610,16 @@ Warnings:
 <ul class="simple">
 <li><p>Los parámetros del modelo <span class="math notranslate nohighlight">\(w_0\)</span> y <span class="math notranslate nohighlight">\(w_1\)</span> deben ser estadísticamente diferentes de cero.</p></li>
 <li><p>La distribución de los errores <span class="math notranslate nohighlight">\(e\)</span> debe ser normal.</p></li>
-<li><p>La varianza de los errores <span class="math notranslate nohighlight">\(\sigma^2\)</span> debe ser constante.</p></li>
+<li><p>La varianza de los errores $ :nbsphinx-math:<a href="#id1"><span class="problematic" id="id2">`</span></a>sigma`^2 $ debe ser constante.</p></li>
 </ul>
 <p>El no cumplimiento de estos supuestos indica que pueden haber problemas en la especificación del modelo o en los datos.</p>
 </div>
-<div class="section" id="Valores-relevantes">
-<h2>Valores relevantes<a class="headerlink" href="#Valores-relevantes" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="section" id="Estadístico-F">
-<h3>Estadístico F<a class="headerlink" href="#Estadístico-F" title="Enlazar permanentemente con este título">¶</a></h3>
+<h2>Estadístico F<a class="headerlink" href="#Estadístico-F" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>En la tabla, es de particular interés el estadístico F. La hipótesis nula es que todos los parámetros del modelo (<span class="math notranslate nohighlight">\(w_0\)</span> y <span class="math notranslate nohighlight">\(w_1\)</span>) son diferentes de cero, versus la hipótesis alterna en que se indica que al menos uno de ellos no es significativamente de cero.</p>
 </div>
 <div class="section" id="Coeficientes-de-la-regresión">
-<h3>Coeficientes de la regresión<a class="headerlink" href="#Coeficientes-de-la-regresión" title="Enlazar permanentemente con este título">¶</a></h3>
+<h2>Coeficientes de la regresión<a class="headerlink" href="#Coeficientes-de-la-regresión" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>En esta fase se verifica los coeficientes sean significativamente diferentes de cero. Ya que el valor esperado de cada parámetro <span class="math notranslate nohighlight">\(w_i\)</span> es desconocido, se verifica contra el supuesto de que su valor sea cero; así, se plantea la siguiente prueba de hipótesis:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(H_0\)</span>: <span class="math notranslate nohighlight">\(w_i=0\)</span></p></li>
@@ -657,19 +627,19 @@ Warnings:
 </ul>
 <p>suponiendo que la distribución de <span class="math notranslate nohighlight">\(w_i\)</span> es normal. Ya que en la práctica hay pocos datos, se reemplaza la normal por la distribución t de Student. La última columna representa la probabilidad de que el valor del parámetro sea cero; es decir, es una prueba de hipótesis usando valores-<span class="math notranslate nohighlight">\(p\)</span>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Valores de los parámetros</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Valores de los parámetros</span>
+<span class="c1">#</span>
 <span class="n">results</span><span class="o">.</span><span class="n">params</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -680,19 +650,19 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Errores estándar</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Errores estándar</span>
+<span class="c1">#</span>
 <span class="n">results</span><span class="o">.</span><span class="n">bse</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -701,7 +671,6 @@ Intercept    1.152827
 x            1.184968
 dtype: float64
 </pre></div></div>
-</div>
 </div>
 <div class="section" id="Coeficiente-de-determinación">
 <h3>Coeficiente de determinación<a class="headerlink" href="#Coeficiente-de-determinación" title="Enlazar permanentemente con este título">¶</a></h3>
@@ -716,19 +685,19 @@ dtype: float64
 <div class="math notranslate nohighlight">
 \[R^2_{\text{Ajustado}} = 1 - \frac{N-1}{N-k-1}(1-R^2)\]</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## R2</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># R2</span>
+<span class="c1">#</span>
 <span class="n">results</span><span class="o">.</span><span class="n">rsquared</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -737,19 +706,19 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Valores pronósticados</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Valores pronósticados</span>
+<span class="c1">#</span>
 <span class="n">results</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -782,22 +751,21 @@ array([  -4.8641841 ,   14.69999471,  -99.84658374,    1.34936759,
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Gráfico del pronóstico</span>
-<span class="c1">##</span>
+<span></span><span class="kn">from</span> <span class="nn">statsmodels.sandbox.regression.predstd</span> <span class="kn">import</span> <span class="n">wls_prediction_std</span>
 
-<span class="kn">from</span> <span class="nn">statsmodels.sandbox.regression.predstd</span> <span class="kn">import</span> <span class="n">wls_prediction_std</span>
-
+<span class="c1">#</span>
+<span class="c1"># Gráfico del pronóstico</span>
+<span class="c1">#</span>
 <span class="n">mean_pred</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span> <span class="o">=</span> <span class="n">wls_prediction_std</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">,</span> <span class="s1">&#39;r--.&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;OLS&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="s1">&#39;g--&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="s1">&#39;g--&#39;</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="s2">&quot;o&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">,</span> <span class="s2">&quot;r--.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;OLS&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="s2">&quot;g--&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="s2">&quot;g--&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -805,17 +773,17 @@ array([  -4.8641841 ,   14.69999471,  -99.84658374,    1.34936759,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_20_0.png" src="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_20_0.png" />
+<img alt="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_17_0.png" src="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_17_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Gráfico de residuos</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Gráfico de residuos</span>
+<span class="c1">#</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">use_line_collection</span><span class="o">=</span><span class="kc">True</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -824,28 +792,28 @@ array([  -4.8641841 ,   14.69999471,  -99.84658374,    1.34936759,
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_21_0.png" src="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_21_0.png" />
+<img alt="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_18_0.png" src="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_18_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Normalidad de los residuos</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Normalidad de los residuos</span>
+<span class="c1">#</span>
 <span class="kn">import</span> <span class="nn">statsmodels.stats.api</span> <span class="k">as</span> <span class="nn">sms</span>
 <span class="kn">from</span> <span class="nn">statsmodels.compat</span> <span class="kn">import</span> <span class="n">lzip</span>
 
-<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Jarque-Bera&#39;</span><span class="p">,</span> <span class="s1">&#39;Chi^2 two-tail prob.&#39;</span><span class="p">,</span> <span class="s1">&#39;Skew&#39;</span><span class="p">,</span> <span class="s1">&#39;Kurtosis&#39;</span><span class="p">]</span>
+<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Jarque-Bera&quot;</span><span class="p">,</span> <span class="s2">&quot;Chi^2 two-tail prob.&quot;</span><span class="p">,</span> <span class="s2">&quot;Skew&quot;</span><span class="p">,</span> <span class="s2">&quot;Kurtosis&quot;</span><span class="p">]</span>
 <span class="n">test</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">jarque_bera</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
 <span class="n">lzip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -857,22 +825,29 @@ array([  -4.8641841 ,   14.69999471,  -99.84658374,    1.34936759,
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Breush-Pagan test</span>
-<span class="c1">##</span>
-<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Lagrange multiplier statistic&#39;</span><span class="p">,</span> <span class="s1">&#39;p-value&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;f-value&#39;</span><span class="p">,</span> <span class="s1">&#39;f p-value&#39;</span><span class="p">]</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Prueba de Breush-Pagan</span>
+<span class="c1">#  Se usa para determinar la heterocedasticidad en un modelo</span>
+<span class="c1">#  de regresión lineal</span>
+<span class="c1">#  https://es.wikipedia.org/wiki/Test_de_Breusch-Pagan</span>
+<span class="c1">#</span>
+<span class="n">name</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Lagrange multiplier statistic&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;p-value&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f-value&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;f p-value&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 <span class="n">test</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">het_breuschpagan</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
 <span class="n">lzip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -884,174 +859,29 @@ array([  -4.8641841 ,   14.69999471,  -99.84658374,    1.34936759,
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Goldfeld-Quandt test</span>
-<span class="c1">##</span>
-<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;F statistic&#39;</span><span class="p">,</span> <span class="s1">&#39;p-value&#39;</span><span class="p">]</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Goldfeld-Quandt test</span>
+<span class="c1">#   Se usa para comprobar la homocedasticidad en modelos de regresión</span>
+<span class="c1">#   https://es.wikipedia.org/wiki/Prueba_de_Goldfeld–Quandt</span>
+<span class="c1">#</span>
+<span class="n">name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;F statistic&quot;</span><span class="p">,</span> <span class="s2">&quot;p-value&quot;</span><span class="p">]</span>
 <span class="n">test</span> <span class="o">=</span> <span class="n">sms</span><span class="o">.</span><span class="n">het_goldfeldquandt</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">resid</span><span class="p">,</span> <span class="n">results</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
 <span class="n">lzip</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">test</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 [(&#39;F statistic&#39;, 0.8929831528098182), (&#39;p-value&#39;, 0.6517143645705812)]
 </pre></div></div>
-</div>
-</div>
-</div>
-<div class="section" id="Opcional-—-Resultados-usando-el-lenguaje-R">
-<h2>Opcional — Resultados usando el lenguaje R<a class="headerlink" href="#Opcional-—-Resultados-usando-el-lenguaje-R" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">load_ext</span> rpy2.ipython
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span> <span class="o">-</span><span class="n">i</span> <span class="n">df</span>
-<span class="nf">head</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-            x          d
-0 -0.07548221 -10.578417
-1  0.25457976   3.454003
-2 -1.67790459 -99.604299
-3  0.02934494   9.184315
-4 -1.26015485 -78.670116
-5 -1.17999447 -72.245923
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se usa la función lm para estimar el modelo de</span>
-<span class="c1">## regresión lineal.</span>
-<span class="c1">##</span>
-<span class="n">m</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">d</span> <span class="o">~</span> <span class="n">x</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## Se imprimen los parámetros del modelo</span>
-<span class="c1">##</span>
-<span class="n">m</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Call:
-lm(formula = d ~ x, data = df)
-
-Coefficients:
-(Intercept)            x
-      -0.39        59.27
-
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se imprime un resumen del modelo estimado.</span>
-<span class="c1">## El primer paso consiste en eliminar las variables</span>
-<span class="c1">## irrelevantes. En este caso, se eliminaría la variable</span>
-<span class="c1">## `sexmale` (valor más alto de Pr(&gt;|t|)) y se estimaría</span>
-<span class="c1">## el modelo nuevamente. Se eliminaría la siguiente variable</span>
-<span class="c1">## más irrelevante y así sucesivamente hasta que solo queden</span>
-<span class="c1">## variables relevantes en el modelo</span>
-<span class="c1">##</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Call:
-lm(formula = d ~ x, data = df)
-
-Residuals:
-    Min      1Q  Median      3Q     Max
--24.959  -8.595   0.200   7.687  32.454
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)   -0.390      1.153  -0.338    0.736
-x             59.274      1.185  50.022   &lt;2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 11.52 on 98 degrees of freedom
-Multiple R-squared:  0.9623,    Adjusted R-squared:  0.9619
-F-statistic:  2502 on 1 and 98 DF,  p-value: &lt; 2.2e-16
-
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se construye una gráfica de 2x2</span>
-<span class="c1">##</span>
-<span class="nf">layout</span><span class="p">(</span><span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">),</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
-
-<span class="c1">##</span>
-<span class="c1">## Se realizan los gráficos de</span>
-<span class="c1">## dignóstico del modelo.</span>
-<span class="c1">##</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## El gráfico QQ muesta que el modelo</span>
-<span class="c1">## no captura adecuadamente el comportamiento</span>
-<span class="c1">## Los demás grafos corroboran esto.</span>
-<span class="c1">##</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_30_0.png" src="../../../_images/notebooks_sklearn_linear_1-02-statsmodels_30_0.png" />
 </div>
 </div>
 </div>

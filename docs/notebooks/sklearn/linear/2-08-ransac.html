@@ -47,7 +47,7 @@
     <link rel="index" title="Índice" href="../../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../../search.html" />
     <link rel="next" title="Regresión Logística" href="../logistic/1-01-regresion-logistica.html" />
-    <link rel="prev" title="Regresión con outliers" href="2-07-hubber.html" /> 
+    <link rel="prev" title="Regresión de Huber y outliers" href="2-07-hubber.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -451,32 +451,18 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Regresión-robusta-usando-RANSAC">
 <h1>Regresión robusta usando RANSAC<a class="headerlink" href="#Regresión-robusta-usando-RANSAC" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>15 min</em> | Ultima modificación: Junio 22, 2019</p></li>
+<li><p>6:41 min | Ultima modificación: Abril 13, 2021 | <a class="reference external" href="https://youtu.be/a_Wwi9BgHxc">YouTube</a></p></li>
 </ul>
 <p>Fuente: <a class="reference external" href="https://scikit-learn.org/stable/auto_examples/linear_model/plot_ransac.html#sphx-glr-auto-examples-linear-model-plot-ransac-py">https://scikit-learn.org/stable/auto_examples/linear_model/plot_ransac.html#sphx-glr-auto-examples-linear-model-plot-ransac-py</a></p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">altair</span> <span class="k">as</span> <span class="nn">alt</span>
-<span class="n">alt</span><span class="o">.</span><span class="n">renderers</span><span class="o">.</span><span class="n">enable</span><span class="p">(</span><span class="s1">&#39;notebook&#39;</span><span class="p">);</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> rpy2.ipython
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span><span class="p">,</span> <span class="n">datasets</span>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">linear_model</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
@@ -484,45 +470,91 @@ div.rendered_html tbody tr:hover {
 <span class="n">n_outliers</span> <span class="o">=</span> <span class="mi">50</span>
 
 
-<span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">coef</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_regression</span><span class="p">(</span><span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                                      <span class="n">n_informative</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-                                      <span class="n">coef</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">coef</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">make_regression</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">n_informative</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">coef</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="c1"># Add outlier data</span>
+<span class="c1">#</span>
+<span class="c1"># Adiciona outliers a los datos</span>
+<span class="c1">#</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">X</span><span class="p">[:</span><span class="n">n_outliers</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n_outliers</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 <span class="n">y</span><span class="p">[:</span><span class="n">n_outliers</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n_outliers</span><span class="p">)</span>
 
-<span class="c1"># Fit line using all data</span>
+<span class="c1">#</span>
+<span class="c1"># Ajusta un modelo lineal a todos los datos</span>
+<span class="c1">#</span>
 <span class="n">lr</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">()</span>
 <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-<span class="c1"># Robustly fit linear model with RANSAC algorithm</span>
+<span class="c1">#</span>
+<span class="c1"># Regresión robusta usando RANSAC</span>
+<span class="c1">#</span>
 <span class="n">ransac</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">RANSACRegressor</span><span class="p">()</span>
 <span class="n">ransac</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 <span class="n">inlier_mask</span> <span class="o">=</span> <span class="n">ransac</span><span class="o">.</span><span class="n">inlier_mask_</span>
 <span class="n">outlier_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">inlier_mask</span><span class="p">)</span>
 
-<span class="c1"># Predict data of estimated models</span>
+<span class="c1">#</span>
+<span class="c1"># Pronostico</span>
+<span class="c1">#</span>
 <span class="n">line_X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">X</span><span class="o">.</span><span class="n">max</span><span class="p">())[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
 <span class="n">line_y</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">line_X</span><span class="p">)</span>
 <span class="n">line_y_ransac</span> <span class="o">=</span> <span class="n">ransac</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">line_X</span><span class="p">)</span>
 
-<span class="c1"># Compare estimated coefficients</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Estimated coefficients (true, linear regression, RANSAC):&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">coef</span><span class="p">,</span> <span class="n">lr</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">ransac</span><span class="o">.</span><span class="n">estimator_</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+<span class="c1">#</span>
+<span class="c1"># Comparación de los coeficientes</span>
+<span class="c1">#</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coeficientes:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;</span><span class="si">{:8.4f}</span><span class="se">\n</span><span class="si">{:8.4f}</span><span class="se">\n</span><span class="si">{:8.4f}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">coef</span><span class="p">),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">lr</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="nb">float</span><span class="p">(</span><span class="n">ransac</span><span class="o">.</span><span class="n">estimator_</span><span class="o">.</span><span class="n">coef_</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 
+<span class="c1">#</span>
+<span class="c1"># Gráfica</span>
+<span class="c1">#</span>
 <span class="n">lw</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">inlier_mask</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">inlier_mask</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;yellowgreen&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Inliers&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">outlier_mask</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">outlier_mask</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gold&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span>
-            <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Outliers&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">line_X</span><span class="p">,</span> <span class="n">line_y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;navy&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Linear regressor&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">line_X</span><span class="p">,</span> <span class="n">line_y_ransac</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;cornflowerblue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span>
-         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;RANSAC regressor&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">inlier_mask</span><span class="p">],</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">inlier_mask</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;yellowgreen&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Inliers&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">[</span><span class="n">outlier_mask</span><span class="p">],</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">outlier_mask</span><span class="p">],</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gold&quot;</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Outliers&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">line_X</span><span class="p">,</span>
+    <span class="n">line_y</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;navy&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Linear regressor&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">line_X</span><span class="p">,</span>
+    <span class="n">line_y_ransac</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;cornflowerblue&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;RANSAC regressor&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;lower right&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Input&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Response&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -531,24 +563,18 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Estimated coefficients (true, linear regression, RANSAC):
-82.1903908407869 [54.17236387] [82.08533159]
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Text(0, 0.5, &#39;Response&#39;)
+Coeficientes:
+ 82.1904
+ 54.1724
+ 82.0853
+
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_2-08-ransac_3_2.png" src="../../../_images/notebooks_sklearn_linear_2-08-ransac_3_2.png" />
+<img alt="../../../_images/notebooks_sklearn_linear_2-08-ransac_2_1.png" src="../../../_images/notebooks_sklearn_linear_2-08-ransac_2_1.png" />
 </div>
 </div>
 </div>

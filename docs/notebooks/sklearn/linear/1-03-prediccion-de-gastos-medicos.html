@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Predicción de gastos médicos &mdash; documentación de --- Cursos --- - </title>
+  <title>Predicción de gastos médicos usando regresión lineal &mdash; documentación de --- Cursos --- - </title>
   
 
   
@@ -159,7 +159,7 @@
         
           <li><a href="../../../analitica-predictiva/content.html">Sesiones</a> &raquo;</li>
         
-      <li>Predicción de gastos médicos</li>
+      <li>Predicción de gastos médicos usando regresión lineal</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -448,10 +448,10 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Predicción-de-gastos-médicos">
-<h1>Predicción de gastos médicos<a class="headerlink" href="#Predicción-de-gastos-médicos" title="Enlazar permanentemente con este título">¶</a></h1>
+<div class="section" id="Predicción-de-gastos-médicos-usando-regresión-lineal">
+<h1>Predicción de gastos médicos usando regresión lineal<a class="headerlink" href="#Predicción-de-gastos-médicos-usando-regresión-lineal" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>45 min</em> | Ultima modificación: Junio 22, 2019</p></li>
+<li><p>14:40 min | Ultima modificación: Abril 13, 2021 | <a class="reference external" href="https://youtu.be/6X2AzhZ7hA8">YouTube</a></p></li>
 </ul>
 <p>En este tutorial se construye un modelo de regresión lineal para la predicción de gastos médicos por parte de una aseguradora.</p>
 <div class="section" id="Descripción-del-problema">
@@ -467,21 +467,14 @@ div.rendered_html tbody tr:hover {
 <li><p>region: northest, southeast, southwest, northwest.</p></li>
 <li><p>charges: costos.</p></li>
 </ul>
-</div>
-<div class="section" id="Preparación">
-<h2>Preparación<a class="headerlink" href="#Preparación" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">altair</span> <span class="k">as</span> <span class="nn">alt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> rpy2.ipython
+<span></span><span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -493,14 +486,17 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Lectura del archivo y verificación</span>
-<span class="c1">##</span>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1">#</span>
+<span class="c1"># Lectura del archivo y verificación</span>
+<span class="c1">#</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
     <span class="s2">&quot;https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/insurance.csv&quot;</span><span class="p">,</span>
-    <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>         <span class="c1"># separador de campos</span>
-    <span class="n">thousands</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># separador de miles para números</span>
-    <span class="n">decimal</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>     <span class="c1"># separador de los decimales para números</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>         <span class="c1"># separador de campos</span>
+    <span class="n">thousands</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># separador de miles para números</span>
+    <span class="n">decimal</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span>     <span class="c1"># separador de los decimales para números</span>
+<span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -597,9 +593,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Tipos de las columnas.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Tipos de las columnas.</span>
+<span class="c1">#</span>
 <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span>
 </pre></div>
 </div>
@@ -628,13 +624,13 @@ dtype: object
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Estadísticos descriptivos de las variables</span>
-<span class="c1">##</span>
-<span class="c1">## Información estadística de la variable dependiente.</span>
-<span class="c1">## Se busca cualquier indicio de irregularidades,</span>
-<span class="c1">## especialmente datos atípicos, información faltante, etc.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Estadísticos descriptivos de las variables</span>
+<span class="c1">#</span>
+<span class="c1">#  Información estadística de la variable dependiente.</span>
+<span class="c1">#  Se busca cualquier indicio de irregularidades,</span>
+<span class="c1">#  especialmente datos atípicos, información faltante, etc.</span>
+<span class="c1">#</span>
 <span class="n">df</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -734,13 +730,13 @@ dtype: object
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## histograma.</span>
-<span class="c1">## Muestra que la mayor parte de la población tiene</span>
-<span class="c1">## gastos bajos, mientras que disminuye la frecuencia</span>
-<span class="c1">## de costos más altos es más baja.</span>
-<span class="c1">##</span>
-<span class="n">df</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s1">&#39;charges&#39;</span><span class="p">);</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># histograma.</span>
+<span class="c1">#  Muestra que la mayor parte de la población tiene</span>
+<span class="c1">#  gastos bajos, mientras que disminuye la frecuencia</span>
+<span class="c1">#  de costos más altos es más baja.</span>
+<span class="c1">#</span>
+<span class="n">df</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">column</span><span class="o">=</span><span class="s2">&quot;charges&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -748,7 +744,7 @@ dtype: object
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_12_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_12_0.png" />
+<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_11_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_11_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -756,11 +752,11 @@ dtype: object
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Se evalua la cantidad de casos por región.</span>
-<span class="c1">## Todas las regiones tienen aproximadamente</span>
-<span class="c1">## la misma cantidad de casos.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se evalua la cantidad de casos por región.</span>
+<span class="c1">#  Todas las regiones tienen aproximadamente</span>
+<span class="c1">#  la misma cantidad de casos.</span>
+<span class="c1">#</span>
 <span class="n">df</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -772,8 +768,8 @@ dtype: object
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 southeast    364
-northwest    325
 southwest    325
+northwest    325
 northeast    324
 Name: region, dtype: int64
 </pre></div></div>
@@ -783,12 +779,12 @@ Name: region, dtype: int64
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## El análisis de correlación muestra que</span>
-<span class="c1">## existe una mayor correlación de los gastos</span>
-<span class="c1">## con la edad y el bmi, pero no con la</span>
-<span class="c1">## cantidad de dependientes.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># El análisis de correlación muestra que</span>
+<span class="c1">#  existe una mayor correlación de los gastos</span>
+<span class="c1">#  con la edad y el bmi, pero no con la</span>
+<span class="c1">#  cantidad de dependientes.</span>
+<span class="c1">#</span>
 <span class="n">df</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -860,54 +856,64 @@ Name: region, dtype: int64
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Se construye la siguiente gráfica para</span>
-<span class="c1">## visualizar relaciones entre las variables</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se construye la siguiente gráfica para</span>
+<span class="c1">#  visualizar relaciones entre las variables</span>
+<span class="c1">#</span>
 <span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">df</span><span class="p">);</span>
 
-<span class="c1">##</span>
-<span class="c1">## la gráfica muestra una relación entre age y charges,</span>
-<span class="c1">## y dos grupos para bmi y charges.</span>
-<span class="c1">##</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># la gráfica muestra una relación entre age y charges,</span>
+<span class="c1"># y dos grupos para bmi y charges.</span>
+<span class="c1">#</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;seaborn.axisgrid.PairGrid at 0x7efef27c8d30&gt;
+</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_15_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_15_0.png" />
+<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_14_1.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_14_1.png" />
 </div>
 </div>
 </div>
-<div class="section" id="Entrenamiento-del-modelo">
-<h2>Entrenamiento del modelo<a class="headerlink" href="#Entrenamiento-del-modelo" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="section" id="Preprocesamiento">
+<h2>Preprocesamiento<a class="headerlink" href="#Preprocesamiento" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Las columnas sex, smoker, region son strings.</span>
-<span class="c1">## Se convierten a variables categoricas</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Las columnas sex, smoker, region son strings.</span>
+<span class="c1"># Se convierten a variables categoricas</span>
+<span class="c1">#</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">preprocessing</span>
 
-<span class="c1">##</span>
-<span class="c1">## Entrena los codificadores</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Entrena los codificadores</span>
+<span class="c1">#</span>
 <span class="n">encoder_sex</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sex</span><span class="p">)</span>
 <span class="n">encoder_smoker</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">smoker</span><span class="p">)</span>
 <span class="n">encoder_region</span> <span class="o">=</span> <span class="n">preprocessing</span><span class="o">.</span><span class="n">LabelEncoder</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">region</span><span class="p">)</span>
 
-<span class="c1">##</span>
-<span class="c1">## Genera las variables transformadas</span>
-<span class="c1">##</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;sex_factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder_sex</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sex</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;smoker_factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder_smoker</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">smoker</span><span class="p">)</span>
-<span class="n">df</span><span class="p">[</span><span class="s1">&#39;region_factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder_region</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">region</span><span class="p">)</span>
+<span class="c1">#</span>
+<span class="c1"># Genera las variables transformadas</span>
+<span class="c1">#</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;sex_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder_sex</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">sex</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;smoker_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder_smoker</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">smoker</span><span class="p">)</span>
+<span class="n">df</span><span class="p">[</span><span class="s2">&quot;region_factor&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">encoder_region</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">region</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -940,36 +946,45 @@ dtype: object
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="Pronóstico-con-sklearn">
-<h2>Pronóstico con sklearn<a class="headerlink" href="#Pronóstico-con-sklearn" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="section" id="Entrenamiento-del-modelo">
+<h2>Entrenamiento del modelo<a class="headerlink" href="#Entrenamiento-del-modelo" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Se usa la función LinearRegresion() para</span>
-<span class="c1">## estimar el modelo de regresión lineal.</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se usa la función LinearRegresion() para</span>
+<span class="c1"># estimar el modelo de regresión lineal.</span>
+<span class="c1">#</span>
 <span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span>
 
-<span class="c1">## Crea el modelo</span>
+<span class="c1"># Crea el modelo</span>
 <span class="n">regr</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">LinearRegression</span><span class="p">()</span>
 
-<span class="c1">## Obtiene las variables independientes</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;bmi&#39;</span><span class="p">,</span> <span class="s1">&#39;children&#39;</span><span class="p">,</span> <span class="s1">&#39;sex_factor&#39;</span><span class="p">,</span> <span class="s1">&#39;smoker_factor&#39;</span><span class="p">,</span> <span class="s1">&#39;region_factor&#39;</span><span class="p">]]</span>
+<span class="c1"># Obtiene las variables independientes</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span>
+    <span class="p">[</span>
+        <span class="s2">&quot;age&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;bmi&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;children&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sex_factor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;smoker_factor&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;region_factor&quot;</span><span class="p">,</span>
+    <span class="p">]</span>
+<span class="p">]</span>
 
-<span class="c1">## Obtiene la variable dependientes</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">&#39;charges&#39;</span><span class="p">]]</span>
+<span class="c1"># Obtiene la variable dependientes</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s2">&quot;charges&quot;</span><span class="p">]]</span>
 
-<span class="c1">## Calibra el modelo</span>
+<span class="c1"># Calibra el modelo</span>
 <span class="n">regr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-<span class="c1">## Imprime los coeficientes:</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Coeficientes: &#39;</span><span class="p">,</span> <span class="n">regr</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
+<span class="c1"># Imprime los coeficientes</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Coeficientes: &quot;</span><span class="p">,</span> <span class="n">regr</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span>
 
-<span class="c1">## Imprime el intercepto:</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Intercepto: &#39;</span><span class="p">,</span> <span class="n">regr</span><span class="o">.</span><span class="n">intercept_</span><span class="p">)</span>
+<span class="c1"># Imprime el intercepto</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Intercepto: &quot;</span><span class="p">,</span> <span class="n">regr</span><span class="o">.</span><span class="n">intercept_</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -989,9 +1004,9 @@ Intercepto:  [-11815.45232123]
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Pronostico para los datos de calibración</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Pronostico para los datos de calibración</span>
+<span class="c1">#</span>
 <span class="n">y_pred</span> <span class="o">=</span> <span class="n">regr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 <span class="n">y_pred</span>
 </pre></div>
@@ -1012,22 +1027,21 @@ array([[25111.24186363],
        [37013.72809551]])
 </pre></div></div>
 </div>
+</div>
+<div class="section" id="Métricas-de-error">
+<h2>Métricas de error<a class="headerlink" href="#Métricas-de-error" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Métricas de error</span>
-<span class="c1">##</span>
-<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
 
-<span class="c1">## MSE</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean squared error: </span><span class="si">%.2f</span><span class="s2">&quot;</span>
-      <span class="o">%</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="c1"># MSE</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Mean squared error: </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
 
-<span class="c1">## R2</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Variance score: </span><span class="si">%.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="c1"># R2</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variance score: </span><span class="si">%.2f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -1048,104 +1062,67 @@ Variance score: 0.75
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Regresión usando statsmodels con formulas como en R</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Regresión usando statsmodels con formulas como en R</span>
+<span class="c1">#</span>
 <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
 <span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="k">as</span> <span class="nn">smf</span>
 
-<span class="c1">## Ajusta el modelo</span>
-<span class="n">mod</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="s1">&#39;charges ~ age + bmi + children + sex_factor + smoker_factor + region_factor&#39;</span><span class="p">,</span>
-              <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">)</span>
+<span class="c1"># Ajusta el modelo</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">ols</span><span class="p">(</span>
+    <span class="n">formula</span><span class="o">=</span><span class="s2">&quot;charges ~ age + bmi + children + sex_factor + smoker_factor + region_factor&quot;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
-</pre></div>
+<div class="prompt empty docutils container">
 </div>
-<div class="output_area rendered_html docutils container">
-<table class="simpletable">
-<caption>OLS Regression Results</caption>
-<tr>
-  <th>Dep. Variable:</th>         <td>charges</td>     <th>  R-squared:         </th> <td>   0.751</td>
-</tr>
-<tr>
-  <th>Model:</th>                   <td>OLS</td>       <th>  Adj. R-squared:    </th> <td>   0.750</td>
-</tr>
-<tr>
-  <th>Method:</th>             <td>Least Squares</td>  <th>  F-statistic:       </th> <td>   668.1</td>
-</tr>
-<tr>
-  <th>Date:</th>             <td>Mon, 03 Jun 2019</td> <th>  Prob (F-statistic):</th>  <td>  0.00</td>
-</tr>
-<tr>
-  <th>Time:</th>                 <td>17:15:37</td>     <th>  Log-Likelihood:    </th> <td> -13548.</td>
-</tr>
-<tr>
-  <th>No. Observations:</th>      <td>  1338</td>      <th>  AIC:               </th> <td>2.711e+04</td>
-</tr>
-<tr>
-  <th>Df Residuals:</th>          <td>  1331</td>      <th>  BIC:               </th> <td>2.715e+04</td>
-</tr>
-<tr>
-  <th>Df Model:</th>              <td>     6</td>      <th>                     </th>     <td> </td>
-</tr>
-<tr>
-  <th>Covariance Type:</th>      <td>nonrobust</td>    <th>                     </th>     <td> </td>
-</tr>
-</table>
-<table class="simpletable">
-<tr>
-        <td></td>           <th>coef</th>     <th>std err</th>      <th>t</th>      <th>P>|t|</th>  <th>[0.025</th>    <th>0.975]</th>
-</tr>
-<tr>
-  <th>Intercept</th>     <td>-1.182e+04</td> <td>  955.130</td> <td>  -12.371</td> <td> 0.000</td> <td>-1.37e+04</td> <td>-9941.729</td>
-</tr>
-<tr>
-  <th>age</th>           <td>  257.2881</td> <td>   11.886</td> <td>   21.647</td> <td> 0.000</td> <td>  233.971</td> <td>  280.605</td>
-</tr>
-<tr>
-  <th>bmi</th>           <td>  332.5701</td> <td>   27.722</td> <td>   11.997</td> <td> 0.000</td> <td>  278.186</td> <td>  386.954</td>
-</tr>
-<tr>
-  <th>children</th>      <td>  479.3694</td> <td>  137.644</td> <td>    3.483</td> <td> 0.001</td> <td>  209.346</td> <td>  749.393</td>
-</tr>
-<tr>
-  <th>sex_factor</th>    <td> -131.1106</td> <td>  332.811</td> <td>   -0.394</td> <td> 0.694</td> <td> -784.001</td> <td>  521.780</td>
-</tr>
-<tr>
-  <th>smoker_factor</th> <td> 2.382e+04</td> <td>  411.843</td> <td>   57.839</td> <td> 0.000</td> <td>  2.3e+04</td> <td> 2.46e+04</td>
-</tr>
-<tr>
-  <th>region_factor</th> <td> -353.6400</td> <td>  151.927</td> <td>   -2.328</td> <td> 0.020</td> <td> -651.682</td> <td>  -55.598</td>
-</tr>
-</table>
-<table class="simpletable">
-<tr>
-  <th>Omnibus:</th>       <td>299.003</td> <th>  Durbin-Watson:     </th> <td>   2.088</td>
-</tr>
-<tr>
-  <th>Prob(Omnibus):</th> <td> 0.000</td>  <th>  Jarque-Bera (JB):  </th> <td> 713.975</td>
-</tr>
-<tr>
-  <th>Skew:</th>          <td> 1.207</td>  <th>  Prob(JB):          </th> <td>9.17e-156</td>
-</tr>
-<tr>
-  <th>Kurtosis:</th>      <td> 5.642</td>  <th>  Cond. No.          </th> <td>    296.</td>
-</tr>
-</table><br/><br/>Warnings:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                charges   R-squared:                       0.751
+Model:                            OLS   Adj. R-squared:                  0.750
+Method:                 Least Squares   F-statistic:                     668.1
+Date:                Tue, 13 Apr 2021   Prob (F-statistic):               0.00
+Time:                        17:12:01   Log-Likelihood:                -13548.
+No. Observations:                1338   AIC:                         2.711e+04
+Df Residuals:                    1331   BIC:                         2.715e+04
+Df Model:                           6
+Covariance Type:            nonrobust
+=================================================================================
+                    coef    std err          t      P&gt;|t|      [0.025      0.975]
+---------------------------------------------------------------------------------
+Intercept     -1.182e+04    955.130    -12.371      0.000   -1.37e+04   -9941.729
+age             257.2881     11.886     21.647      0.000     233.971     280.605
+bmi             332.5701     27.722     11.997      0.000     278.186     386.954
+children        479.3694    137.644      3.483      0.001     209.346     749.393
+sex_factor     -131.1106    332.811     -0.394      0.694    -784.001     521.780
+smoker_factor  2.382e+04    411.843     57.839      0.000     2.3e+04    2.46e+04
+region_factor  -353.6400    151.927     -2.328      0.020    -651.682     -55.598
+==============================================================================
+Omnibus:                      299.003   Durbin-Watson:                   2.088
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):              713.975
+Skew:                           1.207   Prob(JB):                    9.17e-156
+Kurtosis:                       5.642   Cond. No.                         296.
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Parámetros del modelo</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Parámetros del modelo</span>
+<span class="c1">#</span>
 <span class="n">res</span><span class="o">.</span><span class="n">params</span>
 </pre></div>
 </div>
@@ -1171,9 +1148,9 @@ dtype: float64
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Predicción</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Predicción</span>
+<span class="c1">#</span>
 <span class="n">res</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1192,476 +1169,10 @@ dtype: float64
 dtype: float64
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Opcional-—-Lenguaje-R">
-<h2>Opcional — Lenguaje R<a class="headerlink" href="#Opcional-—-Lenguaje-R" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Carga y verificación de los datos.</span>
-<span class="c1">## La variable charges es la que se desea pronósticar.</span>
-<span class="c1">##</span>
-<span class="n">df</span> <span class="o">&lt;-</span> <span class="nf">read.csv</span><span class="p">(</span><span class="s">&quot;insurance.csv&quot;</span><span class="p">,</span> <span class="n">stringsAsFactors</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## Se verifica que los datos hayan sido leidos correctamente.</span>
-<span class="c1">## Se varifican los valores de las variables buscando cualquier</span>
-<span class="c1">## problema de lectura.</span>
-<span class="c1">##</span>
-<span class="nf">str</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-&#39;data.frame&#39;:   1338 obs. of  7 variables:
- $ age     : int  19 18 28 33 32 31 46 37 37 60 ...
- $ sex     : Factor w/ 2 levels &#34;female&#34;,&#34;male&#34;: 1 2 2 2 2 1 1 1 2 1 ...
- $ bmi     : num  27.9 33.8 33 22.7 28.9 ...
- $ children: int  0 1 3 0 0 0 1 3 2 0 ...
- $ smoker  : Factor w/ 2 levels &#34;no&#34;,&#34;yes&#34;: 2 1 1 1 1 1 1 1 1 1 ...
- $ region  : Factor w/ 4 levels &#34;northeast&#34;,&#34;northwest&#34;,..: 4 3 3 2 2 3 3 2 1 2 ...
- $ charges : num  16885 1726 4449 21984 3867 ...
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Información estadística de la variable dependiente.</span>
-<span class="c1">## Se busca cualquier indicio de irregularidades,</span>
-<span class="c1">## especialmente datos atípicos, información faltante, etc.</span>
-<span class="c1">##</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">charges</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
-   1122    4740    9382   13270   16640   63770
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## histograma.</span>
-<span class="c1">## Muestra que la mayor parte de la población tiene</span>
-<span class="c1">## gastos bajos, mientras que disminuye la frecuencia</span>
-<span class="c1">## de costos más altos es más baja.</span>
-<span class="c1">##</span>
-<span class="nf">hist</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">charges</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_30_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_30_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se evalua la cantidad de casos por región.</span>
-<span class="c1">## Todas las regiones tienen aproximadamente</span>
-<span class="c1">## la misma cantidad de casos.</span>
-<span class="c1">##</span>
-<span class="nf">table</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">region</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-northeast northwest southeast southwest
-      324       325       364       325
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## El análisis de correlación muestra que</span>
-<span class="c1">## existe una mayor correlación de los gastos</span>
-<span class="c1">## con la edad y el bmi, pero no con la</span>
-<span class="c1">## cantidad de dependientes.</span>
-<span class="c1">##</span>
-<span class="nf">cor</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span> <span class="s">&quot;bmi&quot;</span><span class="p">,</span> <span class="s">&quot;children&quot;</span><span class="p">,</span> <span class="s">&quot;charges&quot;</span><span class="p">)])</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-               age       bmi   children    charges
-age      1.0000000 0.1092719 0.04246900 0.29900819
-bmi      0.1092719 1.0000000 0.01275890 0.19834097
-children 0.0424690 0.0127589 1.00000000 0.06799823
-charges  0.2990082 0.1983410 0.06799823 1.00000000
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se construye la siguiente gráfica para</span>
-<span class="c1">## visualizar relaciones entre las variables</span>
-<span class="c1">##</span>
-<span class="nf">pairs</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span> <span class="s">&quot;bmi&quot;</span><span class="p">,</span> <span class="s">&quot;children&quot;</span><span class="p">,</span> <span class="s">&quot;charges&quot;</span><span class="p">)])</span>
-
-<span class="c1">##</span>
-<span class="c1">## la gráfica muestra una relación entre age y charges,</span>
-<span class="c1">## y dos grupos para bmi y charges.</span>
-<span class="c1">##</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_33_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_33_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Una gráfica más informativa se obtiene de con la</span>
-<span class="c1">## función pairs.panels().</span>
-<span class="c1">##</span>
-<span class="c1"># install.packages(&quot;psych&quot;)</span>
-<span class="c1">##</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">psych</span><span class="p">)</span>
-<span class="nf">pairs.panels</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;age&quot;</span><span class="p">,</span> <span class="s">&quot;bmi&quot;</span><span class="p">,</span> <span class="s">&quot;children&quot;</span><span class="p">,</span> <span class="s">&quot;charges&quot;</span><span class="p">)])</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_34_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_34_0.png" />
-</div>
-</div>
-<p><strong>Actividad.—</strong> Cómo se interpreta la gráfica anterior?</p>
-<div class="section" id="id1">
-<h3>Entrenamiento del modelo<a class="headerlink" href="#id1" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se usa la función lm para estimar el modelo de</span>
-<span class="c1">## regresión lineal.</span>
-<span class="c1">##</span>
-<span class="n">m</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">charges</span> <span class="o">~</span> <span class="n">age</span> <span class="o">+</span> <span class="n">children</span> <span class="o">+</span> <span class="n">bmi</span> <span class="o">+</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">smoker</span> <span class="o">+</span> <span class="n">region</span><span class="p">,</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## Se imprimen los parámetros del modelo</span>
-<span class="c1">##</span>
-<span class="n">m</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Call:
-lm(formula = charges ~ age + children + bmi + sex + smoker +
-    region, data = df)
-
-Coefficients:
-    (Intercept)              age         children              bmi
-       -11938.5            256.9            475.5            339.2
-        sexmale        smokeryes  regionnorthwest  regionsoutheast
-         -131.3          23848.5           -353.0          -1035.0
-regionsouthwest
-         -960.1
-
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Ya que el modelo usa todas las variables</span>
-<span class="c1">## explicativas disponibles, la llamada a la</span>
-<span class="c1">## función puede simplificarse como:</span>
-<span class="c1">##</span>
-<span class="n">m</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">charges</span> <span class="o">~</span> <span class="n">.</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
-<span class="n">m</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Call:
-lm(formula = charges ~ ., data = df)
-
-Coefficients:
-    (Intercept)              age          sexmale              bmi
-       -11938.5            256.9           -131.3            339.2
-       children        smokeryes  regionnorthwest  regionsoutheast
-          475.5          23848.5           -353.0          -1035.0
-regionsouthwest
-         -960.1
-
-</pre></div></div>
-</div>
-<p><strong>Actividad.—</strong> En la tabla de datos no existen las variables sexmale y smokeryes, cómo se obtuvieron?</p>
-</div>
-<div class="section" id="Diagnóstico-del-modelo">
-<h3>Diagnóstico del modelo<a class="headerlink" href="#Diagnóstico-del-modelo" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="section" id="Coeficientes-del-modelo">
-<h4>Coeficientes del modelo<a class="headerlink" href="#Coeficientes-del-modelo" title="Enlazar permanentemente con este título">¶</a></h4>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se imprime un resumen del modelo estimado.</span>
-<span class="c1">## El primer paso consiste en eliminar las variables</span>
-<span class="c1">## irrelevantes. En este caso, se eliminaría la variable</span>
-<span class="c1">## `sexmale` (valor más alto de Pr(&gt;|t|)) y se estimaría</span>
-<span class="c1">## el modelo nuevamente. Se eliminaría la siguiente variable</span>
-<span class="c1">## más irrelevante y así sucesivamente hasta que solo queden</span>
-<span class="c1">## variables relevantes en el modelo</span>
-<span class="c1">##</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Call:
-lm(formula = charges ~ ., data = df)
-
-Residuals:
-     Min       1Q   Median       3Q      Max
--11304.9  -2848.1   -982.1   1393.9  29992.8
-
-Coefficients:
-                Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)     -11938.5      987.8 -12.086  &lt; 2e-16 ***
-age                256.9       11.9  21.587  &lt; 2e-16 ***
-sexmale           -131.3      332.9  -0.394 0.693348
-bmi                339.2       28.6  11.860  &lt; 2e-16 ***
-children           475.5      137.8   3.451 0.000577 ***
-smokeryes        23848.5      413.1  57.723  &lt; 2e-16 ***
-regionnorthwest   -353.0      476.3  -0.741 0.458769
-regionsoutheast  -1035.0      478.7  -2.162 0.030782 *
-regionsouthwest   -960.0      477.9  -2.009 0.044765 *
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 6062 on 1329 degrees of freedom
-Multiple R-squared:  0.7509,    Adjusted R-squared:  0.7494
-F-statistic: 500.8 on 8 and 1329 DF,  p-value: &lt; 2.2e-16
-
-</pre></div></div>
-</div>
-</div>
-<div class="section" id="Análisis-de-residuales">
-<h4>Análisis de residuales<a class="headerlink" href="#Análisis-de-residuales" title="Enlazar permanentemente con este título">¶</a></h4>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Se construye una gráfica de 2x2</span>
-<span class="c1">##</span>
-<span class="nf">layout</span><span class="p">(</span><span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">),</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
-
-<span class="c1">##</span>
-<span class="c1">## Se realizan los gráficos de</span>
-<span class="c1">## dignóstico del modelo.</span>
-<span class="c1">##</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">## El gráfico QQ muesta que el modelo</span>
-<span class="c1">## no captura adecuadamente el comportamiento</span>
-<span class="c1">## Los demás grafos corroboran esto.</span>
-<span class="c1">##</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_44_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_44_0.png" />
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="Mejora-del-modelo">
-<h3>Mejora del modelo<a class="headerlink" href="#Mejora-del-modelo" title="Enlazar permanentemente con este título">¶</a></h3>
-<p>En un modelo lineal es posible considerar relaciones no lineales por medio de la transformación de las variables. En el siguiente caso se agrega la edad al cuadrado al dataframe.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="n">df</span><span class="o">$</span><span class="n">age2</span> <span class="o">&lt;-</span> <span class="n">df</span><span class="o">$</span><span class="n">age</span><span class="o">^</span><span class="m">2</span>
-</pre></div>
-</div>
-</div>
-<p>Adicionalmente, se considera que la variable bmi podría ser reemplazada simplemente por una variable indicadora que toma el valor de 1 si el bmi es igual o mayor a 30, y cero en caso contrario.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="n">df</span><span class="o">$</span><span class="n">bmi30</span> <span class="o">&lt;-</span> <span class="nf">ifelse</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bmi</span> <span class="o">&gt;=</span> <span class="m">30</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>Más aún, es posible considerar la interacción de dos o más variables. En el siguiente caso, se considera la interación de smoker y bmi30. La notación var1:var2 es equivalente a var1 + var2 + var1*var2.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## El siguiente model considera simultáneamente</span>
-<span class="c1">## el efecto no lineal de la edad, si la persona es</span>
-<span class="c1">## obesa y la interacción entre obesidad y que la persona</span>
-<span class="c1">## sea fumadora.</span>
-<span class="c1">##</span>
-<span class="n">m2</span> <span class="o">&lt;-</span> <span class="nf">lm</span><span class="p">(</span><span class="n">charges</span> <span class="o">~</span> <span class="n">age</span> <span class="o">+</span> <span class="n">age2</span> <span class="o">+</span> <span class="n">children</span> <span class="o">+</span> <span class="n">bmi</span> <span class="o">+</span> <span class="n">sex</span> <span class="o">+</span> <span class="n">bmi30</span><span class="o">*</span><span class="n">smoker</span> <span class="o">+</span> <span class="n">region</span><span class="p">,</span>
-                 <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">)</span>
-<span class="nf">summary</span><span class="p">(</span><span class="n">m2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-
-Call:
-lm(formula = charges ~ age + age2 + children + bmi + sex + bmi30 *
-    smoker + region, data = df)
-
-Residuals:
-     Min       1Q   Median       3Q      Max
--17296.4  -1656.0  -1263.3   -722.1  24160.2
-
-Coefficients:
-                  Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)       134.2509  1362.7511   0.099 0.921539
-age               -32.6851    59.8242  -0.546 0.584915
-age2                3.7316     0.7463   5.000 6.50e-07 ***
-children          678.5612   105.8831   6.409 2.04e-10 ***
-bmi               120.0196    34.2660   3.503 0.000476 ***
-sexmale          -496.8245   244.3659  -2.033 0.042240 *
-bmi30           -1000.1403   422.8402  -2.365 0.018159 *
-smokeryes       13404.6866   439.9491  30.469  &lt; 2e-16 ***
-regionnorthwest  -279.2038   349.2746  -0.799 0.424212
-regionsoutheast  -828.5467   351.6352  -2.356 0.018604 *
-regionsouthwest -1222.6437   350.5285  -3.488 0.000503 ***
-bmi30:smokeryes 19810.7533   604.6567  32.764  &lt; 2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 4445 on 1326 degrees of freedom
-Multiple R-squared:  0.8664,    Adjusted R-squared:  0.8653
-F-statistic: 781.7 on 11 and 1326 DF,  p-value: &lt; 2.2e-16
-
-</pre></div></div>
-</div>
-<p>Nóte que este modelo tiene un r2 superior al del modelo original.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
-</pre></div>
-</div>
-<div class="input_area highlight-r notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="n">R</span>
-<span class="c1">##</span>
-<span class="c1">## Los gráficos de diagnóstico mejoran mucho</span>
-<span class="c1">## pero aún el modelo podría mejorarse aún más</span>
-<span class="c1">## usando otras técnicas.</span>
-<span class="c1">##</span>
-<span class="nf">layout</span><span class="p">(</span><span class="nf">matrix</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">,</span><span class="m">4</span><span class="p">),</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
-<span class="nf">plot</span><span class="p">(</span><span class="n">m2</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_53_0.png" src="../../../_images/notebooks_sklearn_linear_1-03-prediccion-de-gastos-medicos_53_0.png" />
-</div>
-</div>
 <p><strong>Actividad.—</strong> Elimine las variables no significativas.</p>
 <p><strong>Actividad.—</strong> Realice este ejercicio realizando ridge regression.</p>
 <p><strong>Actividad.—</strong> Realice este ejercicio usando LASSO.</p>
-</div>
+<p><strong>Actividad.—</strong> Evalue si sería de utilidad usar transformación de variables.</p>
 </div>
 </div>
 
