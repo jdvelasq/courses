@@ -201,7 +201,27 @@ Sesión 4---15
         /notebooks/sklearn/svm/*
 
 
-Sesión 4---Text Analytics
+Sesión 4---16 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
+
+    **Herramientas Visuales: Orange (https://orangedatamining.com)**
+
+    https://www.youtube.com/c/OrangeDataMining/videos
+
+
+    **Herramientas Visuales: KNIME (https://www.knime.com)**
+
+    https://www.youtube.com/user/KNIMETV/videos
+
+
+Cierre y evaluación del curso
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
+
+
+
+
+
+Text Analytics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
 
     .. toctree::
@@ -211,10 +231,5 @@ Sesión 4---Text Analytics
         /notebooks/text-analytics/*
 
 
-Sesión 4---16 
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^    
-
-
-    **Cierre y evaluación del curso**
 
 

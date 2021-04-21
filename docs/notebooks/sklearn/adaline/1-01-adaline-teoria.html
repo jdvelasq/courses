@@ -46,7 +46,7 @@
     
     <link rel="index" title="Índice" href="../../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../../search.html" />
-    <link rel="next" title="Pronóstico adaptativo usando ADALINEs" href="1-02-pronostico-adaptativo.html" />
+    <link rel="next" title="Pronóstico de la cantidad de usuarios que acceden a un servidor de internet" href="1-02-pronostico-airline.html" />
     <link rel="prev" title="Opcional — Perceptrón unario bipolar" href="../bipolar-perceptron/1-03-perceptron-unario-bipolar.html" /> 
 </head>
 
@@ -452,7 +452,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Combinadores-lineales-adaptativos-(ADALINEs)">
 <h1>Combinadores lineales adaptativos (ADALINEs)<a class="headerlink" href="#Combinadores-lineales-adaptativos-(ADALINEs)" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>30 min</em> | Última modificación: Marzo 21, 2020.</p></li>
+<li><p>30:00 min | Última modificación: Abril 19, 2021 | <a href="#id7"><span class="problematic" id="id8">`YouTube &lt;&gt;`__</span></a></p></li>
 </ul>
 <p>En este taller se presentan los fundamentos matemáticos de los combinadores lineales adaptativos o ADALINEs.</p>
 <div class="section" id="Perceptrón-bipolar-con-entradas-y-pesos-reales">
@@ -507,8 +507,8 @@ div.rendered_html tbody tr:hover {
 <p>En el caso del problema planteado, el pronóstico se realiza usando el siguiente sistema adaptativo de lazo cerrado, en el cual, el modelo adaptativo es un ADALINE.</p>
 <p><img alt="assets/AdalinePronostico-06.png" src="../../../_images/AdalinePronostico-06.png" /></p>
 </div>
-<div class="section" id="Estimación-de-los-pesos-del-ADALINE-usando-\mu-LMS-o-gradiente-descendente">
-<h2>Estimación de los pesos del ADALINE usando <span class="math notranslate nohighlight">\(\mu\)</span>-LMS o gradiente descendente<a class="headerlink" href="#Estimación-de-los-pesos-del-ADALINE-usando-\mu-LMS-o-gradiente-descendente" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="section" id="Algoritmo-\mu-LMS-o-gradiente-descendente">
+<h2>Algoritmo <span class="math notranslate nohighlight">\(\mu\)</span>-LMS o gradiente descendente<a class="headerlink" href="#Algoritmo-\mu-LMS-o-gradiente-descendente" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>A partir de este punto la salida del combinador lineal adaptativo se notará como <span class="math notranslate nohighlight">\(y\)</span> para mantener la consistencia con otros tutoriales.</p>
 <p>Se obtiene al aplicar el algoritmo del gradiente descendente para minimizar el error cuadrático instántaneo:</p>
 <div class="math notranslate nohighlight">
@@ -516,105 +516,66 @@ div.rendered_html tbody tr:hover {
 <p>con:</p>
 <div class="math notranslate nohighlight">
 \[y = w_0 + \sum_i w_i x_i\]</div>
+<p>entonces:</p>
+<div class="math notranslate nohighlight">
+\[e^2 = (d - w_0  - \sum_i w_i x_i)^2\]</div>
 <p>Para encontrar el valor óptimo de los parámetros <span class="math notranslate nohighlight">\(\mathbf{w}\)</span> se usa el gradiente descendente:</p>
 <div class="math notranslate nohighlight">
+\[\mathbf{w}_{k+1} = \mathbf{w}_{k} - \mu \frac{\partial}{\partial \mathbf{w}} e_k^2\]</div>
+<p>Las derivadas del error instantaneo son:</p>
+<div class="math notranslate nohighlight">
 \[\begin{split}\begin{split}
-\mathbf{w}_{k+1} &amp; = \mathbf{w}_{k} - \mu \frac{\partial}{\partial \mathbf{w}} e_k^2 \\
-    &amp; = \mathbf{w}_{k} - 2 \mu e_k \frac{\partial}{\partial \mathbf{w}} e_k \\
-    &amp; = \mathbf{w}_{k} - 2 \mu e_k \frac{\partial}{\partial \mathbf{w}} [d_k - y_k] \\
-    &amp; = \mathbf{w}_{k} + 2 \mu e_k \frac{\partial}{\partial \mathbf{w}} y_k \\
+\frac{\partial}{\partial w_0} e^2
+    &amp; = \frac{\partial}{\partial w_0}  (d - w_0  - \sum_i w_i x_i)^2 \\ \\
+    &amp; = 2 \cdot (d - w_0  - \sum_i w_i x_i) \cdot \frac{\partial}{\partial w_0} (d - w_0  - \sum_i w_i x_i) \\ \\
+    &amp; = 2 \cdot (d - w_0  - \sum_i w_i x_i) \cdot (-1) \\ \\
+    &amp; = -2 \cdot e
 \end{split}\end{split}\]</div>
-<p>Que reescrito en forma vectorial queda:</p>
+<p>y</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}\left[\begin{array}{c} w_0 \\ w_1 \\ \vdots \\ w_n \end{array} \right]_{k+1}
-   = \left[\begin{array}{c} w_0 \\ w_1 \\ \vdots \\ w_n \end{array} \right]_{k}
-        + 2 \mu e_k
-        \left[\begin{array}{c} 1 \\ x_1 \\ \vdots \\ x_n \end{array} \right]_{k}\end{split}\]</div>
-<p>Usando la notación matricial ya descrita en la parte superior de este tutorial, la ecuación anterior se puede reescribir como:</p>
+\[\begin{split}\begin{split}
+\frac{\partial}{\partial w_i} e^2
+    &amp; = \frac{\partial}{\partial w_i}  (d - w_0  - \sum_i w_i x_i)^2 \\ \\
+    &amp; = 2 \cdot (d - w_0  - \sum_i w_i x_i) \cdot \frac{\partial}{\partial w_i} (d - w_0  - \sum_i w_i x_i) \\ \\
+    &amp; = 2 \cdot (d - w_0  - \sum_i w_i x_i) \cdot (-x_i) \\ \\
+    &amp; = -2 \cdot e \cdot x_i
+\end{split}\end{split}\]</div>
+<p>De esta forma, la ecuación del gradiente descendente pueden escribirse como:</p>
 <div class="math notranslate nohighlight">
-\[\mathbf{w}_{k+1} = \mathbf{w}_k + 2 \mu e_i \mathbf{x}_k\]</div>
-<p>Resumiendo:</p>
+\[\begin{split}\begin{split}
+w_0^{(k+1)}
+    &amp; = w_0^{(k)} - \mu \cdot \frac{\partial}{\partial w_0} (e^{(k)})^2  \\ \\
+    &amp; = w_0^{(k)} - \mu \cdot (-2e^{(k)}) \\ \\
+    &amp; = w_0^{(k)} + 2 \mu e^{(k)}
+\end{split}\end{split}\]</div>
 <div class="math notranslate nohighlight">
-\[\mathbf{w}_{k+1} =
-\mathbf{w}_k - \mu \frac{\partial}{\partial \mathbf{w}}  e^2_k  =
-\mathbf{w}_k + 2 \mu e_k \mathbf{x}_k\]</div>
+\[\begin{split}\begin{split}
+w_i^{(k+1)}
+    &amp; = w_i^{(k)} - \mu \cdot \frac{\partial}{\partial w_0} (e^{(k)})^2  \\ \\
+    &amp; = w_i^{(k)} - \mu \cdot (-2 \cdot e^{(k)} \cdot x_i) \\ \\
+    &amp; = w_i^{(k)} + 2 \mu e^{(k)} x_i
+\end{split}\end{split}\]</div>
+<p>Note que las ecuaciones anteriores corresponden al esquema de <em>aprendizaje online</em> por lo que puede usarse el gradiente descendente estocástico.</p>
 <p>Se ha encontrado que el algoritimo converge si:</p>
 <div class="math notranslate nohighlight">
 \[0 &lt; \mu &lt; \frac{1}{1 + \sum_{i=0}^n E[x_i^2]}\]</div>
-<p>Note que en el caso analizado, los pesos <span class="math notranslate nohighlight">\(\mathbf{w}\)</span> cambian cada vez se tiene una nueva observación <span class="math notranslate nohighlight">\(d_k\)</span> tal como ocurre en el algoritmo de gradiente descendente estocástico (SGD).</p>
 </div>
-<div class="section" id="Estimación-de-los-pesos-del-ADALINE-usando-el-algoritmo-\alpha-LMS">
-<h2>Estimación de los pesos del ADALINE usando el algoritmo <span class="math notranslate nohighlight">\(\alpha\)</span>-LMS<a class="headerlink" href="#Estimación-de-los-pesos-del-ADALINE-usando-el-algoritmo-\alpha-LMS" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>El entrenamiento también puede hacerse mediante el algoritmo <span class="math notranslate nohighlight">\(\alpha\)</span>-LMS o Regla Delta de Widrow-Hoff:</p>
-<ol class="arabic simple">
-<li><p>Se define el error lineal como:</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[e_k = d_k - \mathbf{w}^T_k \mathbf{x}_k\]</div>
-<ol class="arabic simple" start="2">
-<li><p>Si se corrigen los pesos, el nuevo error sin cambiar el patrón de entrada es:</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[e_{k+1} = d_k - \mathbf{w}^T_{k+1} \mathbf{x}_k\]</div>
-<ol class="arabic simple" start="3">
-<li><p>Se computa el cambio en el error:</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[\begin{split}\begin{split}
-\Delta e_k
-  &amp; = e_{k+1} - e_k \\
-  &amp; = \mathbf{w}^T_{k+1}  \mathbf{x}_k - \mathbf{w}^T_{k} \mathbf{x}_k \\
-  &amp; = \mathbf{x}^T_k  \mathbf{w}_{k+1} - \mathbf{x}^T_{k} \mathbf{w}_k \\
-  &amp; = - \mathbf{x}^T_k  \Delta \mathbf{w}_k
-\end{split}\end{split}\]</div>
-<ol class="arabic simple" start="4">
-<li><p>Se debe garantizar que <span class="math notranslate nohighlight">\(e_k\)</span> converge asintóticamente a cero.</p></li>
-</ol>
-<ol class="arabic simple" start="5">
-<li><p>Un supuesto podría ser: <span class="math notranslate nohighlight">\(e_{k+1}=(1-\alpha) e_k\)</span> o <span class="math notranslate nohighlight">\(\Delta e_k=- \alpha e_k\)</span></p></li>
-</ol>
-<ol class="arabic simple" start="6">
-<li><p>Haciendo (3)=(5): $ -<span class="math">\mathbf{x}`^T_k :nbsphinx-math:</span>Delta <cite>:nbsphinx-math:</cite>mathbf{w}`_k=-:nbsphinx-math:<a href="#id1"><span class="problematic" id="id2">`</span></a>alpha <a href="#id3"><span class="problematic" id="id4">`</span></a>e_k$</p></li>
-</ol>
-<ol class="arabic simple" start="7">
-<li><p>Multiplicando (6) por <span class="math notranslate nohighlight">\(\mathbf{x}_k\)</span>: <span class="math notranslate nohighlight">\(- \Delta \mathbf{w}_k[\mathbf{x}^T_k \mathbf{x}_k] = -\alpha e_k \mathbf{x}_k\)</span></p></li>
-</ol>
-<ol class="arabic simple" start="8">
-<li><p>Despejando:</p></li>
-</ol>
-<div class="math notranslate nohighlight">
-\[\mathbf{w}_{k+1}= \mathbf{w}_k + \alpha e_k \frac{\mathbf{x}_k}{|\mathbf{x}_k|^2}\]</div>
-</div>
-<div class="section" id="Importación-de-dependencias">
-<h2>Importación de dependencias<a class="headerlink" href="#Importación-de-dependencias" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Implementación-del-modelo">
-<h2>Implementación del modelo<a class="headerlink" href="#Implementación-del-modelo" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="section" id="Implementación">
+<h2>Implementación<a class="headerlink" href="#Implementación" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">class</span> <span class="nc">Adaline</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-                 <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="c1"># tasa de aprendizaje</span>
-                 <span class="n">max_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>      <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
-                 <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>       <span class="c1"># mezcla patrones para aprendizaje online</span>
-                 <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1">#</span>
-                 <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>   <span class="c1">#</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="c1"># tasa de aprendizaje</span>
+        <span class="n">max_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>      <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
+        <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>       <span class="c1"># mezcla patrones para aprendizaje online</span>
+        <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>   <span class="c1">#</span>
+        <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>    <span class="c1">#</span>
+    <span class="p">):</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_epochs</span> <span class="o">=</span> <span class="n">max_epochs</span>
@@ -639,7 +600,7 @@ div.rendered_html tbody tr:hover {
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">warm_start</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">warm_start</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">warm_start</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="n">errors2</span> <span class="o">=</span> <span class="p">[]</span>
@@ -650,15 +611,15 @@ div.rendered_html tbody tr:hover {
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="n">n</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-                <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">n</span><span class="p">,:]</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">n</span><span class="p">,</span> <span class="p">:]</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
 
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-                <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span>
+                <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span>
                 <span class="n">e</span> <span class="o">=</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">u</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">coef_</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">e</span> <span class="o">*</span> <span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">*</span> <span class="n">e</span>
-                <span class="n">errors2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                <span class="n">errors2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
                 <span class="n">forecasts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">errors2</span><span class="p">,</span> <span class="n">forecasts</span>
@@ -695,13 +656,14 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
-<span class="n">d</span> <span class="o">=</span>  <span class="p">[</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span>  <span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">)]</span>
-<span class="n">d</span> <span class="o">+=</span> <span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span>  <span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">134</span><span class="p">)]</span>
-<span class="n">d</span> <span class="o">+=</span> <span class="p">[</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">134</span><span class="p">,</span> <span class="mi">250</span><span class="p">)]</span>
-<span class="n">d</span> <span class="o">=</span>  <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.06</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">);</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">)]</span>
+<span class="n">d</span> <span class="o">+=</span> <span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">4</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="mi">134</span><span class="p">)]</span>
+<span class="n">d</span> <span class="o">+=</span> <span class="p">[</span><span class="mf">0.8</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">134</span><span class="p">,</span> <span class="mi">250</span><span class="p">)]</span>
+<span class="n">d</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mf">0.06</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -709,7 +671,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_53_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_53_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_46_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_46_0.png" />
 </div>
 </div>
 </div>
@@ -720,22 +682,22 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">##  Para pronosticar el valor actual se toman los `L`</span>
-<span class="c1">##  valores previos de la serie</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1">#  Para pronosticar el valor actual se toman los `L`</span>
+<span class="c1">#  valores previos de la serie</span>
+<span class="c1">#</span>
 <span class="n">L</span> <span class="o">=</span> <span class="mi">5</span>
 
-<span class="c1">##</span>
-<span class="c1">## Forma la matriz X</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Forma la matriz X</span>
+<span class="c1">#</span>
 <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)):</span>
-    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">L</span><span class="p">:</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">L</span> <span class="p">:</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
 
-<span class="c1">##</span>
-<span class="c1">## Primeras 3 filas</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Primeras 3 filas</span>
+<span class="c1">#</span>
 <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -764,8 +726,8 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="Especificación-del-modelo">
-<h3>Especificación del modelo<a class="headerlink" href="#Especificación-del-modelo" title="Enlazar permanentemente con este título">¶</a></h3>
+<div class="section" id="Modelo">
+<h3>Modelo<a class="headerlink" href="#Modelo" title="Enlazar permanentemente con este título">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -773,46 +735,24 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">adaline</span> <span class="o">=</span> <span class="n">Adaline</span><span class="p">(</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>  <span class="c1"># tasa de aprendizaje</span>
-    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>        <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
-    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>       <span class="c1"># mezcla patrones para aprendizaje online</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>    <span class="c1"># corrida reproducible</span>
-    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>    <span class="c1"># inicia con pesos aleatorios</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Entrenamiento-del-modelo">
-<h3>Entrenamiento del modelo<a class="headerlink" href="#Entrenamiento-del-modelo" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">errors2</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="n">adaline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>  <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># mezcla patrones para aprendizaje online</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>  <span class="c1"># corrida reproducible</span>
+    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># inicia con pesos aleatorios</span>
+<span class="p">)</span>
+
+<span class="n">errors2</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="n">adaline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
     <span class="n">X</span><span class="p">,</span>
-    <span class="n">d</span><span class="p">[</span><span class="n">L</span><span class="p">:])</span>
+    <span class="n">d</span><span class="p">[</span><span class="n">L</span><span class="p">:],</span>
+<span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Pronóstico</span>
+<span class="c1">#</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)),</span> <span class="n">forecasts</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">);</span>
 </pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Resultados">
-<h3>Resultados<a class="headerlink" href="#Resultados" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)),</span> <span class="n">forecasts</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_61_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_61_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -820,7 +760,10 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Errores</span>
+<span class="c1">#</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errors2</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -829,101 +772,15 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_62_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_62_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_51_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_51_0.png" />
 </div>
-</div>
-</div>
-<div class="section" id="Implementación-en-TensorFlow">
-<h3>Implementación en TensorFlow<a class="headerlink" href="#Implementación-en-TensorFlow" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="section" id="Preparación">
-<h4>Preparación<a class="headerlink" href="#Preparación" title="Enlazar permanentemente con este título">¶</a></h4>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
-<span class="n">tf</span><span class="o">.</span><span class="n">enable_eager_execution</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Definición-del-modelo">
-<h4>Definición del modelo<a class="headerlink" href="#Definición-del-modelo" title="Enlazar permanentemente con este título">¶</a></h4>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">([</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">L</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
-        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_sum</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">y_pred</span>
-
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y_desired</span><span class="p">):</span>
-        <span class="n">y_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="n">e</span> <span class="o">=</span> <span class="n">y_desired</span> <span class="o">-</span> <span class="n">y_pred</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">+</span> <span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">assign_add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">scalar_mul</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">e</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Aplicación-al-caso-propuesto">
-<h4>Aplicación al caso propuesto<a class="headerlink" href="#Aplicación-al-caso-propuesto" title="Enlazar permanentemente con este título">¶</a></h4>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">##  Para pronosticar el valor actual se toman los `L`</span>
-<span class="c1">##  valores previos de la serie</span>
-<span class="c1">##</span>
-<span class="n">L</span> <span class="o">=</span> <span class="mi">5</span>
-
-<span class="c1">##</span>
-<span class="c1">##  Modelo</span>
-<span class="c1">##</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
-
-<span class="c1">##</span>
-<span class="c1">##  Pronosticos del modelo</span>
-<span class="c1">##</span>
-<span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
-<span class="n">y_pred</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-
-<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)):</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">L</span><span class="p">:</span><span class="n">t</span><span class="p">]</span>
-    <span class="n">y_pred</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y_desired</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">])</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">);</span>
-
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_69_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_69_0.png" />
-</div>
-</div>
-<p><strong>Actividad.–</strong> Implemente el algoritmo <span class="math notranslate nohighlight">\(\alpha\)</span>-LMS usando TensorFlow.</p>
 </div>
 </div>
 </div>
 <div class="section" id="Caso-de-aplicación-—-Identificación-de-sistemas">
 <h2>Caso de aplicación — Identificación de sistemas<a class="headerlink" href="#Caso-de-aplicación-—-Identificación-de-sistemas" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="section" id="id5">
-<h3>Definición del problema<a class="headerlink" href="#id5" title="Enlazar permanentemente con este título">¶</a></h3>
+<div class="section" id="id1">
+<h3>Definición del problema<a class="headerlink" href="#id1" title="Enlazar permanentemente con este título">¶</a></h3>
 <p>Cuando un sistema desconocido es excitado mediante una señal de entrada <span class="math notranslate nohighlight">\(z(k)\)</span> se produce una señal de salida <span class="math notranslate nohighlight">\(d(k)\)</span>. El diagrama del sistema aparece en la figura de abajo. Para efectos de control se requiere un modelo que permita pronosticar el valor de <span class="math notranslate nohighlight">\(d(k)\)</span> a partir del valor actual y los valores pasados de la señal de entrada <span class="math notranslate nohighlight">\(z(k)\)</span>, <span class="math notranslate nohighlight">\(z(k-1)\)</span>, <span class="math notranslate nohighlight">\(z(k-2)\)</span>, … El diagrama ilustrativo es presentado a continuación.</p>
 <p><img alt="assets/AdalineIdentificacion-01.png" src="../../../_images/AdalineIdentificacion-01.png" /></p>
 <p>En este tipo de problemas no es posible modelar el sistema que genera la señal de salida <span class="math notranslate nohighlight">\(d(t)\)</span>. Adicionalmente, la señal está contaminada con ruído por lo que resulta imposible pronosticarla de forma perfecta. Por facilidad se supondra que la dinámica del sistema desconocido es descrita por siguiente ecuación no lineal:</p>
@@ -933,8 +790,8 @@ div.rendered_html tbody tr:hover {
 <p>El problema propuesto es conocido como un problema de identificación de sistemas, donde un modelo adaptativo (una red neuronal en este caso) debe aproximar el comportamiento real (la salida, <span class="math notranslate nohighlight">\(d_t\)</span>) de un sistema desconocido a partir de un conjunto de entradas (el vector <span class="math notranslate nohighlight">\(\mathbf{x}_t\)</span>) conocidas. El diagrama esquemático del sistema es el siguiente:</p>
 <p><img alt="assets/AdalineIdentificacion-02.png" src="../../../_images/AdalineIdentificacion-02.png" /></p>
 </div>
-<div class="section" id="id6">
-<h3>Dataset<a class="headerlink" href="#id6" title="Enlazar permanentemente con este título">¶</a></h3>
+<div class="section" id="id2">
+<h3>Dataset<a class="headerlink" href="#id2" title="Enlazar permanentemente con este título">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
@@ -947,18 +804,20 @@ div.rendered_html tbody tr:hover {
 <span class="n">L</span> <span class="o">=</span> <span class="mi">2</span>
 
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">303</span><span class="p">):</span>
-    <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.4</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.4</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="n">z</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="p">)</span>
 
 <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">303</span><span class="p">]</span>
 <span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">303</span><span class="p">]</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;z (entrada)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;z (entrada)&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;d (salida)&#39;</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;d (salida)&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -966,34 +825,34 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_78_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_78_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_59_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_59_0.png" />
 </div>
 </div>
 <p>En términos de los datos se requiere construir un modelo de regresión que permita pronosticar <span class="math notranslate nohighlight">\(d_t\)</span> a partir de los valores <span class="math notranslate nohighlight">\(z_t\)</span>, <span class="math notranslate nohighlight">\(z_{t-1}\)</span>, …</p>
 </div>
-<div class="section" id="id7">
-<h3>Preparación de datos<a class="headerlink" href="#id7" title="Enlazar permanentemente con este título">¶</a></h3>
+<div class="section" id="id3">
+<h3>Preparación de datos<a class="headerlink" href="#id3" title="Enlazar permanentemente con este título">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">##  Para pronosticar el valor actual se toman los `L`</span>
-<span class="c1">##  valores previos de la serie explicativa</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1">#  Para pronosticar el valor actual se toman los `L`</span>
+<span class="c1">#  valores previos de la serie explicativa</span>
+<span class="c1">#</span>
 <span class="n">L</span> <span class="o">=</span> <span class="mi">5</span>
 
-<span class="c1">##</span>
-<span class="c1">## Forma la matriz X</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Forma la matriz X</span>
+<span class="c1">#</span>
 <span class="n">X</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)):</span>
-    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">L</span><span class="p">:</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="n">t</span> <span class="o">-</span> <span class="n">L</span> <span class="p">:</span> <span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
 
-<span class="c1">##</span>
-<span class="c1">## Primeras 3 filas</span>
-<span class="c1">##</span>
+<span class="c1">#</span>
+<span class="c1"># Primeras 3 filas</span>
+<span class="c1">#</span>
 <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -1022,55 +881,33 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>Especificación del modelo<a class="headerlink" href="#id8" title="Enlazar permanentemente con este título">¶</a></h3>
+<div class="section" id="id4">
+<h3>Modelo<a class="headerlink" href="#id4" title="Enlazar permanentemente con este título">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">adaline</span> <span class="o">=</span> <span class="n">Adaline</span><span class="p">(</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Especificación</span>
+<span class="c1">#</span>
+<span class="n">adaline</span> <span class="o">=</span> <span class="n">Adaline</span><span class="p">(</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span>  <span class="c1"># tasa de aprendizaje</span>
     <span class="n">max_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>        <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
     <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>       <span class="c1"># mezcla patrones para aprendizaje online</span>
     <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>    <span class="c1"># corrida reproducible</span>
-    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>    <span class="c1"># inicia con pesos aleatorios</span>
+    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>    <span class="c1"># pesos iniciales aleatorios</span>
+<span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Entrenamiento</span>
+<span class="c1">#</span>
+<span class="n">errors2</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="n">adaline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">d</span><span class="p">[</span><span class="n">L</span><span class="p">:])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)),</span> <span class="n">forecasts</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">);</span>
 </pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="id9">
-<h3>Entrenamiento del modelo<a class="headerlink" href="#id9" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">errors2</span><span class="p">,</span> <span class="n">forecasts</span> <span class="o">=</span> <span class="n">adaline</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
-    <span class="n">X</span><span class="p">,</span>
-    <span class="n">d</span><span class="p">[</span><span class="n">L</span><span class="p">:])</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="id10">
-<h3>Resultados<a class="headerlink" href="#id10" title="Enlazar permanentemente con este título">¶</a></h3>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">);</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)),</span> <span class="n">forecasts</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">);</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_87_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_87_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1078,7 +915,10 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Errores</span>
+<span class="c1">#</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errors2</span><span class="p">);</span>
 </pre></div>
 </div>
@@ -1087,15 +927,15 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_88_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_88_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_65_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_65_0.png" />
 </div>
 </div>
 </div>
 </div>
 <div class="section" id="Caso-de-aplicación-—-Clasificación">
 <h2>Caso de aplicación — Clasificación<a class="headerlink" href="#Caso-de-aplicación-—-Clasificación" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="section" id="id11">
-<h3>Definición del problema<a class="headerlink" href="#id11" title="Enlazar permanentemente con este título">¶</a></h3>
+<div class="section" id="id5">
+<h3>Definición del problema<a class="headerlink" href="#id5" title="Enlazar permanentemente con este título">¶</a></h3>
 <p>El problema de clasificación binaria (con clases <span class="math notranslate nohighlight">\(C_1\)</span> y <span class="math notranslate nohighlight">\(C_2\)</span> dicotómicas) se define de la siguiente manera:</p>
 <ul class="simple">
 <li><p>Cada patrón de entrada tiene la forma <span class="math notranslate nohighlight">\(\mathbf{x}=[+1,x_1,x_2,…,x_n ]\)</span>.</p></li>
@@ -1116,14 +956,13 @@ div.rendered_html tbody tr:hover {
 <p>A continuación se presenta la frontera de decisión generada por un ADALINE para la función lógica AND:</p>
 <p><img alt="../assets/AdalineClasificacion-02.png" src="../../../_images/AdalineClasificacion-02.png" /></p>
 </div>
-<div class="section" id="id12">
-<h3>Dataset<a class="headerlink" href="#id12" title="Enlazar permanentemente con este título">¶</a></h3>
+<div class="section" id="id6">
+<h3>Dataset<a class="headerlink" href="#id6" title="Enlazar permanentemente con este título">¶</a></h3>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-
 <span></span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_blobs</span>
 
 <span class="n">NPOINTS</span> <span class="o">=</span> <span class="mi">150</span>
@@ -1134,12 +973,13 @@ div.rendered_html tbody tr:hover {
     <span class="n">centers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">cluster_std</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
     <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -1147,7 +987,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_94_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_94_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_71_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_71_0.png" />
 </div>
 </div>
 </div>
@@ -1160,18 +1000,19 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">adaline_A</span> <span class="o">=</span> <span class="n">Adaline</span><span class="p">(</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>  <span class="c1"># tasa de aprendizaje</span>
-    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>       <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
-    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>        <span class="c1"># mezcla patrones para aprendizaje online</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>    <span class="c1"># corrida reproducible</span>
-    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>    <span class="c1"># inicia con pesos aleatorios</span>
+    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>  <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># mezcla patrones para aprendizaje online</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>  <span class="c1"># corrida reproducible</span>
+    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># inicia con pesos aleatorios</span>
 
 <span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
 
 <span class="n">errors2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errors2</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1179,7 +1020,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_96_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_96_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_73_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_73_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1189,18 +1030,19 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">adaline_B</span> <span class="o">=</span> <span class="n">Adaline</span><span class="p">(</span>
     <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>  <span class="c1"># tasa de aprendizaje</span>
-    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>       <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
-    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>        <span class="c1"># mezcla patrones para aprendizaje online</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>    <span class="c1"># corrida reproducible</span>
-    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>    <span class="c1"># inicia con pesos aleatorios</span>
+    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>  <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># mezcla patrones para aprendizaje online</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>  <span class="c1"># corrida reproducible</span>
+    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># inicia con pesos aleatorios</span>
 
 <span class="n">B</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
 
 <span class="n">errors2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errors2</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1208,7 +1050,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_97_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_97_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_74_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_74_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -1217,19 +1059,20 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">adaline_C</span> <span class="o">=</span> <span class="n">Adaline</span><span class="p">(</span>
-    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="c1"># tasa de aprendizaje</span>
-    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>       <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
-    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>        <span class="c1"># mezcla patrones para aprendizaje online</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>    <span class="c1"># corrida reproducible</span>
-    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>    <span class="c1"># inicia con pesos aleatorios</span>
+    <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span>  <span class="c1"># tasa de aprendizaje</span>
+    <span class="n">max_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>  <span class="c1"># número máximo de iteraciones sobre el set de datos</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># mezcla patrones para aprendizaje online</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>  <span class="c1"># corrida reproducible</span>
+    <span class="n">warm_start</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span>  <span class="c1"># inicia con pesos aleatorios</span>
 
 <span class="n">C</span> <span class="o">=</span> <span class="p">[</span><span class="o">+</span><span class="mi">1</span> <span class="k">if</span> <span class="n">u</span> <span class="o">==</span> <span class="mi">2</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
 
 <span class="n">errors2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">C</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">errors2</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">);</span>
 </pre></div>
 </div>
 </div>
@@ -1237,7 +1080,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_98_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_98_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_75_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_75_0.png" />
 </div>
 </div>
 </div>
@@ -1248,28 +1091,34 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">)</span>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[:</span><span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">50</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="mi">100</span><span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s2">&quot;equal&quot;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">)</span>
 
 <span class="n">xlim</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
 <span class="n">ylim</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()</span>
 
 <span class="n">xplot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">stop</span><span class="o">=</span><span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
 
-<span class="n">fronteraA</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">/</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-             <span class="o">-</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xplot</span><span class="p">)</span>
+<span class="n">fronteraA</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">-</span><span class="n">adaline_A</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">/</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="o">-</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">adaline_A</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xplot</span>
+<span class="p">)</span>
 
-<span class="n">fronteraB</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">/</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-             <span class="o">-</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xplot</span><span class="p">)</span>
+<span class="n">fronteraB</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">-</span><span class="n">adaline_B</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">/</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="o">-</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">adaline_B</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xplot</span>
+<span class="p">)</span>
 
-<span class="n">fronteraC</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">/</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-             <span class="o">-</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xplot</span><span class="p">)</span>
+<span class="n">fronteraC</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="o">-</span><span class="n">adaline_C</span><span class="o">.</span><span class="n">intercept_</span> <span class="o">/</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="o">-</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">adaline_C</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">xplot</span>
+<span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">fronteraA</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">fronteraB</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">fronteraC</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">fronteraA</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">fronteraB</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">fronteraC</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">);</span>
@@ -1280,7 +1129,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_100_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_100_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_77_0.png" src="../../../_images/notebooks_sklearn_adaline_1-01-adaline-teoria_77_0.png" />
 </div>
 </div>
 </div>

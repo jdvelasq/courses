@@ -46,8 +46,8 @@
     
     <link rel="index" title="Índice" href="../../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../../search.html" />
-    <link rel="next" title="Identificación de sistemas usando ADALINEs" href="1-04-identificacion-de-sistemas.html" />
-    <link rel="prev" title="Pronóstico adaptativo usando ADALINEs" href="1-02-pronostico-adaptativo.html" /> 
+    <link rel="next" title="MADALINEs" href="1-03-madalines.html" />
+    <link rel="prev" title="Combinadores lineales adaptativos (ADALINEs)" href="1-01-adaline-teoria.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -166,7 +166,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../../_sources/notebooks/sklearn/adaline/1-03-pronostico-airline.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/notebooks/sklearn/adaline/1-02-pronostico-airline.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -452,30 +452,19 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Pronóstico-de-la-cantidad-de-usuarios-que-acceden-a-un-servidor-de-internet">
 <h1>Pronóstico de la cantidad de usuarios que acceden a un servidor de internet<a class="headerlink" href="#Pronóstico-de-la-cantidad-de-usuarios-que-acceden-a-un-servidor-de-internet" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>30 min</em> | Última modificación: Marzo 21, 2020.</p></li>
+<li><p>30:00 min | Última modificación: Marzo 21, 2020 | <a href="#id1"><span class="problematic" id="id2">`YouTube &lt;&gt;`__</span></a></p></li>
 </ul>
 <div class="section" id="Definición-del-problema">
 <h2>Definición del problema<a class="headerlink" href="#Definición-del-problema" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>Se desea construir un modelo para pronósticar la cantidad de usuarios que acceden a un servidor de internet por minuto. La muestra de datos obtenida corresponde a 100 minutos consecutivos. Los primeros 80 datos deben ser usados para la estimación del modelo, y los 20 restantes para su predicción (simulando el uso del modelo en productivo).</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
-</div>
-</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">d</span> <span class="o">=</span> <span class="p">[</span>
+<span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">d</span> <span class="o">=</span> <span class="p">[</span>
      <span class="mi">88</span><span class="p">,</span>  <span class="mi">84</span><span class="p">,</span>  <span class="mi">85</span><span class="p">,</span>  <span class="mi">85</span><span class="p">,</span>  <span class="mi">84</span><span class="p">,</span>  <span class="mi">85</span><span class="p">,</span>  <span class="mi">83</span><span class="p">,</span>  <span class="mi">85</span><span class="p">,</span>  <span class="mi">88</span><span class="p">,</span>  <span class="mi">89</span><span class="p">,</span>
      <span class="mi">91</span><span class="p">,</span>  <span class="mi">99</span><span class="p">,</span> <span class="mi">104</span><span class="p">,</span> <span class="mi">112</span><span class="p">,</span> <span class="mi">126</span><span class="p">,</span> <span class="mi">138</span><span class="p">,</span> <span class="mi">146</span><span class="p">,</span> <span class="mi">151</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">148</span><span class="p">,</span>
     <span class="mi">147</span><span class="p">,</span> <span class="mi">149</span><span class="p">,</span> <span class="mi">143</span><span class="p">,</span> <span class="mi">132</span><span class="p">,</span> <span class="mi">131</span><span class="p">,</span> <span class="mi">139</span><span class="p">,</span> <span class="mi">147</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">148</span><span class="p">,</span> <span class="mi">145</span><span class="p">,</span>
@@ -497,12 +486,12 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_4_0.png" src="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_4_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_3_0.png" src="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_3_0.png" />
 </div>
 </div>
-<p>## Solución</p>
+</div>
 <div class="section" id="Análisis-exploratorio">
-<h3>Análisis exploratorio<a class="headerlink" href="#Análisis-exploratorio" title="Enlazar permanentemente con este título">¶</a></h3>
+<h2>Análisis exploratorio<a class="headerlink" href="#Análisis-exploratorio" title="Enlazar permanentemente con este título">¶</a></h2>
 <p>El modelo a utilizar es el siguiente:</p>
 <div class="math notranslate nohighlight">
 \[z_{t} = w_0 + w_1 z_{t-1} + ... + w_P z_{t-P}\]</div>
@@ -531,7 +520,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_14_0.png" src="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_14_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_12_0.png" src="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_12_0.png" />
 </div>
 </div>
 <p>La forma de la ACF es típica de series de tiempo no estacionarias. Una serie de tiempo es estacionaria si su media y su varianza no cambian en el tiempo. De la gráfica de la serie de tiempo se observa que la primera mitad tiene una media diferente a la de la segunda mitad.</p>
@@ -562,7 +551,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_20_0.png" src="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_20_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_18_0.png" src="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_18_0.png" />
 </div>
 </div>
 <p>Note que esta serie si es estacionaria.</p>
@@ -583,7 +572,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_23_0.png" src="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_23_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_21_0.png" src="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_21_0.png" />
 </div>
 </div>
 <p>En un primer análisis podría seleccionarse a <span class="math notranslate nohighlight">\(P=6\)</span>. Sin embargo, es necesario recurrir a la función de autocorrelación parcial (PACF) antes de tomar esta decisión.</p>
@@ -617,7 +606,7 @@ z_t &amp; = \phi z_{t-1} \\
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_30_0.png" src="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_30_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_28_0.png" src="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_28_0.png" />
 </div>
 </div>
 <p>El resultado anterior muestra que el valor máximo sería <span class="math notranslate nohighlight">\(P=3\)</span>.</p>
@@ -779,7 +768,7 @@ sse = 1049.9697929801175  mu = 0.0017180000000000001
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_40_0.png" src="../../../_images/notebooks_sklearn_adaline_1-03-pronostico-airline_40_0.png" />
+<img alt="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_38_0.png" src="../../../_images/notebooks_sklearn_adaline_1-02-pronostico-airline_38_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -804,7 +793,6 @@ sse = 1049.9697929801175  mu = 0.0017180000000000001
 </div>
 <p><strong>Ejercicio.—</strong> ¿El modelo podría mejorar si se usan otros valores diferentes para <span class="math notranslate nohighlight">\(P\)</span>?</p>
 <p><strong>Ejercicio.—</strong> ¿Qué pasa si se pronostica directamente la serie sin realizar la diferenciación?</p>
-</div>
 </div>
 </div>
 
