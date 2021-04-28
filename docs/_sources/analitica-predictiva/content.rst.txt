@@ -46,6 +46,8 @@ Sesión 1---03
 
         /notebooks/sklearn/bayes/*
 
+    * `LAB: Análisis de sentimientos de mensajes en Amazon usando Naive Bayes <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/analisis_de_sentimientos_en_amazon_usando_bayes.ipynb>`_.
+
 
 Sesión 1---04
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
