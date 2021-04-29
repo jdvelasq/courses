@@ -89,6 +89,18 @@ Sesión 2---05
         /notebooks/sklearn/fundamentals/1-*
 
 
+    * `LAB --- Optimización usando el gradiente descendente <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_el_gradiente_descendente.ipynb>`_.
+
+
+    * `LAB --- Estimación de parámetros en modelos de regresión <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/estimacion_de_parametros_en_modelos_de_regresion.ipynb>`_.
+
+
+    * `LAB --- Optimización usando minibatch <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_minibatch.ipynb>`_.
+
+
+    * `LAB --- Búsqueda de la tasa de aprendizaje y momentum óptimos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/busqueda_de_la_tasa_de_aprendizaje_y_momentum_optimos.ipynb>`_.
+
+
 Sesión 2---06
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -99,6 +111,15 @@ Sesión 2---06
         /notebooks/sklearn/fundamentals/2-*
 
 
+    * `LAB --- Implementación de tasas de aprendizaje <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/implementacion_de_tasas_de_aprendizaje.ipynb>`_.
+
+
+    * `LAB --- Selección de variables hacia adelante -forward-. <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/seleccion_de_variables_hacia_adelante.ipynb>`_.
+
+
+    * `LAB --- Selección de variables hacia atras -backward-. <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/seleccion_de_variables_hacia_atras.ipynb>`_.
+
+
 Sesión 2---07
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -107,6 +128,20 @@ Sesión 2---07
         :glob:
         
         /notebooks/sklearn/fundamentals/3-*
+
+
+    * `LAB --- Optimización usando LASSO <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_LASSO.ipynb>`_.
+
+
+    * `LAB --- Optimización usando ElasticNet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_ElasticNet.ipynb>`_.
+
+
+    * `LAB --- Función epsilon insensitiva <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/funcion_epsilon_insensitiva.ipynb>`_.
+
+
+    * `LAB --- Función epsilon cuadrada insensitiva <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/funcion_epsilon_cuadrada_insensitiva.ipynb>`_.
+
+
 
 Sesión 2---08
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -137,7 +172,15 @@ Sesión 3---09
 
     * `LAB --- Transformación óptima de la variable dependiente en modelos de regresión <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/transformacion_optima_de_la_variable_dependiente_en_modelos_de_regresion.ipynb>`_.
 
-    
+
+    * `LAB --- Predicción de la evolución de la diabetes en pacientes usando regresión lineal <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/prediccion_de_la_evolucion_de_la_diabetes_usando_regresion_lineal.ipynb>`_.
+
+
+    * `LAB --- Pronóstico de ventas de carros usados mediante regresion lineal <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/pronostico_de_ventas_de_carros_usados_mediante_regresion_lineal.ipynb>`_.
+
+
+    * `LAB --- Pronóstico de visitas a páginas web usando regresion lineal <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/pronostico_de_visitas_a_paginas_web_usando_regresion_lineal.ipynb>`_.
+
 
 Sesión 3---10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -166,6 +209,10 @@ Sesión 3---11
 
 
     * `LAB --- Fronteras de decisión para el dataset artificial 2moons usando kNN <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/fronteras_de_decision_para_el_dataset_2moons_knn.ipynb.ipynb>`_.
+
+
+    * `LAB --- Sistema de recomendación de paquetes en R usando kNN <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/sistema_de_recomendacion_de_paquetes_en_R_usando_kNN.ipynb.ipynb>`_.
+
 
 
     .. toctree::

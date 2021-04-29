@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Taller — Estimación de parámetros en modelos de regresión &mdash; documentación de --- Cursos --- - </title>
+  <title>Taller — Selección de variables hacia adelante (forward) usando criterios de información &mdash; documentación de --- Cursos --- - </title>
   
 
   
@@ -45,9 +45,7 @@
 
     
     <link rel="index" title="Índice" href="../../../genindex.html" />
-    <link rel="search" title="Búsqueda" href="../../../search.html" />
-    <link rel="next" title="Aprendizaje batch vs online vs SDG vs minibatch" href="1-05_Aprendizaje_batch_vs_online_vs_SDG_vs_minibatch.html" />
-    <link rel="prev" title="Optimización de modelos de regresión" href="1-03_Optimizacion_de_modelos_de_regresion.html" /> 
+    <link rel="search" title="Búsqueda" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -94,20 +92,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../setup.html">Instalación de Vagrant y Docker</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Cursos</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../analitica-de-grandes-datos/index.html">Analítica de grandes datos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../analitica-financiera/index.html">Analítica Financiera</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../analitica-predictiva/index.html">Analítica Predictiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../ciencia-de-los-datos/index.html">Ciencia de los Datos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fundamentos-de-analitica/index.html">Fundamentos de Analítica</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../productos-de-datos/index.html">Productos de Datos</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/index.html">Redes Neuronales Artificiales</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/content.html">Sesiones</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/course-info.html">Información del curso</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/programming-labs.html">Laboratorios de programación</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/complement.html">Material Complementario</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/index.html">Redes Neuronales Artificiales</a></li>
 </ul>
 
             
@@ -156,17 +148,13 @@
     
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../../../analitica-predictiva/index.html">Analítica Predictiva</a> &raquo;</li>
-        
-          <li><a href="../../../analitica-predictiva/content.html">Sesiones</a> &raquo;</li>
-        
-      <li>Taller — Estimación de parámetros en modelos de regresión</li>
+      <li>Taller — Selección de variables hacia adelante (forward) usando criterios de información</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../../_sources/notebooks/sklearn/fundamentals/1-04-taller.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/notebooks/sklearn/fundamentals/-2-13-taller-AIC-forward.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -449,14 +437,13 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Taller-—-Estimación-de-parámetros-en-modelos-de-regresión">
-<h1>Taller — Estimación de parámetros en modelos de regresión<a class="headerlink" href="#Taller-—-Estimación-de-parámetros-en-modelos-de-regresión" title="Enlazar permanentemente con este título">¶</a></h1>
+<div class="section" id="Taller-—-Selección-de-variables-hacia-adelante-(forward)-usando-criterios-de-información">
+<h1>Taller — Selección de variables hacia adelante (forward) usando criterios de información<a class="headerlink" href="#Taller-—-Selección-de-variables-hacia-adelante-(forward)-usando-criterios-de-información" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>60 min</em> | Ultima modificación: Marzo 11, 2020</p></li>
+<li><p><em>45 min</em> | Ultima modificación: Marzo 10, 2021</p></li>
 </ul>
-<div class="section" id="Preparación">
-<h2>Preparación<a class="headerlink" href="#Preparación" title="Enlazar permanentemente con este título">¶</a></h2>
-<div class="nbinput nblast docutils container">
+<p>Implemente una estrategía forward de selección de variables relevantes a partir del código suministrado.</p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -464,98 +451,98 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Muestra-de-datos">
-<h2>Muestra de datos<a class="headerlink" href="#Muestra-de-datos" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>Se desea aproximar la siguiente función</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.15</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">u</span> <span class="o">&lt;</span> <span class="mi">5</span> <span class="k">else</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">0.25</span> <span class="o">*</span> <span class="n">u</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<p>usando el modelo:</p>
-<div class="math notranslate nohighlight">
-\[y_p = g(x_p) = \exp(w_0 + w_1 x_p)\]</div>
-<p>donde el subíndice <span class="math notranslate nohighlight">\(p\)</span> representa cada uno de los puntos de la muestra de datos.</p>
-<p>Para ello, se genera una muestra de 16 patrones entrada-salida.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
-<span class="n">x_real</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="n">x_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-<span class="n">d_data</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x_data</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_data</span><span class="p">))</span> <span class="o">*</span> <span class="n">x_data</span>
 
-<span class="n">d_real</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x_real</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_real</span><span class="p">,</span> <span class="n">d_real</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">d_data</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">);</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="c1">#</span>
+<span class="c1"># A continuación se genera una muestra de 200 datos, con</span>
+<span class="c1"># cuatro variables independientes, pero solo una explicativa</span>
+<span class="c1">#</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_regression</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">make_regression</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">n_informative</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">bias</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>  <span class="c1"># intercepto</span>
+    <span class="n">effective_rank</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># numero de vectores singulares para explicar los datos</span>
+    <span class="n">tail_strength</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>  <span class="c1"># ? importancia relativa de las colas</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># ?</span>
+    <span class="n">coef</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># ?coeficientes de la regresion</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">12136</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Grafica de la variable dependiente contra</span>
+<span class="c1"># la variable explicativa</span>
+<span class="c1">#</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">d</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1">#</span>
+<span class="c1"># A continuación se estima el modelo de regresión lineal</span>
+<span class="c1"># con las 4 variables independientes</span>
+<span class="c1">#</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_fundamentals_1-04-taller_8_0.png" src="../../../_images/notebooks_sklearn_fundamentals_1-04-taller_8_0.png" />
+<img alt="../../../_images/notebooks_sklearn_fundamentals_-2-13-taller-AIC-forward_2_0.png" src="../../../_images/notebooks_sklearn_fundamentals_-2-13-taller-AIC-forward_2_0.png" />
 </div>
 </div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;x</span><span class="se">\t</span><span class="s1">d&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--------------------&#39;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_data</span><span class="p">,</span> <span class="n">d_data</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="mi">4</span><span class="p">),</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-x       d
---------------------
-0.0     2.7183
-0.6667  3.1
-1.3333  3.1123
-2.0     3.3359
-2.6667  5.6278
-3.3333  5.8751
-4.0     5.0645
-4.6667  5.8684
-5.3333  11.5427
-6.0     14.4261
-6.6667  16.4063
-7.3333  14.1504
-8.0     20.7455
-8.6667  24.3234
-9.3333  31.8198
-10.0    35.7747
+                                 OLS Regression Results
+=======================================================================================
+Dep. Variable:                      y   R-squared (uncentered):                   0.959
+Model:                            OLS   Adj. R-squared (uncentered):              0.958
+Method:                 Least Squares   F-statistic:                              1155.
+Date:                Wed, 10 Mar 2021   Prob (F-statistic):                   5.01e-135
+Time:                        23:55:36   Log-Likelihood:                         -790.65
+No. Observations:                 200   AIC:                                      1589.
+Df Residuals:                     196   BIC:                                      1603.
+Df Model:                           4
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            66.3268      0.983     67.492      0.000      64.389      68.265
+x2            -0.2731      0.923     -0.296      0.768      -2.092       1.546
+x3            -0.6180      0.982     -0.629      0.530      -2.555       1.319
+x4            -0.3032      0.970     -0.313      0.755      -2.215       1.609
+==============================================================================
+Omnibus:                        0.546   Durbin-Watson:                   2.002
+Prob(Omnibus):                  0.761   Jarque-Bera (JB):                0.615
+Skew:                          -0.122   Prob(JB):                        0.735
+Kurtosis:                       2.879   Cond. No.                         1.14
+==============================================================================
+
+Warnings:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 </pre></div></div>
 </div>
-<p>## Problema a resolver</p>
-<p>Estime los parámetros del modelo que minimizan la suma de errores al cuadrado (SSE) o pérdida cuadrática:</p>
-<div class="math notranslate nohighlight">
-\[\text{SSE} = \sum_{p=1}^P (d_p - y_p)^2 = \sum_{p=1}^P [d_p - g(x_p)]^2\]</div>
-<ul class="simple">
-<li><p>Imprima el valor óptimo de los parámetros encontrados.</p></li>
-<li><p>Grafique los datos y el pronóstico del modelo ajustado.</p></li>
-</ul>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/usr/local/lib/python3.6/dist-packages/statsmodels/tools/_testing.py:19: FutureWarning: pandas.util.testing is deprecated. Use the functions in the public API at pandas.testing instead.
+  import pandas.util.testing as tm
+</pre></div></div>
 </div>
 </div>
 

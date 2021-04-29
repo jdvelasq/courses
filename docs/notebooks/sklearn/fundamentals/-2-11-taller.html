@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Taller — Minibatch &mdash; documentación de --- Cursos --- - </title>
+  <title>Taller — Tasas de aprendizaje &mdash; documentación de --- Cursos --- - </title>
   
 
   
@@ -45,9 +45,7 @@
 
     
     <link rel="index" title="Índice" href="../../../genindex.html" />
-    <link rel="search" title="Búsqueda" href="../../../search.html" />
-    <link rel="next" title="Regla delta generalizada y algoritmos con supermemoria" href="1-07_Regla_delta_generalizada_y_algoritmos_con_supermemoria.html" />
-    <link rel="prev" title="Aprendizaje batch vs online vs SDG vs minibatch" href="1-05_Aprendizaje_batch_vs_online_vs_SDG_vs_minibatch.html" /> 
+    <link rel="search" title="Búsqueda" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -94,20 +92,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../setup.html">Instalación de Vagrant y Docker</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Cursos</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../analitica-de-grandes-datos/index.html">Analítica de grandes datos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../analitica-financiera/index.html">Analítica Financiera</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../analitica-predictiva/index.html">Analítica Predictiva</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../ciencia-de-los-datos/index.html">Ciencia de los Datos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../fundamentos-de-analitica/index.html">Fundamentos de Analítica</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../productos-de-datos/index.html">Productos de Datos</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/index.html">Redes Neuronales Artificiales</a><ul class="current">
-<li class="toctree-l2 current"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/content.html">Sesiones</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/course-info.html">Información del curso</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/programming-labs.html">Laboratorios de programación</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/complement.html">Material Complementario</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../redes-neuronales-con-tensorflow/index.html">Redes Neuronales Artificiales</a></li>
 </ul>
 
             
@@ -156,17 +148,13 @@
     
       <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../../../analitica-predictiva/index.html">Analítica Predictiva</a> &raquo;</li>
-        
-          <li><a href="../../../analitica-predictiva/content.html">Sesiones</a> &raquo;</li>
-        
-      <li>Taller — Minibatch</li>
+      <li>Taller — Tasas de aprendizaje</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../../_sources/notebooks/sklearn/fundamentals/1-06-taller.ipynb.txt" rel="nofollow"> View page source</a>
+            <a href="../../../_sources/notebooks/sklearn/fundamentals/-2-11-taller.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -449,12 +437,12 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Taller-—-Minibatch">
-<h1>Taller — Minibatch<a class="headerlink" href="#Taller-—-Minibatch" title="Enlazar permanentemente con este título">¶</a></h1>
+<div class="section" id="Taller-—-Tasas-de-aprendizaje">
+<h1>Taller — Tasas de aprendizaje<a class="headerlink" href="#Taller-—-Tasas-de-aprendizaje" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
 <li><p><em>60 min</em> | Ultima modificación: Marzo 10, 2021</p></li>
 </ul>
-<p>A partir del siguiente código, implemente el algoritmo minibatch y ejecutelo para lotes de cinco patrones cada uno.</p>
+<p>A partir del siguiente código, implemente los diferentes esquemas de modificación para la tasa de aprendizaje. Tenga en cuenta que en la práctica, la optimización se realiza mediante un proceso iterativo en que se parte de un punto inicial aleatorio manteniendo constantes los demás parámetros de la optimización. ¿Cuál algoritmo converge mejor?</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -476,16 +464,10 @@ div.rendered_html tbody tr:hover {
     <span class="k">return</span> <span class="p">(</span><span class="n">gw0</span><span class="p">,</span> <span class="n">gw1</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">mejora</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
-
-    <span class="k">global</span> <span class="n">previous_delta_w0</span>
-    <span class="k">global</span> <span class="n">previous_delta_w1</span>
-
+<span class="k">def</span> <span class="nf">mejora</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
     <span class="n">gw0</span><span class="p">,</span> <span class="n">gw1</span> <span class="o">=</span> <span class="n">gSSE</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">)</span>
-    <span class="n">delta_w0</span> <span class="o">=</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">gw0</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">previous_delta_w0</span>
-    <span class="n">delta_w1</span> <span class="o">=</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">gw1</span> <span class="o">+</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">previous_delta_w1</span>
-    <span class="n">previous_delta_w0</span> <span class="o">=</span> <span class="n">delta_w0</span>
-    <span class="n">previous_delta_w1</span> <span class="o">=</span> <span class="n">delta_w1</span>
+    <span class="n">delta_w0</span> <span class="o">=</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">gw0</span>
+    <span class="n">delta_w1</span> <span class="o">=</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">gw1</span>
     <span class="n">w0</span> <span class="o">=</span> <span class="n">w0</span> <span class="o">+</span> <span class="n">delta_w0</span>
     <span class="n">w1</span> <span class="o">=</span> <span class="n">w1</span> <span class="o">+</span> <span class="n">delta_w1</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">)</span>
@@ -493,8 +475,8 @@ div.rendered_html tbody tr:hover {
 
 <span class="k">def</span> <span class="nf">plot_contour</span><span class="p">():</span>
     <span class="c1">#</span>
-    <span class="n">W0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
-    <span class="n">W1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+    <span class="n">W0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">)</span>
+    <span class="n">W1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.08</span><span class="p">)</span>
     <span class="n">W0</span><span class="p">,</span> <span class="n">W1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">W0</span><span class="p">,</span> <span class="n">W1</span><span class="p">)</span>
     <span class="n">F</span> <span class="o">=</span> <span class="n">SSE</span><span class="p">(</span><span class="n">W0</span><span class="p">,</span> <span class="n">W1</span><span class="p">)</span>
     <span class="c1">#</span>
@@ -529,11 +511,8 @@ div.rendered_html tbody tr:hover {
 <span class="n">history_w1</span> <span class="o">=</span> <span class="p">[</span><span class="n">w1</span><span class="p">]</span>
 <span class="n">history_f</span>  <span class="o">=</span> <span class="p">[</span><span class="n">SSE</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">)]</span>
 
-<span class="n">previous_delta_w0</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">previous_delta_w1</span> <span class="o">=</span> <span class="mi">0</span>
-
 <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
-    <span class="n">w0</span><span class="p">,</span> <span class="n">w1</span> <span class="o">=</span> <span class="n">mejora</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">w0</span><span class="p">,</span> <span class="n">w1</span> <span class="o">=</span> <span class="n">mejora</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">)</span>
     <span class="n">history_w0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w0</span><span class="p">)</span>
     <span class="n">history_w1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">w1</span><span class="p">)</span>
     <span class="n">history_f</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SSE</span><span class="p">(</span><span class="n">w0</span><span class="p">,</span> <span class="n">w1</span><span class="p">))</span>
@@ -553,8 +532,8 @@ div.rendered_html tbody tr:hover {
 
 Valores encontrados
 
-  w0 = 0.717213
-  w1 = 1.535152
+  w0 = 0.675531
+  w1 = 1.643269
 
 </pre></div></div>
 </div>
@@ -562,7 +541,7 @@ Valores encontrados
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../../_images/notebooks_sklearn_fundamentals_1-06-taller_2_1.png" src="../../../_images/notebooks_sklearn_fundamentals_1-06-taller_2_1.png" />
+<img alt="../../../_images/notebooks_sklearn_fundamentals_-2-11-taller_2_1.png" src="../../../_images/notebooks_sklearn_fundamentals_-2-11-taller_2_1.png" />
 </div>
 </div>
 </div>
