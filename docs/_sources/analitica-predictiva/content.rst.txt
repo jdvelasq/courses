@@ -1,6 +1,8 @@
 Sesiones
 -------------------------------------------------------------------------------
 
+.. |colabicon| image:: /assets/colab.png 
+
 Sesión 1---01
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -22,12 +24,15 @@ Sesión 1---01
 Sesión 1---02
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Induccioón de reglas**
 
     .. toctree::
         :titlesonly:
         :glob:
 
         /notebooks/sklearn/oneR/*
+
+    **Algoritmo Apriori**
 
     .. toctree::
         :titlesonly:    
@@ -40,6 +45,8 @@ Sesión 1---02
 Sesión 1---03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Clasificadores bayesianos**
+
     .. toctree::
         :titlesonly:
         :glob:
@@ -51,6 +58,8 @@ Sesión 1---03
 
 Sesión 1---04
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
 
     .. toctree::
         :titlesonly:
@@ -82,6 +91,8 @@ Sesión 1---04
 Sesión 2---05
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Fundamentos de aprendizaje automático --- I**
+
     .. toctree::
         :titlesonly:
         :glob:
@@ -104,6 +115,8 @@ Sesión 2---05
 Sesión 2---06
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Fundamentos de aprendizaje automático --- II**
+
     .. toctree::
         :titlesonly:
         :glob:
@@ -122,6 +135,8 @@ Sesión 2---06
 
 Sesión 2---07
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Fundamentos de aprendizaje automático --- III**
 
     .. toctree::
         :titlesonly:
@@ -146,6 +161,8 @@ Sesión 2---07
 Sesión 2---08
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Fundamentos de aprendizaje automático --- IV**
+
     .. toctree::
         :titlesonly:
         :glob:
@@ -156,12 +173,15 @@ Sesión 2---08
 Sesión 3---09
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Gradiente descendente estocástico**
 
     .. toctree::
         :titlesonly:
         :glob:
 
         /notebooks/sklearn/sgd/*
+
+    **Regresión lineal**
 
     .. toctree::
         :titlesonly:
@@ -184,7 +204,9 @@ Sesión 3---09
 
 Sesión 3---10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        
+
+    **Regresión logística**
+
     .. toctree::
         :titlesonly:
         :glob:
@@ -201,6 +223,8 @@ Sesión 3---10
 Sesión 3---11
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Vecinos más cercanos**
+
     .. toctree::
         :titlesonly:
         :glob:
@@ -214,6 +238,7 @@ Sesión 3---11
     * `LAB --- Sistema de recomendación de paquetes en R usando kNN <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/sistema_de_recomendacion_de_paquetes_en_R_usando_kNN.ipynb.ipynb>`_.
 
 
+    **Algoritmo k-means**
 
     .. toctree::
         :titlesonly:
@@ -225,6 +250,8 @@ Sesión 3---11
 
 Sesión 3---12
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Arboles de clasfificación y regresión**
 
     .. toctree::
         :titlesonly:
@@ -238,6 +265,8 @@ Sesión 3---12
 Sesión 4---13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Ensambles de modelos y combinación de pronósticos**
+
     .. toctree::
         :titlesonly:
         :glob:
@@ -247,6 +276,8 @@ Sesión 4---13
 
 Sesión 4---14
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Perceptrones multicapa**
 
     .. toctree::
         :titlesonly:
@@ -267,6 +298,8 @@ Sesión 4---14
 
 Sesión 4---15
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Máquinas de vectores de soporte**
 
     .. toctree::
         :titlesonly:

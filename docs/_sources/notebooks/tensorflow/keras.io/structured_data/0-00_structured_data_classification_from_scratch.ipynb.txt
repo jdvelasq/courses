@@ -1,0 +1,342 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "colab_type": "text"
+   },
+   "source": [
+    "# Structured data classification from scratch"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "import tensorflow as tf\n",
+    "from tensorflow import keras\n",
+    "from tensorflow.keras import layers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "file_url = \"http://storage.googleapis.com/download.tensorflow.org/data/heart.csv\"\n",
+    "dataframe = pd.read_csv(file_url)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "dataframe.shape"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "dataframe.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "val_dataframe = dataframe.sample(frac=0.2, random_state=1337)\n",
+    "train_dataframe = dataframe.drop(val_dataframe.index)\n",
+    "\n",
+    "print(\n",
+    "    \"Using %d samples for training and %d for validation\"\n",
+    "    % (len(train_dataframe), len(val_dataframe))\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "def dataframe_to_dataset(dataframe):\n",
+    "    dataframe = dataframe.copy()\n",
+    "    labels = dataframe.pop(\"target\")\n",
+    "    ds = tf.data.Dataset.from_tensor_slices((dict(dataframe), labels))\n",
+    "    ds = ds.shuffle(buffer_size=len(dataframe))\n",
+    "    return ds\n",
+    "\n",
+    "\n",
+    "train_ds = dataframe_to_dataset(train_dataframe)\n",
+    "val_ds = dataframe_to_dataset(val_dataframe)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "for x, y in train_ds.take(1):\n",
+    "    print(\"Input:\", x)\n",
+    "    print(\"Target:\", y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "train_ds = train_ds.batch(32)\n",
+    "val_ds = val_ds.batch(32)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "from tensorflow.keras.layers.experimental.preprocessing import (\n",
+    "    IntegerLookup,\n",
+    "    Normalization,\n",
+    "    StringLookup,\n",
+    ")\n",
+    "\n",
+    "\n",
+    "def encode_numerical_feature(feature, name, dataset):\n",
+    "    # Create a Normalization layer for our feature\n",
+    "    normalizer = Normalization()\n",
+    "\n",
+    "    # Prepare a Dataset that only yields our feature\n",
+    "    feature_ds = dataset.map(lambda x, y: x[name])\n",
+    "    feature_ds = feature_ds.map(lambda x: tf.expand_dims(x, -1))\n",
+    "\n",
+    "    # Learn the statistics of the data\n",
+    "    normalizer.adapt(feature_ds)\n",
+    "\n",
+    "    # Normalize the input feature\n",
+    "    encoded_feature = normalizer(feature)\n",
+    "    return encoded_feature\n",
+    "\n",
+    "\n",
+    "def encode_categorical_feature(feature, name, dataset, is_string):\n",
+    "    lookup_class = StringLookup if is_string else IntegerLookup\n",
+    "    # Create a lookup layer which will turn strings into integer indices\n",
+    "    lookup = lookup_class(output_mode=\"binary\")\n",
+    "\n",
+    "    # Prepare a Dataset that only yields our feature\n",
+    "    feature_ds = dataset.map(lambda x, y: x[name])\n",
+    "    feature_ds = feature_ds.map(lambda x: tf.expand_dims(x, -1))\n",
+    "\n",
+    "    # Learn the set of possible string values and assign them a fixed integer index\n",
+    "    lookup.adapt(feature_ds)\n",
+    "\n",
+    "    # Turn the string input into integer indices\n",
+    "    encoded_feature = lookup(feature)\n",
+    "    return encoded_feature"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "# Categorical features encoded as integers\n",
+    "sex = keras.Input(shape=(1,), name=\"sex\", dtype=\"int64\")\n",
+    "cp = keras.Input(shape=(1,), name=\"cp\", dtype=\"int64\")\n",
+    "fbs = keras.Input(shape=(1,), name=\"fbs\", dtype=\"int64\")\n",
+    "restecg = keras.Input(shape=(1,), name=\"restecg\", dtype=\"int64\")\n",
+    "exang = keras.Input(shape=(1,), name=\"exang\", dtype=\"int64\")\n",
+    "ca = keras.Input(shape=(1,), name=\"ca\", dtype=\"int64\")\n",
+    "\n",
+    "# Categorical feature encoded as string\n",
+    "thal = keras.Input(shape=(1,), name=\"thal\", dtype=\"string\")\n",
+    "\n",
+    "# Numerical features\n",
+    "age = keras.Input(shape=(1,), name=\"age\")\n",
+    "trestbps = keras.Input(shape=(1,), name=\"trestbps\")\n",
+    "chol = keras.Input(shape=(1,), name=\"chol\")\n",
+    "thalach = keras.Input(shape=(1,), name=\"thalach\")\n",
+    "oldpeak = keras.Input(shape=(1,), name=\"oldpeak\")\n",
+    "slope = keras.Input(shape=(1,), name=\"slope\")\n",
+    "\n",
+    "all_inputs = [\n",
+    "    sex,\n",
+    "    cp,\n",
+    "    fbs,\n",
+    "    restecg,\n",
+    "    exang,\n",
+    "    ca,\n",
+    "    thal,\n",
+    "    age,\n",
+    "    trestbps,\n",
+    "    chol,\n",
+    "    thalach,\n",
+    "    oldpeak,\n",
+    "    slope,\n",
+    "]\n",
+    "\n",
+    "# Integer categorical features\n",
+    "sex_encoded = encode_categorical_feature(sex, \"sex\", train_ds, False)\n",
+    "cp_encoded = encode_categorical_feature(cp, \"cp\", train_ds, False)\n",
+    "fbs_encoded = encode_categorical_feature(fbs, \"fbs\", train_ds, False)\n",
+    "restecg_encoded = encode_categorical_feature(restecg, \"restecg\", train_ds, False)\n",
+    "exang_encoded = encode_categorical_feature(exang, \"exang\", train_ds, False)\n",
+    "ca_encoded = encode_categorical_feature(ca, \"ca\", train_ds, False)\n",
+    "\n",
+    "# String categorical features\n",
+    "thal_encoded = encode_categorical_feature(thal, \"thal\", train_ds, True)\n",
+    "\n",
+    "# Numerical features\n",
+    "age_encoded = encode_numerical_feature(age, \"age\", train_ds)\n",
+    "trestbps_encoded = encode_numerical_feature(trestbps, \"trestbps\", train_ds)\n",
+    "chol_encoded = encode_numerical_feature(chol, \"chol\", train_ds)\n",
+    "thalach_encoded = encode_numerical_feature(thalach, \"thalach\", train_ds)\n",
+    "oldpeak_encoded = encode_numerical_feature(oldpeak, \"oldpeak\", train_ds)\n",
+    "slope_encoded = encode_numerical_feature(slope, \"slope\", train_ds)\n",
+    "\n",
+    "all_features = layers.concatenate(\n",
+    "    [\n",
+    "        sex_encoded,\n",
+    "        cp_encoded,\n",
+    "        fbs_encoded,\n",
+    "        restecg_encoded,\n",
+    "        exang_encoded,\n",
+    "        slope_encoded,\n",
+    "        ca_encoded,\n",
+    "        thal_encoded,\n",
+    "        age_encoded,\n",
+    "        trestbps_encoded,\n",
+    "        chol_encoded,\n",
+    "        thalach_encoded,\n",
+    "        oldpeak_encoded,\n",
+    "    ]\n",
+    ")\n",
+    "x = layers.Dense(32, activation=\"relu\")(all_features)\n",
+    "x = layers.Dropout(0.5)(x)\n",
+    "output = layers.Dense(1, activation=\"sigmoid\")(x)\n",
+    "model = keras.Model(all_inputs, output)\n",
+    "model.compile(\"adam\", \"binary_crossentropy\", metrics=[\"accuracy\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "# `rankdir='LR'` is to make the graph horizontal.\n",
+    "keras.utils.plot_model(model, show_shapes=True, rankdir=\"LR\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "model.fit(train_ds, epochs=50, validation_data=val_ds)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "sample = {\n",
+    "    \"age\": 60,\n",
+    "    \"sex\": 1,\n",
+    "    \"cp\": 1,\n",
+    "    \"trestbps\": 145,\n",
+    "    \"chol\": 233,\n",
+    "    \"fbs\": 1,\n",
+    "    \"restecg\": 2,\n",
+    "    \"thalach\": 150,\n",
+    "    \"exang\": 0,\n",
+    "    \"oldpeak\": 2.3,\n",
+    "    \"slope\": 3,\n",
+    "    \"ca\": 0,\n",
+    "    \"thal\": \"fixed\",\n",
+    "}\n",
+    "\n",
+    "input_dict = {name: tf.convert_to_tensor([value]) for name, value in sample.items()}\n",
+    "predictions = model.predict(input_dict)\n",
+    "\n",
+    "print(\n",
+    "    \"This particular patient had a %.1f percent probability \"\n",
+    "    \"of having a heart disease, as evaluated by our model.\" % (100 * predictions[0][0],)\n",
+    ")"
+   ]
+  }
+ ],
+ "metadata": {
+  "colab": {
+   "collapsed_sections": [],
+   "name": "structured_data_classification_from_scratch",
+   "private_outputs": false,
+   "provenance": [],
+   "toc_visible": true
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

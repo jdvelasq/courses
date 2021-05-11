@@ -1,0 +1,339 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "colab_type": "text"
+   },
+   "source": [
+    "# Text generation with a miniature GPT"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "import tensorflow as tf\n",
+    "from tensorflow import keras\n",
+    "from tensorflow.keras import layers\n",
+    "from tensorflow.keras.layers.experimental.preprocessing import TextVectorization\n",
+    "import numpy as np\n",
+    "import os\n",
+    "import re\n",
+    "import string\n",
+    "import random\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "def causal_attention_mask(batch_size, n_dest, n_src, dtype):\n",
+    "    \"\"\"\n",
+    "    Mask the upper half of the dot product matrix in self attention.\n",
+    "    This prevents flow of information from future tokens to current token.\n",
+    "    1's in the lower triangle, counting from the lower right corner.\n",
+    "    \"\"\"\n",
+    "    i = tf.range(n_dest)[:, None]\n",
+    "    j = tf.range(n_src)\n",
+    "    m = i >= j - n_src + n_dest\n",
+    "    mask = tf.cast(m, dtype)\n",
+    "    mask = tf.reshape(mask, [1, n_dest, n_src])\n",
+    "    mult = tf.concat(\n",
+    "        [tf.expand_dims(batch_size, -1), tf.constant([1, 1], dtype=tf.int32)], 0\n",
+    "    )\n",
+    "    return tf.tile(mask, mult)\n",
+    "\n",
+    "\n",
+    "class TransformerBlock(layers.Layer):\n",
+    "    def __init__(self, embed_dim, num_heads, ff_dim, rate=0.1):\n",
+    "        super(TransformerBlock, self).__init__()\n",
+    "        self.att = layers.MultiHeadAttention(num_heads, embed_dim)\n",
+    "        self.ffn = keras.Sequential(\n",
+    "            [layers.Dense(ff_dim, activation=\"relu\"), layers.Dense(embed_dim),]\n",
+    "        )\n",
+    "        self.layernorm1 = layers.LayerNormalization(epsilon=1e-6)\n",
+    "        self.layernorm2 = layers.LayerNormalization(epsilon=1e-6)\n",
+    "        self.dropout1 = layers.Dropout(rate)\n",
+    "        self.dropout2 = layers.Dropout(rate)\n",
+    "\n",
+    "    def call(self, inputs):\n",
+    "        input_shape = tf.shape(inputs)\n",
+    "        batch_size = input_shape[0]\n",
+    "        seq_len = input_shape[1]\n",
+    "        causal_mask = causal_attention_mask(batch_size, seq_len, seq_len, tf.bool)\n",
+    "        attention_output = self.att(inputs, inputs, attention_mask=causal_mask)\n",
+    "        attention_output = self.dropout1(attention_output)\n",
+    "        out1 = self.layernorm1(inputs + attention_output)\n",
+    "        ffn_output = self.ffn(out1)\n",
+    "        ffn_output = self.dropout2(ffn_output)\n",
+    "        return self.layernorm2(out1 + ffn_output)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "class TokenAndPositionEmbedding(layers.Layer):\n",
+    "    def __init__(self, maxlen, vocab_size, embed_dim):\n",
+    "        super(TokenAndPositionEmbedding, self).__init__()\n",
+    "        self.token_emb = layers.Embedding(input_dim=vocab_size, output_dim=embed_dim)\n",
+    "        self.pos_emb = layers.Embedding(input_dim=maxlen, output_dim=embed_dim)\n",
+    "\n",
+    "    def call(self, x):\n",
+    "        maxlen = tf.shape(x)[-1]\n",
+    "        positions = tf.range(start=0, limit=maxlen, delta=1)\n",
+    "        positions = self.pos_emb(positions)\n",
+    "        x = self.token_emb(x)\n",
+    "        return x + positions\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "vocab_size = 20000  # Only consider the top 20k words\n",
+    "maxlen = 80  # Max sequence size\n",
+    "embed_dim = 256  # Embedding size for each token\n",
+    "num_heads = 2  # Number of attention heads\n",
+    "feed_forward_dim = 256  # Hidden layer size in feed forward network inside transformer\n",
+    "\n",
+    "\n",
+    "def create_model():\n",
+    "    inputs = layers.Input(shape=(maxlen,), dtype=tf.int32)\n",
+    "    embedding_layer = TokenAndPositionEmbedding(maxlen, vocab_size, embed_dim)\n",
+    "    x = embedding_layer(inputs)\n",
+    "    transformer_block = TransformerBlock(embed_dim, num_heads, feed_forward_dim)\n",
+    "    x = transformer_block(x)\n",
+    "    outputs = layers.Dense(vocab_size)(x)\n",
+    "    model = keras.Model(inputs=inputs, outputs=[outputs, x])\n",
+    "    loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)\n",
+    "    model.compile(\n",
+    "        \"adam\", loss=[loss_fn, None],\n",
+    "    )  # No loss and optimization based on word embeddings from transformer block\n",
+    "    return model\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "!curl -O https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz\n",
+    "!tar -xf aclImdb_v1.tar.gz"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "batch_size = 128\n",
+    "\n",
+    "# The dataset contains each review in a separate text file\n",
+    "# The text files are present in four different folders\n",
+    "# Create a list all files\n",
+    "filenames = []\n",
+    "directories = [\n",
+    "    \"aclImdb/train/pos\",\n",
+    "    \"aclImdb/train/neg\",\n",
+    "    \"aclImdb/test/pos\",\n",
+    "    \"aclImdb/test/neg\",\n",
+    "]\n",
+    "for dir in directories:\n",
+    "    for f in os.listdir(dir):\n",
+    "        filenames.append(os.path.join(dir, f))\n",
+    "\n",
+    "print(f\"{len(filenames)} files\")\n",
+    "\n",
+    "# Create a dataset from text files\n",
+    "random.shuffle(filenames)\n",
+    "text_ds = tf.data.TextLineDataset(filenames)\n",
+    "text_ds = text_ds.shuffle(buffer_size=256)\n",
+    "text_ds = text_ds.batch(batch_size)\n",
+    "\n",
+    "\n",
+    "def custom_standardization(input_string):\n",
+    "    \"\"\" Remove html line-break tags and handle punctuation \"\"\"\n",
+    "    lowercased = tf.strings.lower(input_string)\n",
+    "    stripped_html = tf.strings.regex_replace(lowercased, \"<br />\", \" \")\n",
+    "    return tf.strings.regex_replace(stripped_html, f\"([{string.punctuation}])\", r\" \\1\")\n",
+    "\n",
+    "\n",
+    "# Create a vectorization layer and adapt it to the text\n",
+    "vectorize_layer = TextVectorization(\n",
+    "    standardize=custom_standardization,\n",
+    "    max_tokens=vocab_size - 1,\n",
+    "    output_mode=\"int\",\n",
+    "    output_sequence_length=maxlen + 1,\n",
+    ")\n",
+    "vectorize_layer.adapt(text_ds)\n",
+    "vocab = vectorize_layer.get_vocabulary()  # To get words back from token indices\n",
+    "\n",
+    "\n",
+    "def prepare_lm_inputs_labels(text):\n",
+    "    \"\"\"\n",
+    "    Shift word sequences by 1 position so that the target for position (i) is\n",
+    "    word at position (i+1). The model will use all words up till position (i)\n",
+    "    to predict the next word.\n",
+    "    \"\"\"\n",
+    "    text = tf.expand_dims(text, -1)\n",
+    "    tokenized_sentences = vectorize_layer(text)\n",
+    "    x = tokenized_sentences[:, :-1]\n",
+    "    y = tokenized_sentences[:, 1:]\n",
+    "    return x, y\n",
+    "\n",
+    "\n",
+    "text_ds = text_ds.map(prepare_lm_inputs_labels)\n",
+    "text_ds = text_ds.prefetch(tf.data.experimental.AUTOTUNE)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "\n",
+    "class TextGenerator(keras.callbacks.Callback):\n",
+    "    \"\"\"A callback to generate text from a trained model.\n",
+    "    1. Feed some starting prompt to the model\n",
+    "    2. Predict probabilities for the next token\n",
+    "    3. Sample the next token and add it to the next input\n",
+    "\n",
+    "    Arguments:\n",
+    "        max_tokens: Integer, the number of tokens to be generated after prompt.\n",
+    "        start_tokens: List of integers, the token indices for the starting prompt.\n",
+    "        index_to_word: List of strings, obtained from the TextVectorization layer.\n",
+    "        top_k: Integer, sample from the `top_k` token predictions.\n",
+    "        print_every: Integer, print after this many epochs.\n",
+    "    \"\"\"\n",
+    "\n",
+    "    def __init__(\n",
+    "        self, max_tokens, start_tokens, index_to_word, top_k=10, print_every=1\n",
+    "    ):\n",
+    "        self.max_tokens = max_tokens\n",
+    "        self.start_tokens = start_tokens\n",
+    "        self.index_to_word = index_to_word\n",
+    "        self.print_every = print_every\n",
+    "        self.k = top_k\n",
+    "\n",
+    "    def sample_from(self, logits):\n",
+    "        logits, indices = tf.math.top_k(logits, k=self.k, sorted=True)\n",
+    "        indices = np.asarray(indices).astype(\"int32\")\n",
+    "        preds = keras.activations.softmax(tf.expand_dims(logits, 0))[0]\n",
+    "        preds = np.asarray(preds).astype(\"float32\")\n",
+    "        return np.random.choice(indices, p=preds)\n",
+    "\n",
+    "    def detokenize(self, number):\n",
+    "        return self.index_to_word[number]\n",
+    "\n",
+    "    def on_epoch_end(self, epoch, logs=None):\n",
+    "        start_tokens = [_ for _ in self.start_tokens]\n",
+    "        if (epoch + 1) % self.print_every != 0:\n",
+    "            return\n",
+    "        num_tokens_generated = 0\n",
+    "        tokens_generated = []\n",
+    "        while num_tokens_generated <= self.max_tokens:\n",
+    "            pad_len = maxlen - len(start_tokens)\n",
+    "            sample_index = len(start_tokens) - 1\n",
+    "            if pad_len < 0:\n",
+    "                x = start_tokens[:maxlen]\n",
+    "                sample_index = maxlen - 1\n",
+    "            elif pad_len > 0:\n",
+    "                x = start_tokens + [0] * pad_len\n",
+    "            else:\n",
+    "                x = start_tokens\n",
+    "            x = np.array([x])\n",
+    "            y, _ = self.model.predict(x)\n",
+    "            sample_token = self.sample_from(y[0][sample_index])\n",
+    "            tokens_generated.append(sample_token)\n",
+    "            start_tokens.append(sample_token)\n",
+    "            num_tokens_generated = len(tokens_generated)\n",
+    "        txt = \" \".join(\n",
+    "            [self.detokenize(_) for _ in self.start_tokens + tokens_generated]\n",
+    "        )\n",
+    "        print(f\"generated text:\\n{txt}\\n\")\n",
+    "\n",
+    "\n",
+    "# Tokenize starting prompt\n",
+    "word_to_index = {}\n",
+    "for index, word in enumerate(vocab):\n",
+    "    word_to_index[word] = index\n",
+    "\n",
+    "start_prompt = \"this movie is\"\n",
+    "start_tokens = [word_to_index.get(_, 1) for _ in start_prompt.split()]\n",
+    "num_tokens_generated = 40\n",
+    "text_gen_callback = TextGenerator(num_tokens_generated, start_tokens, vocab)\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "model = create_model()\n",
+    "\n",
+    "model.fit(text_ds, verbose=2, epochs=25, callbacks=[text_gen_callback])"
+   ]
+  }
+ ],
+ "metadata": {
+  "colab": {
+   "collapsed_sections": [],
+   "name": "text_generation_with_miniature_gpt",
+   "private_outputs": false,
+   "provenance": [],
+   "toc_visible": true
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

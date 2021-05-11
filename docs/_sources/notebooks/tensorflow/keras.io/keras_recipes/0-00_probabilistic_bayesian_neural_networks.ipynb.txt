@@ -1,0 +1,425 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "colab_type": "text"
+   },
+   "source": [
+    "# Probabilistic Bayesian Neural Networks"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import tensorflow as tf\n",
+    "import tensorflow_datasets as tfds\n",
+    "import tensorflow_probability as tfp\n",
+    "from tensorflow import keras\n",
+    "from tensorflow.keras import layers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "def get_train_and_test_splits(train_size, batch_size=1):\n",
+    "    # We prefetch with a buffer the same size as the dataset because th dataset\n",
+    "    # is very small and fits into memory.\n",
+    "    dataset = (\n",
+    "        tfds.load(name=\"wine_quality\", as_supervised=True, split=\"train\")\n",
+    "        .map(lambda x, y: (x, tf.cast(y, tf.float32)))\n",
+    "        .prefetch(buffer_size=dataset_size)\n",
+    "        .cache()\n",
+    "    )\n",
+    "    # We shuffle with a buffer the same size as the dataset.\n",
+    "    train_dataset = (\n",
+    "        dataset.take(train_size).shuffle(buffer_size=train_size).batch(batch_size)\n",
+    "    )\n",
+    "    test_dataset = dataset.skip(train_size).batch(batch_size)\n",
+    "\n",
+    "    return train_dataset, test_dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "hidden_units = [8, 8]\n",
+    "learning_rate = 0.001\n",
+    "\n",
+    "\n",
+    "def run_experiment(model, loss, train_dataset, test_dataset):\n",
+    "\n",
+    "    model.compile(\n",
+    "        optimizer=keras.optimizers.RMSprop(learning_rate=learning_rate),\n",
+    "        loss=loss,\n",
+    "        metrics=[keras.metrics.RootMeanSquaredError()],\n",
+    "    )\n",
+    "\n",
+    "    print(\"Start training the model...\")\n",
+    "    model.fit(train_dataset, epochs=num_epochs, validation_data=test_dataset)\n",
+    "    print(\"Model training finished.\")\n",
+    "    _, rmse = model.evaluate(train_dataset, verbose=0)\n",
+    "    print(f\"Train RMSE: {round(rmse, 3)}\")\n",
+    "\n",
+    "    print(\"Evaluating model performance...\")\n",
+    "    _, rmse = model.evaluate(test_dataset, verbose=0)\n",
+    "    print(f\"Test RMSE: {round(rmse, 3)}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "FEATURE_NAMES = [\n",
+    "    \"fixed acidity\",\n",
+    "    \"volatile acidity\",\n",
+    "    \"citric acid\",\n",
+    "    \"residual sugar\",\n",
+    "    \"chlorides\",\n",
+    "    \"free sulfur dioxide\",\n",
+    "    \"total sulfur dioxide\",\n",
+    "    \"density\",\n",
+    "    \"pH\",\n",
+    "    \"sulphates\",\n",
+    "    \"alcohol\",\n",
+    "]\n",
+    "\n",
+    "\n",
+    "def create_model_inputs():\n",
+    "    inputs = {}\n",
+    "    for feature_name in FEATURE_NAMES:\n",
+    "        inputs[feature_name] = layers.Input(\n",
+    "            name=feature_name, shape=(1,), dtype=tf.float32\n",
+    "        )\n",
+    "    return inputs"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "def create_baseline_model():\n",
+    "    inputs = create_model_inputs()\n",
+    "    input_values = [value for _, value in sorted(inputs.items())]\n",
+    "    features = keras.layers.concatenate(input_values)\n",
+    "    features = layers.BatchNormalization()(features)\n",
+    "\n",
+    "    # Create hidden layers with deterministic weights using the Dense layer.\n",
+    "    for units in hidden_units:\n",
+    "        features = layers.Dense(units, activation=\"sigmoid\")(features)\n",
+    "    # The output is deterministic: a single point estimate.\n",
+    "    outputs = layers.Dense(units=1)(features)\n",
+    "\n",
+    "    model = keras.Model(inputs=inputs, outputs=outputs)\n",
+    "    return model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "dataset_size = 4898\n",
+    "batch_size = 256\n",
+    "train_size = int(dataset_size * 0.85)\n",
+    "train_dataset, test_dataset = get_train_and_test_splits(train_size, batch_size)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "num_epochs = 100\n",
+    "mse_loss = keras.losses.MeanSquaredError()\n",
+    "baseline_model = create_baseline_model()\n",
+    "run_experiment(baseline_model, mse_loss, train_dataset, test_dataset)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "sample = 10\n",
+    "examples, targets = list(test_dataset.unbatch().shuffle(batch_size * 10).batch(sample))[\n",
+    "    0\n",
+    "]\n",
+    "\n",
+    "predicted = baseline_model(examples).numpy()\n",
+    "for idx in range(sample):\n",
+    "    print(f\"Predicted: {round(float(predicted[idx][0]), 1)} - Actual: {targets[idx]}\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "# Define the prior weight distribution as Normal of mean=0 and stddev=1.\n",
+    "# Note that, in this example, the we prior distribution is not trainable,\n",
+    "# as we fix its parameters.\n",
+    "def prior(kernel_size, bias_size, dtype=None):\n",
+    "    n = kernel_size + bias_size\n",
+    "    prior_model = keras.Sequential(\n",
+    "        [\n",
+    "            tfp.layers.DistributionLambda(\n",
+    "                lambda t: tfp.distributions.MultivariateNormalDiag(\n",
+    "                    loc=tf.zeros(n), scale_diag=tf.ones(n)\n",
+    "                )\n",
+    "            )\n",
+    "        ]\n",
+    "    )\n",
+    "    return prior_model\n",
+    "\n",
+    "\n",
+    "# Define variational posterior weight distribution as multivariate Gaussian.\n",
+    "# Note that the learnable parameters for this distribution are the means,\n",
+    "# variances, and covariances.\n",
+    "def posterior(kernel_size, bias_size, dtype=None):\n",
+    "    n = kernel_size + bias_size\n",
+    "    posterior_model = keras.Sequential(\n",
+    "        [\n",
+    "            tfp.layers.VariableLayer(\n",
+    "                tfp.layers.MultivariateNormalTriL.params_size(n), dtype=dtype\n",
+    "            ),\n",
+    "            tfp.layers.MultivariateNormalTriL(n),\n",
+    "        ]\n",
+    "    )\n",
+    "    return posterior_model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "def create_bnn_model(train_size):\n",
+    "    inputs = create_model_inputs()\n",
+    "    features = keras.layers.concatenate(list(inputs.values()))\n",
+    "    features = layers.BatchNormalization()(features)\n",
+    "\n",
+    "    # Create hidden layers with weight uncertainty using the DenseVariational layer.\n",
+    "    for units in hidden_units:\n",
+    "        features = tfp.layers.DenseVariational(\n",
+    "            units=units,\n",
+    "            make_prior_fn=prior,\n",
+    "            make_posterior_fn=posterior,\n",
+    "            kl_weight=1 / train_size,\n",
+    "            activation=\"sigmoid\",\n",
+    "        )(features)\n",
+    "\n",
+    "    # The output is deterministic: a single point estimate.\n",
+    "    outputs = layers.Dense(units=1)(features)\n",
+    "    model = keras.Model(inputs=inputs, outputs=outputs)\n",
+    "    return model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "num_epochs = 500\n",
+    "train_sample_size = int(train_size * 0.3)\n",
+    "small_train_dataset = train_dataset.unbatch().take(train_sample_size).batch(batch_size)\n",
+    "\n",
+    "bnn_model_small = create_bnn_model(train_sample_size)\n",
+    "run_experiment(bnn_model_small, mse_loss, small_train_dataset, test_dataset)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "def compute_predictions(model, iterations=100):\n",
+    "    predicted = []\n",
+    "    for _ in range(iterations):\n",
+    "        predicted.append(model(examples).numpy())\n",
+    "    predicted = np.concatenate(predicted, axis=1)\n",
+    "\n",
+    "    prediction_mean = np.mean(predicted, axis=1).tolist()\n",
+    "    prediction_min = np.min(predicted, axis=1).tolist()\n",
+    "    prediction_max = np.max(predicted, axis=1).tolist()\n",
+    "    prediction_range = (np.max(predicted, axis=1) - np.min(predicted, axis=1)).tolist()\n",
+    "\n",
+    "    for idx in range(sample):\n",
+    "        print(\n",
+    "            f\"Predictions mean: {round(prediction_mean[idx], 2)}, \"\n",
+    "            f\"min: {round(prediction_min[idx], 2)}, \"\n",
+    "            f\"max: {round(prediction_max[idx], 2)}, \"\n",
+    "            f\"range: {round(prediction_range[idx], 2)} - \"\n",
+    "            f\"Actual: {targets[idx]}\"\n",
+    "        )\n",
+    "\n",
+    "\n",
+    "compute_predictions(bnn_model_small)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "num_epochs = 500\n",
+    "bnn_model_full = create_bnn_model(train_size)\n",
+    "run_experiment(bnn_model_full, mse_loss, train_dataset, test_dataset)\n",
+    "\n",
+    "compute_predictions(bnn_model_full)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "def create_probablistic_bnn_model(train_size):\n",
+    "    inputs = create_model_inputs()\n",
+    "    features = keras.layers.concatenate(list(inputs.values()))\n",
+    "    features = layers.BatchNormalization()(features)\n",
+    "\n",
+    "    # Create hidden layers with weight uncertainty using the DenseVariational layer.\n",
+    "    for units in hidden_units:\n",
+    "        features = tfp.layers.DenseVariational(\n",
+    "            units=units,\n",
+    "            make_prior_fn=prior,\n",
+    "            make_posterior_fn=posterior,\n",
+    "            kl_weight=1 / train_size,\n",
+    "            activation=\"sigmoid\",\n",
+    "        )(features)\n",
+    "\n",
+    "    # Create a probabilisticå output (Normal distribution), and use the `Dense` layer\n",
+    "    # to produce the parameters of the distribution.\n",
+    "    # We set units=2 to learn both the mean and the variance of the Normal distribution.\n",
+    "    distribution_params = layers.Dense(units=2)(features)\n",
+    "    outputs = tfp.layers.IndependentNormal(1)(distribution_params)\n",
+    "\n",
+    "    model = keras.Model(inputs=inputs, outputs=outputs)\n",
+    "    return model"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "def negative_loglikelihood(targets, estimated_distribution):\n",
+    "    return -estimated_distribution.log_prob(targets)\n",
+    "\n",
+    "\n",
+    "num_epochs = 1000\n",
+    "prob_bnn_model = create_probablistic_bnn_model(train_size)\n",
+    "run_experiment(prob_bnn_model, negative_loglikelihood, train_dataset, test_dataset)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "colab_type": "code"
+   },
+   "outputs": [],
+   "source": [
+    "prediction_distribution = prob_bnn_model(examples)\n",
+    "prediction_mean = prediction_distribution.mean().numpy().tolist()\n",
+    "prediction_stdv = prediction_distribution.stddev().numpy()\n",
+    "\n",
+    "# The 95% CI is computed as mean ± (1.96 * stdv)\n",
+    "upper = (prediction_mean + (1.96 * prediction_stdv)).tolist()\n",
+    "lower = (prediction_mean - (1.96 * prediction_stdv)).tolist()\n",
+    "prediction_stdv = prediction_stdv.tolist()\n",
+    "\n",
+    "for idx in range(sample):\n",
+    "    print(\n",
+    "        f\"Prediction mean: {round(prediction_mean[idx][0], 2)}, \"\n",
+    "        f\"stddev: {round(prediction_stdv[idx][0], 2)}, \"\n",
+    "        f\"95% CI: [{round(upper[idx][0], 2)} - {round(lower[idx][0], 2)}]\"\n",
+    "        f\" - Actual: {targets[idx]}\"\n",
+    "    )"
+   ]
+  }
+ ],
+ "metadata": {
+  "colab": {
+   "collapsed_sections": [],
+   "name": "bayesian_neural_networks_wine",
+   "private_outputs": false,
+   "provenance": [],
+   "toc_visible": true
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
