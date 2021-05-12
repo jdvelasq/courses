@@ -252,7 +252,7 @@ Sesión 13
         :maxdepth: 1
         :glob:
 
-        /notebooks/tensorflow/conceptos_básicos/1-*
+        /notebooks/tensorflow/conceptos_basicos/1-*
 
 
 
