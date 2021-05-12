@@ -234,7 +234,7 @@ Sesión 11
 Sesión 12
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Introduccion a Keras con TensorFlow-2.4**
+    **Introduccion a Keras con TensorFlow 2.4**
 
     .. toctree::
         :maxdepth: 1
@@ -242,7 +242,19 @@ Sesión 12
 
         /notebooks/tensorflow/intro/1-*
         
-    
+
+Sesión 13
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Conceptos básicos de TensorFlow 2.4**
+
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
+        /notebooks/tensorflow/conceptos_básicos/1-*
+
+
 
 
 Sesión XX - POR REVISAR
