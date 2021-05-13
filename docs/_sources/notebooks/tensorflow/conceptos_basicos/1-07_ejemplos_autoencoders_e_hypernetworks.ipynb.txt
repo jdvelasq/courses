@@ -1,0 +1,450 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "75c0b058-1387-477f-8264-67eb4ddcc2de",
+   "metadata": {},
+   "source": [
+    "# Ejemplos: Autoencoder e Hypernetworks"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e0d9ceb5-41b6-444e-a2e0-c0d7e9240e3f",
+   "metadata": {},
+   "source": [
+    "* 30:00 min | Última modificación: Mayo 5, 2021 | [YouTube]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c40c5266-2d3c-4f5c-b8bf-7cdefe2af11c",
+   "metadata": {},
+   "source": [
+    "Adaptado de:\n",
+    "\n",
+    "* https://www.tensorflow.org/tutorials/quickstart/advanced\n",
+    "\n",
+    "* https://keras.io/getting_started/intro_to_keras_for_researchers/"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "5a9ae3a6-38ae-4887-9595-141eaf910158",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import tensorflow as tf\n",
+    "from tensorflow import keras"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b232e7de-4e58-4c74-919f-743856b170a4",
+   "metadata": {},
+   "source": [
+    "## Ejemplo 1: Autoencoder variacional"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "88b6face-97a7-4af0-9b15-982c36fdc07c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from tensorflow.keras import layers\n",
+    "\n",
+    "\n",
+    "class Sampling(layers.Layer):\n",
+    "    \"\"\"Uses (z_mean, z_log_var) to sample z, the vector encoding a digit.\"\"\"\n",
+    "\n",
+    "    def call(self, inputs):\n",
+    "        z_mean, z_log_var = inputs\n",
+    "        batch = tf.shape(z_mean)[0]\n",
+    "        dim = tf.shape(z_mean)[1]\n",
+    "        epsilon = tf.keras.backend.random_normal(shape=(batch, dim))\n",
+    "        return z_mean + tf.exp(0.5 * z_log_var) * epsilon\n",
+    "\n",
+    "\n",
+    "class Encoder(layers.Layer):\n",
+    "    \"\"\"Maps MNIST digits to a triplet (z_mean, z_log_var, z).\"\"\"\n",
+    "\n",
+    "    def __init__(self, latent_dim=32, intermediate_dim=64, **kwargs):\n",
+    "        super(Encoder, self).__init__(**kwargs)\n",
+    "        self.dense_proj = layers.Dense(intermediate_dim, activation=tf.nn.relu)\n",
+    "        self.dense_mean = layers.Dense(latent_dim)\n",
+    "        self.dense_log_var = layers.Dense(latent_dim)\n",
+    "        self.sampling = Sampling()\n",
+    "\n",
+    "    def call(self, inputs):\n",
+    "        x = self.dense_proj(inputs)\n",
+    "        z_mean = self.dense_mean(x)\n",
+    "        z_log_var = self.dense_log_var(x)\n",
+    "        z = self.sampling((z_mean, z_log_var))\n",
+    "        return z_mean, z_log_var, z"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "c8a434ab-a30c-4fcf-b274-7dd6bde6bb15",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "\n",
+    "class Decoder(layers.Layer):\n",
+    "    \"\"\"Converts z, the encoded digit vector, back into a readable digit.\"\"\"\n",
+    "\n",
+    "    def __init__(self, original_dim, intermediate_dim=64, **kwargs):\n",
+    "        super(Decoder, self).__init__(**kwargs)\n",
+    "        self.dense_proj = layers.Dense(intermediate_dim, activation=tf.nn.relu)\n",
+    "        self.dense_output = layers.Dense(original_dim, activation=tf.nn.sigmoid)\n",
+    "\n",
+    "    def call(self, inputs):\n",
+    "        x = self.dense_proj(inputs)\n",
+    "        return self.dense_output(x)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "2d2b46af-4bc9-4a95-823a-7f4c0dc84199",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class VariationalAutoEncoder(layers.Layer):\n",
+    "    \"\"\"Combines the encoder and decoder into an end-to-end model for training.\"\"\"\n",
+    "\n",
+    "    def __init__(self, original_dim, intermediate_dim=64, latent_dim=32, **kwargs):\n",
+    "        super(VariationalAutoEncoder, self).__init__(**kwargs)\n",
+    "        self.original_dim = original_dim\n",
+    "        self.encoder = Encoder(latent_dim=latent_dim, intermediate_dim=intermediate_dim)\n",
+    "        self.decoder = Decoder(original_dim, intermediate_dim=intermediate_dim)\n",
+    "\n",
+    "    def call(self, inputs):\n",
+    "        z_mean, z_log_var, z = self.encoder(inputs)\n",
+    "        reconstructed = self.decoder(z)\n",
+    "        # Add KL divergence regularization loss.\n",
+    "        kl_loss = -0.5 * tf.reduce_mean(\n",
+    "            z_log_var - tf.square(z_mean) - tf.exp(z_log_var) + 1\n",
+    "        )\n",
+    "        self.add_loss(kl_loss)\n",
+    "        return reconstructed"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "4a929934-ce5f-4e67-a462-ba8f5fa250a4",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz\n",
+      "11493376/11490434 [==============================] - 1s 0us/step\n",
+      "Step: 0 Loss: 0.3285176753997803\n",
+      "Step: 100 Loss: 0.1257832852183002\n",
+      "Step: 200 Loss: 0.09973727020235797\n",
+      "Step: 300 Loss: 0.08951830081765438\n",
+      "Step: 400 Loss: 0.08464033132479375\n",
+      "Step: 500 Loss: 0.0815235504995801\n",
+      "Step: 600 Loss: 0.0791619285482436\n",
+      "Step: 700 Loss: 0.07774724329312926\n",
+      "Step: 800 Loss: 0.07658955907349134\n",
+      "Step: 900 Loss: 0.07563071685959973\n",
+      "Step: 1000 Loss: 0.07467535723532949\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Our model.\n",
+    "vae = VariationalAutoEncoder(original_dim=784, intermediate_dim=64, latent_dim=32)\n",
+    "\n",
+    "# Loss and optimizer.\n",
+    "loss_fn = tf.keras.losses.MeanSquaredError()\n",
+    "optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)\n",
+    "\n",
+    "# Prepare a dataset.\n",
+    "(x_train, _), _ = tf.keras.datasets.mnist.load_data()\n",
+    "dataset = tf.data.Dataset.from_tensor_slices(\n",
+    "    x_train.reshape(60000, 784).astype(\"float32\") / 255\n",
+    ")\n",
+    "dataset = dataset.shuffle(buffer_size=1024).batch(32)\n",
+    "\n",
+    "\n",
+    "@tf.function\n",
+    "def training_step(x):\n",
+    "    with tf.GradientTape() as tape:\n",
+    "        reconstructed = vae(x)  # Compute input reconstruction.\n",
+    "        # Compute loss.\n",
+    "        loss = loss_fn(x, reconstructed)\n",
+    "        loss += sum(vae.losses)  # Add KLD term.\n",
+    "    # Update the weights of the VAE.\n",
+    "    grads = tape.gradient(loss, vae.trainable_weights)\n",
+    "    optimizer.apply_gradients(zip(grads, vae.trainable_weights))\n",
+    "    return loss\n",
+    "\n",
+    "\n",
+    "losses = []  # Keep track of the losses over time.\n",
+    "for step, x in enumerate(dataset):\n",
+    "    loss = training_step(x)\n",
+    "    # Logging.\n",
+    "    losses.append(float(loss))\n",
+    "    if step % 100 == 0:\n",
+    "        print(\"Step:\", step, \"Loss:\", sum(losses) / len(losses))\n",
+    "\n",
+    "    # Stop after 1000 steps.\n",
+    "    # Training the model to convergence is left\n",
+    "    # as an exercise to the reader.\n",
+    "    if step >= 1000:\n",
+    "        break"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "24d64b34-3e63-4041-8103-bd7d6cc66b59",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "original_dim = 784\n",
+    "intermediate_dim = 64\n",
+    "latent_dim = 32\n",
+    "\n",
+    "# Define encoder model.\n",
+    "original_inputs = tf.keras.Input(shape=(original_dim,), name=\"encoder_input\")\n",
+    "x = layers.Dense(intermediate_dim, activation=\"relu\")(original_inputs)\n",
+    "z_mean = layers.Dense(latent_dim, name=\"z_mean\")(x)\n",
+    "z_log_var = layers.Dense(latent_dim, name=\"z_log_var\")(x)\n",
+    "z = Sampling()((z_mean, z_log_var))\n",
+    "encoder = tf.keras.Model(inputs=original_inputs, outputs=z, name=\"encoder\")\n",
+    "\n",
+    "# Define decoder model.\n",
+    "latent_inputs = tf.keras.Input(shape=(latent_dim,), name=\"z_sampling\")\n",
+    "x = layers.Dense(intermediate_dim, activation=\"relu\")(latent_inputs)\n",
+    "outputs = layers.Dense(original_dim, activation=\"sigmoid\")(x)\n",
+    "decoder = tf.keras.Model(inputs=latent_inputs, outputs=outputs, name=\"decoder\")\n",
+    "\n",
+    "# Define VAE model.\n",
+    "outputs = decoder(z)\n",
+    "vae = tf.keras.Model(inputs=original_inputs, outputs=outputs, name=\"vae\")\n",
+    "\n",
+    "# Add KL divergence regularization loss.\n",
+    "kl_loss = -0.5 * tf.reduce_mean(z_log_var - tf.square(z_mean) - tf.exp(z_log_var) + 1)\n",
+    "vae.add_loss(kl_loss)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "3e587d1f-d660-4344-8ffa-1741c911a8c5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1875/1875 [==============================] - 6s 3ms/step - loss: 0.0841\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<tensorflow.python.keras.callbacks.History at 0x7f559b249320>"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# Loss and optimizer.\n",
+    "loss_fn = tf.keras.losses.MeanSquaredError()\n",
+    "optimizer = tf.keras.optimizers.Adam(learning_rate=1e-3)\n",
+    "\n",
+    "# Prepare a dataset.\n",
+    "(x_train, _), _ = tf.keras.datasets.mnist.load_data()\n",
+    "dataset = tf.data.Dataset.from_tensor_slices(\n",
+    "    x_train.reshape(60000, 784).astype(\"float32\") / 255\n",
+    ")\n",
+    "dataset = dataset.map(lambda x: (x, x))  # Use x_train as both inputs & targets\n",
+    "dataset = dataset.shuffle(buffer_size=1024).batch(32)\n",
+    "\n",
+    "# Configure the model for training.\n",
+    "vae.compile(optimizer, loss=loss_fn)\n",
+    "\n",
+    "# Actually training the model.\n",
+    "vae.fit(dataset, epochs=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8e59e79c-9460-4102-ac05-70b495c8a9b1",
+   "metadata": {},
+   "source": [
+    "## Ejemplo 2: Hypernetworks"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "2599e39b-684c-4fb9-bad5-7778abac4f7c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "input_dim = 784\n",
+    "classes = 10\n",
+    "\n",
+    "# This is the model we'll actually use to predict labels (the hypernetwork).\n",
+    "outer_model = keras.Sequential(\n",
+    "    [keras.layers.Dense(64, activation=tf.nn.relu), keras.layers.Dense(classes),]\n",
+    ")\n",
+    "\n",
+    "# It doesn't need to create its own weights, so let's mark its layers\n",
+    "# as already built. That way, calling `outer_model` won't create new variables.\n",
+    "for layer in outer_model.layers:\n",
+    "    layer.built = True\n",
+    "\n",
+    "# This is the number of weight coefficients to generate. Each layer in the\n",
+    "# hypernetwork requires output_dim * input_dim + output_dim coefficients.\n",
+    "num_weights_to_generate = (classes * 64 + classes) + (64 * input_dim + 64)\n",
+    "\n",
+    "# This is the model that generates the weights of the `outer_model` above.\n",
+    "inner_model = keras.Sequential(\n",
+    "    [\n",
+    "        keras.layers.Dense(16, activation=tf.nn.relu),\n",
+    "        keras.layers.Dense(num_weights_to_generate, activation=tf.nn.sigmoid),\n",
+    "    ]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "9d5624ee-1995-4bab-9951-24006fc913e5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Step: 0 Loss: 2.3159046173095703\n",
+      "Step: 100 Loss: 2.4305347575999723\n",
+      "Step: 200 Loss: 2.0616972818414667\n",
+      "Step: 300 Loss: 1.960266569610747\n",
+      "Step: 400 Loss: 1.8665208106365825\n",
+      "Step: 500 Loss: 1.758070756049751\n",
+      "Step: 600 Loss: 1.6889322986571098\n",
+      "Step: 700 Loss: 1.6399750987967672\n",
+      "Step: 800 Loss: 1.5880663497728449\n",
+      "Step: 900 Loss: 1.5264615358151365\n",
+      "Step: 1000 Loss: 1.4654490344861129\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Loss and optimizer.\n",
+    "loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)\n",
+    "optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)\n",
+    "\n",
+    "# Prepare a dataset.\n",
+    "(x_train, y_train), _ = tf.keras.datasets.mnist.load_data()\n",
+    "dataset = tf.data.Dataset.from_tensor_slices(\n",
+    "    (x_train.reshape(60000, 784).astype(\"float32\") / 255, y_train)\n",
+    ")\n",
+    "\n",
+    "# We'll use a batch size of 1 for this experiment.\n",
+    "dataset = dataset.shuffle(buffer_size=1024).batch(1)\n",
+    "\n",
+    "\n",
+    "@tf.function\n",
+    "def train_step(x, y):\n",
+    "    with tf.GradientTape() as tape:\n",
+    "        # Predict weights for the outer model.\n",
+    "        weights_pred = inner_model(x)\n",
+    "\n",
+    "        # Reshape them to the expected shapes for w and b for the outer model.\n",
+    "        # Layer 0 kernel.\n",
+    "        start_index = 0\n",
+    "        w0_shape = (input_dim, 64)\n",
+    "        w0_coeffs = weights_pred[:, start_index : start_index + np.prod(w0_shape)]\n",
+    "        w0 = tf.reshape(w0_coeffs, w0_shape)\n",
+    "        start_index += np.prod(w0_shape)\n",
+    "        # Layer 0 bias.\n",
+    "        b0_shape = (64,)\n",
+    "        b0_coeffs = weights_pred[:, start_index : start_index + np.prod(b0_shape)]\n",
+    "        b0 = tf.reshape(b0_coeffs, b0_shape)\n",
+    "        start_index += np.prod(b0_shape)\n",
+    "        # Layer 1 kernel.\n",
+    "        w1_shape = (64, classes)\n",
+    "        w1_coeffs = weights_pred[:, start_index : start_index + np.prod(w1_shape)]\n",
+    "        w1 = tf.reshape(w1_coeffs, w1_shape)\n",
+    "        start_index += np.prod(w1_shape)\n",
+    "        # Layer 1 bias.\n",
+    "        b1_shape = (classes,)\n",
+    "        b1_coeffs = weights_pred[:, start_index : start_index + np.prod(b1_shape)]\n",
+    "        b1 = tf.reshape(b1_coeffs, b1_shape)\n",
+    "        start_index += np.prod(b1_shape)\n",
+    "\n",
+    "        # Set the weight predictions as the weight variables on the outer model.\n",
+    "        outer_model.layers[0].kernel = w0\n",
+    "        outer_model.layers[0].bias = b0\n",
+    "        outer_model.layers[1].kernel = w1\n",
+    "        outer_model.layers[1].bias = b1\n",
+    "\n",
+    "        # Inference on the outer model.\n",
+    "        preds = outer_model(x)\n",
+    "        loss = loss_fn(y, preds)\n",
+    "\n",
+    "    # Train only inner model.\n",
+    "    grads = tape.gradient(loss, inner_model.trainable_weights)\n",
+    "    optimizer.apply_gradients(zip(grads, inner_model.trainable_weights))\n",
+    "    return loss\n",
+    "\n",
+    "\n",
+    "losses = []  # Keep track of the losses over time.\n",
+    "for step, (x, y) in enumerate(dataset):\n",
+    "    loss = train_step(x, y)\n",
+    "\n",
+    "    # Logging.\n",
+    "    losses.append(float(loss))\n",
+    "    if step % 100 == 0:\n",
+    "        print(\"Step:\", step, \"Loss:\", sum(losses) / len(losses))\n",
+    "\n",
+    "    # Stop after 1000 steps.\n",
+    "    # Training the model to convergence is left\n",
+    "    # as an exercise to the reader.\n",
+    "    if step >= 1000:\n",
+    "        break"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
