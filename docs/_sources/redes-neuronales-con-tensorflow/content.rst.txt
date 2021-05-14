@@ -267,30 +267,31 @@ Sesión 14
         /notebooks/tensorflow/texto/1-*
 
 
+Sesión 15
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Estimadores en TensorFlow 2.4**
+
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
+        /notebooks/tensorflow/estimadores/1-*
+
+
+
+Sesión 16
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
 
 
 
 Sesión XX - POR REVISAR
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/tutorials/tf.estimator/1-*
-
-
-
-
-
-/notebooks/tensorflow/tutorials/tf.estimator
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/tutorials/tf.estimator/1-*
 
 
 /notebooks/tensorflow/tutorials/Audio
@@ -312,13 +313,6 @@ Sesión XX - POR REVISAR
         /notebooks/tensorflow/keras.io/audio/0-*        
 
 
-/notebooks/tensorflow/Customization/
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/tutorials/Customization/1-*        
 
 
 /notebooks/tensorflow/Distributed_training/
