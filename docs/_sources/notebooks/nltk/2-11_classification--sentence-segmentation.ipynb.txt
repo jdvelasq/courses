@@ -1,0 +1,275 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Segmentación de sentencias\n",
+    "\n",
+    "* *30 min* | Última modificación: Diciembre 9, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "http://www.nltk.org/book/\n",
+    "\n",
+    "Text Analytics with Python"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package treebank to /root/nltk_data...\n",
+      "[nltk_data]   Package treebank is already up-to-date!\n",
+      "[nltk_data] Downloading package punkt to /root/nltk_data...\n",
+      "[nltk_data]   Package punkt is already up-to-date!\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import nltk\n",
+    "nltk.download('treebank')\n",
+    "nltk.download('punkt')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['.',\n",
+       " 'START',\n",
+       " 'Pierre',\n",
+       " 'Vinken',\n",
+       " ',',\n",
+       " '61',\n",
+       " 'years',\n",
+       " 'old',\n",
+       " ',',\n",
+       " 'will',\n",
+       " 'join',\n",
+       " 'the',\n",
+       " 'board',\n",
+       " 'as',\n",
+       " 'a',\n",
+       " 'nonexecutive',\n",
+       " 'director',\n",
+       " 'Nov',\n",
+       " '.',\n",
+       " '29',\n",
+       " '.',\n",
+       " 'Mr',\n",
+       " '.',\n",
+       " 'Vinken',\n",
+       " 'is',\n",
+       " 'chairman',\n",
+       " 'of',\n",
+       " 'Elsevier',\n",
+       " 'N',\n",
+       " '.',\n",
+       " 'V',\n",
+       " '.,',\n",
+       " 'the',\n",
+       " 'Dutch',\n",
+       " 'publishing',\n",
+       " 'group',\n",
+       " '.',\n",
+       " '.',\n",
+       " 'START',\n",
+       " 'Rudolph']"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Carga las sentencias de prueba\n",
+    "##\n",
+    "sents = nltk.corpus.treebank_raw.sents()\n",
+    "\n",
+    "##\n",
+    "## Los tokens son los textos (lexemas).\n",
+    "## Boundaries define el vector donde se ubican\n",
+    "##\n",
+    "tokens = []\n",
+    "boundaries = set()\n",
+    "offset = 0\n",
+    "for sent in sents:\n",
+    "    tokens.extend(sent)\n",
+    "    offset += len(sent)\n",
+    "    boundaries.add(offset-1)\n",
+    "    \n",
+    "##\n",
+    "## Boundaries:\n",
+    "##\n",
+    "## {1,\n",
+    "##  90116,\n",
+    "##  16389,\n",
+    "##  40968,\n",
+    "##  81929,\n",
+    "##  24587,\n",
+    "##  16396,\n",
+    "##  65548,\n",
+    "##  ...}\n",
+    "##\n",
+    "tokens[:40]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[({'next-word-capitalized': False,\n",
+       "   'prev-word': 'nov',\n",
+       "   'punct': '.',\n",
+       "   'prev-word-is-one-char': False},\n",
+       "  False),\n",
+       " ({'next-word-capitalized': True,\n",
+       "   'prev-word': '29',\n",
+       "   'punct': '.',\n",
+       "   'prev-word-is-one-char': False},\n",
+       "  True),\n",
+       " ({'next-word-capitalized': True,\n",
+       "   'prev-word': 'mr',\n",
+       "   'punct': '.',\n",
+       "   'prev-word-is-one-char': False},\n",
+       "  False),\n",
+       " ({'next-word-capitalized': True,\n",
+       "   'prev-word': 'n',\n",
+       "   'punct': '.',\n",
+       "   'prev-word-is-one-char': True},\n",
+       "  False),\n",
+       " ({'next-word-capitalized': False,\n",
+       "   'prev-word': 'group',\n",
+       "   'punct': '.',\n",
+       "   'prev-word-is-one-char': False},\n",
+       "  True)]"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Define las características y las computa\n",
+    "##\n",
+    "def punct_features(tokens, i):\n",
+    "    return {\n",
+    "        \"next-word-capitalized\": tokens[i + 1][0].isupper(),\n",
+    "        \"prev-word\": tokens[i - 1].lower(),\n",
+    "        \"punct\": tokens[i],\n",
+    "        \"prev-word-is-one-char\": len(tokens[i - 1]) == 1,\n",
+    "    }\n",
+    "\n",
+    "##\n",
+    "## Llama la función únicamente cuando encuenetra \".?!\"\n",
+    "##\n",
+    "featuresets = [\n",
+    "    (punct_features(tokens, i), (i in boundaries))\n",
+    "    for i in range(1, len(tokens) - 1)\n",
+    "    if tokens[i] in \".?!\"\n",
+    "]\n",
+    "\n",
+    "featuresets[0:5]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.936026936026936"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Entrenamiento y evaluación del clasificador\n",
+    "##\n",
+    "size = int(len(featuresets) * 0.1)\n",
+    "train_set, test_set = featuresets[size:], featuresets[:size]\n",
+    "classifier = nltk.NaiveBayesClassifier.train(train_set)\n",
+    "nltk.classify.accuracy(classifier, test_set)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Función para usar el clasificador\n",
+    "##\n",
+    "def segment_sentences(words):\n",
+    "    start = 0\n",
+    "    sents = []\n",
+    "    for i, word in enumerate(words):\n",
+    "        if word in '.?!' and classifier.classify(punct_features(words, i)) == True:\n",
+    "            sents.append(words[start:i+1])\n",
+    "            start = i+1\n",
+    "    if start < len(words):\n",
+    "        sents.append(words[start:])\n",
+    "    return sents"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

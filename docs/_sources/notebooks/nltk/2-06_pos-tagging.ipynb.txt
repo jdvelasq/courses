@@ -1,0 +1,1438 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Part-of-Spech (POS) Tagging / Categorización Léxica\n",
+    "\n",
+    "* *30 min* | Última modificación: Diciembre 1, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "http://www.nltk.org/book/\n",
+    "\n",
+    "Text Analytics with Python"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "```\n",
+    "TAG   Descripción      Ejemplo\n",
+    "------------------------------------------------------------\n",
+    "CC    Coordination conjuntion                and, or\n",
+    "CD    Cardinal number                        one, two, 3\n",
+    "DT    Determiner                             a, the\n",
+    "EX    Existential there                      there were two cars \n",
+    "FW    Foreign word                           hola mundo cruel \n",
+    "IN    Preposition/subordinating conjunction  of, in, on, that\n",
+    "JJ    Adjective                              quick, lazy\n",
+    "JJR   Adjective, comparative                 quicker, lazier\n",
+    "JJS   Adjective, superlative                 quickest, laziest\n",
+    "NN    Noun, singular or mass                 fox, dog\n",
+    "NNS   Noun, plural                           foxes, dogs\n",
+    "NNPS  Noun, proper singular                  John, Alice  \n",
+    "NNP   Noun, proper plural                    Vikings, Indians, Germans\n",
+    "\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package averaged_perceptron_tagger to\n",
+      "[nltk_data]     /root/nltk_data...\n",
+      "[nltk_data]   Package averaged_perceptron_tagger is already up-to-\n",
+      "[nltk_data]       date!\n",
+      "[nltk_data] Downloading package brown to /root/nltk_data...\n",
+      "[nltk_data]   Package brown is already up-to-date!\n",
+      "[nltk_data] Downloading package universal_tagset to /root/nltk_data...\n",
+      "[nltk_data]   Package universal_tagset is already up-to-date!\n",
+      "[nltk_data] Downloading package treebank to /root/nltk_data...\n",
+      "[nltk_data]   Package treebank is already up-to-date!\n",
+      "[nltk_data] Downloading package gutenberg to /root/nltk_data...\n",
+      "[nltk_data]   Package gutenberg is already up-to-date!\n",
+      "[nltk_data] Downloading package words to /root/nltk_data...\n",
+      "[nltk_data]   Package words is already up-to-date!\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import nltk\n",
+    "\n",
+    "nltk.download(\"averaged_perceptron_tagger\")\n",
+    "nltk.download(\"brown\")\n",
+    "nltk.download(\"universal_tagset\")\n",
+    "nltk.download(\"treebank\")\n",
+    "nltk.download(\"gutenberg\")\n",
+    "nltk.download(\"words\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Para ver todos los posibles tags ejecute el siguiente codigo\n",
+    "##\n",
+    "#  nltk.download('tagsets')\n",
+    "#  nltk.help.upenn_tagset()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('And', 'CC'),\n",
+       " ('now', 'RB'),\n",
+       " ('for', 'IN'),\n",
+       " ('something', 'NN'),\n",
+       " ('completely', 'RB'),\n",
+       " ('different', 'JJ')]"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Obtención de tags para un texto\n",
+    "##\n",
+    "from nltk.tokenize import word_tokenize\n",
+    "\n",
+    "text = word_tokenize(\"And now for something completely different\")\n",
+    "nltk.pos_tag(text)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('They', 'PRP'),\n",
+       " ('refuse', 'VBP'),\n",
+       " ('to', 'TO'),\n",
+       " ('permit', 'VB'),\n",
+       " ('us', 'PRP'),\n",
+       " ('to', 'TO'),\n",
+       " ('obtain', 'VB'),\n",
+       " ('the', 'DT'),\n",
+       " ('refuse', 'NN'),\n",
+       " ('permit', 'NN')]"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Obtención de tags para un texto\n",
+    "##\n",
+    "text = word_tokenize(\"They refuse to permit us to obtain the refuse permit\")\n",
+    "nltk.pos_tag(text)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "man time day year car moment world house family child country boy\n",
+      "state job place way war girl work word\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Ejemplo de obtención de texto similares\n",
+    "##\n",
+    "text = nltk.Text(word.lower() for word in nltk.corpus.brown.words())\n",
+    "text.similar(\"woman\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "made said done put had seen found given left heard was been brought\n",
+      "set got that took in told felt\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Ejemplo de obtención de texto similares\n",
+    "##\n",
+    "text.similar(\"bought\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "in on to of and for with from at by that into as up out down through\n",
+      "is all about\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Ejemplo de obtención de texto similares\n",
+    "##\n",
+    "text.similar(\"over\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "a his this their its her an that our any all one these my in your no\n",
+      "some other and\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Ejemplo de obtención de texto similares\n",
+    "##\n",
+    "text.similar(\"the\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Ejemplo --- POS tagging usando spaCy\n",
+    "##\n",
+    "sentence = \"US unveils world's most powerful supercomputer, beats China.\"\n",
+    "\n",
+    "#  nlp = spacy.load(\"en_core_web_sm\", parse=True, tag=True, entity=True)\n",
+    "\n",
+    "#  sentence_nlp = nlp(sentence)\n",
+    "\n",
+    "# spacy_pos_tagged = [(word, word.tag_, word.pos_) for word in sentence_nlp]\n",
+    "#  pd.DataFrame(spacy_pos_tagged, columns=[\"Word\", \"POS tag\", \"Tag type\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Word</th>\n",
+       "      <th>POS tag</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>US</td>\n",
+       "      <td>NNP</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>unveils</td>\n",
+       "      <td>JJ</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>world</td>\n",
+       "      <td>NN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>'s</td>\n",
+       "      <td>POS</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>most</td>\n",
+       "      <td>RBS</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>powerful</td>\n",
+       "      <td>JJ</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>supercomputer</td>\n",
+       "      <td>NN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>,</td>\n",
+       "      <td>,</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>beats</td>\n",
+       "      <td>VBZ</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>China</td>\n",
+       "      <td>NNP</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>.</td>\n",
+       "      <td>.</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Word POS tag\n",
+       "0              US     NNP\n",
+       "1         unveils      JJ\n",
+       "2           world      NN\n",
+       "3              's     POS\n",
+       "4            most     RBS\n",
+       "5        powerful      JJ\n",
+       "6   supercomputer      NN\n",
+       "7               ,       ,\n",
+       "8           beats     VBZ\n",
+       "9           China     NNP\n",
+       "10              .       ."
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Ejemplo --- POS tagging usando NLTK\n",
+    "##\n",
+    "import pandas as pd\n",
+    "\n",
+    "sentence = \"US unveils world's most powerful supercomputer, beats China.\"\n",
+    "nltk_pos_tagged = nltk.pos_tag(nltk.word_tokenize(sentence))\n",
+    "pd.DataFrame(nltk_pos_tagged, columns=[\"Word\", \"POS tag\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "('fly', 'NN')"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Representación de tokens tageados\n",
+    "##\n",
+    "tagged_token = nltk.tag.str2tuple(\"fly/NN\")\n",
+    "tagged_token"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'fly'"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Obtención del token\n",
+    "##\n",
+    "tagged_token[0]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'NN'"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Obtención del tag\n",
+    "##\n",
+    "tagged_token[1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('The', 'AT'),\n",
+       " ('grand', 'JJ'),\n",
+       " ('jury', 'NN'),\n",
+       " ('commented', 'VBD'),\n",
+       " ('on', 'IN'),\n",
+       " ('a', 'AT'),\n",
+       " ('number', 'NN'),\n",
+       " ('of', 'IN'),\n",
+       " ('other', 'AP'),\n",
+       " ('topics', 'NNS'),\n",
+       " (',', ','),\n",
+       " ('AMONG', 'IN'),\n",
+       " ('them', 'PPO'),\n",
+       " ('the', 'AT'),\n",
+       " ('Atlanta', 'NP'),\n",
+       " ('and', 'CC'),\n",
+       " ('Fulton', 'NP-TL'),\n",
+       " ('County', 'NN-TL'),\n",
+       " ('purchasing', 'VBG'),\n",
+       " ('departments', 'NNS'),\n",
+       " ('which', 'WDT'),\n",
+       " ('it', 'PPS'),\n",
+       " ('said', 'VBD'),\n",
+       " ('``', '``'),\n",
+       " ('ARE', 'BER'),\n",
+       " ('well', 'QL'),\n",
+       " ('operated', 'VBN'),\n",
+       " ('and', 'CC'),\n",
+       " ('follow', 'VB'),\n",
+       " ('generally', 'RB'),\n",
+       " ('accepted', 'VBN'),\n",
+       " ('practices', 'NNS'),\n",
+       " ('which', 'WDT'),\n",
+       " ('inure', 'VB'),\n",
+       " ('to', 'IN'),\n",
+       " ('the', 'AT'),\n",
+       " ('best', 'JJT'),\n",
+       " ('interest', 'NN'),\n",
+       " ('of', 'IN'),\n",
+       " ('both', 'ABX'),\n",
+       " ('governments', 'NNS'),\n",
+       " (\"''\", \"''\"),\n",
+       " ('.', '.')]"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Representación de un texto taggeado\n",
+    "##\n",
+    "sent = \"\"\"\n",
+    "The/AT grand/JJ jury/NN commented/VBD on/IN a/AT number/NN of/IN\n",
+    "other/AP topics/NNS ,/, AMONG/IN them/PPO the/AT Atlanta/NP and/CC\n",
+    "Fulton/NP-tl County/NN-tl purchasing/VBG departments/NNS which/WDT it/PPS\n",
+    "said/VBD ``/`` ARE/BER well/QL operated/VBN and/CC follow/VB generally/RB\n",
+    "accepted/VBN practices/NNS which/WDT inure/VB to/IN the/AT best/JJT\n",
+    "interest/NN of/IN both/ABX governments/NNS ''/'' ./.\n",
+    "\"\"\"\n",
+    "[nltk.tag.str2tuple(t) for t in sent.split()]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Tagset simplificado**\n",
+    "\n",
+    "```\n",
+    "ADJ    adjective             new, good, high, special, big, local\n",
+    "ADP    adposition            on, of, at, with, by, into, under\n",
+    "ADV    adverb                really, already, still, early, now\n",
+    "CONJ   conjunction           and, or, but, if, while, although\n",
+    "DET    determiner, article   the, a, some, most, every, no, which\n",
+    "NOUN   noun                  year, home, costs, time, Africa\n",
+    "NUM    numeral               twenty-four, fourth, 1991, 14:24\n",
+    "PRT    particle              at, on, out, over per, that, up, with\n",
+    "PRON   pronoun               he, their, her, its, my, I, us\n",
+    "VERB   verb                  is, say, told, given, playing, would\n",
+    ".     punctuation marks      . , ; !\n",
+    "X     other                  ersatz, esprit, dunno, gr8, univeristy\n",
+    "\n",
+    "\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('NOUN', 30654),\n",
+       " ('VERB', 14399),\n",
+       " ('ADP', 12355),\n",
+       " ('.', 11928),\n",
+       " ('DET', 11389),\n",
+       " ('ADJ', 6706),\n",
+       " ('ADV', 3349),\n",
+       " ('CONJ', 2717),\n",
+       " ('PRON', 2535),\n",
+       " ('PRT', 2264),\n",
+       " ('NUM', 2166),\n",
+       " ('X', 92)]"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Principales categorias usadas en la categoría news\n",
+    "##\n",
+    "from nltk.corpus import brown\n",
+    "\n",
+    "brown_news_tagged = brown.tagged_words(categories=\"news\", tagset=\"universal\")\n",
+    "tag_fd = nltk.FreqDist(tag for (word, tag) in brown_news_tagged)\n",
+    "tag_fd.most_common()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['NOUN',\n",
+       " 'DET',\n",
+       " 'ADJ',\n",
+       " 'ADP',\n",
+       " '.',\n",
+       " 'VERB',\n",
+       " 'CONJ',\n",
+       " 'NUM',\n",
+       " 'ADV',\n",
+       " 'PRT',\n",
+       " 'PRON',\n",
+       " 'X']"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Sustantivos\n",
+    "##   Se refieren a personas, cosas o conceptos. Los sustantivos pueden\n",
+    "##   aparecer después de determinantes y adjetivos, y pueden ser el\n",
+    "##   sujeto u objeto del verbo.\n",
+    "##\n",
+    "\n",
+    "## Selecciona los bigramas del corpus\n",
+    "word_tag_pairs = nltk.bigrams(brown_news_tagged)\n",
+    "\n",
+    "## Selecciona los predecesores de los sustantivos\n",
+    "noun_preceders = [a[1] for (a, b) in word_tag_pairs if b[1] == \"NOUN\"]\n",
+    "\n",
+    "## Obtiene los tags mas comunes de los predecesores de los sustantivos\n",
+    "[tag for (tag, _) in nltk.FreqDist(noun_preceders).most_common()]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['is',\n",
+       " 'said',\n",
+       " 'was',\n",
+       " 'are',\n",
+       " 'be',\n",
+       " 'has',\n",
+       " 'have',\n",
+       " 'will',\n",
+       " 'says',\n",
+       " 'would',\n",
+       " 'were',\n",
+       " 'had',\n",
+       " 'been',\n",
+       " 'could',\n",
+       " \"'s\",\n",
+       " 'can',\n",
+       " 'do',\n",
+       " 'say',\n",
+       " 'make',\n",
+       " 'may']"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Verbos\n",
+    "##   Describen accioes o eventos. En el contexto de una sentencia, los verbos\n",
+    "##   tipicamente expresan una relación que involucra a los referentes de una\n",
+    "##   o más frases nominales\n",
+    "##\n",
+    "\n",
+    "## Obtiene las palabras taggeadas\n",
+    "wsj = nltk.corpus.treebank.tagged_words(tagset=\"universal\")\n",
+    "\n",
+    "[wt[0] for (wt, _) in nltk.FreqDist(wsj).most_common() if wt[1] == \"VERB\"][:20]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "NN [('year', 137), ('time', 97), ('state', 88), ('week', 85), ('man', 72)]\n",
+      "NN$ [(\"year's\", 13), (\"world's\", 8), (\"state's\", 7), (\"nation's\", 6), (\"city's\", 6)]\n",
+      "NN$-HL [(\"Golf's\", 1), (\"Navy's\", 1)]\n",
+      "NN$-TL [(\"President's\", 11), (\"Administration's\", 3), (\"Army's\", 3), (\"League's\", 3), (\"University's\", 3)]\n",
+      "NN-HL [('sp.', 2), ('problem', 2), ('Question', 2), ('cut', 2), ('party', 2)]\n",
+      "NN-NC [('ova', 1), ('eva', 1), ('aya', 1)]\n",
+      "NN-TL [('President', 88), ('House', 68), ('State', 59), ('University', 42), ('City', 41)]\n",
+      "NN-TL-HL [('Fort', 2), ('Mayor', 1), ('Commissioner', 1), ('City', 1), ('Oak', 1)]\n",
+      "NNS [('years', 101), ('members', 69), ('people', 52), ('sales', 51), ('men', 46)]\n",
+      "NNS$ [(\"children's\", 7), (\"women's\", 5), (\"men's\", 3), (\"janitors'\", 3), (\"taxpayers'\", 2)]\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Tags no simplificados\n",
+    "##\n",
+    "\n",
+    "## Para cada prefijo encuentra los cinco tags más comunes\n",
+    "def findtags(tag_prefix, tagged_text):\n",
+    "    cfd = nltk.ConditionalFreqDist(\n",
+    "        (tag, word) for (word, tag) in tagged_text if tag.startswith(tag_prefix)\n",
+    "    )\n",
+    "    return dict((tag, cfd[tag].most_common(5)) for tag in cfd.conditions())\n",
+    "\n",
+    "\n",
+    "## Obtiene los tags que inician con NN\n",
+    "tagdict = findtags(\"NN\", nltk.corpus.brown.tagged_words(categories=\"news\"))\n",
+    "\n",
+    "for tag in sorted(tagdict)[0:10]:\n",
+    "    print(tag, tagdict[tag])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[',',\n",
+       " '.',\n",
+       " 'accomplished',\n",
+       " 'analytically',\n",
+       " 'appear',\n",
+       " 'apt',\n",
+       " 'associated',\n",
+       " 'assuming',\n",
+       " 'became',\n",
+       " 'become',\n",
+       " 'been',\n",
+       " 'began',\n",
+       " 'call',\n",
+       " 'called',\n",
+       " 'carefully',\n",
+       " 'chose',\n",
+       " 'classified',\n",
+       " 'colorful',\n",
+       " 'composed',\n",
+       " 'contain',\n",
+       " 'differed',\n",
+       " 'difficult',\n",
+       " 'encountered',\n",
+       " 'enough',\n",
+       " 'equate',\n",
+       " 'extremely',\n",
+       " 'found',\n",
+       " 'happens',\n",
+       " 'have',\n",
+       " 'ignored',\n",
+       " 'in',\n",
+       " 'involved',\n",
+       " 'more',\n",
+       " 'needed',\n",
+       " 'nightly',\n",
+       " 'observed',\n",
+       " 'of',\n",
+       " 'on',\n",
+       " 'out',\n",
+       " 'quite',\n",
+       " 'represent',\n",
+       " 'responsible',\n",
+       " 'revamped',\n",
+       " 'seclude',\n",
+       " 'set',\n",
+       " 'shortened',\n",
+       " 'sing',\n",
+       " 'sounded',\n",
+       " 'stated',\n",
+       " 'still',\n",
+       " 'sung',\n",
+       " 'supported',\n",
+       " 'than',\n",
+       " 'to',\n",
+       " 'when',\n",
+       " 'work']"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Exploración de corpus taggeados\n",
+    "##   Análisis de la palabra 'often'\n",
+    "##\n",
+    "\n",
+    "## Obtiene tl texto\n",
+    "brown_learned_text = brown.words(categories=\"learned\")\n",
+    "\n",
+    "## Obtiene y ordena los bigramas que empiezan por often\n",
+    "sorted(set(b for (a, b) in nltk.bigrams(brown_learned_text) if a == \"often\"))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "VERB  ADV  ADP  ADJ    .  PRT \n",
+      "  37    8    7    6    4    2 \n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Tags que se usan después de la palabra often\n",
+    "##\n",
+    "brown_lrnd_tagged = brown.tagged_words(categories=\"learned\", tagset=\"universal\")\n",
+    "tags = [b[1] for (a, b) in nltk.bigrams(brown_lrnd_tagged) if a[0] == \"often\"]\n",
+    "nltk.FreqDist(tags).tabulate()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "combined to achieve\n",
+      "continue to place\n",
+      "serve to protect\n",
+      "wanted to wait\n",
+      "allowed to place\n",
+      "expected to become\n",
+      "expected to approve\n",
+      "expected to make\n",
+      "intends to make\n",
+      "seek to set\n",
+      "like to see\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Análisis del caso \"<Verb> to <Verb>\"\n",
+    "##\n",
+    "from nltk.corpus import brown\n",
+    "\n",
+    "\n",
+    "def process(sentence):\n",
+    "    for (w1, t1), (w2, t2), (w3, t3) in nltk.trigrams(sentence):\n",
+    "        if t1.startswith(\"V\") and t2 == \"TO\" and t3.startswith(\"V\"):\n",
+    "            print(w1, w2, w3)\n",
+    "\n",
+    "\n",
+    "for tagged_sent in brown.tagged_sents()[:100]:\n",
+    "    process(tagged_sent)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "best ADJ ADV VERB NOUN\n",
+      "close ADV ADJ VERB NOUN\n",
+      "open ADJ VERB NOUN ADV\n",
+      "present ADJ ADV NOUN VERB\n",
+      "that ADP DET PRON ADV\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Palabras que tienen distinta clasificación basads en el contexto\n",
+    "##\n",
+    "brown_news_tagged = brown.tagged_words(categories=\"news\", tagset=\"universal\")\n",
+    "data = nltk.ConditionalFreqDist(\n",
+    "    (word.lower(), tag) for (word, tag) in brown_news_tagged\n",
+    ")\n",
+    "for word in sorted(data.conditions()):\n",
+    "    if len(data[word]) > 3:\n",
+    "        tags = [tag for (tag, _) in data[word].most_common()]\n",
+    "        print(word, \" \".join(tags))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['[',\n",
+       " 'Alice',\n",
+       " \"'\",\n",
+       " 's',\n",
+       " 'Adventures',\n",
+       " 'in',\n",
+       " 'Wonderland',\n",
+       " 'by',\n",
+       " 'UNK',\n",
+       " 'UNK',\n",
+       " 'UNK',\n",
+       " 'UNK',\n",
+       " 'CHAPTER',\n",
+       " 'I',\n",
+       " '.',\n",
+       " 'Down',\n",
+       " 'the',\n",
+       " 'Rabbit',\n",
+       " '-',\n",
+       " 'UNK',\n",
+       " 'Alice',\n",
+       " 'was',\n",
+       " 'beginning',\n",
+       " 'to',\n",
+       " 'get',\n",
+       " 'very',\n",
+       " 'tired',\n",
+       " 'of',\n",
+       " 'sitting',\n",
+       " 'by',\n",
+       " 'her',\n",
+       " 'sister',\n",
+       " 'on',\n",
+       " 'the',\n",
+       " 'bank',\n",
+       " ',',\n",
+       " 'and',\n",
+       " 'of',\n",
+       " 'having',\n",
+       " 'nothing',\n",
+       " 'to',\n",
+       " 'do',\n",
+       " ':',\n",
+       " 'once',\n",
+       " 'or',\n",
+       " 'twice',\n",
+       " 'she',\n",
+       " 'had',\n",
+       " 'peeped',\n",
+       " 'into']"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Uso de defaultdict\n",
+    "##\n",
+    "from collections import defaultdict\n",
+    "\n",
+    "alice = nltk.corpus.gutenberg.words(\"carroll-alice.txt\")\n",
+    "vocab = nltk.FreqDist(alice)\n",
+    "v1000 = [word for (word, _) in vocab.most_common(1000)]\n",
+    "mapping = defaultdict(lambda: \"UNK\")\n",
+    "for v in v1000:\n",
+    "    mapping[v] = v\n",
+    "\n",
+    "alice2 = [mapping[v] for v in alice]\n",
+    "alice2[:50]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1001"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "len(set(alice2))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "30654"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Conteo de la cantidad por tipo de tag\n",
+    "##\n",
+    "from collections import defaultdict\n",
+    "\n",
+    "counts = defaultdict(int)\n",
+    "from nltk.corpus import brown\n",
+    "\n",
+    "for (word, tag) in brown.tagged_words(categories=\"news\", tagset=\"universal\"):\n",
+    "    counts[tag] += 1\n",
+    "\n",
+    "counts[\"NOUN\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['.',\n",
+       " 'ADJ',\n",
+       " 'ADP',\n",
+       " 'ADV',\n",
+       " 'CONJ',\n",
+       " 'DET',\n",
+       " 'NOUN',\n",
+       " 'NUM',\n",
+       " 'PRON',\n",
+       " 'PRT',\n",
+       " 'VERB',\n",
+       " 'X']"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "sorted(counts)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('NOUN', 30654),\n",
+       " ('VERB', 14399),\n",
+       " ('ADP', 12355),\n",
+       " ('.', 11928),\n",
+       " ('DET', 11389),\n",
+       " ('ADJ', 6706),\n",
+       " ('ADV', 3349),\n",
+       " ('CONJ', 2717),\n",
+       " ('PRON', 2535),\n",
+       " ('PRT', 2264),\n",
+       " ('NUM', 2166),\n",
+       " ('X', 92)]"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Conteo ordenado por cantidad\n",
+    "##\n",
+    "from operator import itemgetter\n",
+    "\n",
+    "sorted(counts.items(), key=itemgetter(1), reverse=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['NOUN',\n",
+       " 'VERB',\n",
+       " 'ADP',\n",
+       " '.',\n",
+       " 'DET',\n",
+       " 'ADJ',\n",
+       " 'ADV',\n",
+       " 'CONJ',\n",
+       " 'PRON',\n",
+       " 'PRT',\n",
+       " 'NUM',\n",
+       " 'X']"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Extracción de los tags ordenados\n",
+    "##\n",
+    "[t for t, _ in sorted(counts.items(), key=itemgetter(1), reverse=True)]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['abactinally',\n",
+       " 'abandonedly',\n",
+       " 'abasedly',\n",
+       " 'abashedly',\n",
+       " 'abashlessly',\n",
+       " 'abbreviately',\n",
+       " 'abdominally',\n",
+       " 'abhorrently',\n",
+       " 'abidingly',\n",
+       " 'abiogenetically',\n",
+       " 'abiologically',\n",
+       " 'abjectly',\n",
+       " 'ableptically',\n",
+       " 'ably',\n",
+       " 'abnormally']"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Ejemplo de indexación por las últimas dos letras\n",
+    "##\n",
+    "last_letters = defaultdict(list)\n",
+    "words = nltk.corpus.words.words(\"en\")\n",
+    "for word in words:\n",
+    "    key = word[-2:]\n",
+    "    last_letters[key].append(word)\n",
+    "\n",
+    "last_letters[\"ly\"][:15]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['blazy',\n",
+       " 'bleezy',\n",
+       " 'blowzy',\n",
+       " 'boozy',\n",
+       " 'breezy',\n",
+       " 'bronzy',\n",
+       " 'buzzy',\n",
+       " 'Chazy',\n",
+       " 'cozy',\n",
+       " 'crazy',\n",
+       " 'dazy',\n",
+       " 'dizzy',\n",
+       " 'dozy',\n",
+       " 'enfrenzy',\n",
+       " 'fezzy']"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "last_letters[\"zy\"][:15]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['entrail', 'latrine', 'ratline', 'reliant', 'retinal', 'trenail']"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Creación de un diccionario de anagramas\n",
+    "##\n",
+    "anagrams = defaultdict(list)\n",
+    "for word in words:\n",
+    "    key = \"\".join(sorted(word))\n",
+    "    anagrams[key].append(word)\n",
+    "\n",
+    "anagrams[\"aeilnrt\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['entrail', 'latrine', 'ratline', 'reliant', 'retinal', 'trenail']"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Código equivalente a defaultdict(list) en NLTK\n",
+    "## con nltk.Index(). Note que nltk.Index() recibe una\n",
+    "## tupla (clave, valor)\n",
+    "##\n",
+    "anagrams = nltk.Index((\"\".join(sorted(w)), w) for w in words)\n",
+    "anagrams[\"aeilnrt\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "defaultdict(int, {'NOUN': 5, 'ADJ': 11})"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Manejo de claves complejas y valores\n",
+    "##\n",
+    "pos = defaultdict(lambda: defaultdict(int))\n",
+    "brown_news_tagged = brown.tagged_words(categories=\"news\", tagset=\"universal\")\n",
+    "for ((w1, t1), (w2, t2)) in nltk.bigrams(brown_news_tagged):\n",
+    "    pos[(t1, w2)][t2] += 1\n",
+    "\n",
+    "pos[(\"DET\", \"right\")]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['mortal',\n",
+       " 'Against',\n",
+       " 'Him',\n",
+       " 'There',\n",
+       " 'brought',\n",
+       " 'King',\n",
+       " 'virtue',\n",
+       " 'every',\n",
+       " 'been',\n",
+       " 'thine']"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Inversión de un diccionario\n",
+    "##\n",
+    "counts = defaultdict(int)\n",
+    "for word in nltk.corpus.gutenberg.words(\"milton-paradise.txt\"):\n",
+    "    counts[word] += 1\n",
+    "\n",
+    "[key for (key, value) in counts.items() if value == 32]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'ideas'"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Inversión directa de un dicionario\n",
+    "##\n",
+    "pos = {\"colorless\": \"ADJ\", \"ideas\": \"N\", \"sleep\": \"V\", \"furiously\": \"ADV\"}\n",
+    "pos2 = dict((value, key) for (key, value) in pos.items())\n",
+    "pos2[\"N\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['furiously', 'peacefully']"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pos.update({\"cats\": \"N\", \"scratch\": \"V\", \"peacefully\": \"ADV\", \"old\": \"ADJ\"})\n",
+    "pos2 = defaultdict(list)\n",
+    "for key, value in pos.items():\n",
+    "    pos2[value].append(key)\n",
+    "\n",
+    "pos2[\"ADV\"]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['furiously', 'peacefully']"
+      ]
+     },
+     "execution_count": 37,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Código equivalente en NLTK\n",
+    "##\n",
+    "pos2 = nltk.Index((value, key) for (key, value) in pos.items())\n",
+    "pos2[\"ADV\"]"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -1,9 +1,7 @@
 
 Material de apoyo para cursos
 =======================================
- 
-.. highlight:: python
-    :linenos:
+
 
 .. toctree::
     :caption: Configuración
@@ -13,18 +11,25 @@ Material de apoyo para cursos
     setup
 
 .. toctree::
-    :caption: Cursos
+    :caption: Cursos de Pregrado
+    :hidden:
+    :titlesonly:
+
+    analitica-financiera/index
+    fundamentos-de-analitica/index
+    redes-neuronales-con-tensorflow/index
+
+
+.. toctree::
+    :caption: Cursos de Posgrado
     :hidden:
     :titlesonly:
 
     analitica-de-grandes-datos/index
-    analitica-financiera/index
+    analitica-de-texto/index
     analitica-predictiva/index
-    ciencia-de-los-datos/index
-    fundamentos-de-analitica/index
-    productos-de-datos/index.rst
-    redes-neuronales-con-tensorflow/index
-
+    ciencia-de-los-datos/index    
+    productos-de-datos/index
 
 **Docente responsable:** 
 

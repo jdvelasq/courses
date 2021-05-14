@@ -11,6 +11,5 @@ Este curso aborda los principales aspectos sobre esta temática haciendo un énf
 
     content
     course-info
-    programming-labs
     complement
    
