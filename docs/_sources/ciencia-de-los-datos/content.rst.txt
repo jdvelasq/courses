@@ -16,9 +16,7 @@ Sesión 1---01
 
     * Ver la sección de *Información del curso* en el menú de la izquierda.
 
-    * Charla Magistral: *Una introducción a la Analítica*. Descargue 
-      :download:`aquí <https://github.com/jdvelasq/datalabs/blob/master/pdf/intro-analitica.pdf>` 
-      la presentación.
+    * Presentación: `Una introducción a la Analítica <https://jdvelasq.github.io/intro-analitca/>`_ 
 
     * Revisión de la instalación de Vagrant.
 
@@ -184,7 +182,7 @@ Sesión 3---11
     
     **Narrativa de datos**
 
-        Descargue la presentación :download:`Narrativa de datos</notebooks/storytelling/data-storytelling.pdf>`
+        `Presentación <https://jdvelasq.github.io/data-storytelling/>`_
 
 
     

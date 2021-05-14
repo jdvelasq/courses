@@ -6,5 +6,4 @@ Analítica de grandes datos
     :titlesonly:
 
     content
-    grades
     course-info
