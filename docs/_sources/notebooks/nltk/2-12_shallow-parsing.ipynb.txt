@@ -1,0 +1,512 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Shallow Parsing\n",
+    "\n",
+    "* *30 min* | Última modificación: Diciembre 1, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "http://www.nltk.org/book/\n",
+    "\n",
+    "Text Analytics with Python"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Shallow parsing"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Noun phrase (NP): El sustantivo (noun) encabeza la frase. Una NP atua como el sujeto u objeto de un verbo.\n",
+    "\n",
+    "\n",
+    "* Verb phrase (VP): El verbo (verb) encabeza la frase. \n",
+    "\n",
+    "\n",
+    "* Adjective phrase (ADJP): El adjetivo es la cabeza. Califica sustantivsos y pronombres en la sentencia.\n",
+    "\n",
+    "\n",
+    "* Adverb phrase (ADVP): frases que actuan como adverbios\n",
+    "\n",
+    "\n",
+    "* Preprositional phrase (PP): tienen una preposicion al inicio de la frase."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package treebank to /root/nltk_data...\n",
+      "[nltk_data]   Package treebank is already up-to-date!\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/usr/local/lib/python3.6/dist-packages/nltk/tokenize/regexp.py:123: FutureWarning: split() requires a non-empty pattern match.\n",
+      "  return [tok for tok in self._regexp.split(text) if tok]\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(S\n",
+      "  (NP A/DT Lorillard/NNP spokewoman/NN)\n",
+      "  said/VBD\n",
+      "  ,/,\n",
+      "  ``/``\n",
+      "  (NP This/DT)\n",
+      "  is/VBZ\n",
+      "  (NP an/DT old/JJ story/NN)\n",
+      "  ./.)\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Ejemplo del resultado de una shallow parser\n",
+    "##\n",
+    "nltk.download('treebank')\n",
+    "\n",
+    "from nltk.corpus import treebank_chunk\n",
+    "\n",
+    "data = treebank_chunk.chunked_sents()\n",
+    "\n",
+    "train_data = data[:3500] \n",
+    "test_data = data[3500:]\n",
+    "\n",
+    "print(train_data[7])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "POS Tags: [('US', 'NNP'), ('unveils', 'JJ'), ('world', 'NN'), (\"'s\", 'POS'), ('most', 'RBS'), ('powerful', 'JJ'), ('supercomputer', 'NN'), (',', ','), ('beats', 'VBZ'), ('China', 'NNP'), ('.', '.')]\n",
+      "\n",
+      "(S\n",
+      "  (NP US/NNP)\n",
+      "  (NP unveils/JJ world/NN)\n",
+      "  's/POS\n",
+      "  most/RBS\n",
+      "  (NP powerful/JJ supercomputer/NN)\n",
+      "  ,/,\n",
+      "  beats/VBZ\n",
+      "  (NP China/NNP)\n",
+      "  ./.)\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Especificacion de un regexp parser\n",
+    "##\n",
+    "from nltk.chunk import RegexpParser\n",
+    "\n",
+    "sentence = \"US unveils world's most powerful supercomputer, beats China.\"\n",
+    "\n",
+    "tagged_simple_sent = nltk.pos_tag(nltk.word_tokenize(sentence))\n",
+    "print('POS Tags:', tagged_simple_sent)\n",
+    "\n",
+    "chunk_grammar = \"\"\"\n",
+    "NP: {<DT>?<JJ>*<NN.*>}\n",
+    "\"\"\"\n",
+    "\n",
+    "rc = RegexpParser(chunk_grammar) \n",
+    "c = rc.parse(tagged_simple_sent)\n",
+    "print()\n",
+    "print(c)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(S\n",
+      "  (NP US/NNP)\n",
+      "  unveils/JJ\n",
+      "  (NP world/NN 's/POS most/RBS)\n",
+      "  powerful/JJ\n",
+      "  (NP supercomputer/NN ,/,)\n",
+      "  beats/VBZ\n",
+      "  (NP China/NNP ./.))\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Chink --- lo que no es reconocido\n",
+    "##\n",
+    "chink_grammar = \"\"\"\n",
+    "NP:\n",
+    "   {<.*>+}                # Chunk everything as NP\n",
+    "   }<VBZ|VBD|JJ|IN>+{     # Chink sequences of VBD\\VBZ\\JJ\\IN\n",
+    "\"\"\"\n",
+    "\n",
+    "rc = RegexpParser(chink_grammar)\n",
+    "c = rc.parse(tagged_simple_sent)\n",
+    "print(c)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(S\n",
+      "  (NP US/NNP)\n",
+      "  (NP unveils/JJ world/NN)\n",
+      "  's/POS\n",
+      "  (ADVP most/RBS)\n",
+      "  (NP powerful/JJ supercomputer/NN)\n",
+      "  ,/,\n",
+      "  (VP beats/VBZ)\n",
+      "  (NP China/NNP)\n",
+      "  ./.)\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Mejoras\n",
+    "##\n",
+    "grammar = \"\"\"\n",
+    "NP:   {<DT>?<JJ>?<NN.*>}\n",
+    "ADJP: {<JJ>}\n",
+    "ADVP: {<RB.*>}\n",
+    "PP:   {<IN>}\n",
+    "VP:   {<MD>?<VB.*>+}\n",
+    "\"\"\"\n",
+    "\n",
+    "rc = RegexpParser(grammar)\n",
+    "c = rc.parse(tagged_simple_sent)\n",
+    "print(c)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ChunkParse score:\n",
+      "    IOB Accuracy:  46.1%%\n",
+      "    Precision:     19.9%%\n",
+      "    Recall:        43.3%%\n",
+      "    F-Measure:     27.3%%\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Evaluacion\n",
+    "##\n",
+    "print(rc.evaluate(test_data))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(S\n",
+      "  (NP A/DT Lorillard/NNP spokewoman/NN)\n",
+      "  said/VBD\n",
+      "  ,/,\n",
+      "  ``/``\n",
+      "  (NP This/DT)\n",
+      "  is/VBZ\n",
+      "  (NP an/DT old/JJ story/NN)\n",
+      "  ./.)\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## B- begining of the chunk\n",
+    "## I- inside a chunk\n",
+    "## O- no pertenece a ningun chunk\n",
+    "##\n",
+    "from nltk.chunk.util import tree2conlltags, conlltags2tree\n",
+    "\n",
+    "train_sent = train_data[7]\n",
+    "print(train_sent)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('A', 'DT', 'B-NP'),\n",
+       " ('Lorillard', 'NNP', 'I-NP'),\n",
+       " ('spokewoman', 'NN', 'I-NP'),\n",
+       " ('said', 'VBD', 'O'),\n",
+       " (',', ',', 'O'),\n",
+       " ('``', '``', 'O'),\n",
+       " ('This', 'DT', 'B-NP'),\n",
+       " ('is', 'VBZ', 'O'),\n",
+       " ('an', 'DT', 'B-NP'),\n",
+       " ('old', 'JJ', 'I-NP'),\n",
+       " ('story', 'NN', 'I-NP'),\n",
+       " ('.', '.', 'O')]"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "wtc = tree2conlltags(train_sent)\n",
+    "wtc"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(S\n",
+      "  (NP A/DT Lorillard/NNP spokewoman/NN)\n",
+      "  said/VBD\n",
+      "  ,/,\n",
+      "  ``/``\n",
+      "  (NP This/DT)\n",
+      "  is/VBZ\n",
+      "  (NP an/DT old/JJ story/NN)\n",
+      "  ./.)\n"
+     ]
+    }
+   ],
+   "source": [
+    "tree = conlltags2tree(wtc)\n",
+    "print(tree)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def conll_tag_chunks(chunk_sents):\n",
+    "    tagged_sents = [tree2conlltags(tree) for tree in chunk_sents]\n",
+    "    return [[(t, c) for (w, t, c) in sent] for sent in tagged_sents]\n",
+    "\n",
+    "def combined_tagger(train_data, taggers, backoff=None):\n",
+    "    for tagger in taggers:\n",
+    "        backoff = tagger(train_data, backoff=backoff)\n",
+    "    return backoff"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ChunkParse score:\n",
+      "    IOB Accuracy:  97.2%%\n",
+      "    Precision:     91.4%%\n",
+      "    Recall:        94.3%%\n",
+      "    F-Measure:     92.8%%\n"
+     ]
+    }
+   ],
+   "source": [
+    "from nltk.tag import UnigramTagger, BigramTagger\n",
+    "from nltk.chunk import ChunkParserI\n",
+    "\n",
+    "class NGramTagChunker(ChunkParserI):\n",
+    "    def __init__(self, train_sentences, tagger_classes=[UnigramTagger, BigramTagger]):\n",
+    "        train_sent_tags = conll_tag_chunks(train_sentences)\n",
+    "        self.chunk_tagger = combined_tagger(train_sent_tags, tagger_classes)\n",
+    "\n",
+    "    def parse(self, tagged_sentence):\n",
+    "        if not tagged_sentence:\n",
+    "            return None\n",
+    "        \n",
+    "        pos_tags = [tag for word, tag in tagged_sentence]\n",
+    "        chunk_pos_tags = self.chunk_tagger.tag(pos_tags)\n",
+    "        chunk_tags = [chunk_tag for (pos_tag, chunk_tag) in chunk_pos_tags]\n",
+    "        wpc_tags = [(word, pos_tag, chunk_tag) for ((word, pos_tag), chunk_tag) in zip(tagged_sentence, chunk_tags)]\n",
+    "        return conlltags2tree(wpc_tags)\n",
+    "    \n",
+    "ntc = NGramTagChunker(train_data)\n",
+    "print(ntc.evaluate(test_data))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "NameError",
+     "evalue": "name 'nlp' is not defined",
+     "output_type": "error",
+     "traceback": [
+      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
+      "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
+      "\u001b[0;32m<ipython-input-29-833c8b4a0527>\u001b[0m in \u001b[0;36m<module>\u001b[0;34m\u001b[0m\n\u001b[0;32m----> 1\u001b[0;31m \u001b[0msentence_nlp\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mnlp\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0msentence\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m\u001b[1;32m      2\u001b[0m \u001b[0mtagged_sentence\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0;34m[\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mword\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mtext\u001b[0m\u001b[0;34m,\u001b[0m \u001b[0mword\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mtag_\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;32mfor\u001b[0m \u001b[0mword\u001b[0m \u001b[0;32min\u001b[0m \u001b[0msentence_nlp\u001b[0m\u001b[0;34m]\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      3\u001b[0m \u001b[0mtree\u001b[0m \u001b[0;34m=\u001b[0m \u001b[0mntc\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mparse\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mtagged_sentence\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      4\u001b[0m \u001b[0mprint\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mtree\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n",
+      "\u001b[0;31mNameError\u001b[0m: name 'nlp' is not defined"
+     ]
+    }
+   ],
+   "source": [
+    "sentence_nlp = nlp(sentence)\n",
+    "tagged_sentence = [(word.text, word.tag_) for word in sentence_nlp]\n",
+    "tree = ntc.parse(tagged_sentence)\n",
+    "print(tree)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from nltk.corpus import conll2000\n",
+    "\n",
+    "wsj_data = conll2000.chunked_sents()\n",
+    "train_wsj_data = wsj_data[:10000]\n",
+    "test_wsj_data = wsj_data[10000:]\n",
+    "\n",
+    "print(train_wsj_data[10])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tc = NGramTagChunker(train_wsj_data)\n",
+    "print(tc.evaluate(test_wsj_data))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tree = tc.parse(tagged_sentence)\n",
+    "print(tree)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from nltk.corpus import conll2000\n",
+    "wsj_data = conll2000.chunked_sents()\n",
+    "train_wsj_data = wsj_data[:10000]\n",
+    "test_wsj_data = wsj_data[10000:]\n",
+    "print(train_wsj_data[10])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tc = NGramTagChunker(train_wsj_data)\n",
+    "\n",
+    "print(tc.evaluate(test_wsj_data))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tree = tc.parse(tagged_sentence)\n",
+    "print(tree)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

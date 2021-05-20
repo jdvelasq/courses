@@ -1,4 +1,3 @@
-
 Material de apoyo para cursos
 =======================================
 
@@ -13,20 +12,19 @@ Material de apoyo para cursos
 .. toctree::
     :caption: Cursos de Pregrado
     :hidden:
-    :titlesonly:
-
-    analitica-financiera/index
+    :maxdepth: 1
+    
     fundamentos-de-analitica/index
-    redes-neuronales-con-tensorflow/index
+    redes_neuronales_y_algoritmos_bioinspirados/index
+
 
 
 .. toctree::
     :caption: Cursos de Posgrado
     :hidden:
-    :titlesonly:
+    :maxdepth: 1
 
     analitica-de-grandes-datos/index
-    analitica-de-texto/index
     analitica-predictiva/index
     ciencia-de-los-datos/index    
     productos-de-datos/index

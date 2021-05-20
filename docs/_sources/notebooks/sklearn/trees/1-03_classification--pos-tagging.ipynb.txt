@@ -1,0 +1,381 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Clasificación POS-tagging\n",
+    "\n",
+    "* *30 min* | Última modificación: Diciembre 9, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "http://www.nltk.org/book/\n",
+    "\n",
+    "Text Analytics with Python"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package brown to /root/nltk_data...\n",
+      "[nltk_data]   Package brown is already up-to-date!\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "True"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import nltk\n",
+    "\n",
+    "nltk.download(\"brown\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['e', ',', '.', 's', 'd', 't', 'he', 'n', 'a', 'of']"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## En este ejemplo se construye un clasificador que\n",
+    "## indica el tag de la palabra con base en sus últimas\n",
+    "## letras\n",
+    "##\n",
+    "from nltk.corpus import brown\n",
+    "\n",
+    "##\n",
+    "## Crea el objeto vacio\n",
+    "##\n",
+    "suffix_fdist = nltk.FreqDist()\n",
+    "\n",
+    "##\n",
+    "## Computa la frecuencia de la última, dos últimas y\n",
+    "## tres últimas letras de la palabra\n",
+    "##\n",
+    "for word in brown.words():\n",
+    "    word = word.lower()\n",
+    "    suffix_fdist[word[-1:]] += 1\n",
+    "    suffix_fdist[word[-2:]] += 1\n",
+    "    suffix_fdist[word[-3:]] += 1\n",
+    "\n",
+    "##\n",
+    "## Sufijos más comunes\n",
+    "##\n",
+    "common_suffixes = [suffix for (suffix, count) in suffix_fdist.most_common(100)]\n",
+    "common_suffixes[:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.6270512182993535"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Representación usando bag-of-words\n",
+    "##\n",
+    "def pos_features(word):\n",
+    "    features = {}\n",
+    "    for suffix in common_suffixes:\n",
+    "        features[\"endswith({})\".format(suffix)] = word.lower().endswith(suffix)\n",
+    "    return features\n",
+    "\n",
+    "\n",
+    "##\n",
+    "## Conjunto de palabras taggeadas\n",
+    "##\n",
+    "tagged_words = brown.tagged_words(categories=\"news\")\n",
+    "\n",
+    "##\n",
+    "## Preparación de los datos\n",
+    "##\n",
+    "featuresets = [(pos_features(n), g) for (n, g) in tagged_words]\n",
+    "\n",
+    "##\n",
+    "## Conjuntos de entrenamiento y validación\n",
+    "##\n",
+    "size = int(len(featuresets) * 0.1)\n",
+    "train_set, test_set = featuresets[size:], featuresets[:size]\n",
+    "\n",
+    "##\n",
+    "## Entrenamiento y evaluación del clasificador\n",
+    "##\n",
+    "classifier = nltk.DecisionTreeClassifier.train(train_set)\n",
+    "nltk.classify.accuracy(classifier, test_set)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'NNS'"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Clasificación de una palabra\n",
+    "##\n",
+    "classifier.classify(pos_features(\"cats\"))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "if endswith(the) == False: \n",
+      "  if endswith(,) == False: \n",
+      "    if endswith(s) == False: \n",
+      "      if endswith(.) == False: return '.'\n",
+      "      if endswith(.) == True: return '.'\n",
+      "    if endswith(s) == True: \n",
+      "      if endswith(is) == False: return 'PP$'\n",
+      "      if endswith(is) == True: return 'BEZ'\n",
+      "  if endswith(,) == True: return ','\n",
+      "if endswith(the) == True: return 'AT'\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Reglas equivalentes\n",
+    "##\n",
+    "print(classifier.pseudocode(depth=4))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'suffix(1)': 'n', 'suffix(2)': 'on', 'suffix(3)': 'ion', 'prev-word': 'an'}"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Aumento de las características teniendo\n",
+    "## en cuenta la palabra anterior\n",
+    "##\n",
+    "def pos_features(sentence, i):\n",
+    "    features = {\n",
+    "        \"suffix(1)\": sentence[i][-1:],\n",
+    "        \"suffix(2)\": sentence[i][-2:],\n",
+    "        \"suffix(3)\": sentence[i][-3:],\n",
+    "    }\n",
+    "    if i == 0:\n",
+    "        features[\"prev-word\"] = \"<START>\"\n",
+    "    else:\n",
+    "        features[\"prev-word\"] = sentence[i - 1]\n",
+    "    return features\n",
+    "\n",
+    "\n",
+    "pos_features(brown.sents()[0], 8)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.7891596220785678"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Carga de las sentencias\n",
+    "##\n",
+    "tagged_sents = brown.tagged_sents(categories=\"news\")\n",
+    "\n",
+    "##\n",
+    "## Extracción de características\n",
+    "##\n",
+    "featuresets = []\n",
+    "for tagged_sent in tagged_sents:\n",
+    "    untagged_sent = nltk.tag.untag(tagged_sent)\n",
+    "    for i, (word, tag) in enumerate(tagged_sent):\n",
+    "        featuresets.append((pos_features(untagged_sent, i), tag))\n",
+    "\n",
+    "##\n",
+    "## Conjuntos de entrenamiento y validación\n",
+    "##\n",
+    "size = int(len(featuresets) * 0.1)\n",
+    "train_set, test_set = featuresets[size:], featuresets[:size]\n",
+    "\n",
+    "##\n",
+    "## Entrenamiento y evaluación del clasificador\n",
+    "##\n",
+    "classifier = nltk.NaiveBayesClassifier.train(train_set)\n",
+    "nltk.classify.accuracy(classifier, test_set)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.7980528511821975\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Clasificación de secuencias de tags\n",
+    "##\n",
+    "def pos_features(sentence, i, history):\n",
+    "    features = {\n",
+    "        \"suffix(1)\": sentence[i][-1:],\n",
+    "        \"suffix(2)\": sentence[i][-2:],\n",
+    "        \"suffix(3)\": sentence[i][-3:],\n",
+    "    }\n",
+    "    if i == 0:\n",
+    "        features[\"prev-word\"] = \"<START>\"\n",
+    "        features[\"prev-tag\"] = \"<START>\"\n",
+    "    else:\n",
+    "        features[\"prev-word\"] = sentence[i - 1]\n",
+    "        features[\"prev-tag\"] = history[i - 1]\n",
+    "    return features\n",
+    "\n",
+    "\n",
+    "class ConsecutivePosTagger(nltk.TaggerI):\n",
+    "    ##\n",
+    "    ## Constructor\n",
+    "    ##   Construye y entrena el clasificador\n",
+    "    ##\n",
+    "    def __init__(self, train_sents):\n",
+    "        train_set = []\n",
+    "        for tagged_sent in train_sents:\n",
+    "            untagged_sent = nltk.tag.untag(tagged_sent)\n",
+    "            history = []\n",
+    "            for i, (word, tag) in enumerate(tagged_sent):\n",
+    "                featureset = pos_features(untagged_sent, i, history)\n",
+    "                train_set.append((featureset, tag))\n",
+    "                history.append(tag)\n",
+    "        self.classifier = nltk.NaiveBayesClassifier.train(train_set)\n",
+    "\n",
+    "    ##\n",
+    "    ## Aplica el tag a un grupo de sentencias\n",
+    "    ##\n",
+    "    def tag(self, sentence):\n",
+    "        history = []\n",
+    "        for i, word in enumerate(sentence):\n",
+    "            featureset = pos_features(sentence, i, history)\n",
+    "            tag = self.classifier.classify(featureset)\n",
+    "            history.append(tag)\n",
+    "        return zip(sentence, history)\n",
+    "\n",
+    "\n",
+    "##\n",
+    "## Carga los datos\n",
+    "##\n",
+    "tagged_sents = brown.tagged_sents(categories=\"news\")\n",
+    "\n",
+    "##\n",
+    "## Conjuntos de entrenamiento y validación\n",
+    "##\n",
+    "size = int(len(tagged_sents) * 0.1)\n",
+    "train_sents, test_sents = tagged_sents[size:], tagged_sents[:size]\n",
+    "\n",
+    "##\n",
+    "## Entrenamiento y evaluación del clasificador\n",
+    "##\n",
+    "tagger = ConsecutivePosTagger(train_sents)\n",
+    "print(tagger.evaluate(test_sents))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
