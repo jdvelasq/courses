@@ -273,7 +273,7 @@ Sesión 12
 Sesión 13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Fundamentos de optimización no lineal y Computación Evolutiva --- I**
+    **Fundamentos de Computación Evolutiva y Algoritmos Bio-inspirados--- I**
 
     .. toctree::
         :maxdepth: 1
@@ -286,7 +286,7 @@ Sesión 13
 Sesión 14
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Fundamentos de optimización no lineal y Computación Evolutiva --- II**
+    **Fundamentos de Computación Evolutiva y Algoritmos Bio-inspirados--- II**
 
     .. toctree::
         :maxdepth: 1
