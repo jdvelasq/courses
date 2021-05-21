@@ -294,6 +294,11 @@ Sesión 14
 
         /notebooks/optimization/2-*  
 
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
+        /notebooks/optimization/anexo*  
 
 
 
