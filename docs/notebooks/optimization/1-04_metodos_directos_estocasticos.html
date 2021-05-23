@@ -46,7 +46,7 @@
     
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Estrategias Evolutivas" href="1-10_estrategias_evolutivas.html" />
+    <link rel="next" title="Estrategias Evolutivas" href="1-05_estrategias_evolutivas.html" />
     <link rel="prev" title="Métodos determinísticos locales no derivativos" href="1-03_metodos_directos_no_derivativos.html" /> 
 </head>
 
@@ -568,64 +568,6 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Temple-Simulado">
 <h2>Temple Simulado<a class="headerlink" href="#Temple-Simulado" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%writefile</span> simulatedannealing.py
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">baseoptimizer</span> <span class="kn">import</span> <span class="n">BaseOptimizer</span>
-
-<span class="k">class</span> <span class="nc">SimulatedAnnealing</span><span class="p">(</span><span class="n">BaseOptimizer</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">t_init</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">t_min</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">t_init</span> <span class="o">=</span> <span class="n">t_init</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">t_min</span> <span class="o">=</span> <span class="n">t_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">M</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">population</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_min</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_init</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">individual</span> <span class="ow">in</span> <span class="n">population</span><span class="p">:</span>
-
-            <span class="k">if</span> <span class="s2">&quot;t_current&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">individual</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">individual</span><span class="p">[</span><span class="s2">&quot;t_current&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_init</span>
-
-            <span class="n">x</span> <span class="o">=</span> <span class="n">individual</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">fn_x</span> <span class="o">=</span> <span class="n">individual</span><span class="o">.</span><span class="n">fn_x</span>
-
-            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_direction</span><span class="p">()</span>
-            <span class="n">x_next</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">*</span> <span class="n">individual</span><span class="o">.</span><span class="n">t_current</span> <span class="o">*</span> <span class="n">v</span>
-            <span class="n">fn_x_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">(</span><span class="n">x_next</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span>
-                <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="p">(</span><span class="n">fn_x_next</span> <span class="o">-</span> <span class="n">fn_x</span><span class="p">)</span> <span class="o">/</span> <span class="n">individual</span><span class="o">.</span><span class="n">t_current</span><span class="p">)))</span>
-            <span class="p">):</span>
-                <span class="n">individual</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x_next</span>
-                <span class="n">individual</span><span class="o">.</span><span class="n">fn_x</span> <span class="o">=</span> <span class="n">fn_x_next</span>
-
-            <span class="n">individual</span><span class="o">.</span><span class="n">t_current</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="n">individual</span><span class="o">.</span><span class="n">t_current</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">population</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Overwriting simulatedannealing.py
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
@@ -665,7 +607,7 @@ Overwriting simulatedannealing.py
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_8_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_8_0.png" />
+<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_7_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_7_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -686,7 +628,7 @@ Overwriting simulatedannealing.py
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_9_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_9_0.png" />
+<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_8_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_8_0.png" />
 </div>
 </div>
 </div>
@@ -778,7 +720,7 @@ Overwriting simulatedannealing.py
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_12_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_12_0.png" />
+<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_11_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_11_0.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -801,7 +743,7 @@ Overwriting simulatedannealing.py
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_13_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_13_0.png" />
+<img alt="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_12_0.png" src="../../_images/notebooks_optimization_1-04_metodos_directos_estocasticos_12_0.png" />
 </div>
 </div>
 </div>
