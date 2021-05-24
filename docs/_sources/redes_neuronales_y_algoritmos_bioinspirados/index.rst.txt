@@ -282,17 +282,36 @@ Sesión 13
         /notebooks/optimization/1-*  
 
 
-
-Sesión 14
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-    **Fundamentos de Computación Evolutiva y Algoritmos Bio-inspirados--- II**
+    **Métodos determinísticos locales no derivativos**
 
     .. toctree::
         :maxdepth: 1
         :glob:
 
         /notebooks/optimization/2-*  
+
+    **Métodos directos estocásticos**
+
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
+        /notebooks/optimization/3-*  
+
+
+Sesión 14
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Fundamentos de Computación Evolutiva y Algoritmos Bio-inspirados--- II**
+
+
+    **Métodos poblacionales**
+     
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
+        /notebooks/optimization/4-*  
 
     .. toctree::
         :maxdepth: 1
