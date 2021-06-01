@@ -121,13 +121,13 @@ Sesión 06
             /notebooks/sklearn/mccullochpitts/1-*
 
 
-    **Perceptrón bipolar**.
+    **Perceptrón binario y perceptrón bipolar**.
 
         .. toctree::
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/bipolar-perceptron/*
+            /notebooks/sklearn/bipolar-perceptron/1-*
 
 
     **Combinadores lineales adaptativos**
@@ -149,7 +149,7 @@ Sesión 07
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/continuous-perceptron/*
+            /notebooks/sklearn/continuous-perceptron/1-*
 
     **Regresión Logística**
     
@@ -157,7 +157,7 @@ Sesión 07
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/logistic/*
+            /notebooks/sklearn/logistic/1-*
 
 
         * `LAB --- Clasificación del conjunto artificial de datos de los dos circulos usando regresión logística <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/clasificacion_del_conjunto_artificial_de_datos_de_los_dos_circulos_usando_regresion_logistica.ipynb>`_.
@@ -323,6 +323,21 @@ Sesión 14
 
 Sesión 15
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Otros modelos**
+
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
+        /notebooks/sklearn/som/1-*
+        /notebooks/sklearn/cascor/1-*
+        /notebooks/sklearn/elm/1-*
+        /notebooks/sklearn/rbfn/1-*
+        /notebooks/sklearn/pi-sigma/1-*
+        /notebooks/sklearn/associative/1-*
+
 
 
 
@@ -501,13 +516,8 @@ Sesión 16
 
       
 
-    **(Opcional) Modelos asociativos**
 
-    .. toctree::
-            :maxdepth: 1
-            :glob:
-
-            /notebooks/sklearn/associative/*
+            
 
 
 

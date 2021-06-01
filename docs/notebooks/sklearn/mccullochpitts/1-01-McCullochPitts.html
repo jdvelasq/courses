@@ -46,7 +46,7 @@
     
     <link rel="index" title="Índice" href="../../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../../search.html" />
-    <link rel="next" title="Regla de aprendizaje del perceptrón" href="../bipolar-perceptron/1-01-perceptron-bipolar.html" />
+    <link rel="next" title="Perceptrones binarios" href="../bipolar-perceptron/1-01-perceptron-binario.html" />
     <link rel="prev" title="Afinación de parámetros de modelos en sklearn" href="../sgd/1-03-afinacion-parametros.html" /> 
 </head>
 
@@ -464,7 +464,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Reconocimiento-de-patrones-binarios-usando-neuronas-de-McCulloch-Pitts">
 <h1>Reconocimiento de patrones binarios usando neuronas de McCulloch-Pitts<a class="headerlink" href="#Reconocimiento-de-patrones-binarios-usando-neuronas-de-McCulloch-Pitts" title="Enlazar permanentemente con este título">¶</a></h1>
 <ul class="simple">
-<li><p><em>30 min</em> | Última modificación: Marzo 20, 2020</p></li>
+<li><p>30 min | Última modificación: Mayo 28, 2021</p></li>
 </ul>
 <div class="section" id="Definición-del-problema">
 <h2>Definición del problema<a class="headerlink" href="#Definición-del-problema" title="Enlazar permanentemente con este título">¶</a></h2>
@@ -619,7 +619,7 @@ excitatoria. El valor del umbral de la neurona es la cantidad de unos de la entr
 </div>
 <div class="section" id="Solución-al-problema-propuesto">
 <h3>Solución al problema propuesto<a class="headerlink" href="#Solución-al-problema-propuesto" title="Enlazar permanentemente con este título">¶</a></h3>
-<p>Para el problema propuesto, cada patrón puede ser codificado como un vector de tres posiciones. Cuando el cuadro es negro, el valor de la posición correspondiente del vector es +1 y cuando es blanco es -1. Cada patrón es asociado a una variable de salida que toma el valor de +1 cuando el patrón debe ser reconocido y 0 cuando debe ser ignorado. De esta forma, el problema puede plantearse como:</p>
+<p>Para el problema propuesto, cada patrón puede ser codificado como un vector de tres posiciones. Cuando el cuadro es negro, el valor de la posición correspondiente del vector es +1 y cuando es blanco es 0. Cada patrón es asociado a una variable de salida que toma el valor de +1 cuando el patrón debe ser reconocido y 0 cuando debe ser ignorado. De esta forma, el problema puede plantearse como:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>    Entrada    Salida
  (x1, x2, x3)                 +----+----+----+
 -----------------------       | x1 | x2 | x3 |
@@ -646,116 +646,250 @@ excitatoria. El valor del umbral de la neurona es la cantidad de unos de la entr
 <div class="section" id="Implementación-en-Python">
 <h2>Implementación en Python<a class="headerlink" href="#Implementación-en-Python" title="Enlazar permanentemente con este título">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="o">%</span><span class="k">load_ext</span> rpy2.ipython
+
+
+<span class="k">class</span> <span class="nc">Layer</span><span class="p">:</span>
+    <span class="c1">#</span>
+    <span class="c1"># Se implementa una clase genérica de capa</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_activation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;linear&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+                <span class="s2">&quot;sigmoid&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)),</span>
+                <span class="s2">&quot;relu&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+                <span class="s2">&quot;step&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">}[</span><span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">check_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">),</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_weights</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_activation</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">OrLayer</span><span class="p">(</span><span class="n">Layer</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span>
+            <span class="n">input_dim</span><span class="o">=</span><span class="n">input_dim</span><span class="p">,</span>
+            <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">check_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">McCullochPittsNetwork</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">y</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="n">input_dim</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">hidden_dim</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">Layer</span><span class="p">(</span>
+            <span class="n">units</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;step&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">w</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">input_dim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">w</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">w</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span> <span class="o">=</span> <span class="n">OrLayer</span><span class="p">(</span><span class="n">units</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">input_dim</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">def</span> <span class="nf">coef2string</span><span class="p">(</span><span class="n">coef</span><span class="p">,</span> <span class="n">isvar</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">coef</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">coef</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">isvar</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot; + &quot;</span>
+                <span class="k">return</span> <span class="s2">&quot; + </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">coef</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">coef</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">coef</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">isvar</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot; - &quot;</span>
+                <span class="k">return</span> <span class="s2">&quot; - </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">-</span><span class="n">coef</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">var2string</span><span class="p">(</span><span class="n">coef</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">coef</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">coef2string</span><span class="p">(</span><span class="n">coef</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;x</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+
+        <span class="n">text_hidden</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">neuron</span><span class="p">,</span> <span class="n">bias</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span><span class="o">.</span><span class="n">kernel</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer</span><span class="o">.</span><span class="n">bias</span><span class="p">):</span>
+            <span class="n">eq</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="n">var2string</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">weight</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">neuron</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="k">if</span> <span class="n">bias</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">eq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">eq</span><span class="p">)</span> <span class="o">+</span> <span class="n">coef2string</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">eq</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">eq</span><span class="p">)</span>
+
+            <span class="n">eq</span> <span class="o">=</span> <span class="n">eq</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">eq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;+&#39;</span><span class="p">:</span>
+                <span class="n">eq</span> <span class="o">=</span> <span class="n">eq</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="n">text_hidden</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;step(&quot;</span> <span class="o">+</span> <span class="n">eq</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">)</span>
+
+        <span class="n">text_output</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">coef2string</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="kc">True</span><span class="p">)</span> <span class="o">+</span> <span class="n">t</span>
+            <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="o">.</span><span class="n">kernel</span><span class="p">,</span> <span class="n">text_hidden</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="o">.</span><span class="n">bias</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">text_output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coef2string</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_layer</span><span class="o">.</span><span class="n">bias</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="kc">False</span><span class="p">))</span>
+
+        <span class="n">text_output</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;    &quot;</span> <span class="o">+</span> <span class="n">t</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">text_output</span><span class="p">]</span>
+        <span class="n">text_output</span> <span class="o">=</span> <span class="s2">&quot;step(</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text_output</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+        <span class="k">return</span> <span class="n">text_output</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">clear</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
-<span class="c1">##</span>
-<span class="c1">## Define una clase que implementa el modelo.</span>
-<span class="c1">##</span>
-<span class="k">class</span> <span class="nc">McCullochPits</span><span class="p">:</span>
-
-    <span class="c1">##</span>
-    <span class="c1">## Esta función crea la red neuronal</span>
-    <span class="c1">##</span>
-    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        - x: Es una lista de listas que representa la matriz</span>
-<span class="sd">             de entradas a la red neuronal.</span>
-<span class="sd">        - y: Es una lista de binarios que representan la</span>
-<span class="sd">             salida de la red neuronal.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">## Calcula la cantidad de entradas + 1</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
-
-        <span class="c1">## Obtiene las filas de la matriz x para las</span>
-        <span class="c1">## cuales la salida es unitaria</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span> <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="n">z</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span>
-
-        <span class="c1">## Computa la cantidad de 1s en la entrada, que</span>
-        <span class="c1">## corresponde al valor del umbral de cada</span>
-        <span class="c1">## neurona</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">sum</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">w</span><span class="p">])</span>
-
-        <span class="c1">## Convierte los 0 en la matriz w a -n para</span>
-        <span class="c1">## transformalos en conextiones inhibitorias</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">element</span> <span class="k">if</span> <span class="n">element</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">n</span> <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">w</span><span class="p">])</span>
-
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Pronostica la salida para una lista de entradas.</span>
-
-<span class="sd">        &gt;&gt;&gt; x = [[0, 0, 0],</span>
-<span class="sd">        ...      [0, 0, 1],</span>
-<span class="sd">        ...      [0, 1, 0],</span>
-<span class="sd">        ...      [0, 1, 1],</span>
-<span class="sd">        ...      [1, 0, 0],</span>
-<span class="sd">        ...      [1, 0, 1],</span>
-<span class="sd">        ...      [1, 1, 0],</span>
-<span class="sd">        ...      [1, 1, 1]]</span>
-<span class="sd">        &gt;&gt;&gt; y = [0,</span>
-<span class="sd">        ...      1,</span>
-<span class="sd">        ...      0,</span>
-<span class="sd">        ...      0,</span>
-<span class="sd">        ...      1,</span>
-<span class="sd">        ...      0,</span>
-<span class="sd">        ...      1,</span>
-<span class="sd">        ...      1]</span>
-<span class="sd">        &gt;&gt;&gt; m = McCullochPits() # crea el modelo</span>
-<span class="sd">        &gt;&gt;&gt; m.fit(x, y)         # construye la red neuronal</span>
-<span class="sd">        &gt;&gt;&gt; for u in x:         #</span>
-<span class="sd">        ...    m.predict(u)     # pronostica la salida para cadaa patrón de x</span>
-<span class="sd">        0</span>
-<span class="sd">        1</span>
-<span class="sd">        0</span>
-<span class="sd">        0</span>
-<span class="sd">        1</span>
-<span class="sd">        0</span>
-<span class="sd">        1</span>
-<span class="sd">        1</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>                               <span class="c1"># convierte x en un array</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span>                                <span class="c1"># calcula la entrada a cada neurona</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>                         <span class="c1">#</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">u</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-        <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">u</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">u</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">doctest</span>
-    <span class="n">doctest</span><span class="o">.</span><span class="n">testmod</span><span class="p">()</span>
+<span></span><span class="n">nn</span><span class="o">.</span><span class="n">hidden_layer</span><span class="o">.</span><span class="n">kernel</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-
+array([[-4,  1,  1,  1],
+       [-4, -4,  1,  1],
+       [ 1, -4, -4,  1]])
 </pre></div></div>
 </div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Ejemplo propuesto</span>
+<span class="c1">#</span>
+<span class="n">X</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="p">]</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+
+<span class="n">nn</span> <span class="o">=</span> <span class="n">McCullochPittsNetwork</span><span class="p">()</span>
+<span class="n">nn</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">nn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([0, 1, 0, 0, 1, 0, 1, 1])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># La red neuronal es equivalente a la siguiente función</span>
+<span class="c1">#</span>
+<span class="n">nn</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+step(
+    + step(- 4x0 - 4x1 + x2 - 1)
+    + step(x0 - 4x1 - 4x2 - 1)
+    + step(x0 + x1 - 4x2 - 2)
+    + step(x0 + x1 + x2 - 3)
+    - 1
+)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Notas">
+<h2>Notas<a class="headerlink" href="#Notas" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>El método de construcción del modelo no resulta adecuado para:</p>
+<ul class="simple">
+<li><p>Patrones de muchos bits (muchas entradas).</p></li>
+<li><p>Más de una salida. En este caso se construye una red para salida.</p></li>
+</ul>
 </div>
 </div>
 
