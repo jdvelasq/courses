@@ -210,7 +210,12 @@ Sesión 09
 
     **Sistemas difusos y Neurodifusos**   
 
-    
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/fuzzy/1-*
 
 Sesión 10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
