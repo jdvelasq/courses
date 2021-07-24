@@ -242,12 +242,3 @@ Sesión 16
 
 
     * **Cierre y evaluación del curso**
-
-
-**Analítica Financiera**
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/cashflows/*

@@ -1,0 +1,614 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "Modelos ARIMA\n",
+    "===\n",
+    "\n",
+    "* 34:29 min | Ultima modificación: Marzo 21, 2021 | YouTube"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "#3 Proceso autoregresivo de orden P o AR(P)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Generación de series sintéticas\n",
+    "\n",
+    "**Ejercicio.--** Grafique una realización del modelo $y_t = 10 + 0.7*y_{t-1} + e_t$ con $T$ = 100 y $e_t$ ~ $N(0, 0.5^2)$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Pronóstico\n",
+    "\n",
+    "**Ejercicio.--** Si la serie del ejercicio anterior es la serie real, grafique el pronóstico para las siguientes 20 observaciones y los intervalos de confianza para una desviación estándar."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Filtrado\n",
+    "\n",
+    "**Ejercicio.--** Si se tiene la serie presentada a continuación y el modelo:\n",
+    "\n",
+    "$$y_t =  0.8897 y_{t-1} - 0.4858 * y_{t-2} + e_t$$\n",
+    "\n",
+    "compute el vector de errores $e_t$.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true,
+    "jupyter": {
+     "outputs_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "x <- c(-0.48287415, -0.83860770, -1.54441509, -0.80557103,  0.16431753,\n",
+    "        0.72286589,  0.08181223, -0.36310403, -1.12951608, -1.07049116,\n",
+    "       -1.17601669, -0.99011639, -0.23031558,  0.19755863,  0.30593800,\n",
+    "       -0.03003204, -0.26791963, -0.42687330, -0.70733683, -0.36424417)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Estimación\n",
+    "\n",
+    "$$y_t = \\phi_0 + \\sum_{i=1}^p \\phi_i ~y_{t-i} + e_t $$\n",
+    "\n",
+    "Donde: \n",
+    "\n",
+    "* $P$ -- orden del modelo.\n",
+    "* $\\phi_0$ -- constante. \n",
+    "* $\\phi_1,...,\\phi_p$: coeficientes de los valores pasados de $y_t$.\n",
+    "* $e_t$: es un aleatorio normal $N(0, \\sigma^2)$.\n",
+    "\n",
+    "Los valores de $\\phi_p$, para  $p=0, 1, ..., P$ se pueden estimar por mínimos cuadrádos ordinarios. ¿cómo?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "> [`ar.ols {stats}`](https://stat.ethz.ch/R-manual/R-patched/library/stats/html/ar.ols.html)\n",
+    "\n",
+    "    ar.ols(x, \n",
+    "           aic = TRUE, \n",
+    "           order.max = NULL, \n",
+    "           na.action = na.fail,\n",
+    "           demean = TRUE, \n",
+    "           intercept = demean, \n",
+    "           series, ...)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\n",
+       "Call:\n",
+       "ar.ols(x = x, order.max = 6, demean = FALSE, intercept = TRUE)\n",
+       "\n",
+       "Coefficients:\n",
+       "      1        2        3        4        5  \n",
+       " 0.6906  -0.0890  -0.5833   0.2441  -0.2282  \n",
+       "\n",
+       "Intercept: -0.4048 (0.1294) \n",
+       "\n",
+       "Order selected 5  sigma^2 estimated as  0.04939"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "x <- c(-0.48287415, -0.83860770, -1.54441509, -0.80557103,  0.16431753,\n",
+    "        0.72286589,  0.08181223, -0.36310403, -1.12951608, -1.07049116,\n",
+    "       -1.17601669, -0.99011639, -0.23031558,  0.19755863,  0.30593800,\n",
+    "       -0.03003204, -0.26791963, -0.42687330, -0.70733683, -0.36424417)\n",
+    "\n",
+    "ar.ols(x, order.max = 6, demean = FALSE, intercept = TRUE)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Diagnóstico\n",
+    "\n",
+    "Se analiza si los residuales siguen una distribución normal:\n",
+    "\n",
+    "* Incorrelacionados: ACF y PACF\n",
+    "* Distribución normal: Prueba de Jarque-Bera, gráfico Q-Q, etc.\n",
+    "* Varianza constante."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Notación como polinomio\n",
+    "\n",
+    "Operador de rezago:\n",
+    "\n",
+    "$$B^j y_t=y_{t-j}$$\n",
+    "\n",
+    "Polimnomio de rezagos de orden $P$:\n",
+    "\n",
+    "$$\\phi_P(B) = 1 + \\phi_1B + \\phi_2B^2 + ... + \\phi_P B^P$$\n",
+    "\n",
+    "Al aplicar $\\phi_P(B)$ sobre la serie $y_t$ se obtiene:\n",
+    "\n",
+    "$$ \\phi_P(B) y_t = y_t + \\phi_1 ~ y_{t-1} + \\phi_2~ y_{t-2}+...+ \\phi_P~ y_{t-P} $$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Estimación\n",
+    "\n",
+    "$$y_t = \\phi_0 + \\sum_{i=1}^p \\phi_i ~y_{t-i} + e_t $$\n",
+    "\n",
+    "Donde: \n",
+    "\n",
+    "* $P$ -- orden del modelo.\n",
+    "* $\\phi_0$ -- constante. \n",
+    "* $\\phi_1,...,\\phi_p$: coeficientes de los valores pasados de $y_t$.\n",
+    "* $e_t$: es un aleatorio normal $N(0, \\sigma^2)$.\n",
+    "\n",
+    "Los valores de $\\phi_p$, para  $p=0, 1, ..., P$ se pueden estimar por mínimos cuadrádos ordinarios. ¿cómo?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "**Ejercicio.--** Estime un modelo AR(P) para la siguiente serie y ejecute pruebas de diagnóstico."
+   ]
+  },
+  {
+   "cell_type": "raw",
+   "metadata": {},
+   "source": [
+    "x <- c(-0.1651,  0.0114,  0.9344,  0.3204, -0.1909,  0.2961,  0.2253, -0.3576, -0.5170, -0.6661,\n",
+    "       -1.7933, -1.6418, -0.4534,  0.0962,  0.1927,  0.0396, -0.8781, -1.4209, -0.9949,  0.1454, \n",
+    "       -0.3265, -0.9522, -1.0905, -0.2530,  0.5617,  0.4533,  0.2812, -0.2974,  0.2490,  0.8834)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Procesos de medias moviles MA"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Generación de series sintéticas\n",
+    "\n",
+    "**Ejercicio.--** Grafique una realización del modelo $y_t = 10 + 0.7*e_{t-1} + e_t$ con $T$ = 100 y $e_t$ ~ $N(0, 0.5^2)$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Pronóstico\n",
+    "\n",
+    "**Ejercicio.--** Si la serie del ejercicio anterior es la serie real, grafique el pronóstico para las siguientes 20 observaciones y los intervalos de confianza para una desviación estándar."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Filtrado\n",
+    "\n",
+    "**Ejercicio.--** Si se tiene la serie presentada a continuación y el modelo:\n",
+    "\n",
+    "$$y_t =  0.8897 y_{t-1} - 0.4858 * y_{t-2} + e_t$$\n",
+    "\n",
+    "compute el vector de errores $e_t$.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true,
+    "jupyter": {
+     "outputs_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "x <- c( 0.0501,  0.8231, -0.2154,  0.9970,  0.3790,  0.6241,  0.6743,  0.1167,  0.4232, -0.2102,  \n",
+    "        0.2394, -0.3224,  0.7079,  0.7556,  0.5436,  1.5252,  0.2469,  0.8982,  0.4878, -0.8237)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Estimación\n",
+    "\n",
+    "$$y_t = \\theta_0 + \\sum_{i=1}^p \\theta_i ~e_{t-i} + e_t $$\n",
+    "\n",
+    "Donde: \n",
+    "\n",
+    "* $P$ -- orden del modelo.\n",
+    "* $\\theta_0$ -- constante. \n",
+    "* $\\theta_1,...,\\phi_p$: coeficientes de los valores pasados de $e_t$.\n",
+    "* $e_t$: es un aleatorio normal $N(0, \\sigma^2)$.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Proceso autoregresivo de medias moviles ARMA"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Generación de series sintéticas\n",
+    "\n",
+    "**Ejercicio.--** Grafique una realización del modelo $y_t = 2 + 0.8*y_{t-1} - 0.6*e_{t-1} + e_t$ con $T$ = 100 y $e_t$ ~ $N(0, 0.5^2)$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Pronóstico\n",
+    "\n",
+    "**Ejercicio.--** Si la serie del ejercicio anterior es la serie real, grafique el pronóstico para las siguientes 20 observaciones y los intervalos de confianza para una desviación estándar."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Filtrado\n",
+    "\n",
+    "**Ejercicio.--** Si se tiene la serie presentada a continuación y el modelo:\n",
+    "\n",
+    "$$y_t =  0.8897 y_{t-1} - 0.4858 * y_{t-2} -0.2279*e_{t-1} + 0.2488*e_{t-2} + e_t$$\n",
+    "\n",
+    "compute el vector de errores $e_t$.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "collapsed": true,
+    "jupyter": {
+     "outputs_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "x <- c( 0.008720877, -0.070187719,  0.465438922,  0.325266638, -0.097881057,\n",
+    "       -0.784230077, -1.258963935, -0.324819493, -0.395749299,  0.584931439,\n",
+    "        0.404337137,  0.526124885, -0.289302006, -0.462703955,  0.112001104,\n",
+    "        0.436598957,  0.279412549, -0.445491137, -0.434671953, -0.460745508)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "## Proceso Integrado I(d)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Generación de series sintéticas\n",
+    "\n",
+    "**Ejercicio.--** Grafique una realización del modelo $(1 - B) ^d * y_t = e_t$ con $T$ = 10, $d$ = 2 y $e_t$ ~ $N(0, 0.5^2)$.\n",
+    "\n",
+    "**Ejercicio.--** Grafique el ACF de la serie anterior."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Pronóstico\n",
+    "\n",
+    "**Ejercicio.--** Si la serie del ejercicio anterior es la serie real, grafique el pronóstico para las siguientes 20 observaciones y los intervalos de confianza para una desviación estándar."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Estimación\n",
+    "\n",
+    "**Ejercicio.--** Genere una realización del modelo $(1 - B) ^d * y_t = e_t$ con $T$ = 10, $d$ = 1 y $e_t$ ~ $N(0, 0.5^2)$. Luego estime un modelo AR(1). Analice."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "source": [
+    "### Prueba de Raiz Unitaria de Dickey-Fuller\n",
+    "\n",
+    ">[`adf.test`](https://cran.r-project.org/web/packages/tseries/tseries.pdf)\n",
+    "\n",
+    "La prueba de Dickey-Fuller es una prueba de hipótesis donde para el modelo\n",
+    "\n",
+    "$$y_t = \\phi y_{t-1} + e_t$$\n",
+    "\n",
+    "\n",
+    "* $H_o$: $\\phi=1$ (raíz unitaria).\n",
+    "\n",
+    "\n",
+    "* $H_a$: $\\phi \\neq 1$.\n",
+    "\n",
+    "La serie debe diferenciarse hasta que no existan raíces unitarias."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "\n",
+       "\tAugmented Dickey-Fuller Test\n",
+       "\n",
+       "data:  x\n",
+       "Dickey-Fuller = -1.194, Lag order = 3, p-value = 0.8976\n",
+       "alternative hypothesis: stationary\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "x <- ts(data = c( 0.24, -0.45,  0.02,  0.67,  0.67,  1.41, -0.40,  0.46,  0.30, -0.27, \n",
+    "              -1.19, -1.70, -1.56, -1.59, -1.19, -1.48, -1.93, -2.73, -2.54, -3.63, \n",
+    "              -3.05, -3.12, -3.00, -2.22, -1.44, -3.07, -4.09, -4.61, -3.90, -3.43, \n",
+    "              -2.53, -3.05, -2.06, -3.33, -2.23, -2.36, -2.67, -0.82, -1.12, -0.54,\n",
+    "              -0.33,  0.66, -0.86, -1.87, -1.86, -1.62,  0.18,  0.61,  1.59,  0.65), freq=1)\n",
+    "\n",
+    "adf.test(x)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Diferenciación de la serie de tiempo"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "[Contenido](#Contenido)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    ">[`diff {base}`](https://stat.ethz.ch/R-manual/R-devel/library/base/html/diff.html)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "\n",
+    "Para utilizar esta metodología  para el modelamiento y posterior pronóstico de series de tiempo se debe verificar la estacionaridad de la serie. Esta se puede diagnosticar mediante el test de dickey-fuller que se realizó anteriormente, si la serie resulta no estacionaria se debe diferenciar la serie hasta alcanzar la estacionariedad.\n",
+    "\n",
+    "Sea $Y_t$ una serie de tiempo, su diferenciación simple esta dada por:\n",
+    "\n",
+    "$$ Y_t - Y_{t-1}$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {
+    "collapsed": true,
+    "jupyter": {
+     "outputs_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "## Ejemplo de diferenciación simple\n",
+    "\n",
+    "x.d <- diff(x)  # Serie X con presencia de raiz Unit."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Warning message:\n",
+      "In adf.test(x.d): p-value smaller than printed p-value"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "\n",
+       "\tAugmented Dickey-Fuller Test\n",
+       "\n",
+       "data:  x.d\n",
+       "Dickey-Fuller = -5.3973, Lag order = 3, p-value = 0.01\n",
+       "alternative hypothesis: stationary\n"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "## Prueba de raiz unitaria-Dickey-Fuller\n",
+    "\n",
+    "adf.test(x.d)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El valor $p$ es menor a 0.01 lo cual indica que la probabilidad de equivocarse dado que rechace la hipótesis nula es es menor a 1%, por tanto se rechaza la hipótesis nula y se confirma la serie diferenciada es estacionaria ya que no existe presencia de raíz unitaria."
+   ]
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "celltoolbar": "Slideshow",
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

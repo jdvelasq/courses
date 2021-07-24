@@ -28,6 +28,16 @@ Material de apoyo para cursos
     analitica-predictiva/index
     ciencia-de-los-datos/index    
     productos-de-datos/index
+    analitica_avanzada/index
+
+
+.. toctree::
+    :caption: Prueba técnica
+    :hidden:
+    :maxdepth: 1
+
+
+
 
 **Docente responsable:** 
 

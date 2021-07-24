@@ -124,21 +124,6 @@ Sesión 05
             /notebooks/python/3-*        
 
 
-    **Fundamentos de procesamiento de texto**
-
-        .. toctree::
-            :maxdepth: 1
-            :glob:
-
-            /notebooks/textblob/*
-            /notebooks/re/*
-            /notebooks/pyparsing/*
-
-        .. toctree::
-            :titlesonly:
-            :glob:
-
-            /notebooks/nltk/1-*
 
 
 Sesión 06

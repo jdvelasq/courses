@@ -1,0 +1,642 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "source": [
+    "Análisis de Flujos de Fondos\n",
+    "===\n",
+    "\n",
+    "* 60:00 min | Última modificación: Juno 22, 2019 | YouTube"
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Criterio del valor presente neto \n",
+    "\n",
+    "![assets/analysis.png](assets/analysis.png)\n"
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Criterio del valor presente.**\n",
+    "\n",
+    "$$PV(r) = \\sum_{t=0}^N \\frac{F_t}{(1+r)^t}$$\n",
+    "\n",
+    "* Si $PV(r) > 0$, acepte.\n",
+    "* Si $PV(r) = 0$, indiferencia.\n",
+    "* Si $PV(r) < 0$, rechace."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Criterio del valor futuro.**\n",
+    "\n",
+    "$$FV(r) = \\sum_{t=0}^N \\frac{F_t}{(1+r)^{N-t}}$$\n",
+    "\n",
+    "* Si $FV(r) > 0$, acepte.\n",
+    "* Si $FV(r) = 0$, indiferencia.\n",
+    "* Si $FV(r) < 0$, rechace."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Criterio del equivalente uniforme períodico.**\n",
+    "\n",
+    "$$UPE(r) = PV(r) * \\frac{r * (1+r)^N}{(1+r)^N-1}$$\n",
+    "\n",
+    "* Si $UPE(r) > 0$, acepte.\n",
+    "* Si $UPE(r) = 0$, indiferencia.\n",
+    "* Si $UPE(r) < 0$, rechace."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Nota 1.** $r$ es la MARR y puede variar de período a período.\n",
+    "\n",
+    "**Nota 2.** El $PV(r)$ representa el excedente que se gana sobre la alternativa de invertir a una tasa de $r$."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "`timevalue(cflo, marr, base_date=0)`\n",
+    "\n",
+    "donde:\n",
+    "\n",
+    "* `cflo` -- flujo neto de efectivo.\n",
+    "* `marr` -- tasa mínima atractiva de retorno.\n",
+    "* `base_date` -- período base para calcular el valor equivalente.\n",
+    "\n",
+    "La función retorna el valor único equivalente. Para `base_date=0` corresponde al valor presente neto; para `base_date = nper` corresponde al valor futuro neto.\n"
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Ejemplo.--** Calcule los indicadores para el siguiente flujo de efectivo, si la tasa de descuento es del 10%.\n",
+    "\n",
+    "![assets/diagrama-vpn.png](assets/diagrama-vpn.png)\n"
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "source": [
+    "import cashflows as cf\n",
+    "\n",
+    "cflo = cf.cashflow(const_value=[-1000, 400, 360, 320, 280, 240], start=2000)\n",
+    "cflo"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "2000   -1000.0\n",
+       "2001     400.0\n",
+       "2002     360.0\n",
+       "2003     320.0\n",
+       "2004     280.0\n",
+       "2005     240.0\n",
+       "Freq: A-DEC, dtype: float64"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 1
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "source": [
+    "## valor presente neto\n",
+    "cf.timevalue(cflo  = cflo,\n",
+    "             prate = cf.interest_rate([10]*6, start=2000))"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "241.84264611831009"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 2
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "source": [
+    "## valor futuro neto\n",
+    "cf.timevalue(cflo  = cflo,\n",
+    "             prate = cf.interest_rate([10]*6, start=2000),\n",
+    "             base_date = 5  )"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "389.49000000000012"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 3
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "source": [
+    "## la función puede recibir simultaneamente varios flujos de efectivo\n",
+    "cf.timevalue(cflo  = [cflo, cflo, cflo],\n",
+    "              prate = cf.interest_rate([10]*6, start=2000))"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "0    241.842646\n",
+       "1    241.842646\n",
+       "2    241.842646\n",
+       "dtype: float64"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 4
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Tasa interna de retorno (IRR)\n",
+    "\n",
+    "$r^*$ -- tasa interna de retorno (irr). Es la tasa que hace el valor presente igual a cero.\n",
+    "\n",
+    "$$PV(r^*) = \\sum_{t=0}^N \\frac{F_t}{(1+r^*)^t} ~=~0$$"
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Ejemplo.--** Calcule la irr para el ejemplo anterior."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "source": [
+    "import cashflows as cf\n",
+    "cflo = cf.cashflow(const_value=[-1000, 400, 360, 320, 280, 240], start=2000)\n",
+    "cf.irr(cflo)"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "20.000000000000018"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 6
+    }
+   ],
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "source": [
+    "cf.irr([cflo, cflo, cflo])"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "0    20.0\n",
+       "1    20.0\n",
+       "2    20.0\n",
+       "dtype: float64"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 7
+    }
+   ],
+   "metadata": {}
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Tasa Interna de Retorno Modificada\n",
+    "\n",
+    "![assets/mirr.png](assets/mirr.png)\n",
+    "\n",
+    "$$(1+MIRR)^N = \\frac{\\sum_{t=0}^N \\max(F_t,0) * (1+r_1)^{N-t} }{ \\sum_{t=0}^N \\min(F_t,0) * (1+r_2)^{-t} }$$\n",
+    "\n",
+    "$r_1$ -- tasa de reinversión.   \n",
+    "$r_2$ -- tasa de financiamiento."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "source": [
+    "cf.mirr(cflo=cflo, finance_rate=0, reinvest_rate=0)"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "9.8560543306117854"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 8
+    }
+   ],
+   "metadata": {
+    "scrolled": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "### Análisis de sensibilidad\n",
+    "\n",
+    "Se realiza variando una de las variables del problema para determinar el efecto en el indicador utilizado.\n",
+    "\n",
+    "**Ejemplo.--** Se tiene un proyecto con la siguiente información:\n",
+    "\n",
+    "* Años de operación: 10\n",
+    "* Años de construcción: 1\n",
+    "* Producción: 1000 unidades por año\n",
+    "* Precio de venta: `$` 10 por unidad\n",
+    "* Costos operativos: `$` 220 por año\n",
+    "* Costos de inversión: `$` 2000 depreciables a 10 años.\n",
+    "* MARR = 10%\n",
+    "* Impuesto de renta: 30%\n",
+    "\n",
+    "Construya la gráfica de sensibilidad del npv a la producción, el precio de venta y la inversión."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "source": [
+    "## se construye una función que recibe la información \n",
+    "## relevante y retorn el npv\n",
+    "\n",
+    "def project(marr,\n",
+    "            produccion, \n",
+    "            precio, \n",
+    "            costo,\n",
+    "            inversion):\n",
+    "    \n",
+    "    # ingresos operativos\n",
+    "    ingre = cf.cashflow(const_value=[0] + [precio*produccion]*10, start=2018) \n",
+    "    \n",
+    "    # costos operativos\n",
+    "    opera = cf.cashflow(const_value=[0] + [costo]*10, start=2018)\n",
+    "    \n",
+    "    # inversión\n",
+    "    inver = cf.cashflow(const_value=[inversion] + [0]*10, start=2018)\n",
+    "    \n",
+    "    # vida útil de la inversión\n",
+    "    life = cf.cashflow(const_value=[10] + [0]*10, start = 2018)\n",
+    "    \n",
+    "    # depreciación\n",
+    "    dep = cf.depreciation_sl(costs=inver, life=life)['Depr']\n",
+    "                        \n",
+    "        \n",
+    "        \n",
+    "    # utilidad antes de impuestos\n",
+    "    antes = ingre - opera - inver - dep\n",
+    "    \n",
+    "    tax_rate = cf.interest_rate(const_value=[30]*11, start=2018)\n",
+    "    \n",
+    "    impue = cf.after_tax_cashflow(antes, tax_rate=tax_rate)\n",
+    "    \n",
+    "    neto = antes + impue\n",
+    "\n",
+    "    npv = cf.timevalue(cflo=neto, prate=cf.interest_rate([marr]*11, start=2018))\n",
+    "    \n",
+    "    return npv"
+   ],
+   "outputs": [],
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "source": [
+    "project(marr=10, produccion=100, precio=10, costo=220, inversion=2000)"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "2633.0035977013285"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 11
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "source": [
+    "## resultados para diferentes valores de la MARR\n",
+    "x=[]\n",
+    "for i in [8, 10, 12]:\n",
+    "    x.append(project( i, 100, 10, 220, 2000))\n",
+    "x"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "[3059.4013748018465, 2633.0035977013285, 2260.2681634217906]"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 12
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "source": [
+    "## resultados para diferentes valores de la inversión\n",
+    "[project(10, 100, 10, 220, x) for x in [1600, 1800, 2000, 2200, 2400]]"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "[3352.5210871979721,\n",
+       " 2992.7623424496505,\n",
+       " 2633.0035977013285,\n",
+       " 2273.244852953007,\n",
+       " 1913.486108204685]"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 13
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "source": [
+    "## resultados para diferentes valores del precio\n",
+    "[project(10, 100, x, 220, 2000) for x in [8, 9, 10, 11, 12]]"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "[1035.4161502181119,\n",
+       " 1834.2098739597204,\n",
+       " 2633.0035977013285,\n",
+       " 3431.7973214429371,\n",
+       " 4230.5910451845448]"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 14
+    }
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "%matplotlib inline"
+   ],
+   "outputs": [],
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "source": [
+    "precio = [8, 9, 10, 11, 12]\n",
+    "y = [project(0.10, 100, x, 220, 2000) for x in precio]"
+   ],
+   "outputs": [],
+   "metadata": {
+    "collapsed": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "source": [
+    "plt.plot(precio, y)"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "[<matplotlib.lines.Line2D at 0x11285d208>]"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 17
+    },
+    {
+     "output_type": "display_data",
+     "data": {
+      "text/plain": [
+       "<matplotlib.figure.Figure at 0x109db9c18>"
+      ],
+      "image/png": "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"
+     },
+     "metadata": {}
+    }
+   ],
+   "metadata": {
+    "scrolled": true,
+    "slideshow": {
+     "slide_type": "fragment"
+    }
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Ejercicio.--** Grafique las sensibilidades al costo y a la producción."
+   ],
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    }
+   }
+  }
+ ],
+ "metadata": {
+  "anaconda-cloud": {},
+  "celltoolbar": "Slideshow",
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

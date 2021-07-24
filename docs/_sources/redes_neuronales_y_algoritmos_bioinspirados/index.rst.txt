@@ -205,19 +205,9 @@ Sesión 08
         * `LAB --- Identificación de creditos riesgosos usando SVMs <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/identificacion_de_creditos_riesgosos_usando_svm.ipynb>`_.
 
 
+
+
 Sesión 09
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-    **Sistemas difusos y Neurodifusos**   
-
-
-        .. toctree::
-            :maxdepth: 1
-            :glob:
-
-            /notebooks/fuzzy/1-*
-
-Sesión 10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Arboles de regresión y clasificación**
@@ -240,6 +230,22 @@ Sesión 10
             :glob:
 
             /notebooks/sklearn/ensembles/1-*
+
+
+
+
+Sesión 10
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Sistemas difusos y Neurodifusos**   
+
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/fuzzy/1-*
+
 
 
 Sesión 11
@@ -330,7 +336,7 @@ Sesión 15
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-    **Otros modelos**
+    **Opcional: Otros modelos**
 
     .. toctree::
         :maxdepth: 1
@@ -357,189 +363,3 @@ Sesión 16
 
     * **Cierre y evaluación del curso**
 
-**POR REVISAR**
-
-
-
-/notebooks/tensorflow/tutorials/Audio
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/tutorials/Audio/1-*        
-
-/notebooks/tensorflow/keras.io/audio
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/keras.io/audio/0-*        
-
-
-
-
-/notebooks/tensorflow/Distributed_training/
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/Distributed_training/1-*        
-
-
-/notebooks/tensorflow/tutorials/Generative
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-        
-        /notebooks/tensorflow/tutorials/Generative/1-*        
-
-
-/notebooks/tensorflow/keras.io/generative
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/keras.io/generative/0-*
-
-
-/notebooks/tensorflow/tutorials/Images
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-        
-        /notebooks/tensorflow/tutorials/Images/1-*        
-
-
-/notebooks/tensorflow/keras.io/vision
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/keras.io/vision/0-*
-
-
-/notebooks/tensorflow/tutorials/Interpretability
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-        
-        /notebooks/tensorflow/tutorials/Interpretability/1-*        
-
-
-/notebooks/tensorflow/tutorials/Load_and_process_data
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-        
-        /notebooks/tensorflow/tutorials/Load_and_process_data/1-*        
-
-
-/notebooks/tensorflow/tutorials/Reinforcement_learning
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/tutorials/Reinforcement_learning/1-*        
-
-
-/notebooks/tensorflow/keras.io/rl
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/keras.io/rl/0-*
-
-
-/notebooks/tensorflow/tutorials/Structured_data
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/tutorials/Structured_data/1-*        
-
-
-/notebooks/tensorflow/keras.io/structured_data
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/keras.io/structured_data/0-*
-
-/notebooks/tensorflow/tutorials/Text
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/tutorials/Text/1-*        
-
-
-/notebooks/tensorflow/keras.io/keras_recipes
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/keras.io/keras_recipes/0-*
-
-
-/notebooks/tensorflow/keras.io/nlp
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/keras.io/nlp/0-*
-
-/notebooks/tensorflow/keras.io/timeseries
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        
-        /notebooks/tensorflow/keras.io/timeseries/0-*
-        
-
-
-
-
-
-
-      
-
-
-            
-
-
-
-
-
-
-
-
-
-
-**Material Complementario**
-
-.. toctree::
-   :maxdepth: 1
-
-   /notebooks/tensorflow-in-r/fundamentos-de-tensorflow-en-r
-   /notebooks/tensorflow-in-r/estimacion-de-parametros-optimos-en-modelos-de-regresion-R.ipynb
-   /notebooks/tensorflow-in-r/tensorboard-en-r
-   /notebooks/tensorflow-in-r/estimadores-R
-   

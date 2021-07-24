@@ -1,0 +1,186 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "source": [
+    "Análisis bajo riesgo\n",
+    "===\n",
+    "\n",
+    "* 60:00 min | Última modificación: Juno 22, 2019 | YouTube"
+   ],
+   "metadata": {}
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "A continuación se desarrolla el mismo caso anterior pero considerando que el precio y la producción son variables aleatorias."
+   ],
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "source": [
+    "import numpy as np\n",
+    "import numpy.random as rdn\n",
+    "import cashflows as cf"
+   ],
+   "outputs": [],
+   "metadata": {
+    "collapsed": true
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "source": [
+    "## se construye una función que recibe la información relevante y retorn el npv\n",
+    "\n",
+    "def project(marr,\n",
+    "            costo,\n",
+    "            inversion):\n",
+    "    \n",
+    "    \n",
+    "    precio      = rdn.triangular(  8,  10,  12, 10)\n",
+    "    produccion  = rdn.triangular( 80, 100, 120, 10)\n",
+    "\n",
+    "    \n",
+    "    ingre = cf.cashflow(const_value = [0] + (precio*produccion).tolist(), start=2018)  \n",
+    "    opera = cf.cashflow(const_value = [0] + [costo] * 10, start=2018)\n",
+    "    inver = cf.cashflow(const_value = [inversion] + [0] * 10, start=2018)\n",
+    "    \n",
+    "    asset = cf.cashflow(const_value=[inversion] + [0] * 10, start=2018)\n",
+    "    life  = cf.cashflow(const_value=[5] + [0]*10, start=2018)\n",
+    "    \n",
+    "    dep   = cf.depreciation_sl(costs = asset, life=life)['Depr']\n",
+    "    \n",
+    "    antes = ingre - opera - inver - dep\n",
+    "    desp  = cf.after_tax_cashflow(antes, cf.interest_rate([30] * 11, start=2018))\n",
+    "    neto  = antes + dep\n",
+    "    \n",
+    "    npv   = cf.timevalue(cflo=neto, prate=marr)\n",
+    "    \n",
+    "    return npv"
+   ],
+   "outputs": [],
+   "metadata": {
+    "collapsed": true
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "source": [
+    "marr = cf.interest_rate([10] * 11, start=2018)\n",
+    "project(marr, 220, 2000)"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "2622.27516893243"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 3
+    }
+   ],
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "source": [
+    "import matplotlib.pyplot as plt"
+   ],
+   "outputs": [],
+   "metadata": {
+    "collapsed": true
+   }
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "source": [
+    "result = []\n",
+    "\n",
+    "for sim in range(1000):\n",
+    "    result.append(project(marr, 220, 2000))\n",
+    "result[1:10]"
+   ],
+   "outputs": [
+    {
+     "output_type": "execute_result",
+     "data": {
+      "text/plain": [
+       "[2597.27970768053,\n",
+       " 2610.1513068181644,\n",
+       " 3052.5482478377694,\n",
+       " 2552.1355200855833,\n",
+       " 2742.8843000115448,\n",
+       " 2474.7929391657253,\n",
+       " 2749.3260743851033,\n",
+       " 3235.9889184226331,\n",
+       " 2462.5773726707012]"
+      ]
+     },
+     "metadata": {},
+     "execution_count": 5
+    }
+   ],
+   "metadata": {}
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "source": [
+    "plt.hist(result)\n",
+    "plt.show()"
+   ],
+   "outputs": [
+    {
+     "output_type": "display_data",
+     "data": {
+      "text/plain": [
+       "<matplotlib.figure.Figure at 0x10d59f8d0>"
+      ],
+      "image/png": "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"
+     },
+     "metadata": {}
+    }
+   ],
+   "metadata": {
+    "scrolled": false
+   }
+  },
+  {
+   "cell_type": "markdown",
+   "source": [
+    "**Ejercicio.--** Incluya en la simulación a las variables costo e inversión."
+   ],
+   "metadata": {}
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
