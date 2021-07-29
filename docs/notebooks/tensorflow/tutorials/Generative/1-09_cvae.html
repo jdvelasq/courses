@@ -13,8 +13,6 @@
   
   <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
 
   
@@ -32,17 +30,16 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
         <script src="../../../../_static/clipboard.min.js"></script>
         <script src="../../../../_static/copybutton.js"></script>
         <script src="../../../../_static/translations.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     
     <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
@@ -73,7 +70,7 @@
           
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Buscar documentos" />
+    <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -160,7 +157,7 @@
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../../../../_sources/notebooks/tensorflow/tutorials/Generative/1-09_cvae.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+            <a href="../../../../_sources/notebooks/tensorflow/tutorials/Generative/1-09_cvae.ipynb.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -445,24 +442,13 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Convolutional-Variational-Autoencoder">
 <h1>Convolutional Variational Autoencoder<a class="headerlink" href="#Convolutional-Variational-Autoencoder" title="Enlazar permanentemente con este título">¶</a></h1>
-<table class="tfo-notebook-buttons" align="left"><td><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;a target=&quot;_blank&quot; href=&quot;https://www.tensorflow.org/tutorials/generative/cvae&quot;&gt;
-&lt;img src=&quot;https://www.tensorflow.org/images/tf_logo_32px.png&quot; /&gt;
-View on TensorFlow.org&lt;/a&gt;
-</pre></div>
-</div>
-</td><td><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;a target=&quot;_blank&quot; href=&quot;https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/tutorials/generative/cvae.ipynb&quot;&gt;
-&lt;img src=&quot;https://www.tensorflow.org/images/colab_logo_32px.png&quot; /&gt;
-Run in Google Colab&lt;/a&gt;
-</pre></div>
-</div>
-</td><td><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;a target=&quot;_blank&quot; href=&quot;https://github.com/tensorflow/docs/blob/master/site/en/tutorials/generative/cvae.ipynb&quot;&gt;
-&lt;img src=&quot;https://www.tensorflow.org/images/GitHub-Mark-32px.png&quot; /&gt;
-View source on GitHub&lt;/a&gt;
-</pre></div>
-</div>
-</td><td><div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;a href=&quot;https://storage.googleapis.com/tensorflow_docs/docs/site/en/tutorials/generative/cvae.ipynb&quot;&gt;&lt;img src=&quot;https://www.tensorflow.org/images/download_logo_32px.png&quot; /&gt;Download notebook&lt;/a&gt;
-</pre></div>
-</div>
+<table class="tfo-notebook-buttons" align="left">  <td>
+
+|e4ff67b1af754a05b5d47f27eaaa3523| View on TensorFlow.org</td>  <td>
+
+|51402b89e72740e2b888ab1092939c85| Run in Google Colab</td>  <td>
+
+|de316642e150474aa8851fe10cdbe6a2| View source on GitHub</td><td><p><a href="#id1"><span class="problematic" id="id2">|</span></a>8a3a900b6bf843fd8ec9f622f8245576|Download notebook</p>
 </td></table><p>This notebook demonstrates how to train a Variational Autoencoder (VAE) (<a class="reference external" href="https://arxiv.org/abs/1312.6114">1</a>, <a class="reference external" href="https://arxiv.org/abs/1401.4082">2</a>) on the MNIST dataset. A VAE is a probabilistic take on the autoencoder, a model which takes high dimensional input data and compresses it into a smaller representation. Unlike a traditional autoencoder, which maps the input onto a latent vector, a VAE maps the input data into the parameters of a probability distribution, such as the mean and
 variance of a Gaussian. This approach produces a continuous, structured latent space, which is useful for image generation.</p>
 <p><img alt="CVAE image latent space" src="../../../../_images/cvae_latent_space.jpg" /></p>
@@ -889,7 +875,7 @@ variance of a Gaussian. This approach produces a continuous, structured latent s
 <p>This tutorial has demonstrated how to implement a convolutional variational autoencoder using TensorFlow.</p>
 <p>As a next step, you could try to improve the model output by increasing the network size. For instance, you could try setting the <code class="docutils literal notranslate"><span class="pre">filter</span></code> parameters for each of the <code class="docutils literal notranslate"><span class="pre">Conv2D</span></code> and <code class="docutils literal notranslate"><span class="pre">Conv2DTranspose</span></code> layers to 512. Note that in order to generate the final 2D latent image plot, you would need to keep <code class="docutils literal notranslate"><span class="pre">latent_dim</span></code> to 2. Also, the training time would increase as the network size increases.</p>
 <p>You could also try implementing a VAE using a different dataset, such as CIFAR-10.</p>
-<p>VAEs can be implemented in several different styles and of varying complexity. You can find additional implementations in the following sources: - <a class="reference external" href="https://keras.io/examples/generative/vae/">Variational AutoEncoder (keras.io)</a> - <a class="reference external" href="https://www.tensorflow.org/guide/keras/custom_layers_and_models#putting_it_all_together_an_end-to-end_example">VAE example from «Writing custom layers and models» guide (tensorflow.org)</a> - <a class="reference external" href="https://www.tensorflow.org/probability/examples/Probabilistic_Layers_VAE">TFP Probabilistic Layers: Variational Auto
+<p>VAEs can be implemented in several different styles and of varying complexity. You can find additional implementations in the following sources: - <a class="reference external" href="https://keras.io/examples/generative/vae/">Variational AutoEncoder (keras.io)</a> - <a class="reference external" href="https://www.tensorflow.org/guide/keras/custom_layers_and_models#putting_it_all_together_an_end-to-end_example">VAE example from “Writing custom layers and models” guide (tensorflow.org)</a> - <a class="reference external" href="https://www.tensorflow.org/probability/examples/Probabilistic_Layers_VAE">TFP Probabilistic Layers: Variational Auto
 Encoder</a></p>
 <p>If you’d like to learn more about the details of VAEs, please refer to <a class="reference external" href="https://arxiv.org/abs/1906.02691">An Introduction to Variational Autoencoders</a>.</p>
 </div>
@@ -912,11 +898,11 @@ Encoder</a></p>
     
     
     
-    Construido con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
     
-    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
         </div>
