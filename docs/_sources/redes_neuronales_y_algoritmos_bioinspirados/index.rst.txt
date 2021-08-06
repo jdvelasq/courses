@@ -27,7 +27,7 @@ Sesión 02 (2021-03-02)
         :titlesonly:
         :glob:
         
-        /notebooks/sklearn/mccullochpitts/1-*
+        /notebooks/mcculloch-pitts_neuron/1-*
 
 Sesión 03 (2021-03-09)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -43,18 +43,18 @@ Sesión 04 (2021-03-16)
         :titlesonly:
         :glob:
         
-        /notebooks/sklearn/fundamentals/1-*
+        /notebooks/ml_fundamentals/1-*
 
-    * `LAB --- Optimización usando el gradiente descendente <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_el_gradiente_descendente.ipynb>`_.
-
-
-    * `LAB --- Estimación de parámetros en modelos de regresión <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/estimacion_de_parametros_en_modelos_de_regresion.ipynb>`_.
+    * `LAB --- Optimización usando el gradiente descendente <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/optimizacion_usando_el_gradiente_descendente.ipynb>`_.
 
 
-    * `LAB --- Optimización usando minibatch <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_minibatch.ipynb>`_.
+    * `LAB --- Estimación de parámetros en modelos de regresión <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/estimacion_de_parametros_en_modelos_de_regresion.ipynb>`_.
 
 
-    * `LAB --- Búsqueda de la tasa de aprendizaje y momentum óptimos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/busqueda_de_la_tasa_de_aprendizaje_y_momentum_optimos.ipynb>`_.
+    * `LAB --- Optimización usando minibatch <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/optimizacion_usando_minibatch.ipynb>`_.
+
+
+    * `LAB --- Búsqueda de la tasa de aprendizaje y momentum óptimos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/busqueda_de_la_tasa_de_aprendizaje_y_momentum_optimos.ipynb>`_.
 
 
 Sesión 05 (2021-03-23)
@@ -72,15 +72,15 @@ Sesión 06 (2021-04-06)
         :titlesonly:
         :glob:
         
-        /notebooks/sklearn/fundamentals/2-*
+        /notebooks/ml_fundamentals/2-*
 
-    * `LAB --- Implementación de tasas de aprendizaje <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/implementacion_de_tasas_de_aprendizaje.ipynb>`_.
-
-
-    * `LAB --- Selección de variables hacia adelante -forward-. <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/seleccion_de_variables_hacia_adelante.ipynb>`_.
+    * `LAB --- Implementación de tasas de aprendizaje <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/implementacion_de_tasas_de_aprendizaje.ipynb>`_.
 
 
-    * `LAB --- Selección de variables hacia atras -backward-. <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/seleccion_de_variables_hacia_atras.ipynb>`_.
+    * `LAB --- Selección de variables hacia adelante -forward-. <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/seleccion_de_variables_hacia_adelante.ipynb>`_.
+
+
+    * `LAB --- Selección de variables hacia atras -backward-. <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/seleccion_de_variables_hacia_atras.ipynb>`_.
 
 
 Sesión 07 (2021-04-13)
@@ -92,20 +92,20 @@ Sesión 07 (2021-04-13)
         :titlesonly:
         :glob:
         
-        /notebooks/sklearn/fundamentals/3-*
+        /notebooks/ml_fundamentals/3-*
 
 
 
-    * `LAB --- Optimización usando LASSO <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_LASSO.ipynb>`_.
+    * `LAB --- Optimización usando LASSO <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentalss/optimizacion_usando_LASSO.ipynb>`_.
 
 
-    * `LAB --- Optimización usando ElasticNet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/optimizacion_usando_ElasticNet.ipynb>`_.
+    * `LAB --- Optimización usando ElasticNet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/optimizacion_usando_ElasticNet.ipynb>`_.
 
 
-    * `LAB --- Función epsilon insensitiva <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/funcion_epsilon_insensitiva.ipynb>`_.
+    * `LAB --- Función epsilon insensitiva <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/funcion_epsilon_insensitiva.ipynb>`_.
 
 
-    * `LAB --- Función epsilon cuadrada insensitiva <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/funcion_epsilon_cuadrada_insensitiva.ipynb>`_.
+    * `LAB --- Función epsilon cuadrada insensitiva <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ml_fundamentals/funcion_epsilon_cuadrada_insensitiva.ipynb>`_.
 
 
 
@@ -118,7 +118,7 @@ Sesión 08 (2021-04-20)
         :titlesonly:
         :glob:
         
-        /notebooks/sklearn/fundamentals/4-*
+        /notebooks/ml_fundamentals/4-*
 
 
 
@@ -131,7 +131,7 @@ Sesión 09 (2021-04-27)
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/sgd/*
+        /notebooks/sklearn__sgd/*
     
 
     **Perceptrón bipolar**.
@@ -140,7 +140,7 @@ Sesión 09 (2021-04-27)
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/bipolar-perceptron/1-*
+        /notebooks/sklearn__perceptron/1-*
 
 
 
@@ -153,7 +153,7 @@ Sesión 10 (2021-05-04)
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/adaline/*
+        /notebooks/adaptive_linear_combiner/*
 
 
 
@@ -167,18 +167,18 @@ Sesión 11 (2021-07-27)
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/continuous-perceptron/1-*
+        /notebooks/continuous_perceptron/1-*
 
     .. toctree::
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/logistic/1-*
+        /notebooks/sklearn__logistic_regression/1-*
 
-    * `LAB --- Clasificación del conjunto artificial de datos de los dos circulos usando regresión logística <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/clasificacion_del_conjunto_artificial_de_datos_de_los_dos_circulos_usando_regresion_logistica.ipynb>`_.
+    * `LAB --- Clasificación del conjunto artificial de datos de los dos circulos usando regresión logística <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__logistic_regression/clasificacion_del_conjunto_artificial_de_datos_de_los_dos_circulos_usando_regresion_logistica.ipynb>`_.
 
 
-    * `LAB --- Identificación de hongos venenosos usando regresión logística <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/identificacion_de_hongos_venenosos_usando_regresion_logistica.ipynb>`_.
+    * `LAB --- Identificación de hongos venenosos usando regresión logística <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__logistic_regression/identificacion_de_hongos_venenosos_usando_regresion_logistica.ipynb>`_.
 
 
 
@@ -192,16 +192,16 @@ Sesión 12 (2021-08-03)
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/mlp/1-*
+        /notebooks/sklearn__neural_network/1-*
 
 
-    * `LAB --- Clasificación del conjunto artificial de datos de los dos circulos usando MLP <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/clasificacion_del_conjunto_artificial_de_datos_de_los_dos_circulos_usando_mlp.ipynb>`_.
+    * `LAB --- Clasificación del conjunto artificial de datos de los dos circulos usando MLP <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__neural_network/clasificacion_del_conjunto_artificial_de_datos_de_los_dos_circulos_usando_mlp.ipynb>`_.
 
 
-    * `LAB --- Clasificación del conjunto artificial 2G4C usando MLP <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/clasificacion_del_conjunto_artificial_2G4C_usando_mlp.ipynb>`_.
+    * `LAB --- Clasificación del conjunto artificial 2G4C usando MLP <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__neural_network/clasificacion_del_conjunto_artificial_2G4C_usando_mlp.ipynb>`_.
 
 
-    * `LAB --- Predicción de la evolución de la diabetes en pacientes usando perceptrones multicapa <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/prediccion_de_la_evolucion_de_la_diabetes_usando_mlp.ipynb>`_.
+    * `LAB --- Predicción de la evolución de la diabetes en pacientes usando perceptrones multicapa <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__neural_network/prediccion_de_la_evolucion_de_la_diabetes_usando_mlp.ipynb>`_.
 
 
 
@@ -215,15 +215,15 @@ Sesión 13 (2021-08-10)
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/svm/1-*
+        /notebooks/sklearn__svm/1-*
 
-    * `LAB --- Clasificación del conjunto artificial de datos de los dos circulos usando SVMs <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/clasificacion_del_conjunto_artificial_de_datos_de_los_dos_circulos_usando_svm.ipynb>`_.
-
-
-    * `LAB --- Clasificación del conjunto artificial 2G4C usando SVMs <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/clasificacion_del_conjunto_artificial_2G4C_usando_svm.ipynb>`_.
+    * `LAB --- Clasificación del conjunto artificial de datos de los dos circulos usando SVMs <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__svm/clasificacion_del_conjunto_artificial_de_datos_de_los_dos_circulos_usando_svm.ipynb>`_.
 
 
-    * `LAB --- Identificación de creditos riesgosos usando SVMs <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/identificacion_de_creditos_riesgosos_usando_svm.ipynb>`_.
+    * `LAB --- Clasificación del conjunto artificial 2G4C usando SVMs <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__svm/clasificacion_del_conjunto_artificial_2G4C_usando_svm.ipynb>`_.
+
+
+    * `LAB --- Identificación de creditos riesgosos usando SVMs <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__svm/identificacion_de_creditos_riesgosos_usando_svm.ipynb>`_.
 
 
 Sesión 14 (2021-08-17)
@@ -235,9 +235,9 @@ Sesión 14 (2021-08-17)
         :titlesonly:
         :glob:
 
-        /notebooks/sklearn/trees/1-*
+        /notebooks/sklearn__tree/1-*
 
-    * `LAB --- Clasificación del conjunto artificial 2G4C usando arboles <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/labs/clasificacion_del_conjunto_artificial_2G4C_usando_arboles.ipynb>`_.
+    * `LAB --- Clasificación del conjunto artificial 2G4C usando arboles <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/sklearn__tree/clasificacion_del_conjunto_artificial_2G4C_usando_arboles.ipynb>`_.
 
 
     **Ensambles de modelos**
@@ -246,7 +246,7 @@ Sesión 14 (2021-08-17)
         :titlesonly:
         :glob:
 
-        /notebooks/sklearn/ensembles/1-*
+        /notebooks/sklearn__ensemble/1-*
 
 
 Sesión 15 (2021-08-24)
@@ -258,14 +258,8 @@ Sesión 15 (2021-08-24)
         :maxdepth: 1
         :glob:
 
-        /notebooks/tensorflow/intro/1-*
+        /notebooks/tensorflow__ML_basics/1-*
 
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-
-        /notebooks/tensorflow/texto/1-*
-        
         
 Sesión 16 (2021-08-31)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -276,7 +270,8 @@ Sesión 16 (2021-08-31)
         :maxdepth: 1
         :glob:
 
-        /notebooks/tensorflow/estimadores/1-*
+        /notebooks/tensorflow__basics/1-*
+
 
 
     **Cierre y evaluación del curso**
@@ -287,11 +282,21 @@ Sesión 16 (2021-08-31)
 Material para próximos cursos (2022)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+
+    
+
     .. toctree::
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/associative/*
+        /notebooks/tensorflow__estimators/1-*
+
+
+    .. toctree::
+        :maxdepth: 1
+        :glob:
+
+        /notebooks/associative_memory_models/*
 
     .. toctree::
         :maxdepth: 1
@@ -308,44 +313,20 @@ Material para próximos cursos (2022)
         :glob:
 
 
-        /notebooks/fuzzy/1-*
+        /notebooks/fuzzy_systems/1-*
 
     .. toctree::
         :maxdepth: 1
         :glob:
 
-        /notebooks/sklearn/som/1-*
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
+        /notebooks/self-organizing_map/1-*
 
 
-        /notebooks/sklearn/cascor/1-*
 
-    .. toctree::
-        :maxdepth: 1
-        :glob:
 
-        /notebooks/sklearn/elm/1-*
 
-    .. toctree::
-        :maxdepth: 1
-        :glob:
 
-        /notebooks/sklearn/rbfn/1-*
 
-    .. toctree::
-        :maxdepth: 1
-        :glob:            
-
-        /notebooks/sklearn/pi-sigma/1-*
-
-    .. toctree::
-        :maxdepth: 1
-        :glob:
-                    
-        /notebooks/sklearn/associative/1-*
 
 
 
