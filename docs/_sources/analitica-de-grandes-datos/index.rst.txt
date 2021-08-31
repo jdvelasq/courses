@@ -14,7 +14,25 @@ Sesión 01
             course-info
 
 
-    **Hadoop Streamming**
+
+    **Ingeniería de Datos --- Bash para Procesamiento de Datos**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/bash/1-*
+            /notebooks/bash/2-*
+            /notebooks/bash/3-*
+            /notebooks/bash/4-*
+            /notebooks/bash/5-*
+
+
+Sesión 02
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Hadoop**
+    
 
         .. toctree::
             :maxdepth: 1
@@ -22,46 +40,60 @@ Sesión 01
 
             /notebooks/hadoop/1-*
 
-Sesión 02
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Apache Pig**
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Pig I**
 
         .. toctree::
             :maxdepth: 1
             :glob:
 
             /notebooks/pig/1-*
-            /notebooks/pig/2-*
-
-        
 
 
 Sesión 03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Apache Hive**
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Pig II**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+
+            /notebooks/pig/2-*
+
+        
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Hive I**
 
         .. toctree::
             :maxdepth: 1
             :glob:
 
             /notebooks/hive/1-*
-            /notebooks/hive/2-*        
-
 
 Sesión 04
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Apache Spark RDD y MLLib RDD**
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Hive II**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+
+            /notebooks/hive/2-*        
+
+
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Spark**
 
         .. toctree::
             :maxdepth: 1
             :glob:
 
             /notebooks/pyspark/1-*
-            
-    **Apache Spark MLLib RDD**
+
+
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Spark RDD**
     
         .. toctree::
             :maxdepth: 1
@@ -73,7 +105,7 @@ Sesión 04
 Sesión 05
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Apache SparkQL**
+    **Ingeniería de Datos --- Procesamiento de Datos con Apache Spark SQL**
 
         .. toctree::
             :maxdepth: 1
@@ -81,7 +113,7 @@ Sesión 05
 
             /notebooks/pyspark/3-*
 
-    **Apache Spark MLlib-main --- I**
+    **Analítica de Grandes Datos --- Procesamiento de Datos con Apache Spark ML I**
 
         .. toctree::
             :maxdepth: 1
@@ -93,7 +125,7 @@ Sesión 05
 Sesión 06
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Apache Spark MLlib-main --- II**
+    **Analítica de Grandes Datos --- Procesamiento de Datos con Apache Spark ML II**
 
         .. toctree::
             :maxdepth: 1
@@ -107,7 +139,7 @@ Sesión 06
 Sesión 07
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Apache Spark Streaming**
+    **Analítica de Grandes Datos --- Apache Spark Streaming**
 
         .. toctree::
             :maxdepth: 1
@@ -115,7 +147,7 @@ Sesión 07
 
             /notebooks/pyspark/7-*
 
-    **Introduccion a Keras con TensorFlow 2.4**
+    **Analítica de Grandes Datos --- Introduccion a Keras con TensorFlow 2.4**
 
         .. toctree::
             :maxdepth: 1
@@ -128,7 +160,7 @@ Sesión 07
 Sesión 08
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Procesamiento básico de texto usando TensorFlow 2.4**
+    **Analítica de Grandes Datos --- Procesamiento básico de texto usando TensorFlow 2.4**
 
         .. toctree::
             :maxdepth: 1
@@ -137,7 +169,7 @@ Sesión 08
             /notebooks/tensorflow/texto/1-*
 
 
-    **Estimadores en TensorFlow 2.4**
+    **Analítica de Grandes Datos --- Estimadores en TensorFlow 2.4**
 
         .. toctree::
             :maxdepth: 1

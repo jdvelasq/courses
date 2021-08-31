@@ -1,0 +1,1023 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "c91f72d3-b8c5-46bf-97b4-7b830c8157a8",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "# Agregación\n",
+    "\n",
+    "* *60:00 min* | Última modificación: Agosto 11, 2021 | YouTube"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "a3b7363c-0ac0-466a-bdbb-b9bcaf4fbfc4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "0ed50fe0-8452-41be-8888-b9c2bba243ff",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting /tmp/data.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile /tmp/data.csv\n",
+    "Vendor,Date,CarBrand,Color,Price,Code\n",
+    "KASPER B. ORTIZ,14.09.18,Dodge,indigo,\"1184\",1.0\n",
+    "Cheryl A. Kemp,25.01.20,Dongfeng Motor,violet,1379,2\n",
+    "Nita T. Gay,28.06.21,Renault,green,1591,5\n",
+    "Scarlet X. Stout,17.04.19,Ford,indigo,1901,1\n",
+    "Todd L. Richards,12.11.20,Tata Motors,indigo,1566,3\n",
+    "Philip Z. Pruitt,12.02.20,BMW,green,1440,4\n",
+    "Nita T. Gay,24.10.18,CHEVROLET,blue,1687,6\n",
+    "Kasper B. Ortiz,11.10.20,Buick,indigo,1894,2\n",
+    "Philip Z. Pruitt,22.01.19,Dacia,Violet,1858,6\n",
+    "Cheryl A. Kemp,21.11.18,Daimler,orange,1550,1\n",
+    "Todd L. Richards,28.04.19,LiCHEVROLETncoln,red,1606,2\n",
+    "cheryl a. kemp,28.05.20,Buick,red,1252,\"1\"\n",
+    "Kasper B. Ortiz,25.08.19,Volkswagen,violet,1468,9\n",
+    "Cheryl A. Kemp,28.11.20,Vauxhall,red,1339,8\n",
+    "Kasper B. Ortiz,16.03.21,Volkswagen,red,1618,9\n",
+    "Philip Z. Pruitt,17.03.21,Daimler,orange,1201,7\n",
+    "CHERYL A. KEMP,07.11.19,Isuzu,indigo,1280,6\n",
+    "NITA T. GAY,29.05.20,Hyundai Motors,orange,1849,7\n",
+    "Kasper B. Ortiz,13.02.20,Peugeot,Blue,1415,9\n",
+    "CHERYL A. KEMP,29.03.20,Maruti Suzuki,blue,1626,0\n",
+    "Kasper B. Ortiz,01.07.20,Mitsubishi Motors,blue,1120,1\n",
+    "NITA T. GAY,03.11.18,RAM Trucks,orange,1056,4\n",
+    "Kasper B. Ortiz,24.02.20,Kia Motors,orange,1375,3\n",
+    "Philip Z. Pruitt,14.05.20,Chevrolet,orange,1656,9\n",
+    "Kasper B. Ortiz,16.06.21,RAM Trucks,orange,1549,7\n",
+    "Kasper B. Ortiz,28.08.18,Kenworth,green,NONE,9\n",
+    "Philip Z. Pruitt,29.11.18,,orange,1469,4\n",
+    "Cheryl A. Kemp,01.10.18,GMC,orange,1087000,3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "c5cc1854-0de5-4d5e-9400-5cc2b14c1b4a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Vendor</th>\n",
+       "      <th>Date</th>\n",
+       "      <th>CarBrand</th>\n",
+       "      <th>Color</th>\n",
+       "      <th>Price</th>\n",
+       "      <th>Code</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>KASPER B. ORTIZ</td>\n",
+       "      <td>2018-09-14</td>\n",
+       "      <td>Dodge</td>\n",
+       "      <td>indigo</td>\n",
+       "      <td>1184.0</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>Cheryl A. Kemp</td>\n",
+       "      <td>2020-01-25</td>\n",
+       "      <td>Dongfeng Motor</td>\n",
+       "      <td>violet</td>\n",
+       "      <td>1379.0</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>Nita T. Gay</td>\n",
+       "      <td>2021-06-28</td>\n",
+       "      <td>Renault</td>\n",
+       "      <td>green</td>\n",
+       "      <td>1591.0</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>Scarlet X. Stout</td>\n",
+       "      <td>2019-04-17</td>\n",
+       "      <td>Ford</td>\n",
+       "      <td>indigo</td>\n",
+       "      <td>1901.0</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>Todd L. Richards</td>\n",
+       "      <td>2020-12-11</td>\n",
+       "      <td>Tata Motors</td>\n",
+       "      <td>indigo</td>\n",
+       "      <td>1566.0</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Vendor       Date        CarBrand   Color   Price  Code\n",
+       "0   KASPER B. ORTIZ 2018-09-14           Dodge  indigo  1184.0     1\n",
+       "1    Cheryl A. Kemp 2020-01-25  Dongfeng Motor  violet  1379.0     2\n",
+       "2       Nita T. Gay 2021-06-28         Renault   green  1591.0     5\n",
+       "3  Scarlet X. Stout 2019-04-17            Ford  indigo  1901.0     1\n",
+       "4  Todd L. Richards 2020-12-11     Tata Motors  indigo  1566.0     3"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'----------------------------------------------------------------------'"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Vendor</th>\n",
+       "      <th>Date</th>\n",
+       "      <th>CarBrand</th>\n",
+       "      <th>Color</th>\n",
+       "      <th>Price</th>\n",
+       "      <th>Code</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>23</th>\n",
+       "      <td>Philip Z. Pruitt</td>\n",
+       "      <td>2020-05-14</td>\n",
+       "      <td>Chevrolet</td>\n",
+       "      <td>orange</td>\n",
+       "      <td>1656.0</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>24</th>\n",
+       "      <td>Kasper B. Ortiz</td>\n",
+       "      <td>2021-06-16</td>\n",
+       "      <td>RAM Trucks</td>\n",
+       "      <td>orange</td>\n",
+       "      <td>1549.0</td>\n",
+       "      <td>7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25</th>\n",
+       "      <td>Kasper B. Ortiz</td>\n",
+       "      <td>2018-08-28</td>\n",
+       "      <td>Kenworth</td>\n",
+       "      <td>green</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>26</th>\n",
+       "      <td>Philip Z. Pruitt</td>\n",
+       "      <td>2018-11-29</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>orange</td>\n",
+       "      <td>1469.0</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>27</th>\n",
+       "      <td>Cheryl A. Kemp</td>\n",
+       "      <td>2018-01-10</td>\n",
+       "      <td>GMC</td>\n",
+       "      <td>orange</td>\n",
+       "      <td>1087000.0</td>\n",
+       "      <td>3</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              Vendor       Date    CarBrand   Color      Price  Code\n",
+       "23  Philip Z. Pruitt 2020-05-14   Chevrolet  orange     1656.0     9\n",
+       "24   Kasper B. Ortiz 2021-06-16  RAM Trucks  orange     1549.0     7\n",
+       "25   Kasper B. Ortiz 2018-08-28    Kenworth   green        NaN     9\n",
+       "26  Philip Z. Pruitt 2018-11-29         NaN  orange     1469.0     4\n",
+       "27    Cheryl A. Kemp 2018-01-10         GMC  orange  1087000.0     3"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Carga de datos e inspección inicial\n",
+    "#\n",
+    "data = pd.read_csv(\n",
+    "    \"/tmp/data.csv\",\n",
+    "    parse_dates=['Date'],\n",
+    ")\n",
+    "\n",
+    "#\n",
+    "# Conversión de tipos\n",
+    "#\n",
+    "data.Code = data.Code.astype(int)\n",
+    "data.Price = pd.to_numeric(data.Price, errors=\"coerce\")\n",
+    "\n",
+    "\n",
+    "display(\n",
+    "    data.head(),\n",
+    "    \"-\" * 70,\n",
+    "    data.tail(),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "804c6b7c-aac2-45dd-97b5-b3ebb7508c23",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'CHERYL A. KEMP'"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'cheryl a. kemp'"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Inspección directa de una columna\n",
+    "#\n",
+    "display(data.Vendor.min(), data.Vendor.max())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "0dbc5328-3232-4b8b-a739-b2f9564f9e05",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'KASPER B. ORTIZCheryl A. KempNita T. GayScarlet X. StoutTodd L. RichardsPhilip Z. PruittNita T. GayKasper B. OrtizPhilip Z. PruittCheryl A. KempTodd L. Richardscheryl a. kempKasper B. OrtizCheryl A. KempKasper B. OrtizPhilip Z. PruittCHERYL A. KEMPNITA T. GAYKasper B. OrtizCHERYL A. KEMPKasper B. OrtizNITA T. GAYKasper B. OrtizPhilip Z. PruittKasper B. OrtizKasper B. OrtizPhilip Z. PruittCheryl A. Kemp'"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se observa mezcla de valores en mayuscula\n",
+    "# y minuscula\n",
+    "#\n",
+    "data.Vendor.sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "90da24bd-dd93-423f-baf6-67b5b241b1e8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'1056'"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "'NONE'"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "display(data.Price.min(), data.Price.max())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "8f817077-cc18-4e18-8ead-fec316a99472",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Vendor    KASPER B. ORTIZCheryl A. KempNita T. GayScarle...\n",
+       "Color     indigovioletgreenindigoindigogreenblueindigoVi...\n",
+       "Price                                           1.12593e+06\n",
+       "Code                                                    129\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Inspección de la suma de los campos\n",
+    "#\n",
+    "data.sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "154ded43-2a79-46d9-9f36-12f21e0e4d1b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Vendor         CHERYL A. KEMP\n",
+       "Date      2018-01-10 00:00:00\n",
+       "Color                    Blue\n",
+       "Price                    1056\n",
+       "Code                        0\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "#\n",
+    "#\n",
+    "data.agg('min')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "c3a0736a-b0b0-47e9-b29a-6c991d9d7c27",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Vendor</th>\n",
+       "      <th>Date</th>\n",
+       "      <th>Color</th>\n",
+       "      <th>Price</th>\n",
+       "      <th>Code</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>CHERYL A. KEMP</td>\n",
+       "      <td>2018-01-10</td>\n",
+       "      <td>Blue</td>\n",
+       "      <td>1056.0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>cheryl a. kemp</td>\n",
+       "      <td>2021-06-28</td>\n",
+       "      <td>violet</td>\n",
+       "      <td>1087000.0</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "             Vendor       Date   Color      Price  Code\n",
+       "min  CHERYL A. KEMP 2018-01-10    Blue     1056.0     0\n",
+       "max  cheryl a. kemp 2021-06-28  violet  1087000.0     9"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "#\n",
+    "#\n",
+    "data.agg(['min', 'max'])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "3a90a895-97b1-4f3d-b37d-1fa89f691954",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>min</th>\n",
+       "      <th>max</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>Vendor</th>\n",
+       "      <td>CHERYL A. KEMP</td>\n",
+       "      <td>cheryl a. kemp</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Date</th>\n",
+       "      <td>2018-01-10 00:00:00</td>\n",
+       "      <td>2021-06-28 00:00:00</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Color</th>\n",
+       "      <td>Blue</td>\n",
+       "      <td>violet</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Price</th>\n",
+       "      <td>1056</td>\n",
+       "      <td>1.087e+06</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>Code</th>\n",
+       "      <td>0</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                        min                  max\n",
+       "Vendor       CHERYL A. KEMP       cheryl a. kemp\n",
+       "Date    2018-01-10 00:00:00  2021-06-28 00:00:00\n",
+       "Color                  Blue               violet\n",
+       "Price                  1056            1.087e+06\n",
+       "Code                      0                    9"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.agg(['min', 'max']).transpose()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "b035996c-9e54-46fd-98c7-441028b53d97",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Kasper B. Ortiz     8\n",
+       "Philip Z. Pruitt    5\n",
+       "Cheryl A. Kemp      4\n",
+       "CHERYL A. KEMP      2\n",
+       "Nita T. Gay         2\n",
+       "Todd L. Richards    2\n",
+       "NITA T. GAY         2\n",
+       "cheryl a. kemp      1\n",
+       "Scarlet X. Stout    1\n",
+       "KASPER B. ORTIZ     1\n",
+       "Name: Vendor, dtype: int64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.Vendor.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "2bbd9c4b-d917-4907-ba41-ceec0b39af8d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x7faeff03c668>"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "data.Vendor.value_counts(ascending=True).plot.barh()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "81fc70ca-ff32-41ec-92ad-d3a07602d3fc",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<matplotlib.axes._subplots.AxesSubplot at 0x7faefe8e67b8>"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    },
+    {
+     "data": {
+      "image/png": "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\n",
+      "text/plain": [
+       "<Figure size 432x288 with 1 Axes>"
+      ]
+     },
+     "metadata": {
+      "needs_background": "light"
+     },
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Un histograma ayuda a dectectar la presencia de\n",
+    "# outliers\n",
+    "#\n",
+    "data.Price.plot.hist()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "c385305a-fc8e-4f65-91ea-d1648db01dee",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>Date</th>\n",
+       "      <th>CarBrand</th>\n",
+       "      <th>Color</th>\n",
+       "      <th>Price</th>\n",
+       "      <th>Code</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>15</th>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>16</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>17</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>18</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>19</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>20</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>21</th>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>2</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>22</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>23</th>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>24</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25</th>\n",
+       "      <td>8</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>26</th>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>27</th>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>3</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    Date  CarBrand  Color  Price  Code\n",
+       "0      1         1      1      1     1\n",
+       "1      4         4      3      4     4\n",
+       "2      2         2      2      2     2\n",
+       "3      1         1      1      1     1\n",
+       "4      2         2      2      2     2\n",
+       "5      5         4      3      5     4\n",
+       "6      2         2      2      2     2\n",
+       "7      8         7      7      7     5\n",
+       "8      5         4      3      5     4\n",
+       "9      4         4      3      4     4\n",
+       "10     2         2      2      2     2\n",
+       "11     1         1      1      1     1\n",
+       "12     8         7      7      7     5\n",
+       "13     4         4      3      4     4\n",
+       "14     8         7      7      7     5\n",
+       "15     5         4      3      5     4\n",
+       "16     2         2      2      2     2\n",
+       "17     2         2      1      2     2\n",
+       "18     8         7      7      7     5\n",
+       "19     2         2      2      2     2\n",
+       "20     8         7      7      7     5\n",
+       "21     2         2      1      2     2\n",
+       "22     8         7      7      7     5\n",
+       "23     5         4      3      5     4\n",
+       "24     8         7      7      7     5\n",
+       "25     8         7      7      7     5\n",
+       "26     5         4      3      5     4\n",
+       "27     4         4      3      4     4"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "data.groupby('Vendor').transform('nunique')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f685d592-9bc9-42e3-8176-4582ee4d3a0c",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

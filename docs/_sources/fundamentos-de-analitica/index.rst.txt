@@ -41,9 +41,13 @@ Sesión 03
 
     **Datapipes y ETL**
 
+    **Revisar**
+
         .. toctree::
             :maxdepth: 1
             :glob:
+
+            
 
             /notebooks/python/3-*
 
