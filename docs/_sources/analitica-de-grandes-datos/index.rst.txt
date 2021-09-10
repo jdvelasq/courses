@@ -31,7 +31,7 @@ Sesión 01
 Sesión 02
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Hadoop**
+    **Ingeniería de Datos --- Apache Hadoop**
     
 
         .. toctree::
@@ -41,7 +41,7 @@ Sesión 02
             /notebooks/hadoop/1-*
 
 
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Pig I**
+    **Ingeniería de Datos --- Apache Pig I**
 
         .. toctree::
             :maxdepth: 1
@@ -53,7 +53,7 @@ Sesión 02
 Sesión 03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Pig II**
+    **Ingeniería de Datos --- Apache Pig II**
 
         .. toctree::
             :maxdepth: 1
@@ -63,7 +63,7 @@ Sesión 03
             /notebooks/pig/2-*
 
         
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Hive I**
+    **Ingeniería de Datos --- Apache Hive I**
 
         .. toctree::
             :maxdepth: 1
@@ -74,7 +74,7 @@ Sesión 03
 Sesión 04
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Hive II**
+    **Ingeniería de Datos --- Apache Hive II**
 
         .. toctree::
             :maxdepth: 1
@@ -84,7 +84,7 @@ Sesión 04
             /notebooks/hive/2-*        
 
 
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Spark**
+    **Ingeniería de Datos --- Programación funcional en Apache Spark**
 
         .. toctree::
             :maxdepth: 1
@@ -93,7 +93,7 @@ Sesión 04
             /notebooks/pyspark/1-*
 
 
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Spark RDD**
+    **Ingeniería de Datos --- Apache Spark RDD**
     
         .. toctree::
             :maxdepth: 1
@@ -105,7 +105,7 @@ Sesión 04
 Sesión 05
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos --- Procesamiento de Datos con Apache Spark SQL**
+    **Ingeniería de Datos --- Apache Spark SQL**
 
         .. toctree::
             :maxdepth: 1
@@ -113,7 +113,7 @@ Sesión 05
 
             /notebooks/pyspark/3-*
 
-    **Analítica de Grandes Datos --- Procesamiento de Datos con Apache Spark ML I**
+    **Analítica Predictiva en Grandes Datos --- Apache Spark ML I**
 
         .. toctree::
             :maxdepth: 1
@@ -125,7 +125,7 @@ Sesión 05
 Sesión 06
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Analítica de Grandes Datos --- Procesamiento de Datos con Apache Spark ML II**
+    **Analítica Predictiva en Grandes Datos --- Apache Spark ML II**
 
         .. toctree::
             :maxdepth: 1
@@ -147,7 +147,7 @@ Sesión 07
 
             /notebooks/pyspark/7-*
 
-    **Analítica de Grandes Datos --- Introduccion a Keras con TensorFlow 2.4**
+    **Analítica Predictiva en Grandes Datos --- Introduccion a Keras con TensorFlow 2.4**
 
         .. toctree::
             :maxdepth: 1
@@ -160,7 +160,7 @@ Sesión 07
 Sesión 08
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Analítica de Grandes Datos --- Procesamiento básico de texto usando TensorFlow 2.4**
+    **Analítica Predictiva en Grandes Datos --- Procesamiento básico de texto usando TensorFlow 2.4**
 
         .. toctree::
             :maxdepth: 1
@@ -169,7 +169,7 @@ Sesión 08
             /notebooks/tensorflow/texto/1-*
 
 
-    **Analítica de Grandes Datos --- Estimadores en TensorFlow 2.4**
+    **Analítica Predictiva en Grandes Datos --- Estimadores en TensorFlow 2.4**
 
         .. toctree::
             :maxdepth: 1

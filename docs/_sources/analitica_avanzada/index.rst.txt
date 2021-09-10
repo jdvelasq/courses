@@ -1,12 +1,13 @@
 Analítica Avanzada
 =========================================================================================
 
-Semana 1
+
+
+Sesión 01
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Presentación del curso**
 
-    * Ver la sección de *Información del curso* en el menú de la izquierda.
+    **Presentación del curso**
 
     .. toctree::
         :maxdepth: 1
@@ -14,109 +15,88 @@ Semana 1
 
         course-info
 
-    **Analítica Financiera I**
 
-    .. toctree::
-        :titlesonly:
-        :glob:
 
-        /notebooks/cashflows/1-*
+    * **Financial analytics**
 
-Semana 2
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/cashflows/1-*
+            /notebooks/cashflows/2-*
+            /notebooks/cashflows/3-*
+
+
+Sesión 02
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Analítica Financiera II**
+    * **Pronóstico de series de tiempo para analítica de negocios**
 
-    .. toctree::
-        :titlesonly:
-        :glob:
+        .. toctree::
+            :titlesonly:
+            :glob:
 
-        /notebooks/cashflows/2-*
+            /notebooks/timeseries/1-*
 
-Semana 3
+
+
+
+Sesion 03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Analítica Financiera III**
+    * **Text analytics**
 
-    .. toctree::
-        :titlesonly:
-        :glob:
+        .. toctree::
+            :titlesonly:
+            :glob:
 
-        /notebooks/cashflows/3-*
+            /notebooks/nltk/1-*
 
+        .. toctree::
+            :titlesonly:
+            :glob:
 
-Semana 4
+            /notebooks/nltk/2-*
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/tensorflow/texto/*
+
+Sesión 04
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Analítica de Texto I**
-
-    .. toctree::
-        :titlesonly:
-        :glob:
-
-        /notebooks/textblob/*
-        /notebooks/re/*
-        /notebooks/pyparsing/*
-
-    .. toctree::
-        :titlesonly:
-        :glob:
-
-        /notebooks/nltk/1-*
+    * **Customer analytics**
 
 
-
-Semana 5
+Sesión 05
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Analítica de Texto II**
-
-    .. toctree::
-        :titlesonly:
-        :glob:
-
-        /notebooks/nltk/2-*
+    * **Operations analytics**
 
 
-    .. toctree::
-        :titlesonly:
-        :glob:
-
-        /notebooks/tensorflow/texto/*
-
-
-Semana 6
+Sesión 06
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Predicción de Series de Tiempo I**
+    * **People analytics**
 
-    .. toctree::
-        :titlesonly:
-        :glob:
 
-        /notebooks/timeseries/1-*
-
-Semana 7
+Sesión 07
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Predicción de Series de Tiempo II**
+    * **Accounting analytics**
 
-    .. toctree::
-        :titlesonly:
-        :glob:
 
-        /notebooks/timeseries/2-*        
-
-Semana 8
+Sesión 08
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Predicción de Series de Tiempo III**
+    * **Marketing analytics**
 
-    .. toctree::
-        :titlesonly:
-        :glob:
 
-        /notebooks/timeseries/3-*
+
+
 
 
 
