@@ -46,6 +46,15 @@ Sesión 03
         * NBviewer https://nbviewer.jupyter.org
 
 
+    **Análisis de Datos --- Visualización básica de datos --- PENDIENTE**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/basic_data_visualization/1-*
+
+
     **Análisis de Datos --- Manipulación de Datos con Pandas --- PENDIENTE**
 
         .. toctree::
