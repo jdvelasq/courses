@@ -1,0 +1,766 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Recomendación de items frecuentes en supermercados usando Apriori --- 8:50 min\n",
+    "===\n",
+    "\n",
+    "* 8:50 min | Ultima modificación: Junio 22, 2019 | [YouTube](https://youtu.be/tOWDtDoHht8)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este ejemplo se desarrolla un sistema de reglas de asociación usando el algoritmo Apriori para realizar recomendaciones a clientes a partir de su compra actual. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Descripción del problema"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Una cadena de supermercados desea construir un sistema de recomendación para su página web que sugiera a un comprador otros productos que podrían interesarle dependiendo de la búsqueda o la selección de productos que haya realizado en el momento de realizar la selección."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Se tiene una base de datos de 9835 transacciones recolectadas de forma continua durante 12 días para un supermercado relativamente pequeño. Para hacer este problema manejable no se tuvieron en cuenta las posibles marcas de un mismo producto ni los distintos tipos de presentaciones. De esta forma, se tienen registros de 169 tipos de productos como `chicken`, `frozen meals`, `margarine`, etc. El objetivo en términos de los datos consiste en determinar los grupos de productos que se compran frecuentemente juntos con el fin de que cuando un cliente seleccione uno o más items de un determinado grupo, los restantes elementos le sean sugeridos automáticamente por el sistema.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Preparación"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "##\n",
+    "## Preparación. Se utiliza el paquete rpy2 \n",
+    "## para ejecutar código R dentro de Python.\n",
+    "##\n",
+    "%load_ext rpy2.ipython"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%%sh\n",
+    "PACK=arules\n",
+    "if /usr/bin/test ! -d /usr/local/lib/R/site-library/$PACK; \n",
+    "then    \n",
+    "    sudo Rscript -e 'install.packages(\"'$PACK'\")'\n",
+    "fi"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "R[write to console]: Loading required package: Matrix\n",
+      "\n",
+      "R[write to console]: \n",
+      "Attaching package: ‘arules’\n",
+      "\n",
+      "\n",
+      "R[write to console]: The following objects are masked from ‘package:base’:\n",
+      "\n",
+      "    abbreviate, write\n",
+      "\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Carga de los datos\n",
+    "##\n",
+    "library(arules)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Lectura de datos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {
+    "collapsed": true,
+    "jupyter": {
+     "outputs_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "%%R\n",
+    "groceries <- read.transactions(\n",
+    "    \"https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/groceries.csv\", \n",
+    "    sep = \",\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El archivo anterior contiene una transacción por fila, y los items comprados por transacción aparecen separados por coma:\n",
+    "\n",
+    "    citrus fruit,semi-finished bread,margarine,ready soups \n",
+    "    tropical fruit,yogurt,coffee\n",
+    "    whole milk\n",
+    "    pip fruit,yogurt,cream cheese ,meat spreads\n",
+    "    other vegetables,whole milk,condensed milk,long life bakery product\n",
+    "    whole milk,butter,yogurt,rice,abrasive cleaner\n",
+    "    rolls/buns\n",
+    "    other vegetables,UHT-milk,rolls/buns,bottled beer,liquor (appetizer)\n",
+    "    pot plants\n",
+    "    whole milk,cereals\n",
+    "    \n",
+    "Una de las dificultades para manejar esta información es que cada fila puede contener un número diferente de elementos por lo que no es posible usar directamente un data.frame y se utiliza una matriz esparcida. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Análisis exploratorio"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "transactions as itemMatrix in sparse format with\n",
+      " 9835 rows (elements/itemsets/transactions) and\n",
+      " 169 columns (items) and a density of 0.02609146 \n",
+      "\n",
+      "most frequent items:\n",
+      "      whole milk other vegetables       rolls/buns             soda \n",
+      "            2513             1903             1809             1715 \n",
+      "          yogurt          (Other) \n",
+      "            1372            34055 \n",
+      "\n",
+      "element (itemset/transaction) length distribution:\n",
+      "sizes\n",
+      "   1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 \n",
+      "2159 1643 1299 1005  855  645  545  438  350  246  182  117   78   77   55   46 \n",
+      "  17   18   19   20   21   22   23   24   26   27   28   29   32 \n",
+      "  29   14   14    9   11    4    6    1    1    1    1    3    1 \n",
+      "\n",
+      "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n",
+      "  1.000   2.000   3.000   4.409   6.000  32.000 \n",
+      "\n",
+      "includes extended item information - examples:\n",
+      "            labels\n",
+      "1 abrasive cleaner\n",
+      "2 artif. sweetener\n",
+      "3   baby cosmetics\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se obtiene la información más relevante de los datos. Los \n",
+    "## resultados indican lo siguiente:\n",
+    "##\n",
+    "##   * Hay 9.835 transacciones con 169 items (ok!)\n",
+    "##\n",
+    "##   * Los productos más vendidos son:\n",
+    "##     \n",
+    "##       producto          transacciones en \n",
+    "##                         las que aparece\n",
+    "##       ------------------------------------\n",
+    "##       whole milk        2.513\n",
+    "##       other vegetables  1.903\n",
+    "##       ...\n",
+    "##\n",
+    "##  * Hay 2.159 transacciones con 1 ítem, 1.643 con 2 ítems, ...,\n",
+    "##    hay una sola transacción con 32 ítems\n",
+    "##\n",
+    "##\n",
+    "summary(groceries)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La segunda parte de la tabla anterior indica la cantidad de transacciones que tienen un solo item, luego dos y así sucesivamente.\n",
+    " \n",
+    "    element (itemset/transaction) length distribution:\n",
+    "    sizes\n",
+    "       1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 \n",
+    "    2159 1643 1299 1005  855  645  545  438  350  246  182  117   78   77   55   46 \n",
+    "\n",
+    "      17   18   19   20   21   22   23   24   26   27   28   29   32 \n",
+    "      29   14   14    9   11    4    6    1    1    1    1    3    1 \n",
+    "\n",
+    "Esta misma tabla indica que hay una transacción en que se compraron 32 items."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "    items                     \n",
+      "[1] {citrus fruit,            \n",
+      "     margarine,               \n",
+      "     ready soups,             \n",
+      "     semi-finished bread}     \n",
+      "[2] {coffee,                  \n",
+      "     tropical fruit,          \n",
+      "     yogurt}                  \n",
+      "[3] {whole milk}              \n",
+      "[4] {cream cheese,            \n",
+      "     meat spreads,            \n",
+      "     pip fruit,               \n",
+      "     yogurt}                  \n",
+      "[5] {condensed milk,          \n",
+      "     long life bakery product,\n",
+      "     other vegetables,        \n",
+      "     whole milk}              \n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se visualizan los items comprados en las primeras\n",
+    "## cinco transacciones (filas del archivo)\n",
+    "##\n",
+    "inspect(groceries[1:5])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "abrasive cleaner artif. sweetener   baby cosmetics \n",
+      "    0.0035587189     0.0032536858     0.0006100661 \n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se imprime la frequencia con que se compraron los primeros \n",
+    "## tres items (note que esta organizado alfabeticamente)\n",
+    "##\n",
+    "itemFrequency(groceries[, 1:3])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n"
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se grafica un histograma que muestra la frecuencia\n",
+    "## con que se compraron ciertos items. El parámetro\n",
+    "## `support`  corresponde a la frecuencia mínima que\n",
+    "## deben tener un item para que sea incluído en la gráfica.\n",
+    "## En este caso un item debe aparecer en 0.1 * 9385 = 938.5\n",
+    "## transacciones para ser tenido en cuenta.\n",
+    "##\n",
+    "itemFrequencyPlot(groceries, support = 0.1)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n"
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se obtiene la misma gráfica anterior pero para los \n",
+    "## 20 items más comprados.\n",
+    "##\n",
+    "itemFrequencyPlot(groceries, topN = 20)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "image/png": "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\n"
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se puede visualizar la matriz de items\n",
+    "## y transacciones para una muestra aleatoria.\n",
+    "## Una linea vertical muestra items que podrían ser \n",
+    "## comprados en cada transacción\n",
+    "##\n",
+    "image(sample(groceries, 100))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Construcción del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Apriori\n",
+      "\n",
+      "Parameter specification:\n",
+      " confidence minval smax arem  aval originalSupport maxtime support minlen\n",
+      "        0.8    0.1    1 none FALSE            TRUE       5     0.1      1\n",
+      " maxlen target   ext\n",
+      "     10  rules FALSE\n",
+      "\n",
+      "Algorithmic control:\n",
+      " filter tree heap memopt load sort verbose\n",
+      "    0.1 TRUE TRUE  FALSE TRUE    2    TRUE\n",
+      "\n",
+      "Absolute minimum support count: 983 \n",
+      "\n",
+      "set item appearances ...[0 item(s)] done [0.00s].\n",
+      "set transactions ...[169 item(s), 9835 transaction(s)] done [0.01s].\n",
+      "sorting and recoding items ... [8 item(s)] done [0.00s].\n",
+      "creating transaction tree ... done [0.00s].\n",
+      "checking subsets of size 1 2 done [0.00s].\n",
+      "writing ... [0 rule(s)] done [0.00s].\n",
+      "creating S4 object  ... done [0.00s].\n",
+      "set of 0 rules \n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## La corrida con los parámetros por defecto de la\n",
+    "## función no generan reglas para los datos suministrados.\n",
+    "## El valor por defecto de support es 0.1, es decir,\n",
+    "## un item debe aparecer en un mínimo de 938.5 transacciones\n",
+    "## para ser considerado\n",
+    "##\n",
+    "apriori(groceries)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Apriori\n",
+      "\n",
+      "Parameter specification:\n",
+      " confidence minval smax arem  aval originalSupport maxtime support minlen\n",
+      "       0.25    0.1    1 none FALSE            TRUE       5   0.006      2\n",
+      " maxlen target   ext\n",
+      "     10  rules FALSE\n",
+      "\n",
+      "Algorithmic control:\n",
+      " filter tree heap memopt load sort verbose\n",
+      "    0.1 TRUE TRUE  FALSE TRUE    2    TRUE\n",
+      "\n",
+      "Absolute minimum support count: 59 \n",
+      "\n",
+      "set item appearances ...[0 item(s)] done [0.00s].\n",
+      "set transactions ...[169 item(s), 9835 transaction(s)] done [0.01s].\n",
+      "sorting and recoding items ... [109 item(s)] done [0.00s].\n",
+      "creating transaction tree ... done [0.01s].\n",
+      "checking subsets of size 1 2 3 4 done [0.01s].\n",
+      "writing ... [463 rule(s)] done [0.00s].\n",
+      "creating S4 object  ... done [0.00s].\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## El parámetro confianza representa el porcentaje mínimo\n",
+    "## de veces que una regla debe ser correcta para que \n",
+    "## sea considerada; esto permite eliminar reglas sin\n",
+    "## sentido. El parámetro minlen indica que las reglas \n",
+    "## deben contener al menos 2 items.\n",
+    "##\n",
+    "groceryrules <- apriori(groceries, \n",
+    "                        parameter = list(support = 0.006, \n",
+    "                                         confidence = 0.25, \n",
+    "                                         minlen = 2))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "set of 463 rules \n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Número de reglas generadas\n",
+    "##\n",
+    "groceryrules"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Evaluación del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "set of 463 rules\n",
+      "\n",
+      "rule length distribution (lhs + rhs):sizes\n",
+      "  2   3   4 \n",
+      "150 297  16 \n",
+      "\n",
+      "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n",
+      "  2.000   2.000   3.000   2.711   3.000   4.000 \n",
+      "\n",
+      "summary of quality measures:\n",
+      "    support           confidence          lift            count      \n",
+      " Min.   :0.006101   Min.   :0.2500   Min.   :0.9932   Min.   : 60.0  \n",
+      " 1st Qu.:0.007117   1st Qu.:0.2971   1st Qu.:1.6229   1st Qu.: 70.0  \n",
+      " Median :0.008744   Median :0.3554   Median :1.9332   Median : 86.0  \n",
+      " Mean   :0.011539   Mean   :0.3786   Mean   :2.0351   Mean   :113.5  \n",
+      " 3rd Qu.:0.012303   3rd Qu.:0.4495   3rd Qu.:2.3565   3rd Qu.:121.0  \n",
+      " Max.   :0.074835   Max.   :0.6600   Max.   :3.9565   Max.   :736.0  \n",
+      "\n",
+      "mining info:\n",
+      "      data ntransactions support confidence\n",
+      " groceries          9835   0.006       0.25\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "## \n",
+    "## Se obtiene la cantidad  de reglas, la cantidad \n",
+    "## de elementos por regla, y el resumen de las \n",
+    "## métricas de calidad\n",
+    "##\n",
+    "summary(groceryrules)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "     lhs                      rhs                support     confidence\n",
+      "[1]  {pot plants}          => {whole milk}       0.006914082 0.4000000 \n",
+      "[2]  {pasta}               => {whole milk}       0.006100661 0.4054054 \n",
+      "[3]  {herbs}               => {root vegetables}  0.007015760 0.4312500 \n",
+      "[4]  {herbs}               => {other vegetables} 0.007727504 0.4750000 \n",
+      "[5]  {herbs}               => {whole milk}       0.007727504 0.4750000 \n",
+      "[6]  {processed cheese}    => {whole milk}       0.007015760 0.4233129 \n",
+      "[7]  {semi-finished bread} => {whole milk}       0.007117438 0.4022989 \n",
+      "[8]  {beverages}           => {whole milk}       0.006812405 0.2617188 \n",
+      "[9]  {detergent}           => {other vegetables} 0.006405694 0.3333333 \n",
+      "[10] {detergent}           => {whole milk}       0.008947636 0.4656085 \n",
+      "     lift     count\n",
+      "[1]  1.565460 68   \n",
+      "[2]  1.586614 60   \n",
+      "[3]  3.956477 69   \n",
+      "[4]  2.454874 76   \n",
+      "[5]  1.858983 76   \n",
+      "[6]  1.656698 69   \n",
+      "[7]  1.574457 70   \n",
+      "[8]  1.024275 67   \n",
+      "[9]  1.722719 63   \n",
+      "[10] 1.822228 88   \n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se visualizan las primeras 10 reglas.\n",
+    "##\n",
+    "inspect(groceryrules[1:10])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "    lhs                   rhs                      support confidence     lift count\n",
+      "[1] {herbs}            => {root vegetables}    0.007015760  0.4312500 3.956477    69\n",
+      "[2] {berries}          => {whipped/sour cream} 0.009049314  0.2721713 3.796886    89\n",
+      "[3] {other vegetables,                                                              \n",
+      "     tropical fruit,                                                                \n",
+      "     whole milk}       => {root vegetables}    0.007015760  0.4107143 3.768074    69\n",
+      "[4] {beef,                                                                          \n",
+      "     other vegetables} => {root vegetables}    0.007930859  0.4020619 3.688692    78\n",
+      "[5] {other vegetables,                                                              \n",
+      "     tropical fruit}   => {pip fruit}          0.009456024  0.2634561 3.482649    93\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se puede inspeccionar un conjunto de reglas en particular\n",
+    "##\n",
+    "inspect(sort(groceryrules, by = \"lift\")[1:5])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "    lhs          rhs                  support     confidence lift     count\n",
+      "[1] {berries} => {whipped/sour cream} 0.009049314 0.2721713  3.796886  89  \n",
+      "[2] {berries} => {yogurt}             0.010574479 0.3180428  2.279848 104  \n",
+      "[3] {berries} => {other vegetables}   0.010269446 0.3088685  1.596280 101  \n",
+      "[4] {berries} => {whole milk}         0.011794611 0.3547401  1.388328 116  \n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se puede obtener un subconjunto de las reglas que\n",
+    "## cumplen una condición particular\n",
+    "##\n",
+    "berryrules <- subset(groceryrules, items %in% \"berries\")\n",
+    "inspect(berryrules)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {
+    "collapsed": true,
+    "jupyter": {
+     "outputs_hidden": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se pueden almacenar las reglas en el disco\n",
+    "##\n",
+    "write(groceryrules, \n",
+    "      file = \"groceryrules.csv\",\n",
+    "      sep = \",\", \n",
+    "      quote = TRUE, \n",
+    "      row.names = FALSE)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\"rules\",\"support\",\"confidence\",\"lift\",\"count\"\n",
+      "\"{pot plants} => {whole milk}\",0.00691408235892222,0.4,1.56545961002786,68\n",
+      "\"{pasta} => {whole milk}\",0.00610066090493137,0.405405405405405,1.58661446962283,60\n",
+      "\"{herbs} => {root vegetables}\",0.00701576004067107,0.43125,3.95647737873134,69\n",
+      "\"{herbs} => {other vegetables}\",0.00772750381291307,0.475,2.45487388334209,76\n",
+      "\"{herbs} => {whole milk}\",0.00772750381291307,0.475,1.85898328690808,76\n",
+      "\"{processed cheese} => {whole milk}\",0.00701576004067107,0.423312883435583,1.65669805355709,69\n",
+      "\"{semi-finished bread} => {whole milk}\",0.00711743772241993,0.402298850574713,1.57445650433836,70\n",
+      "\"{beverages} => {whole milk}\",0.00681240467717336,0.26171875,1.02427533077994,67\n",
+      "\"{detergent} => {other vegetables}\",0.00640569395017794,0.333333333333333,1.72271851462603,63\n"
+     ]
+    }
+   ],
+   "source": [
+    "!head groceryrules.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "'data.frame':\t463 obs. of  5 variables:\n",
+      " $ rules     : Factor w/ 463 levels \"{baking powder} => {other vegetables}\",..: 340 302 207 206 208 341 402 21 139 140 ...\n",
+      " $ support   : num  0.00691 0.0061 0.00702 0.00773 0.00773 ...\n",
+      " $ confidence: num  0.4 0.405 0.431 0.475 0.475 ...\n",
+      " $ lift      : num  1.57 1.59 3.96 2.45 1.86 ...\n",
+      " $ count     : num  68 60 69 76 76 69 70 67 63 88 ...\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%R\n",
+    "##\n",
+    "## Se pueden convertir a un data.frame\n",
+    "##\n",
+    "groceryrules_df <- as(groceryrules, \"data.frame\")\n",
+    "str(groceryrules_df)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** ¿Cómo se usan las reglas obtenidas cuándo se sabe que un cliente ha seleccionado ciertos productos?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!rm *.csv"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  },
+  "nteract": {
+   "version": "0.7.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

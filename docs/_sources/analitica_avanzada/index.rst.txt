@@ -13,7 +13,7 @@ Sesión 01
         :maxdepth: 1
         :glob:
 
-        course-info
+course-info
 
 
 
@@ -23,9 +23,9 @@ Sesión 01
             :titlesonly:
             :glob:
 
-            /notebooks/cashflows/1-*
-            /notebooks/cashflows/2-*
-            /notebooks/cashflows/3-*
+/notebooks/cashflows/1-*
+/notebooks/cashflows/2-*
+/notebooks/cashflows/3-*
 
 
 Sesión 02
@@ -37,7 +37,7 @@ Sesión 02
             :titlesonly:
             :glob:
 
-            /notebooks/timeseries/1-*
+/notebooks/timeseries/1-*
 
 
 
@@ -51,19 +51,19 @@ Sesion 03
             :titlesonly:
             :glob:
 
-            /notebooks/nltk/1-*
+/notebooks/nltk/1-*
 
         .. toctree::
             :titlesonly:
             :glob:
 
-            /notebooks/nltk/2-*
+/notebooks/nltk/2-*
 
         .. toctree::
             :titlesonly:
             :glob:
 
-            /notebooks/tensorflow/texto/*
+/notebooks/tensorflow/texto/*
 
 Sesión 04
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

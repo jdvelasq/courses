@@ -27,7 +27,7 @@ Sesion 02
                 :maxdepth: 1
                 :glob:
 
-                /notebooks/jupyter/*
+/notebooks/jupyter/*
 
             * NBviewer https://nbviewer.jupyter.org
 
@@ -49,7 +49,7 @@ Sesión 03
 
             
 
-            /notebooks/python/3-*
+/notebooks/python/3-*
 
 
 Sesión 04
@@ -61,7 +61,7 @@ Sesión 04
             :maxdepth: 1
             :glob:
 
-            /notebooks/sqlite3/*
+/notebooks/sqlite3/*
 
 
 Sesión 05 
@@ -73,7 +73,7 @@ Sesión 05
             :maxdepth: 1
             :glob:
 
-            /notebooks/pandas/*    
+/notebooks/pandas/*    
 
 
 Sesión 06
@@ -85,10 +85,10 @@ Sesión 06
             :maxdepth: 1
             :glob:
 
-            /notebooks/matplotlib/*
-            /notebooks/altair/*
-            /notebooks/bokeh/*
-            /notebooks/visualizacion/*
+/notebooks/matplotlib/*
+/notebooks/altair/*
+/notebooks/bokeh/*
+/notebooks/visualizacion/*
         
 
 Sesión 07
@@ -100,9 +100,9 @@ Sesión 07
             :maxdepth: 1
             :glob:
 
-            /notebooks/textblob/*
-            /notebooks/re/*
-            /notebooks/pyparsing/*
+/notebooks/textblob/*
+/notebooks/re/*
+/notebooks/pyparsing/*
 
 
 Sesión 08
@@ -114,7 +114,7 @@ Sesión 08
             :maxdepth: 1
             :glob:
 
-            /notebooks/aexp/*
+/notebooks/aexp/*
 
 
 Sesión 09
@@ -126,7 +126,7 @@ Sesión 09
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/oneR/*
+/notebooks/sklearn/oneR/*
 
 
     **Pronostico Bayesiano**
@@ -135,7 +135,7 @@ Sesión 09
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/bayes/*
+/notebooks/sklearn/bayes/*
 
 
 Sesión 10
@@ -147,7 +147,7 @@ Sesión 10
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/kmeans/*
+/notebooks/sklearn/kmeans/*
 
 
     **Data Storytelling**
@@ -164,8 +164,8 @@ Sesión 11
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/linear/1-*
-            /notebooks/sklearn/linear/2-*
+/notebooks/sklearn/linear/1-*
+/notebooks/sklearn/linear/2-*
 
 
 Sesión 12
@@ -177,7 +177,7 @@ Sesión 12
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/logistic/*
+/notebooks/sklearn/logistic/*
 
     **Redes Neuronales Artificiales**
 
@@ -185,7 +185,7 @@ Sesión 12
             :maxdepth: 1
             :glob:
 
-            /notebooks/sklearn/mlp/1-*
+/notebooks/sklearn/mlp/1-*
 
 Sesión 13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -196,10 +196,10 @@ Sesión 13
             :maxdepth: 1
             :glob:
 
-            /notebooks/tensorflow/intro/1-01_*
-            /notebooks/tensorflow/intro/1-02_*
-            /notebooks/tensorflow/intro/1-03_*
-            /notebooks/tensorflow/texto/1-*
+/notebooks/tensorflow/intro/1-01_*
+/notebooks/tensorflow/intro/1-02_*
+/notebooks/tensorflow/intro/1-03_*
+/notebooks/tensorflow/texto/1-*
 
 
 Sesión 14
@@ -211,7 +211,7 @@ Sesión 14
             :maxdepth: 1
             :glob:
 
-            /notebooks/hadoop/*
+/notebooks/hadoop/*
 
 
 Sesión 15
@@ -223,14 +223,14 @@ Sesión 15
             :maxdepth: 1
             :glob:
 
-            /notebooks/decisions/*
+/notebooks/decisions/*
 
 
         .. toctree::
             :maxdepth: 1
             :glob:
 
-            /notebooks/simulation/*
+/notebooks/simulation/*
 
 
 Sesión 16
@@ -242,7 +242,7 @@ Sesión 16
             :maxdepth: 1
             :glob:
 
-            /notebooks/flask/*
+/notebooks/flask/*
 
 
     * **Cierre y evaluación del curso**

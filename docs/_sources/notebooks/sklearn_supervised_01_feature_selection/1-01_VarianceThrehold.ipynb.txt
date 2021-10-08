@@ -1,0 +1,203 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "7900597d-61d3-458e-aa8d-3fdbdd6e2096",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    },
+    "tags": []
+   },
+   "source": [
+    "Remoción de características de baja varianza --- 4:14 min\n",
+    "===\n",
+    "\n",
+    "* 4:14 min | Última modificación: Octubre 7, 2021 | [YouTube](https://youtu.be/g8LB6sfjJrQ)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4f5fa909-2abf-4266-9e01-7c705ab80a01",
+   "metadata": {},
+   "source": [
+    "Remueve las características que:\n",
+    "\n",
+    "* Tienen varianza cero (la columna es una constante).\n",
+    "\n",
+    "* La varianza no cumple con un límite pre-establecido. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9b257d88-9b71-4fb2-9e23-18dad5601952",
+   "metadata": {},
+   "source": [
+    "Considere la siguiente matriz de características binarias:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "ed438930-ab0b-429f-b6e3-5361bda66b0b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "X = [\n",
+    "    [0, 0, 1],\n",
+    "    [0, 1, 0],\n",
+    "    [1, 0, 0],\n",
+    "    [0, 1, 1],\n",
+    "    [0, 1, 0],\n",
+    "    [0, 1, 1],\n",
+    "]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3abee5fd-a7a8-46a1-a4aa-1545e5d69327",
+   "metadata": {},
+   "source": [
+    "Para la cual, la 1ra columna es practicamente constante."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "170ef6fa-c9cd-4fd9-b8ff-198877b9842b",
+   "metadata": {},
+   "source": [
+    "En este caso se desea remover las columnas que tengan más del 80% de sus valores iguales."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9ff6f91c-f929-417f-8bcd-111884993d7f",
+   "metadata": {},
+   "source": [
+    "**Nota**: una distribución de Bernoulli es una distribución discreta de probabilidades en que el valor de éxito (1) ocurre con una probabilidad $p$, y el de fracaso (0) con una probabilidad de $1-p$. Si $X$ es una variable aleatoria que sigue una distribución de Bernoulli, su varianza será $p(1-p)$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e1b7489f-875c-4201-8758-e1d0d8edbafd",
+   "metadata": {},
+   "source": [
+    "Teniendo en cuenta lo anterior, se desea remover las caracterísiticas con una variranza inferior a:\n",
+    "\n",
+    "$$\n",
+    "0.80 \\; ( 1 - 0.80) = 0.16\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "4db6f6c1-20ac-4758-b3b0-d8945b21b008",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[0, 1],\n",
+       "       [1, 0],\n",
+       "       [0, 0],\n",
+       "       [1, 1],\n",
+       "       [1, 0],\n",
+       "       [1, 1]])"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.feature_selection import VarianceThreshold\n",
+    "\n",
+    "varianceThreshold = VarianceThreshold(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Features with a training-set variance lower than this threshold will be\n",
+    "    # removed.\n",
+    "    threshold=0.8\n",
+    "    * (1 - 0.8),\n",
+    ")\n",
+    "\n",
+    "varianceThreshold.fit_transform(X)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "e9b504a7-35c6-4e90-a324-f2242fc3ccaa",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0.13888889, 0.22222222, 0.25      ])"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "varianceThreshold.variances_"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "74cf7636-f6fd-4b06-b39e-b4f5d47ffb72",
+   "metadata": {},
+   "source": [
+    "Los valores de la varianza para otras distribuciones son:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7e515e66-c259-4020-8a83-a6cd58b7029a",
+   "metadata": {},
+   "source": [
+    "* Uniforme entre $a$ y $b$:\n",
+    "\n",
+    "$$\n",
+    "\\frac{1}{12}(b-a)^2\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a3d49901-e941-4a1b-b1ec-ec382a556537",
+   "metadata": {},
+   "source": [
+    "* Normal N($\\mu$, $\\sigma$):\n",
+    "\n",
+    "$$\n",
+    "\\sigma^2 = \\frac{1}{n-1}\\sum_i (x_i - \\bar{x})^2\n",
+    "$$"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

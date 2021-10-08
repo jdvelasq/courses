@@ -1,0 +1,521 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Reconocimiento de texto usando SVM --- 3:59 min\n",
+    "===\n",
+    "\n",
+    "* 3:59 min | Ultima modificación: Abril 14, 2021 | [YouTube](https://youtu.be/dv0QoSHfoXk)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En esta lección se realiza el reconocimiento de letras mayúsculas a partir de las características de cada letra."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Definición del problema"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En los problemas de OCR (optical character recognition), el reconocimiento se realizar mediante la división del documento en una malla tal que cada caracter es aislado en una celda. El problema real consiste en identificar el caracter aislado. La dificultad radica que un mismo caracter puede variar en tamaño, forma de escritura, grosor y orientación; véase la figura de abajo. Se desea construir una herramienta que permita el reconocimiento automático de caracteres.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Se tiene una base de 20.000 ejemplos de 16 atributos, la cual fue construida con las 26 letras mayúsculas del alfabeto ingles, impresas en blanco y negro distorsionadas y escaladas. Los atributos son los siguientes:\n",
+    "\n",
+    "1.  lettr --- capital letter --- (26 values from A to Z) \n",
+    "2.  x-box --- horizontal position of box --- (integer) \n",
+    "3.  y-box --- vertical position of box --- (integer) \n",
+    "4.  width --- width of box --- (integer) \n",
+    "5.  high  --- height of box --- (integer) \n",
+    "6.  onpix --- total # on pixels --- (integer) \n",
+    "7.  x-bar --- mean x of on pixels in box --- (integer) \n",
+    "8.  y-bar --- mean y of on pixels in box --- (integer) \n",
+    "9.  x2bar --- mean x variance --- (integer) \n",
+    "10. y2bar --- mean y variance --- (integer) \n",
+    "11. xybar --- mean x y correlation --- (integer) \n",
+    "12. x2ybr --- mean of x * x * y --- (integer) \n",
+    "13. xy2br --- mean of x * y * y --- (integer) \n",
+    "14. x-ege --- mean edge count left to right --- (integer) \n",
+    "15. xegvy --- correlation of x-ege with y --- (integer) \n",
+    "16. y-ege --- mean edge count bottom to top --- (integer) \n",
+    "17. yegvx --- correlation of y-ege with x --- (integer)\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Solución"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>letter</th>\n",
+       "      <th>xbox</th>\n",
+       "      <th>ybox</th>\n",
+       "      <th>width</th>\n",
+       "      <th>height</th>\n",
+       "      <th>onpix</th>\n",
+       "      <th>xbar</th>\n",
+       "      <th>ybar</th>\n",
+       "      <th>x2bar</th>\n",
+       "      <th>y2bar</th>\n",
+       "      <th>xybar</th>\n",
+       "      <th>x2ybar</th>\n",
+       "      <th>xy2bar</th>\n",
+       "      <th>xedge</th>\n",
+       "      <th>xedgey</th>\n",
+       "      <th>yedge</th>\n",
+       "      <th>yedgex</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>T</td>\n",
+       "      <td>2</td>\n",
+       "      <td>8</td>\n",
+       "      <td>3</td>\n",
+       "      <td>5</td>\n",
+       "      <td>1</td>\n",
+       "      <td>8</td>\n",
+       "      <td>13</td>\n",
+       "      <td>0</td>\n",
+       "      <td>6</td>\n",
+       "      <td>6</td>\n",
+       "      <td>10</td>\n",
+       "      <td>8</td>\n",
+       "      <td>0</td>\n",
+       "      <td>8</td>\n",
+       "      <td>0</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>I</td>\n",
+       "      <td>5</td>\n",
+       "      <td>12</td>\n",
+       "      <td>3</td>\n",
+       "      <td>7</td>\n",
+       "      <td>2</td>\n",
+       "      <td>10</td>\n",
+       "      <td>5</td>\n",
+       "      <td>5</td>\n",
+       "      <td>4</td>\n",
+       "      <td>13</td>\n",
+       "      <td>3</td>\n",
+       "      <td>9</td>\n",
+       "      <td>2</td>\n",
+       "      <td>8</td>\n",
+       "      <td>4</td>\n",
+       "      <td>10</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>D</td>\n",
+       "      <td>4</td>\n",
+       "      <td>11</td>\n",
+       "      <td>6</td>\n",
+       "      <td>8</td>\n",
+       "      <td>6</td>\n",
+       "      <td>10</td>\n",
+       "      <td>6</td>\n",
+       "      <td>2</td>\n",
+       "      <td>6</td>\n",
+       "      <td>10</td>\n",
+       "      <td>3</td>\n",
+       "      <td>7</td>\n",
+       "      <td>3</td>\n",
+       "      <td>7</td>\n",
+       "      <td>3</td>\n",
+       "      <td>9</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>N</td>\n",
+       "      <td>7</td>\n",
+       "      <td>11</td>\n",
+       "      <td>6</td>\n",
+       "      <td>6</td>\n",
+       "      <td>3</td>\n",
+       "      <td>5</td>\n",
+       "      <td>9</td>\n",
+       "      <td>4</td>\n",
+       "      <td>6</td>\n",
+       "      <td>4</td>\n",
+       "      <td>4</td>\n",
+       "      <td>10</td>\n",
+       "      <td>6</td>\n",
+       "      <td>10</td>\n",
+       "      <td>2</td>\n",
+       "      <td>8</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>G</td>\n",
+       "      <td>2</td>\n",
+       "      <td>1</td>\n",
+       "      <td>3</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>8</td>\n",
+       "      <td>6</td>\n",
+       "      <td>6</td>\n",
+       "      <td>6</td>\n",
+       "      <td>6</td>\n",
+       "      <td>5</td>\n",
+       "      <td>9</td>\n",
+       "      <td>1</td>\n",
+       "      <td>7</td>\n",
+       "      <td>5</td>\n",
+       "      <td>10</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "  letter  xbox  ybox  width  height  onpix  xbar  ybar  x2bar  y2bar  xybar  \\\n",
+       "0      T     2     8      3       5      1     8    13      0      6      6   \n",
+       "1      I     5    12      3       7      2    10     5      5      4     13   \n",
+       "2      D     4    11      6       8      6    10     6      2      6     10   \n",
+       "3      N     7    11      6       6      3     5     9      4      6      4   \n",
+       "4      G     2     1      3       1      1     8     6      6      6      6   \n",
+       "\n",
+       "   x2ybar  xy2bar  xedge  xedgey  yedge  yedgex  \n",
+       "0      10       8      0       8      0       8  \n",
+       "1       3       9      2       8      4      10  \n",
+       "2       3       7      3       7      3       9  \n",
+       "3       4      10      6      10      2       8  \n",
+       "4       5       9      1       7      5      10  "
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "\n",
+    "df = pd.read_csv(\n",
+    "    \"https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/letterdata.csv\"\n",
+    ")\n",
+    "\n",
+    "df.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(20000, 17)"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Tamaño del dataframe\n",
+    "#\n",
+    "df.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Entrenamiento del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "RangeIndex(start=0, stop=20000, step=1)"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.index"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df_train = df[0:16000]\n",
+    "df_test = df[16000:]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.svm import SVC\n",
+    "\n",
+    "clf = SVC(kernel=\"linear\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "SVC(C=1.0, break_ties=False, cache_size=200, class_weight=None, coef0=0.0,\n",
+       "    decision_function_shape='ovr', degree=3, gamma='scale', kernel='linear',\n",
+       "    max_iter=-1, probability=False, random_state=None, shrinking=True,\n",
+       "    tol=0.001, verbose=False)"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "clf.fit(df_train[df.columns[1:]], df_train[\"letter\"].ravel())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Pronóstico"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['U', 'N', 'V', 'I', 'N', 'H', 'E', 'Y', 'G', 'E'], dtype=object)"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y_test = clf.predict(df_test[df.columns[1:]])\n",
+    "\n",
+    "y_test[0:10]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Evaluación"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[144,   0,   0,   0,   0,   1,   0,   0,   0,   1,   0,   0,   0,\n",
+       "          1,   2,   0,   5,   0,   1,   1,   1,   0,   1,   0,   0,   0],\n",
+       "       [  0, 121,   0,   5,   2,   0,   2,   2,   0,   0,   1,   1,   2,\n",
+       "          0,   0,   2,   2,   5,   3,   0,   0,   2,   0,   1,   0,   0],\n",
+       "       [  0,   0, 121,   0,   5,   1,  11,   1,   1,   0,   1,   3,   0,\n",
+       "          0,   3,   0,   1,   0,   0,   0,   0,   0,   0,   0,   0,   0],\n",
+       "       [  1,   2,   0, 156,   0,   0,   2,   9,   4,   3,   4,   2,   0,\n",
+       "          6,   5,   3,   1,   3,   0,   0,   0,   0,   0,   2,   3,   0],\n",
+       "       [  0,   0,   5,   0, 126,   2,   1,   0,   0,   0,   3,   5,   0,\n",
+       "          0,   0,   0,   2,   0,   9,   1,   0,   0,   0,   1,   0,   3],\n",
+       "       [  0,   0,   0,   0,   0, 137,   2,   3,   6,   0,   0,   0,   0,\n",
+       "          0,   0,  16,   0,   0,   5,   2,   0,   2,   0,   2,   2,   0],\n",
+       "       [  1,   1,   2,   1,   9,   1, 123,   3,   0,   0,   0,   2,   1,\n",
+       "          0,   1,   2,   8,   1,   4,   2,   1,   0,   0,   2,   0,   0],\n",
+       "       [  0,   1,   0,   1,   0,   0,   1, 106,   0,   2,   2,   2,   2,\n",
+       "          5,  20,   0,   2,   3,   0,   3,   0,   2,   0,   0,   1,   0],\n",
+       "       [  0,   1,   0,   0,   0,   1,   0,   0, 141,   8,   0,   0,   0,\n",
+       "          0,   0,   1,   0,   0,   2,   0,   0,   0,   0,   6,   1,   1],\n",
+       "       [  0,   1,   0,   0,   0,   2,   0,   1,   7, 128,   0,   0,   0,\n",
+       "          0,   2,   1,   4,   0,   1,   0,   0,   0,   0,   1,   0,   6],\n",
+       "       [  1,   1,   8,   0,   0,   0,   2,   5,   0,   0, 121,   0,   0,\n",
+       "          2,   0,   1,   0,   8,   0,   1,   2,   0,   0,   7,   0,   0],\n",
+       "       [  0,   0,   0,   0,   2,   0,   1,   0,   1,   0,   0, 132,   0,\n",
+       "          0,   0,   0,   0,   0,   3,   0,   0,   0,   0,   1,   0,   1],\n",
+       "       [  1,   0,   1,   0,   0,   0,   1,   2,   0,   0,   0,   0, 137,\n",
+       "          4,   0,   0,   0,   0,   0,   0,   3,   0,   8,   0,   1,   0],\n",
+       "       [  0,   0,   0,   0,   0,   1,   0,   1,   0,   0,   0,   0,   0,\n",
+       "        143,   0,   0,   0,   3,   0,   0,   1,   0,   2,   0,   0,   0],\n",
+       "       [  0,   0,   1,   1,   0,   0,   0,   2,   0,   1,   1,   0,   0,\n",
+       "          1,  98,   2,   3,   1,   0,   0,   4,   0,   0,   0,   0,   0],\n",
+       "       [  0,   0,   0,   1,   0,   2,   1,   0,   0,   0,   0,   0,   0,\n",
+       "          0,   2, 132,   0,   0,   0,   0,   0,   0,   0,   0,   1,   0],\n",
+       "       [  0,   0,   0,   0,   1,   0,   7,   2,   0,   0,   0,   4,   0,\n",
+       "          0,   3,   1, 123,   1,   5,   0,   0,   0,   0,   0,   4,   0],\n",
+       "       [  1,   6,   0,   0,   1,   0,   2,   7,   0,   0,  11,   0,   0,\n",
+       "          1,   1,   1,   1, 135,   0,   1,   0,   1,   0,   0,   0,   0],\n",
+       "       [  1,   1,   0,   0,   1,   0,   3,   0,   1,   1,   0,   1,   0,\n",
+       "          0,   0,   0,  14,   0, 106,   3,   0,   0,   0,   1,   0,  10],\n",
+       "       [  0,   0,   0,   0,   2,   3,   0,   0,   0,   0,   0,   0,   0,\n",
+       "          0,   0,   0,   0,   0,   2, 132,   1,   0,   0,   1,   2,   2],\n",
+       "       [  1,   0,   4,   2,   0,   0,   0,   2,   0,   0,   0,   0,   0,\n",
+       "          0,   0,   0,   0,   0,   0,   0, 151,   0,   0,   0,   0,   0],\n",
+       "       [  0,   0,   0,   0,   0,   0,   3,   2,   0,   0,   0,   0,   0,\n",
+       "          2,   1,   0,   2,   1,   0,   0,   0, 125,   2,   0,   3,   0],\n",
+       "       [  0,   0,   0,   0,   0,   0,   2,   0,   0,   0,   0,   0,   2,\n",
+       "          0,   0,   1,   0,   0,   0,   0,   4,   4, 126,   0,   0,   0],\n",
+       "       [  0,   1,   0,   0,   2,   0,   0,   2,   2,   0,   2,   5,   0,\n",
+       "          0,   1,   0,   0,   0,   2,   0,   0,   0,   0, 134,   1,   3],\n",
+       "       [  3,   0,   0,   0,   0,   2,   0,   1,   0,   0,   0,   0,   0,\n",
+       "          1,   0,   5,   0,   0,   0,   3,   0,   0,   0,   0, 126,   0],\n",
+       "       [  2,   0,   0,   0,   1,   0,   0,   0,   2,   4,   0,   0,   0,\n",
+       "          0,   0,   0,   0,   0,  18,   2,   0,   0,   0,   0,   0, 132]])"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn import metrics\n",
+    "\n",
+    "metrics.confusion_matrix(y_test, df_test[\"letter\"].ravel())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** Use el kernel rbf y compare la precisión de los dos modelos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Ejercicio.---** Repita el proceso usando crossvalidation."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  },
+  "nteract": {
+   "version": "0.7.1"
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -1,0 +1,252 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "ef2dc3c3-616a-4a45-b50a-ca3009ebdc80",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Ámbito y variables en funciones --- 7:24 min\n",
+    "===\n",
+    "\n",
+    "* 7:24 min | Última modificación: Octubre 5, 2021 | [YouTube](https://youtu.be/3W-uuhft9lc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "2bb4d46f-ec27-4541-82a7-6e97e9a335f2",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "wick.john\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Accesso a variables definidas fuera del ámbito de la función\n",
+    "# =============================================================================\n",
+    "#\n",
+    "username = \"wick.john\"\n",
+    "\n",
+    "\n",
+    "def print_username():\n",
+    "    print(username)\n",
+    "\n",
+    "\n",
+    "print_username()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "288fa1ed-8907-4213-9583-d9ff60d34c98",
+   "metadata": {},
+   "source": [
+    "Explicación:\n",
+    "\n",
+    "     \n",
+    "     +-- Ambiente del módulo -------------+      +-- Ambiente de la función ------------------+        \n",
+    "     | {                                  |      | creado con la llamada a la funcion         |\n",
+    "     |     'username': \"wick.john\",       |      | {                                          |\n",
+    "     |     'print_username': #function,   | <=== |     'ambiente_padre': ambiente del modulo  |\n",
+    "     | }                                  |      | }                                          |\n",
+    "     +------------------------------------+      +--------------------------------------------+\n",
+    "    \n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "75efc879-a4ea-44bb-b079-872ed614af4f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "inside: 3\n",
+      "outside: 5\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Ambito de las variables\n",
+    "# =============================================================================\n",
+    "#\n",
+    "int_var = 5\n",
+    "\n",
+    "\n",
+    "def my_function(int_var):\n",
+    "    int_var = 3\n",
+    "    print(\"inside:\", int_var)\n",
+    "\n",
+    "\n",
+    "my_function(int_var)\n",
+    "print(\"outside:\", int_var)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "be3d14a5-532d-485d-ad0b-86f34a5ac539",
+   "metadata": {},
+   "source": [
+    "    Codigo                Memoria\n",
+    "    -----------------------------------------------------------\n",
+    "                          ambiente = {}, funcion = {}\n",
+    "    int_var = 5\n",
+    "                          ambiente = {'int_var': 5}, funcion = {}\n",
+    "    my_function(int_var)\n",
+    "                          ambiente = {'int_var': 5}, funcion = {'int_var': 5}\n",
+    "        (cuerpo de la funcion)\n",
+    "        int_var = 3\n",
+    "                          ambiente = {'int_var': 5}, funcion = {'int_var': 3}"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f8056636-5404-41b3-901f-65f1daba139e",
+   "metadata": {},
+   "source": [
+    "## Comandos global y nonlocal"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "348668ed-65a4-4cc0-926b-a2560a3605b4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "1"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se define la variable como global\n",
+    "#\n",
+    "global_var = 0\n",
+    "\n",
+    "\n",
+    "def user_function():\n",
+    "    \"\"\"Cambia el valor de la variable global\"\"\"\n",
+    "    global global_var\n",
+    "    global_var += 1\n",
+    "\n",
+    "\n",
+    "display(global_var)\n",
+    "user_function()\n",
+    "display(global_var)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "43933540-696e-46e0-a3a8-78714360fae9",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2\n",
+      "1\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Sin nonlocal\n",
+    "#\n",
+    "def outer():\n",
+    "    n = 1\n",
+    "\n",
+    "    def inner():\n",
+    "        n = 2\n",
+    "        print(n)\n",
+    "\n",
+    "    inner()\n",
+    "    print(n)\n",
+    "\n",
+    "\n",
+    "outer()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "407d6463-4e5a-455f-9566-c5e6a655fdac",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2\n",
+      "2\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Con nonlocal\n",
+    "#\n",
+    "def outer():\n",
+    "    n = 1\n",
+    "\n",
+    "    def inner():\n",
+    "        nonlocal n\n",
+    "        n = 2\n",
+    "        print(n)\n",
+    "\n",
+    "    inner()\n",
+    "    print(n)\n",
+    "\n",
+    "\n",
+    "outer()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

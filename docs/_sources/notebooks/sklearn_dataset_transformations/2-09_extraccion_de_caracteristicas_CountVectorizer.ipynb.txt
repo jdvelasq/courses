@@ -1,0 +1,414 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "4f840df1-29dd-4b41-a766-79bcb6e2d54a",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Extracción de características de texto usando CountVectorizer --- 13:46 min\n",
+    "===\n",
+    "\n",
+    "* 13:46 min | Ultima modificación: Ocutbre 7, 2021 | [YouTube](https://youtu.be/eqUmrBlIa64)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "536a638c-1685-43f8-845c-05f8df003d3b",
+   "metadata": {},
+   "source": [
+    "Creación del corpus\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "a7f40b7a-a7c5-44a2-a158-621d1cbdbee9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "corpus = [\n",
+    "    \"This is the first document.\",\n",
+    "    \"This is the second second document.\",\n",
+    "    \"And the third one.\",\n",
+    "    \"Is this the first document?\",\n",
+    "]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "889f8574-96cd-4ba2-8a08-d1c1f30982a5",
+   "metadata": {},
+   "source": [
+    "Creación del transformador\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "bdd6dc76-d12c-4082-a3fb-2aaf48c9ddb4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd\n",
+    "from sklearn.feature_extraction.text import CountVectorizer\n",
+    "\n",
+    "pd.set_option(\"display.notebook_repr_html\", False)\n",
+    "\n",
+    "\n",
+    "vectorizer = CountVectorizer(\n",
+    "    CountVectorizer(\n",
+    "        # -------------------------------------------------------------\n",
+    "        # Convert all characters to lowercase before tokenizing.\n",
+    "        lowercase=True,\n",
+    "        # -------------------------------------------------------------\n",
+    "        # Override the preprocessing (strip_accents and lowercase)\n",
+    "        # stage\n",
+    "        preprocessor=None,\n",
+    "        # -------------------------------------------------------------\n",
+    "        # Override the string tokenization step while preserving the\n",
+    "        # preprocessing and n-grams generation steps. Only applies if\n",
+    "        # analyzer == 'word'.\n",
+    "        tokenizer=None,\n",
+    "        # -------------------------------------------------------------\n",
+    "        # If ‘english’, a built-in stop word list for English is used.\n",
+    "        stop_words=\"english\",\n",
+    "        # -------------------------------------------------------------\n",
+    "        # Regular expression denoting what constitutes a “token”, only\n",
+    "        # used if analyzer == 'word'. The default regexp select tokens\n",
+    "        # of 2 or more alphanumeric characters (punctuation is\n",
+    "        # completely ignored and always treated as a token separator).\n",
+    "        token_pattern=\"(?u)\\b\\w\\w+\\b\",\n",
+    "        # -------------------------------------------------------------\n",
+    "        # When building the vocabulary ignore terms that have a\n",
+    "        # document frequency strictly higher than the given threshold\n",
+    "        # (corpus-specific stop words). If float, the parameter\n",
+    "        # represents a proportion of documents, integer absolute counts.\n",
+    "        # This parameter is ignored if vocabulary is not None.\n",
+    "        max_df=1.0,\n",
+    "        # -------------------------------------------------------------\n",
+    "        # When building the vocabulary ignore terms that have a\n",
+    "        # document frequency strictly lower than the given threshold.\n",
+    "        # This value is also called cut-off in the literature. If float,\n",
+    "        # the parameter represents a proportion of documents, integer\n",
+    "        # absolute counts.\n",
+    "        min_df=1,\n",
+    "        # -------------------------------------------------------------\n",
+    "        # If not None, build a vocabulary that only consider the top\n",
+    "        # max_features ordered by term frequency across the corpus.\n",
+    "        max_features=None,\n",
+    "        # -------------------------------------------------------------\n",
+    "        # If True, all non zero counts are set to 1. This is useful for\n",
+    "        # discrete probabilistic models that model binary events rather\n",
+    "        # than integer counts.\n",
+    "        binary=False,\n",
+    "    ),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a0a0a7ee-3e38-422d-a3ba-e8e9a077873e",
+   "metadata": {},
+   "source": [
+    "Creación de la matriz documento-termino\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "d1edabd7-b9cc-4889-a7e8-1b55a0b47b93",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "   and  document  first  is  one  second  the  third  this\n",
+       "0    0         1      1   1    0       0    1      0     1\n",
+       "1    0         1      0   1    0       2    1      0     1\n",
+       "2    1         0      0   0    1       0    1      1     0\n",
+       "3    0         1      1   1    0       0    1      0     1"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "vectorizer.fit(corpus)\n",
+    "X = vectorizer.transform(corpus)\n",
+    "\n",
+    "pd.DataFrame(\n",
+    "    X.toarray(),\n",
+    "    columns=vectorizer.get_feature_names(),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b808f425-3c5b-4982-ac3d-d9f5193a2d3f",
+   "metadata": {},
+   "source": [
+    "Nombres de las columnas\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "a5c71b87-90a2-4e0e-904d-62ba051e7c4d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['and', 'document', 'first', 'is', 'one', 'second', 'the', 'third', 'this']"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "vectorizer.get_feature_names()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a6bf8670-9f76-4222-9c7c-4beedb8f1e8f",
+   "metadata": {},
+   "source": [
+    "Transformación de un texto nuevo\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "af64cbc0-3dac-45f1-b715-014c2a245f32",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[0, 0, 0, 0, 0, 0, 0, 0, 0]])"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "vectorizer.transform([\"Something completely new.\"]).toarray()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "43a36a9d-6238-4552-8077-c580d9df34de",
+   "metadata": {},
+   "source": [
+    "Construcción de un analizador\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "0ff19763-f622-4094-b26e-b0a43d69c321",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['this', 'is', 'completely', 'new', 'text', 'document', 'to', 'analyze']"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "analyze = vectorizer.build_analyzer()\n",
+    "analyze(\"This is a completely new text document to analyze.\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "28fe81e9-9e5d-49ca-8623-b61359b2d1d5",
+   "metadata": {},
+   "source": [
+    "Posición (columna) del token en la matriz\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "95a326ec-3a10-4e41-992b-f49ab10ea286",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "vectorizer.vocabulary_.get(\"document\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "18576c90-905b-45c6-8d69-ba0d89fbe960",
+   "metadata": {},
+   "source": [
+    "Reconocimiento de bigramas\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "8f193085-4532-4535-8753-aa2f860ad2e0",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['bi', 'grams', 'are', 'cool', 'bi grams', 'grams are', 'are cool']"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "bigram_vectorizer = CountVectorizer(\n",
+    "    ngram_range=(1, 2),\n",
+    "    token_pattern=r\"\\b\\w+\\b\",\n",
+    "    min_df=1,\n",
+    ")\n",
+    "\n",
+    "analyze = bigram_vectorizer.build_analyzer()\n",
+    "\n",
+    "analyze(\"Bi-grams are cool!\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "b628a8ef-d546-4bad-828c-47a75c8bf80e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "   and  and the  document  first  first document  is  is the  is this  one  \\\n",
+       "0    0        0         1      1               1   1       1        0    0   \n",
+       "1    0        0         1      0               0   1       1        0    0   \n",
+       "2    1        1         0      0               0   0       0        0    1   \n",
+       "3    0        0         1      1               1   1       0        1    0   \n",
+       "\n",
+       "   second  ...  second second  the  the first  the second  the third  third  \\\n",
+       "0       0  ...              0    1          1           0          0      0   \n",
+       "1       2  ...              1    1          0           1          0      0   \n",
+       "2       0  ...              0    1          0           0          1      1   \n",
+       "3       0  ...              0    1          1           0          0      0   \n",
+       "\n",
+       "   third one  this  this is  this the  \n",
+       "0          0     1        1         0  \n",
+       "1          0     1        1         0  \n",
+       "2          1     0        0         0  \n",
+       "3          0     1        0         1  \n",
+       "\n",
+       "[4 rows x 21 columns]"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "bigram_vectorizer.fit(corpus)\n",
+    "\n",
+    "X_2 = bigram_vectorizer.transform(corpus)\n",
+    "\n",
+    "pd.DataFrame(\n",
+    "    X_2.toarray(),\n",
+    "    columns=bigram_vectorizer.get_feature_names(),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2f42426a-6e48-4744-b4a1-9f3de36bc42b",
+   "metadata": {},
+   "source": [
+    "Extracción de una columna de la matriz documento-término\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "b40dd3a3-3c92-43c3-80ce-052fe93761b9",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[0],\n",
+       "       [0],\n",
+       "       [0],\n",
+       "       [1]])"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "feature_index = bigram_vectorizer.vocabulary_.get(\"is this\")\n",
+    "\n",
+    "X_2[:, feature_index].toarray()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

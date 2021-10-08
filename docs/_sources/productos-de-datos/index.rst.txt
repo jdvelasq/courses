@@ -11,5 +11,5 @@ Sesión 01
 
             course-info
 
-..        /notebooks/git/taller-control-de-versiones-con-git.rst
-..        /notebooks/git/taller-control-de-versiones-con-github.rst
+/notebooks/git/taller-control-de-versiones-con-git.rst
+/notebooks/git/taller-control-de-versiones-con-github.rst
