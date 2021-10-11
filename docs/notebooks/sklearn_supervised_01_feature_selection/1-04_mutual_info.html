@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Remoción de características de baja varianza — 4:14 min &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
+  <title>Selección de variables usando Información mutua — &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Medición de la relevancia individual de variables en modelos de regresión (f_regression) —" href="1-02_f_regression.html" />
-    <link rel="prev" title="Efectos de la transformación de variables en modelos de regresión y clasificación — 13:14 min" href="../sklearn_dataset_transformations/9-98_Efectos_de_la_transformacion_de_variables.html" /> 
+    <link rel="next" title="Selección de variables usando la estadística chi2 —" href="1-05_chi2.html" />
+    <link rel="prev" title="Test ANOVA test para clasificación (test ANOVA de una via) —" href="1-03_f_classif.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -86,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../analitica-predictiva/index.html">Analítica Predictiva</a> &raquo;</li>
-      <li>Remoción de características de baja varianza — 4:14 min</li>
+      <li>Selección de variables usando Información mutua —</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/notebooks/sklearn_supervised_01_feature_selection/1-01_VarianceThrehold.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+            <a href="../../_sources/notebooks/sklearn_supervised_01_feature_selection/1-04_mutual_info.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
       </li>
   </ul>
   <hr/>
@@ -366,55 +366,93 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Remoción-de-características-de-baja-varianza-—-4:14-min">
-<h1>Remoción de características de baja varianza — 4:14 min<a class="headerlink" href="#Remoción-de-características-de-baja-varianza-—-4:14-min" title="Enlazar permanentemente con este título"></a></h1>
+<div class="section" id="Selección-de-variables-usando-Información-mutua-—">
+<h1>Selección de variables usando Información mutua —<a class="headerlink" href="#Selección-de-variables-usando-Información-mutua-—" title="Enlazar permanentemente con este título"></a></h1>
 <ul class="simple">
-<li><p>4:14 min | Última modificación: Octubre 7, 2021 | <a class="reference external" href="https://youtu.be/g8LB6sfjJrQ">YouTube</a></p></li>
+<li><p>0:00 min | Última modificación: Octubre 13, 2021 | [YouTube]</p></li>
 </ul>
-<p>Remueve las características que:</p>
+<p>Las funciones <code class="docutils literal notranslate"><span class="pre">mutual_info_classif()</span></code> y <code class="docutils literal notranslate"><span class="pre">mutual_info_regression</span></code> estiman la información mutua entre cada una de las variables explicativas y la variable dependiente.</p>
+<p>La información mutua es una medida de la dependencia mutua entre dos variables aleatorias.</p>
+<p>En el caso de variables discretas, la información mutua se calcula como:</p>
+<div class="math notranslate nohighlight">
+\[I(x y) = \sum_x \sum_y \text{Prob}(x,y)
+\log
+\left(
+\frac{\text{Prob}(x,y)}{\text{Prob(x)}\cdot \text{Prob}(y)}
+\right)\]</div>
+<p>donde:</p>
 <ul class="simple">
-<li><p>Tienen varianza cero (la columna es una constante).</p></li>
-<li><p>La varianza no cumple con un límite pre-establecido.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{Prob}(x,y)\)</span> es la probabilidad conjunta de <span class="math notranslate nohighlight">\(x\)</span> y <span class="math notranslate nohighlight">\(y\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{Prob}(x)\)</span> y <span class="math notranslate nohighlight">\(\text{Prob}(y)\)</span> son las probabilidades marginales.</p></li>
 </ul>
-<p>Considere la siguiente matriz de características binarias:</p>
-<div class="nbinput nblast docutils container">
+<p>Esta métrica se basa en la divergencia de Kullback-Leibler, la cual es una medida entre la diferencia entre dos distribuciones de probabilidad.</p>
+<p>En este caso se parte del supuesto de que si no hay relación entre <span class="math notranslate nohighlight">\(x\)</span> y <span class="math notranslate nohighlight">\(y\)</span>, ambas variables son independientes, y por tanto, <span class="math notranslate nohighlight">\(\text{Prob}(x,y)=\text{Prob}(x)\times \text{Prob}(y)\)</span>, tal que <span class="math notranslate nohighlight">\(I(x,y)=0\)</span>.</p>
+<div class="section" id="Clasificación">
+<h2>Clasificación<a class="headerlink" href="#Clasificación" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">X</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-</div>
-<p>Para la cual, la 1ra columna es practicamente constante.</p>
-<p>En este caso se desea remover las columnas que tengan más del 80% de sus valores iguales.</p>
-<p><strong>Nota</strong>: una distribución de Bernoulli es una distribución discreta de probabilidades en que el valor de éxito (1) ocurre con una probabilidad <span class="math notranslate nohighlight">\(p\)</span>, y el de fracaso (0) con una probabilidad de <span class="math notranslate nohighlight">\(1-p\)</span>. Si <span class="math notranslate nohighlight">\(X\)</span> es una variable aleatoria que sigue una distribución de Bernoulli, su varianza será <span class="math notranslate nohighlight">\(p(1-p)\)</span>.</p>
-<p>Teniendo en cuenta lo anterior, se desea remover las caracterísiticas con una variranza inferior a:</p>
-<div class="math notranslate nohighlight">
-\[0.80 \; ( 1 - 0.80) = 0.16\]</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">VarianceThreshold</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_blobs</span>
 
-<span class="n">varianceThreshold</span> <span class="o">=</span> <span class="n">VarianceThreshold</span><span class="p">(</span>
-    <span class="c1"># -------------------------------------------------------------------------</span>
-    <span class="c1"># Features with a training-set variance lower than this threshold will be</span>
-    <span class="c1"># removed.</span>
-    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.8</span>
-    <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">),</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_blobs</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">centers</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">cluster_std</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">varianceThreshold</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="c1">#</span>
+<span class="c1"># Note que x0 y x1 son significativas, mientras que x2 es una variable</span>
+<span class="c1"># aleatoria no explicativa</span>
+<span class="c1">#</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))))</span>
+<span class="n">X</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(150, 3)
+</pre></div></div>
+</div>
+<p><a class="reference external" href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_classif.html#sklearn.feature_selection.mutual_info_classif">https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_classif.html#sklearn.feature_selection.mutual_info_classif</a></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">mutual_info_classif</span>
+
+<span class="n">mutual_info</span> <span class="o">=</span> <span class="n">mutual_info_classif</span><span class="p">(</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Feature matrix.</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Target vector.</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Number of neighbors to use for MI estimation for continuous variables.</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># If bool, then determines whether to consider all features discrete or</span>
+    <span class="c1"># continuous.</span>
+    <span class="n">discrete_features</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Determines random number generation for adding small noise to continuous</span>
+    <span class="c1"># variables in order to remove repeated values.</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">mutual_info</span>
 </pre></div>
 </div>
 </div>
@@ -424,43 +462,74 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[0, 1],
-       [1, 0],
-       [0, 0],
-       [1, 1],
-       [1, 0],
-       [1, 1]])
+array([1.10530858, 0.9911345 , 0.        ])
 </pre></div></div>
 </div>
-<div class="nbinput docutils container">
+</div>
+<div class="section" id="Regresión">
+<h2>Regresión<a class="headerlink" href="#Regresión" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">varianceThreshold</span><span class="o">.</span><span class="n">variances_</span>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_regression</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_regression</span><span class="p">(</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="n">n_features</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">n_informative</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">bias</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">tail_strength</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">noise</span><span class="o">=</span><span class="mf">12.0</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">coef</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">mutual_info_regression</span>
+
+<span class="n">mutual_info</span> <span class="o">=</span> <span class="n">mutual_info_regression</span><span class="p">(</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Feature matrix.</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Target vector.</span>
+    <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># If bool, then determines whether to consider all features discrete or</span>
+    <span class="c1"># continuous.</span>
+    <span class="n">discrete_features</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Number of neighbors to use for MI estimation for continuous variables.</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Determines random number generation for adding small noise to continuous</span>
+    <span class="c1"># variables in order to remove repeated values.</span>
+    <span class="n">random_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">mutual_info</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([0.13888889, 0.22222222, 0.25      ])
+array([0.07191495, 0.63637812, 0.        , 0.09702994])
 </pre></div></div>
 </div>
-<p>Los valores de la varianza para otras distribuciones son:</p>
-<ul class="simple">
-<li><p>Uniforme entre <span class="math notranslate nohighlight">\(a\)</span> y <span class="math notranslate nohighlight">\(b\)</span>:</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[\frac{1}{12}(b-a)^2\]</div>
-<ul class="simple">
-<li><p>Normal N(<span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(\sigma\)</span>):</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[\sigma^2 = \frac{1}{n-1}\sum_i (x_i - \bar{x})^2\]</div>
+</div>
 </div>
 
 

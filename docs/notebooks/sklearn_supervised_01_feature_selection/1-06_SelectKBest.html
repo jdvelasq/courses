@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Remoción de características de baja varianza — 4:14 min &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
+  <title>Selección de las K características con los scores más altos (SelectKBest) — &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Medición de la relevancia individual de variables en modelos de regresión (f_regression) —" href="1-02_f_regression.html" />
-    <link rel="prev" title="Efectos de la transformación de variables en modelos de regresión y clasificación — 13:14 min" href="../sklearn_dataset_transformations/9-98_Efectos_de_la_transformacion_de_variables.html" /> 
+    <link rel="next" title="Selección de características de acuerdo a un percentil de los scores más altos (SelectPercentil) —" href="1-07_SelectPercentile.html" />
+    <link rel="prev" title="Selección de variables usando la estadística chi2 —" href="1-05_chi2.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -86,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../analitica-predictiva/index.html">Analítica Predictiva</a> &raquo;</li>
-      <li>Remoción de características de baja varianza — 4:14 min</li>
+      <li>Selección de las K características con los scores más altos (SelectKBest) —</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/notebooks/sklearn_supervised_01_feature_selection/1-01_VarianceThrehold.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+            <a href="../../_sources/notebooks/sklearn_supervised_01_feature_selection/1-06_SelectKBest.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
       </li>
   </ul>
   <hr/>
@@ -366,55 +366,67 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Remoción-de-características-de-baja-varianza-—-4:14-min">
-<h1>Remoción de características de baja varianza — 4:14 min<a class="headerlink" href="#Remoción-de-características-de-baja-varianza-—-4:14-min" title="Enlazar permanentemente con este título"></a></h1>
+<div class="section" id="Selección-de-las-K-características-con-los-scores-más-altos-(SelectKBest)-—">
+<h1>Selección de las K características con los scores más altos (SelectKBest) —<a class="headerlink" href="#Selección-de-las-K-características-con-los-scores-más-altos-(SelectKBest)-—" title="Enlazar permanentemente con este título"></a></h1>
 <ul class="simple">
-<li><p>4:14 min | Última modificación: Octubre 7, 2021 | <a class="reference external" href="https://youtu.be/g8LB6sfjJrQ">YouTube</a></p></li>
+<li><p>0:00 min | Última modificación: Octubre 11, 2021 | [YouTube]</p></li>
 </ul>
-<p>Remueve las características que:</p>
+<p>Esta metodología permite seleccionar las <span class="math notranslate nohighlight">\(k\)</span> variables independienes con los valores más altos del score.</p>
+<p>Esta es una metodología que permite realizar la selección independiente de cada característica, mediante una medición directa de la relación entre cada característica y <code class="docutils literal notranslate"><span class="pre">y</span></code> (sin que medie un modelo). Es decir, no se tienen en cuenta interacciones entre características.</p>
+<p>Para seleccionar las características se debe especificar una función que tome <code class="docutils literal notranslate"><span class="pre">X</span></code> y <code class="docutils literal notranslate"><span class="pre">y</span></code>, y retorne los scores y los valores críticos asociados.</p>
+<p>Las disponibles funciones para computar la importancia de cada variable independiente son:</p>
 <ul class="simple">
-<li><p>Tienen varianza cero (la columna es una constante).</p></li>
-<li><p>La varianza no cumple con un límite pre-establecido.</p></li>
+<li><p>f_classif()</p></li>
+<li><p>f_regression()</p></li>
+<li><p>mutual_info_classif()</p></li>
+<li><p>mutual_info_regression()</p></li>
+<li><p>chi2() (únicamente para clasificación)</p></li>
 </ul>
-<p>Considere la siguiente matriz de características binarias:</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">X</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="p">]</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Carga el dataset de prueba</span>
+<span class="c1">#</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_digits</span>
+
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_digits</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">X</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
 </div>
-<p>Para la cual, la 1ra columna es practicamente constante.</p>
-<p>En este caso se desea remover las columnas que tengan más del 80% de sus valores iguales.</p>
-<p><strong>Nota</strong>: una distribución de Bernoulli es una distribución discreta de probabilidades en que el valor de éxito (1) ocurre con una probabilidad <span class="math notranslate nohighlight">\(p\)</span>, y el de fracaso (0) con una probabilidad de <span class="math notranslate nohighlight">\(1-p\)</span>. Si <span class="math notranslate nohighlight">\(X\)</span> es una variable aleatoria que sigue una distribución de Bernoulli, su varianza será <span class="math notranslate nohighlight">\(p(1-p)\)</span>.</p>
-<p>Teniendo en cuenta lo anterior, se desea remover las caracterísiticas con una variranza inferior a:</p>
-<div class="math notranslate nohighlight">
-\[0.80 \; ( 1 - 0.80) = 0.16\]</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1797, 64)
+</pre></div></div>
+</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">VarianceThreshold</span>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectKBest</span><span class="p">,</span> <span class="n">chi2</span>
 
-<span class="n">varianceThreshold</span> <span class="o">=</span> <span class="n">VarianceThreshold</span><span class="p">(</span>
+<span class="n">selectKBest</span> <span class="o">=</span> <span class="n">SelectKBest</span><span class="p">(</span>
     <span class="c1"># -------------------------------------------------------------------------</span>
-    <span class="c1"># Features with a training-set variance lower than this threshold will be</span>
-    <span class="c1"># removed.</span>
-    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.8</span>
-    <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.8</span><span class="p">),</span>
+    <span class="c1"># Function taking two arrays X and y, and returning a pair of arrays</span>
+    <span class="c1"># (scores, pvalues) or a single array with scores.</span>
+    <span class="n">score_func</span><span class="o">=</span><span class="n">chi2</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Number of top features to select. int or &#39;all&#39;</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">varianceThreshold</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">selectKBest</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">selectKBest</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">X_new</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
 </div>
@@ -424,12 +436,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([[0, 1],
-       [1, 0],
-       [0, 0],
-       [1, 1],
-       [1, 0],
-       [1, 1]])
+(1797, 20)
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -437,7 +444,7 @@ array([[0, 1],
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">varianceThreshold</span><span class="o">.</span><span class="n">variances_</span>
+<span></span><span class="n">selectKBest</span><span class="o">.</span><span class="n">scores_</span>
 </pre></div>
 </div>
 </div>
@@ -447,20 +454,57 @@ array([[0, 1],
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-array([0.13888889, 0.22222222, 0.25      ])
+array([          nan,  811.90700411, 3501.28249552,  698.9252572 ,
+        438.52969882, 3879.81925999, 3969.45823205, 1193.5608181 ,
+         24.79521396, 2953.83108764, 2583.65198939,  388.24205944,
+        824.69094853, 3676.48924765, 1983.5796061 ,  597.24198237,
+          8.95886124, 1924.21690377, 2409.27140681, 3556.31594594,
+       4871.94194551, 4782.19921618, 2155.17378998,  376.76583333,
+          7.90090158, 2471.82418401, 4515.48149826, 2986.64314847,
+       3724.09567634, 3208.64686641, 5138.07412439,   35.71270718,
+                 nan, 5688.25079535, 5262.46646904, 3165.0605867 ,
+       3231.63943369, 2532.99695611, 3288.81403655,           nan,
+        142.85082873, 3863.85787901, 6416.0867248 , 5448.25154235,
+       4079.73153383, 2134.02540236, 4486.34097862,  313.53898127,
+         70.39927392,  449.72327313, 2801.97224468, 1527.54519627,
+       1653.15892311, 3073.99803898, 5251.21748723,  683.88227339,
+          9.15254237,  851.06791492, 3800.2473108 ,  730.92975659,
+       1859.53966338, 4379.2250408 , 5059.00551511, 2281.32864013])
 </pre></div></div>
 </div>
-<p>Los valores de la varianza para otras distribuciones son:</p>
-<ul class="simple">
-<li><p>Uniforme entre <span class="math notranslate nohighlight">\(a\)</span> y <span class="math notranslate nohighlight">\(b\)</span>:</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[\frac{1}{12}(b-a)^2\]</div>
-<ul class="simple">
-<li><p>Normal N(<span class="math notranslate nohighlight">\(\mu\)</span>, <span class="math notranslate nohighlight">\(\sigma\)</span>):</p></li>
-</ul>
-<div class="math notranslate nohighlight">
-\[\sigma^2 = \frac{1}{n-1}\sum_i (x_i - \bar{x})^2\]</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">selectKBest</span><span class="o">.</span><span class="n">pvalues_</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([            nan, 5.81310493e-169, 0.00000000e+000, 1.17740541e-144,
+       8.11314242e-089, 0.00000000e+000, 0.00000000e+000, 2.97727113e-251,
+       3.20626273e-003, 0.00000000e+000, 0.00000000e+000, 4.41344943e-078,
+       1.02825052e-171, 0.00000000e+000, 0.00000000e+000, 8.18335060e-123,
+       4.41080315e-001, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 1.23435651e-075,
+       5.44163062e-001, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 4.45801029e-005,
+                   nan, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000,             nan,
+       2.65875300e-026, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 3.49452723e-062,
+       1.27145348e-011, 3.28604761e-091, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 2.01600539e-141,
+       4.23314114e-001, 2.14859356e-177, 0.00000000e+000, 1.54562173e-151,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000])
+</pre></div></div>
+</div>
 </div>
 
 

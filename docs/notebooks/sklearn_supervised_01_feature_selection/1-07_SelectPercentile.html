@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Medición de la relevancia individual de variables en modelos de regresión — &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
+  <title>Selección de características de acuerdo a un percentil de los scores más altos (SelectPercentil) — &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
@@ -24,8 +24,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Técnicas para la selección univariada de características" href="1-05_seleccion_univariada_de_caracteristicas.html" />
-    <link rel="prev" title="Remoción de características de baja varianza — 4:14 min" href="1-01_VarianceThrehold.html" /> 
+    <link rel="next" title="SelectFpr —" href="1-08_SelectFpr.html" />
+    <link rel="prev" title="Selección de las K características con los scores más altos (SelectKBest) —" href="1-06_SelectKBest.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -86,9 +86,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../analitica-predictiva/index.html">Analítica Predictiva</a> &raquo;</li>
-      <li>Medición de la relevancia individual de variables en modelos de regresión —</li>
+      <li>Selección de características de acuerdo a un percentil de los scores más altos (SelectPercentil) —</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/notebooks/sklearn_supervised_01_feature_selection/1-02_relevancia_de_variables_regresion.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+            <a href="../../_sources/notebooks/sklearn_supervised_01_feature_selection/1-07_SelectPercentile.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
       </li>
   </ul>
   <hr/>
@@ -366,193 +366,165 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Medición-de-la-relevancia-individual-de-variables-en-modelos-de-regresión-—">
-<h1>Medición de la relevancia individual de variables en modelos de regresión —<a class="headerlink" href="#Medición-de-la-relevancia-individual-de-variables-en-modelos-de-regresión-—" title="Enlazar permanentemente con este título"></a></h1>
+<div class="section" id="Selección-de-características-de-acuerdo-a-un-percentil-de-los-scores-más-altos-(SelectPercentil)-—">
+<h1>Selección de características de acuerdo a un percentil de los scores más altos (SelectPercentil) —<a class="headerlink" href="#Selección-de-características-de-acuerdo-a-un-percentil-de-los-scores-más-altos-(SelectPercentil)-—" title="Enlazar permanentemente con este título"></a></h1>
 <ul class="simple">
-<li><p>0:00 min | Última modificación: Octubre 7, 2021 | [YouTube]</p></li>
+<li><p>0:00 min | Última modificación: Octubre 11, 2021 | [YouTube]</p></li>
 </ul>
-<p>La capacidad explicativa de las variables independientes en modelos de regresión puede realizarse a trabes del uso del estadístico F y su respectivos valores críticos.</p>
-<p>El cómputo de la correlación cruzada entre cada regresor y la variable explicada.</p>
-<div class="math notranslate nohighlight">
-\[\text{cross-corr}(x_i, y) = \frac{\sum_i (x_i - \bar{x}) * (y - \bar{y})}{\text{std}(x_i) * \text{std}(y)}\]</div>
-<p>El estadístico F se calcula en este caso como:</p>
-<div class="math notranslate nohighlight">
-\[F_\text{statistic} = \frac{\text{cross-corr}(x_i, y)^2}{1 - \text{cross-corr}(x_i, y)^2} * (n - 2)\]</div>
-<p>donde <span class="math notranslate nohighlight">\(n\)</span> es la cantidad de patrones del dataset. El modelo univariado de regresión lineal tiene 2 parámetros.</p>
-<p>El estadístico sigue una distribución <span class="math notranslate nohighlight">\(F(1, n-2)\)</span>.</p>
-<div class="nbinput nblast docutils container">
+<p>Esta metodología permite seleccionar las variables independientes que están en el percentil de scores más altos.</p>
+<p>Esta es una metodología que permite realizar la selección independiente de cada característica. Es decir, no se tienen en cuenta interacciones entre características.</p>
+<p>Para seleccionar las características se debe especificar una función que tome <code class="docutils literal notranslate"><span class="pre">X</span></code> y <code class="docutils literal notranslate"><span class="pre">y</span></code>, y retorne los scores y los valores críticos asociados.</p>
+<p>Las disponibles funciones para computar la importancia de cada variable independiente son:</p>
+<ul class="simple">
+<li><p>f_classif()</p></li>
+<li><p>f_regression()</p></li>
+<li><p>mutual_info_classif()</p></li>
+<li><p>mutual_info_regression()</p></li>
+<li><p>chi2() (únicamente para clasificación)</p></li>
+</ul>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">make_regression</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Carga el dataset de prueba</span>
+<span class="c1">#</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.datasets</span> <span class="kn">import</span> <span class="n">load_digits</span>
 
-<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">make_regression</span><span class="p">(</span>
-    <span class="n">n_samples</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
-    <span class="n">n_features</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">n_informative</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">noise</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-    <span class="n">random_state</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_digits</span><span class="p">(</span><span class="n">return_X_y</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">36</span><span class="p">))))</span>
+
+<span class="n">X</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1797, 100)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Cómputo de las medias y las desviaciones estándar</span>
-<span class="c1">#</span>
-<span class="n">y_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-<span class="n">y_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+<span></span><span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectPercentile</span><span class="p">,</span> <span class="n">chi2</span>
 
-<span class="n">x0</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">x0_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
-<span class="n">x0_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+<span class="n">selectPercentile</span> <span class="o">=</span> <span class="n">SelectPercentile</span><span class="p">(</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Function taking two arrays X and y, and returning a pair of arrays</span>
+    <span class="c1"># (scores, pvalues) or a single array with scores.</span>
+    <span class="n">score_func</span><span class="o">=</span><span class="n">chi2</span><span class="p">,</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Percent of features to keep.</span>
+    <span class="n">percentile</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="n">x1</span> <span class="o">=</span> <span class="n">X</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">x1_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
-<span class="n">x1_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+<span class="n">selectPercentile</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">X_new</span> <span class="o">=</span> <span class="n">selectPercentile</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">X_new</span><span class="o">.</span><span class="n">shape</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(1797, 10)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Coeficientes de correlación</span>
-<span class="c1">#</span>
-<span class="n">corr_coeff_x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">x0</span> <span class="o">-</span> <span class="n">x0_mean</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_mean</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">x0_std</span> <span class="o">*</span> <span class="n">y_std</span><span class="p">)</span>
-<span class="n">corr_coeff_x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x1_mean</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_mean</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">x1_std</span> <span class="o">*</span> <span class="n">y_std</span><span class="p">)</span>
-
-<span class="n">squared_corr_coeff_x0</span> <span class="o">=</span> <span class="n">corr_coeff_x0</span> <span class="o">**</span> <span class="mi">2</span>
-<span class="n">squared_corr_coeff_x1</span> <span class="o">=</span> <span class="n">corr_coeff_x1</span> <span class="o">**</span> <span class="mi">2</span>
+<span></span><span class="n">selectPercentile</span><span class="o">.</span><span class="n">scores_</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([           nan, 8.11907004e+02, 3.50128250e+03, 6.98925257e+02,
+       4.38529699e+02, 3.87981926e+03, 3.96945823e+03, 1.19356082e+03,
+       2.47952140e+01, 2.95383109e+03, 2.58365199e+03, 3.88242059e+02,
+       8.24690949e+02, 3.67648925e+03, 1.98357961e+03, 5.97241982e+02,
+       8.95886124e+00, 1.92421690e+03, 2.40927141e+03, 3.55631595e+03,
+       4.87194195e+03, 4.78219922e+03, 2.15517379e+03, 3.76765833e+02,
+       7.90090158e+00, 2.47182418e+03, 4.51548150e+03, 2.98664315e+03,
+       3.72409568e+03, 3.20864687e+03, 5.13807412e+03, 3.57127072e+01,
+                  nan, 5.68825080e+03, 5.26246647e+03, 3.16506059e+03,
+       3.23163943e+03, 2.53299696e+03, 3.28881404e+03,            nan,
+       1.42850829e+02, 3.86385788e+03, 6.41608672e+03, 5.44825154e+03,
+       4.07973153e+03, 2.13402540e+03, 4.48634098e+03, 3.13538981e+02,
+       7.03992739e+01, 4.49723273e+02, 2.80197224e+03, 1.52754520e+03,
+       1.65315892e+03, 3.07399804e+03, 5.25121749e+03, 6.83882273e+02,
+       9.15254237e+00, 8.51067915e+02, 3.80024731e+03, 7.30929757e+02,
+       1.85953966e+03, 4.37922504e+03, 5.05900552e+03, 2.28132864e+03,
+       3.60008703e+00, 2.19217170e+00, 2.03066569e+00, 2.94171731e+00,
+       3.27709832e+00, 1.71971160e+00, 7.34252314e-01, 4.64692864e+00,
+       2.98543828e+00, 7.35578295e+00, 4.02951205e+00, 4.13465963e+00,
+       4.19643601e+00, 2.92327956e+00, 2.53590121e+00, 2.34154316e+00,
+       2.36389578e+00, 2.44285487e+00, 2.45927501e+00, 6.05639073e+00,
+       2.85872832e+00, 2.74251548e+00, 3.12697422e+00, 5.57462076e+00,
+       5.18707468e+00, 2.93059604e+00, 9.43106988e-01, 3.35913263e+00,
+       4.63530197e+00, 1.17495076e+00, 7.74837679e-01, 3.07863232e+00,
+       3.36366910e+00, 3.64506330e+00, 4.72851387e+00, 1.27804265e+00])
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Cálculo de los estadísticos F</span>
-<span class="c1">#</span>
-<span class="n">f_statistic_x0</span> <span class="o">=</span> <span class="n">squared_corr_coeff_x0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">squared_corr_coeff_x0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
-<span class="n">f_statistic_x1</span> <span class="o">=</span> <span class="n">squared_corr_coeff_x1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">squared_corr_coeff_x1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
-
-<span class="n">display</span><span class="p">(</span>
-    <span class="n">f_statistic_x0</span><span class="p">,</span>
-    <span class="n">f_statistic_x1</span><span class="p">,</span>
-<span class="p">)</span>
+<span></span><span class="n">selectPercentile</span><span class="o">.</span><span class="n">pvalues_</span>
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-2325.283260155656
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-1.4326568685428067
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Cálculo de los valores críticos</span>
-<span class="c1">#</span>
-<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">f</span>
-
-<span class="n">display</span><span class="p">(</span>
-    <span class="mi">1</span> <span class="o">-</span> <span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">f_statistic_x0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">),</span>
-    <span class="mi">1</span> <span class="o">-</span> <span class="n">f</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">f_statistic_x1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">),</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-1.1102230246251565e-16
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-0.2413675068071277
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># --- Verificación ------------------------------------------------------------</span>
-<span class="c1">#</span>
-<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">f_regression</span>
-
-<span class="n">f_statistic</span><span class="p">,</span> <span class="n">p_values</span> <span class="o">=</span> <span class="n">f_regression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-
-<span class="n">display</span><span class="p">(</span>
-    <span class="n">f_statistic</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="n">f_statistic</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-    <span class="n">p_values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="n">p_values</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-2325.2832601555683
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-1.4326568685428058
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-1.7127059787182625e-28
-</pre></div></div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-0.24136750680712935
+array([            nan, 5.81310493e-169, 0.00000000e+000, 1.17740541e-144,
+       8.11314242e-089, 0.00000000e+000, 0.00000000e+000, 2.97727113e-251,
+       3.20626273e-003, 0.00000000e+000, 0.00000000e+000, 4.41344943e-078,
+       1.02825052e-171, 0.00000000e+000, 0.00000000e+000, 8.18335060e-123,
+       4.41080315e-001, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 1.23435651e-075,
+       5.44163062e-001, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 4.45801029e-005,
+                   nan, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000,             nan,
+       2.65875300e-026, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 3.49452723e-062,
+       1.27145348e-011, 3.28604761e-091, 0.00000000e+000, 0.00000000e+000,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 2.01600539e-141,
+       4.23314114e-001, 2.14859356e-177, 0.00000000e+000, 1.54562173e-151,
+       0.00000000e+000, 0.00000000e+000, 0.00000000e+000, 0.00000000e+000,
+       9.35711572e-001, 9.88051240e-001, 9.90973325e-001, 9.66560856e-001,
+       9.52288627e-001, 9.95165159e-001, 9.99844029e-001, 8.63937029e-001,
+       9.64869491e-001, 6.00129741e-001, 9.09459390e-001, 9.02327947e-001,
+       8.98014222e-001, 9.67259052e-001, 9.79902343e-001, 9.84845736e-001,
+       9.84322544e-001, 9.82381001e-001, 9.81958723e-001, 7.34261464e-001,
+       9.69633314e-001, 9.73635033e-001, 9.59047184e-001, 7.81620699e-001,
+       8.17705007e-001, 9.66983061e-001, 9.99557809e-001, 9.48341186e-001,
+       8.64871463e-001, 9.98917018e-001, 9.99804541e-001, 9.61095610e-001,
+       9.48117653e-001, 9.33184421e-001, 8.57303250e-001, 9.98482943e-001])
 </pre></div></div>
 </div>
 </div>
