@@ -1,0 +1,1507 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Segmentación del mercado de adolescentes --- 17:07 min\n",
+    "===\n",
+    "\n",
+    "* 17:07 min | Ultima modificación: Abril 14, 2021 | [YouTube](https://youtu.be/sNHcKxjZcG4)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este tutorial se aplica el algoritmo K-means para clasificar un grupo de adolecentes con base en sus intéreses, con el fin de diseñar estrategias publicitarias y servicios encaminados a cada grupo de interés."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Descripción del problema\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Un vendedor desea enviar publicidad electrónica a una población de adolecentes y adultos jóvenes con el fin de maximizar sus ventas. Para ello, desea poder clasificar a sus clientes potenciales por grupos de interés de acuerdo con sus intereses y consecuentemente enviar publicidad específica a cada uno de ellos.   "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este problema se desea determina que grupos de interés existen en una población de clientes a partir de los mensajes enviados por un servicio de redes sociales. La información disponible consiste en 30000 observaciones de 40 variables que podrían caracterizar los intereses de la población analizada. Estas variables corresponden a palabras que pueden asociarse a un interés de la poblaión analizada. Cada variable mide la frecuencia con que una determinada palabra aparece en los mensajes de texto; adicionalmente, dentro de estas variables se incluye  información como el sexo, la edad y la cantidad de contactos de la persona. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Carga de los datos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>gradyear</th>\n",
+       "      <th>gender</th>\n",
+       "      <th>age</th>\n",
+       "      <th>friends</th>\n",
+       "      <th>basketball</th>\n",
+       "      <th>football</th>\n",
+       "      <th>soccer</th>\n",
+       "      <th>softball</th>\n",
+       "      <th>volleyball</th>\n",
+       "      <th>swimming</th>\n",
+       "      <th>...</th>\n",
+       "      <th>blonde</th>\n",
+       "      <th>mall</th>\n",
+       "      <th>shopping</th>\n",
+       "      <th>clothes</th>\n",
+       "      <th>hollister</th>\n",
+       "      <th>abercrombie</th>\n",
+       "      <th>die</th>\n",
+       "      <th>death</th>\n",
+       "      <th>drunk</th>\n",
+       "      <th>drugs</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>M</td>\n",
+       "      <td>18.982</td>\n",
+       "      <td>7</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>F</td>\n",
+       "      <td>18.801</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>M</td>\n",
+       "      <td>18.335</td>\n",
+       "      <td>69</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>F</td>\n",
+       "      <td>18.875</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>18.995</td>\n",
+       "      <td>10</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>F</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>142</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>F</td>\n",
+       "      <td>18.930</td>\n",
+       "      <td>72</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>M</td>\n",
+       "      <td>18.322</td>\n",
+       "      <td>17</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>F</td>\n",
+       "      <td>19.055</td>\n",
+       "      <td>52</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>2006</td>\n",
+       "      <td>F</td>\n",
+       "      <td>18.708</td>\n",
+       "      <td>39</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>10 rows × 40 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   gradyear gender     age  friends  basketball  football  soccer  softball  \\\n",
+       "0      2006      M  18.982        7           0         0       0         0   \n",
+       "1      2006      F  18.801        0           0         1       0         0   \n",
+       "2      2006      M  18.335       69           0         1       0         0   \n",
+       "3      2006      F  18.875        0           0         0       0         0   \n",
+       "4      2006    NaN  18.995       10           0         0       0         0   \n",
+       "5      2006      F     NaN      142           0         0       0         0   \n",
+       "6      2006      F  18.930       72           0         0       0         0   \n",
+       "7      2006      M  18.322       17           0         0       0         1   \n",
+       "8      2006      F  19.055       52           0         0       0         0   \n",
+       "9      2006      F  18.708       39           0         0       0         0   \n",
+       "\n",
+       "   volleyball  swimming  ...  blonde  mall  shopping  clothes  hollister  \\\n",
+       "0           0         0  ...       0     0         0        0          0   \n",
+       "1           0         0  ...       0     1         0        0          0   \n",
+       "2           0         0  ...       0     0         0        0          0   \n",
+       "3           0         0  ...       0     0         0        0          0   \n",
+       "4           0         0  ...       0     0         2        0          0   \n",
+       "5           0         0  ...       0     0         1        0          0   \n",
+       "6           0         0  ...       0     2         0        0          2   \n",
+       "7           0         0  ...       0     0         0        0          0   \n",
+       "8           0         0  ...       0     0         0        0          0   \n",
+       "9           0         0  ...       0     0         1        0          0   \n",
+       "\n",
+       "   abercrombie  die  death  drunk  drugs  \n",
+       "0            0    0      0      0      0  \n",
+       "1            0    0      0      0      0  \n",
+       "2            0    0      1      0      0  \n",
+       "3            0    0      0      0      0  \n",
+       "4            0    0      0      1      1  \n",
+       "5            0    0      0      1      0  \n",
+       "6            0    0      0      0      0  \n",
+       "7            0    0      0      0      0  \n",
+       "8            0    0      0      0      0  \n",
+       "9            0    0      0      0      0  \n",
+       "\n",
+       "[10 rows x 40 columns]"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import pandas as pd\n",
+    "\n",
+    "df = pd.read_csv(\n",
+    "    \"https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/snsdata.csv\",\n",
+    "    sep=\",\",\n",
+    "    thousands=None,\n",
+    "    decimal=\".\",\n",
+    "    encoding=\"latin-1\",\n",
+    ")\n",
+    "\n",
+    "df.head(10)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Análisis exploratorio\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "30000"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Número de registros\n",
+    "#\n",
+    "len(df)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "F    22054\n",
+       "M     5222\n",
+       "Name: gender, dtype: int64"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Valores diferentes de NA\n",
+    "#\n",
+    "df.gender.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2724"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Número de registros con NA\n",
+    "#\n",
+    "df.gender.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    24914.000000\n",
+       "mean        17.993950\n",
+       "std          7.858054\n",
+       "min          3.086000\n",
+       "25%         16.312000\n",
+       "50%         17.287000\n",
+       "75%         18.259000\n",
+       "max        106.927000\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# La muestra contiene un rango de edades \n",
+    "# por fuera de la población de interés\n",
+    "#\n",
+    "df.age.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    24914.000000\n",
+       "mean        17.993950\n",
+       "std          7.858054\n",
+       "min          3.086000\n",
+       "25%         16.312000\n",
+       "50%         17.287000\n",
+       "75%         18.259000\n",
+       "max        106.927000\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se analizan los rangos de las variables \n",
+    "# para determinar si hay datos por fuera de sus \n",
+    "# rangos válidos. La variable `edad` contiene\n",
+    "# datos por fuera de la población de interés\n",
+    "#\n",
+    "df.age.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "5086"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# cantidad de nulos en la columna age\n",
+    "df.age.isnull().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    24477.000000\n",
+       "mean        17.252429\n",
+       "std          1.157465\n",
+       "min         13.027000\n",
+       "25%         16.304000\n",
+       "50%         17.265000\n",
+       "75%         18.220000\n",
+       "max         19.995000\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "#\n",
+    "# Se seleccionan las personas entre 13 y 20 años y \n",
+    "# se descartan las demás observaciones\n",
+    "#\n",
+    "df['age'] = df['age'].map(lambda x: np.nan if x <  13 else x)\n",
+    "df['age'] = df['age'].map(lambda x: np.nan if x >= 20 else x)\n",
+    "\n",
+    "#\n",
+    "# Se verifica la variable edad en los registros de las\n",
+    "# personas en la población de interés.\n",
+    "#\n",
+    "df.age.describe()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "F    22054\n",
+       "M     5222\n",
+       "Name: gender, dtype: int64"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se crean nuevas variables numéricas a partir \n",
+    "# de información categórica\n",
+    "#\n",
+    "df['female'] = df['gender'].map(lambda x: 1 if x == 'F' else 0)\n",
+    "df['no_gender'] = df['gender'].map(lambda x: 1 if pd.isnull(x) else 0)\n",
+    "\n",
+    "# Cantidad de hombres y mujeres en la muestra.\n",
+    "df.gender.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2724"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Número de registros con NA\n",
+    "#\n",
+    "df.gender.isna().sum()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1    22054\n",
+       "0     7946\n",
+       "Name: female, dtype: int64"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Cantidad de hombres y mujeres en la muestra\n",
+    "# 0=Male, 1=Female\n",
+    "#\n",
+    "df.female.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    27276\n",
+       "1     2724\n",
+       "Name: no_gender, dtype: int64"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Cantidad de patrones para los que se \n",
+    "# conoce y no se conoce el genero\n",
+    "#\n",
+    "df.no_gender.value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "17.252428933284307"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Edad sin tener en cuenta los datos faltantes\n",
+    "#\n",
+    "df.age.mean()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "gradyear\n",
+       "2006    18.655858\n",
+       "2007    17.706172\n",
+       "2008    16.767701\n",
+       "2009    15.819573\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se calcula una tabla para determinar \n",
+    "# la edad promedio por año de graduación\n",
+    "#\n",
+    "df.groupby(\"gradyear\")['age'].mean()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "count    30000.000000\n",
+       "mean        17.237326\n",
+       "std          1.141821\n",
+       "min         13.027000\n",
+       "25%         16.282000\n",
+       "50%         17.238000\n",
+       "75%         18.212000\n",
+       "max         19.995000\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Los valores faltantes se llenan con el promedio\n",
+    "# de acuerdo con el año de graduación\n",
+    "#\n",
+    "ave_age = df.groupby(\"gradyear\")['age'].mean()\n",
+    "df.age = [x if not pd.isnull(x) else ave_age[y] for x, y in zip(df.age, df.gradyear)]\n",
+    "df.age.describe()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Entrenamiento del modelo\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>basketball</th>\n",
+       "      <th>football</th>\n",
+       "      <th>soccer</th>\n",
+       "      <th>softball</th>\n",
+       "      <th>volleyball</th>\n",
+       "      <th>swimming</th>\n",
+       "      <th>cheerleading</th>\n",
+       "      <th>baseball</th>\n",
+       "      <th>tennis</th>\n",
+       "      <th>sports</th>\n",
+       "      <th>...</th>\n",
+       "      <th>shopping</th>\n",
+       "      <th>clothes</th>\n",
+       "      <th>hollister</th>\n",
+       "      <th>abercrombie</th>\n",
+       "      <th>die</th>\n",
+       "      <th>death</th>\n",
+       "      <th>drunk</th>\n",
+       "      <th>drugs</th>\n",
+       "      <th>female</th>\n",
+       "      <th>no_gender</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>...</td>\n",
+       "      <td>2</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>5 rows × 38 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   basketball  football  soccer  softball  volleyball  swimming  cheerleading  \\\n",
+       "0           0         0       0         0           0         0             0   \n",
+       "1           0         1       0         0           0         0             0   \n",
+       "2           0         1       0         0           0         0             0   \n",
+       "3           0         0       0         0           0         0             0   \n",
+       "4           0         0       0         0           0         0             0   \n",
+       "\n",
+       "   baseball  tennis  sports  ...  shopping  clothes  hollister  abercrombie  \\\n",
+       "0         0       0       0  ...         0        0          0            0   \n",
+       "1         0       0       0  ...         0        0          0            0   \n",
+       "2         0       0       0  ...         0        0          0            0   \n",
+       "3         0       0       0  ...         0        0          0            0   \n",
+       "4         0       0       0  ...         2        0          0            0   \n",
+       "\n",
+       "   die  death  drunk  drugs  female  no_gender  \n",
+       "0    0      0      0      0       0          0  \n",
+       "1    0      0      0      0       1          0  \n",
+       "2    0      1      0      0       0          0  \n",
+       "3    0      0      0      0       1          0  \n",
+       "4    0      0      1      1       0          1  \n",
+       "\n",
+       "[5 rows x 38 columns]"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se separa la información de las palabras relacionadas\n",
+    "# con los intereses del resto de la información\n",
+    "##\n",
+    "interests = df.iloc[:,4:].copy()\n",
+    "interests.head()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[0.        , 0.        , 0.        , ..., 0.        , 0.        ,\n",
+       "        0.        ],\n",
+       "       [0.        , 0.06666667, 0.        , ..., 0.        , 1.        ,\n",
+       "        0.        ],\n",
+       "       [0.        , 0.06666667, 0.        , ..., 0.        , 0.        ,\n",
+       "        0.        ],\n",
+       "       ...,\n",
+       "       [0.        , 0.06666667, 0.        , ..., 0.        , 0.        ,\n",
+       "        0.        ],\n",
+       "       [0.        , 0.        , 0.        , ..., 0.        , 0.        ,\n",
+       "        0.        ],\n",
+       "       [0.08333333, 0.        , 0.        , ..., 0.        , 1.        ,\n",
+       "        0.        ]])"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se escala para eliminar problemas asociados\n",
+    "# a la medida de los datos.\n",
+    "#\n",
+    "from sklearn.preprocessing import MinMaxScaler\n",
+    "\n",
+    "scaler = MinMaxScaler()\n",
+    "interests_z = scaler.fit_transform(interests)\n",
+    "interests_z"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Se usa el algoritmo para determinar los centros de 5 grupos\n",
+    "#\n",
+    "from sklearn.cluster import KMeans\n",
+    "\n",
+    "df_clusters = KMeans(n_clusters=5, random_state=1).fit(interests_z)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Evaluación del modelo\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "4    17136\n",
+       "1     5222\n",
+       "0     4259\n",
+       "2     2724\n",
+       "3      659\n",
+       "Name: 0, dtype: int64"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Número de patrones asignados a cada cluster\n",
+    "#\n",
+    "(pd.DataFrame(df_clusters.predict(interests_z)))[0].value_counts()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[ 2.00739875e-02,  2.70093458e-02,  1.30581516e-02,\n",
+       "         1.90764156e-02,  2.10280374e-02,  8.86343081e-03,\n",
+       "         8.95638629e-03,  8.54264019e-03,  8.97196262e-03,\n",
+       "         1.93341121e-02,  4.50415369e-02,  4.34292507e-03,\n",
+       "         1.38110073e-02,  3.40420561e-02,  1.14036664e-02,\n",
+       "         2.89719626e-02,  6.28363070e-03,  3.84451997e-03,\n",
+       "         1.82717582e-02,  2.11392968e-02,  7.96462794e-03,\n",
+       "         1.04078165e-02,  4.51713396e-03,  2.23024639e-03,\n",
+       "         3.09737307e-02,  3.88369678e-02,  9.23147275e-04,\n",
+       "         6.93535826e-02,  1.28929482e-01,  8.06366822e-02,\n",
+       "         2.73883697e-02,  2.28387850e-02,  1.40399320e-02,\n",
+       "         1.36348465e-02,  2.61682243e-02,  9.12675234e-03,\n",
+       "         1.00000000e+00, -1.45716772e-15],\n",
+       "       [ 1.31415167e-02,  2.98991446e-02,  7.78047293e-03,\n",
+       "         5.40698853e-04,  2.47578924e-03,  2.57595038e-03,\n",
+       "         9.57487553e-04,  1.69714669e-02,  6.88114388e-03,\n",
+       "         1.66443253e-02,  3.95761522e-03,  1.40767468e-03,\n",
+       "         4.57466275e-03,  5.18958254e-03,  2.26850897e-03,\n",
+       "         6.85561088e-03,  5.32130961e-03,  4.45666934e-03,\n",
+       "         1.08196093e-02,  1.20461053e-02,  5.41283470e-03,\n",
+       "         4.44796490e-03,  4.16826248e-03,  2.48946764e-03,\n",
+       "         4.88059871e-03,  3.42567769e-03,  7.43736509e-05,\n",
+       "         1.13302694e-02,  4.43926047e-03,  9.02432018e-03,\n",
+       "         3.63845270e-03,  2.84852547e-03,  8.10382647e-03,\n",
+       "         7.44104612e-03,  9.40731520e-03,  3.44695519e-03,\n",
+       "         8.94839758e-14, -1.47104551e-15],\n",
+       "       [ 7.20447871e-03,  9.83847283e-03,  6.56713983e-03,\n",
+       "         5.29066252e-03,  7.23725614e-03,  3.31580693e-03,\n",
+       "         9.87110458e-03,  3.78579295e-03,  5.33529124e-03,\n",
+       "         6.36319139e-03,  1.40316528e-02,  1.23013113e-03,\n",
+       "         5.91450481e-03,  7.92951542e-03,  2.73918446e-03,\n",
+       "         1.17229564e-02,  2.99247986e-03,  2.20264317e-03,\n",
+       "         8.48935389e-03,  7.60436333e-03,  4.66086730e-03,\n",
+       "         3.89634228e-03,  3.20606951e-03,  1.36830864e-03,\n",
+       "         8.08628011e-03,  8.89215206e-03,  1.82992272e-04,\n",
+       "         1.79882526e-02,  2.30943799e-02,  1.40877386e-02,\n",
+       "         7.05661609e-03,  5.00183554e-03,  7.22533707e-03,\n",
+       "         5.03461296e-03,  7.70925110e-03,  2.06497797e-03,\n",
+       "        -1.52100554e-14,  1.00000000e+00],\n",
+       "       [ 1.83358624e-02,  3.73292868e-02,  9.38571348e-03,\n",
+       "         1.25859145e-02,  1.50661175e-02,  6.31455284e-03,\n",
+       "         3.19676277e-01,  1.10015175e-02,  4.85584219e-03,\n",
+       "         1.36570561e-02,  3.27937953e-02,  2.72874903e-03,\n",
+       "         1.11279717e-02,  2.45827011e-02,  7.58725341e-03,\n",
+       "         2.22559433e-02,  4.25346025e-03,  2.34515106e-03,\n",
+       "         1.16416920e-02,  1.67642171e-02,  7.58725341e-03,\n",
+       "         8.96675404e-03,  4.04653515e-03,  2.62105118e-03,\n",
+       "         1.87425665e-02,  1.78721969e-02,  8.77058652e-04,\n",
+       "         3.79362671e-02,  6.67678300e-02,  2.76934750e-02,\n",
+       "         2.41106053e-02,  1.91578149e-02,  8.82880397e-03,\n",
+       "         8.88792543e-03,  1.32776935e-02,  5.21623672e-03,\n",
+       "         1.00000000e+00, -1.08246745e-15],\n",
+       "       [ 8.64251631e-03,  1.06027851e-02,  7.41606345e-03,\n",
+       "         1.03589902e-02,  1.01748675e-02,  3.82610990e-03,\n",
+       "         4.35615282e-03,  3.15512708e-03,  4.82617587e-03,\n",
+       "         8.99308599e-03,  1.54737560e-02,  1.40330376e-03,\n",
+       "         7.53075600e-03,  9.88606486e-03,  2.68545361e-03,\n",
+       "         1.27821599e-02,  4.12184952e-03,  3.70753990e-03,\n",
+       "         1.05380879e-02,  9.49320423e-03,  5.64683433e-03,\n",
+       "         4.96109208e-03,  3.48037784e-03,  1.76347170e-03,\n",
+       "         8.77529589e-03,  8.75125783e-03,  2.13879665e-04,\n",
+       "         1.24695686e-02,  1.64077232e-02,  6.31025416e-03,\n",
+       "         3.59658519e-03,  3.09669880e-03,  7.19464584e-03,\n",
+       "         7.47881975e-03,  8.12153082e-03,  2.75708443e-03,\n",
+       "         1.00000000e+00,  3.65957264e-14]])"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Frecuencia de las palabras en cada cluster\n",
+    "#\n",
+    "df_clusters.cluster_centers_"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Actividad.---** Haga un heatmap para la interpretación de los grupos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Actividad.---** Cuál de los clusters anteriores tiene más interés en los deportes?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Actividad.---** Cuál es el cluster de las princesas?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Actividad.---** Cuál cluster representa las personas que no hablan o no han posteado sobre sus intereses?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Análisis del modelo\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>cluster</th>\n",
+       "      <th>gender</th>\n",
+       "      <th>age</th>\n",
+       "      <th>friends</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>M</td>\n",
+       "      <td>18.982</td>\n",
+       "      <td>7</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0</td>\n",
+       "      <td>F</td>\n",
+       "      <td>18.801</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>1</td>\n",
+       "      <td>M</td>\n",
+       "      <td>18.335</td>\n",
+       "      <td>69</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>4</td>\n",
+       "      <td>F</td>\n",
+       "      <td>18.875</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>2</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>18.995</td>\n",
+       "      <td>10</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   cluster gender     age  friends\n",
+       "0        1      M  18.982        7\n",
+       "1        0      F  18.801        0\n",
+       "2        1      M  18.335       69\n",
+       "3        4      F  18.875        0\n",
+       "4        2    NaN  18.995       10"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se asigna a cada ejemplo de los datos\n",
+    "# el cluster al que pertenece\n",
+    "#\n",
+    "df[\"cluster\"] = df_clusters.predict(interests_z).tolist()\n",
+    "\n",
+    "#\n",
+    "# clusters a los que pertenecen los primeros cinco patrones\n",
+    "#\n",
+    "df[[\"cluster\", \"gender\", \"age\", \"friends\"]].head(5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "cluster\n",
+       "0    17.057595\n",
+       "1    17.432631\n",
+       "2    17.269795\n",
+       "3    16.990936\n",
+       "4    17.226794\n",
+       "Name: age, dtype: float64"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Características demográficas de los clusters.\n",
+    "# Edad por cluster.\n",
+    "#\n",
+    "df.groupby(\"cluster\")['age'].mean()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "cluster\n",
+       "0    1\n",
+       "1    0\n",
+       "2    0\n",
+       "3    1\n",
+       "4    1\n",
+       "Name: female, dtype: int64"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# \n",
+    "# Promedio de mujeres por cluster\n",
+    "#\n",
+    "\n",
+    "#\n",
+    "# cluster\tfemale\n",
+    "#       1 0.8381171\n",
+    "#       2 0.7250000\n",
+    "#       3 0.8378198\n",
+    "#       4 0.8027079\n",
+    "#       5 0.6994515\n",
+    "#\n",
+    "df.groupby(\"cluster\")['female'].mean()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "4259\n",
+      "0\n",
+      "0\n",
+      "659\n",
+      "17136\n"
+     ]
+    }
+   ],
+   "source": [
+    "for a,b in df.groupby(\"cluster\"):\n",
+    "    print(b['female'].sum())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "cluster\n",
+       "0    37.799483\n",
+       "1    24.926465\n",
+       "2    26.139134\n",
+       "3    40.025797\n",
+       "4    30.149977\n",
+       "Name: friends, dtype: float64"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Cantidad promedio de amigos por cluster\n",
+    "#\n",
+    "df.groupby(\"cluster\")['friends'].mean()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Actividad.---** Al analizar las distintas variables presentadas, qué puede inferir de cada cluster?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Actividad.---** Repita este ejercicio usando clustering jerárquico."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  },
+  "nteract": {
+   "version": "0.7.1"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
