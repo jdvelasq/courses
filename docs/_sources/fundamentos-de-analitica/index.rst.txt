@@ -2,10 +2,43 @@ Fundamentos de Analítica
 =========================================================================================
     
 
-Sesión 01 
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 01 --- Octubre 5, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Introducción**
+No hay clase
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesion 02 --- Octubre 12, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Clase suspendida por actividades del PLei 2034**
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 03 --- Octubre 19, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**3:00:00**
+
+
+**Presentación del curso** (1:00 hr)
+
+    * Tiempo estimado: 1 hr.
 
         .. toctree::
             :maxdepth: 1
@@ -14,30 +47,369 @@ Sesión 01
             course-info
 
 
-        * Presentación: `Introducción a la Analítica <https://jdvelasq.github.io/intro-analitca/>`_.
+**Sesión Magistral: Introducción a la Analítica** (2:00 hr)
+
+        * `Presentación intro a la analitica <https://jdvelasq.github.io/intro-analitca/>`_ 
 
 
+.. raw:: html
 
-Sesion 02
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 04 --- Octubre 26, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Jupyter Lab y Google Colab**
+    **Python para Análisis de Datos (I)** --- 1:10:17 hr
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-/notebooks/jupyter/*
-
-            * NBviewer https://nbviewer.jupyter.org
-
-    **Git y GitHub**
-
-            * GitHub pages https://pages.github.com
+            /notebooks/python_for_data_analysis/1-*
 
 
-Sesión 03 
+    **Python para Análisis de Datos (II)** --- 0:56:05 hr
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/python_for_data_analysis/2-*
+
+
+    **Python para Análisis de Datos (III)** --- 1:02:32 hr
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/python_for_data_analysis/3-*
+
+
+    **Python para Análisis de Datos (IV)**  --- 2:00:41 hr
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/python_for_data_analysis/4-*
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 05 --- Noviembre 2, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**2:05:18**
+
+    **Ingestión de Datos con Python** --- 57:13 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_ingestion_with_python/1-*
+
+
+    **Manipulación de Datos con Pandas (I)** --- 1:08:05 hr
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_manipulation_with_pandas/1-*
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 06 --- Noviembre 9, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**2:00:08**
+
+
+
+    **Manipulación de Datos con Pandas (II)** --- 72:59 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_manipulation_with_pandas/2-*
+
+    **Limpieza de Datos** --- 47:09 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_cleaning_with_pandas/1-*
+
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 07 --- Noviembre 16, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Manipulación de Datos en SQLite3** --- 47:20 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_manipulation_with_sqlite3/1-*
+
+
+    **Limpieza de Datos en SQL**
+
+    PENDIENTE
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 08 --- Noviembre 23, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Visualización de datos con Matplotlib** --- 65:12 min
+
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_visualization_with_matplotlib/1-*
+
+
+    **Visualización estadística de datos con Seaborn**
+
+    PENDIENTE
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 09 --- Noviembre 30, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+    **Fundamentos optimización para aprendizaje automático** --- 78:24 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/optimization_for_ML/1-*
+
+
+
+    **Selección y evaluación del modelo**
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_model_selection_and_evaluation/1-*
+
+
+
+
+
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 10 --- Diciembre 7, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Selección y evaluación del modelo**
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_model_selection_and_evaluation/2-*
+
+
+    **Pipelines y estimadores compuestos** --- 49:27 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_dataset_transformations/1-*
+
+
+
+             
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 11 --- Diciembre 14, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Pipelines y estimadores compuestos** --- 49:27 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_dataset_transformations/1-*
+
+
+    **Extracción de características** --- 35:25 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_dataset_transformations/2-*
+
+
+    **Preprocesamiento de datos** --- 48:56 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_dataset_transformations/3-*
+
+
+    **Transformación de la variable de salida** --- 6:03 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_dataset_transformations/8-*
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 12 --- Enero 11, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Selección de características** --- 56:50 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_supervised_01_feature_selection/1-*
+
+
+    **Modelos Lineales** --- 1:31:51 
+
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_supervised_02_linear_models/1-*
+
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 13 --- Enero 18, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Máquinas de Vectores de Soporte** --- 35:17 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_supervised_03_svm/1-*
+
+    **Vecinos más cercanos** --- 0:54:29 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_supervised_05_neighbors/1-* 
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 14 --- Enero 25, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Clustering** --- 45:09 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_unsupervised_03_clustering/1-* 
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 15 --- Febrero 1, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Introducción a Big Data**
+
+    PENDIENTE
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 16 --- Febrero 8, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Asesoria y Cierre del Curso**
+
+
+
+
+
 
     **Datapipes y ETL**
 
@@ -52,8 +424,6 @@ Sesión 03
 /notebooks/python/3-*
 
 
-Sesión 04
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Gestión de bases de datos con SQLite3**
 
@@ -94,15 +464,7 @@ Sesión 06
 Sesión 07
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Fundamentos de procesamiento de texto**
 
-        .. toctree::
-            :maxdepth: 1
-            :glob:
-
-/notebooks/textblob/*
-/notebooks/re/*
-/notebooks/pyparsing/*
 
 
 Sesión 08
