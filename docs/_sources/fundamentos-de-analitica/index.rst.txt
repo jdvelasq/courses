@@ -58,6 +58,7 @@ Sesión 03 --- Octubre 19, 2021
 
 Sesión 04 --- Octubre 26, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**3:08:54**
 
     **Python para Análisis de Datos (I)** --- 1:10:17 hr
 
@@ -68,8 +69,6 @@ Sesión 04 --- Octubre 26, 2021
             /notebooks/python_for_data_analysis/1-*
 
 
-    **Python para Análisis de Datos (II)** --- 0:56:05 hr
-
         .. toctree::
             :maxdepth: 1
             :glob:
@@ -77,13 +76,22 @@ Sesión 04 --- Octubre 26, 2021
             /notebooks/python_for_data_analysis/2-*
 
 
-    **Python para Análisis de Datos (III)** --- 1:02:32 hr
-
         .. toctree::
             :maxdepth: 1
             :glob:
 
             /notebooks/python_for_data_analysis/3-*
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 05 --- Noviembre 2, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**2:00:41**
 
 
     **Python para Análisis de Datos (IV)**  --- 2:00:41 hr
@@ -101,8 +109,296 @@ Sesión 04 --- Octubre 26, 2021
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 05 --- Noviembre 2, 2021
+Sesión 06 --- Noviembre 9, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**1:44:22**
+
+**Ingestión y Limpieza de Datos con Python.**
+
+    **Ingestión de Datos con Python** --- 57:13 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_ingestion_with_python/1-*
+
+
+    **Limpieza de Datos** --- 47:09 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_cleaning_with_pandas/1-*
+
+
+    **--- Scrapping? ---**
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 07 --- Noviembre 16, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**2:21:04**
+
+
+**Manipulación de Datos con Pandas**
+
+    **Manipulación de Datos con Pandas (I)** --- 1:08:05 hr
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_manipulation_with_pandas/1-*
+
+    **Manipulación de Datos con Pandas (II)** --- 72:59 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_manipulation_with_pandas/2-*
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 08 --- Noviembre 23, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+**Manipulación de Datos con SQL**
+
+    **Manipulación de Datos en SQLite3** --- 47:20 min
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_manipulation_with_sqlite3/1-*
+
+
+    **--- Limpieza de Dtatos con SQL ---**
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 09 --- Noviembre 30, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+**Visualización de Datos (I)**
+
+    **Visualización de datos con Matplotlib** --- 65:12 min
+
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_visualization_with_matplotlib/1-*
+
+
+    **Visualización de Datos con Seaborn**
+
+    PENDIENTE
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 10 --- Diciembre 7, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Visualización de Datos (II)**
+
+    **Visualización de Datos con Bokeh**
+
+    PENDIENTE   
+
+
+    **Visualización de Datos Geoespaciales**
+
+    PENDIENTE   
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 11 --- Diciembre 14, 2021
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**2:30:59**
+
+
+**Fundamentos de Machine Learning**
+
+    **Fundamentos optimización para aprendizaje automático** --- 78:24 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/optimization_for_ML/1-*
+
+
+
+    **Selección y evaluación del modelo** --- 72:15 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_model_selection_and_evaluation/1-*
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 12 --- Enero 11, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Selección y evaluación del modelo** --- 60:47 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_model_selection_and_evaluation/2-*
+
+
+    **Transformaciones del Conjunto de Datos** --- 49:27 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_dataset_transformations/1-*
+
+
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 13 --- Enero 18, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Preprocesamiento de datos** --- 48:56 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_dataset_transformations/3-*
+
+
+
+    **Modelos Lineales** --- 0:43:20
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_supervised_02_linear_models/1-01*
+            /notebooks/sklearn_supervised_02_linear_models/1-02*
+            /notebooks/sklearn_supervised_02_linear_models/1-11*
+            /notebooks/sklearn_supervised_02_linear_models/1-12*
+    
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 14 --- Enero 25, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+    **Clustering** --- 45:09 min
+
+            .. toctree::
+                :titlesonly:
+                :glob:
+
+                /notebooks/sklearn_unsupervised_03_clustering/1-* 
+
+
+    **Máquinas de Vectores de Soporte** --- 35:17 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_supervised_03_svm/1-*
+
+
+
+    **Vecinos más cercanos** --- 0:54:29 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_supervised_05_neighbors/1-*         
+
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 15 --- Febrero 1, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+    **Descomposición de datos** --- 42:45  min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_unsupervised_05_decomposition/1-* 
+
+
+    **Redes Neuronales no supervizadas** --- 10:25 min
+
+        .. toctree::
+            :titlesonly:
+            :glob:
+
+            /notebooks/sklearn_unsupervised_09_rbm/1-*
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 16 --- Febrero 8, 2022
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Asesoria y Cierre del Curso**
+
+
+
+
+
+
+
+
+
 **2:05:18**
 
     **Ingestión de Datos con Python** --- 57:13 min
@@ -125,13 +421,6 @@ Sesión 05 --- Noviembre 2, 2021
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 06 --- Noviembre 9, 2021
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-**2:00:08**
 
 
 
@@ -155,12 +444,6 @@ Sesión 06 --- Noviembre 9, 2021
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 07 --- Noviembre 16, 2021
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Manipulación de Datos en SQLite3** --- 47:20 min
 
@@ -177,13 +460,6 @@ Sesión 07 --- Noviembre 16, 2021
 
 
 
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 08 --- Noviembre 23, 2021
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
     **Visualización de datos con Matplotlib** --- 65:12 min
@@ -202,12 +478,6 @@ Sesión 08 --- Noviembre 23, 2021
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 09 --- Noviembre 30, 2021
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
@@ -237,12 +507,6 @@ Sesión 09 --- Noviembre 30, 2021
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 10 --- Diciembre 7, 2021
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
     **Selección y evaluación del modelo**
@@ -266,12 +530,6 @@ Sesión 10 --- Diciembre 7, 2021
              
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 11 --- Diciembre 14, 2021
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
     **Pipelines y estimadores compuestos** --- 49:27 min
@@ -311,12 +569,6 @@ Sesión 11 --- Diciembre 14, 2021
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 12 --- Enero 11, 2022
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Selección de características** --- 56:50 min
 
@@ -340,12 +592,6 @@ Sesión 12 --- Enero 11, 2022
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 13 --- Enero 18, 2022
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Máquinas de Vectores de Soporte** --- 35:17 min
 
@@ -365,12 +611,6 @@ Sesión 13 --- Enero 18, 2022
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 14 --- Enero 25, 2022
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
     **Clustering** --- 45:09 min
@@ -384,12 +624,6 @@ Sesión 14 --- Enero 25, 2022
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 15 --- Febrero 1, 2022
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Introducción a Big Data**
 
@@ -397,14 +631,6 @@ Sesión 15 --- Febrero 1, 2022
 
 
 
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 16 --- Febrero 8, 2022
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**Asesoria y Cierre del Curso**
 
 
 
