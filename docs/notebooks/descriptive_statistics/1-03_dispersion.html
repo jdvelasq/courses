@@ -24,8 +24,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Estadísticos de Orden" href="1-04_univariate_orden.html" />
-    <link rel="prev" title="Medidas de Localización" href="1-02_univariate_location.html" /> 
+    <link rel="next" title="Distribución de los datos" href="1-04_distribution.html" />
+    <link rel="prev" title="Medidas de Localización" href="1-02_location.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -88,7 +88,7 @@
           <li><a href="../../ciencia-de-los-datos/index.html">Ciencia de los Datos Aplicada</a> &raquo;</li>
       <li>Medidas de Dispersión</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/notebooks/descriptive_statistics/1-03_univariate_dispersion.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+            <a href="../../_sources/notebooks/descriptive_statistics/1-03_dispersion.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
       </li>
   </ul>
   <hr/>
@@ -573,15 +573,71 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="P2.—-¿Cuál-es-el-rango-típico-de-la-longitud-y-ancho-del-pétalo-y-del-sépalo-para-cada-uno-de-los-tipos-de-flores?">
 <h2>P2.— ¿Cuál es el rango típico de la longitud y ancho del pétalo y del sépalo para cada uno de los tipos de flores?<a class="headerlink" href="#P2.—-¿Cuál-es-el-rango-típico-de-la-longitud-y-ancho-del-pétalo-y-del-sépalo-para-cada-uno-de-los-tipos-de-flores?" title="Enlazar permanentemente con este título"></a></h2>
 <p>Esta pregunta se refiere a una medida de la dispersión o variabilildad de los datos y a como se distribuyen.</p>
+<div class="section" id="Métricas-basadas-en-la-distancia-respecto-a-las-métricas-de-localización">
+<h3>Métricas basadas en la distancia respecto a las métricas de localización<a class="headerlink" href="#Métricas-basadas-en-la-distancia-respecto-a-las-métricas-de-localización" title="Enlazar permanentemente con este título"></a></h3>
 <p><strong>Desviación:</strong></p>
 <p>Diferencia entre el valor observado y el valor estimado de localización. En modelado sus sinónimos son errores o residuales.</p>
 <p><strong>Rango:</strong></p>
 <p>Diferencia entre el valor más grande y más pequeño de la muestra de los datos.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">iris_melt</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span>
+    <span class="n">iris</span><span class="p">,</span>
+    <span class="n">id_vars</span><span class="o">=</span><span class="s2">&quot;species&quot;</span><span class="p">,</span>
+    <span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+    <span class="n">value_name</span><span class="o">=</span><span class="s2">&quot;Values&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">g</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;species&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Values&quot;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">iris_melt</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;swarm&quot;</span><span class="p">,</span>
+    <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">edgecolors</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tab:blue&#39;</span><span class="p">,</span> <span class="s1">&#39;tab:orange&#39;</span><span class="p">,</span> <span class="s1">&#39;tab:green&#39;</span><span class="p">]</span>
+
+<span class="n">means</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;species&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i_axes</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">i_axes</span><span class="p">]</span>
+    <span class="n">x_lim</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()</span>
+    <span class="n">mean_values</span> <span class="o">=</span> <span class="n">means</span><span class="p">[</span><span class="n">means</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">i_axes</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">mean_value</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">mean_values</span><span class="p">)):</span>
+        <span class="n">g</span><span class="o">.</span><span class="n">axes</span><span class="p">[</span><span class="n">i_axes</span><span class="p">]</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">mean_value</span><span class="p">,</span> <span class="n">i</span><span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mf">0.4</span><span class="p">,</span>  <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_descriptive_statistics_1-03_dispersion_13_0.png" src="../../_images/notebooks_descriptive_statistics_1-03_dispersion_13_0.png" />
+</div>
+</div>
 <p><strong>Varianza muestral:</strong></p>
 <div class="math notranslate nohighlight">
 \[s^2 = \frac{1}{n-1} \sum_{i=1}^n (x_i - \bar{x})^2\]</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -623,7 +679,7 @@ div.rendered_html tbody tr:hover {
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -635,7 +691,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -648,7 +704,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -660,7 +716,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -724,7 +780,7 @@ dtype: float64
 <p><strong>Desviación estándar muestral</strong>.</p>
 <p>Raíz cuadrada de la varianza muestral.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -766,7 +822,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -778,7 +834,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -791,7 +847,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -803,7 +859,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -869,7 +925,7 @@ dtype: float64
 <div class="math notranslate nohighlight">
 \[\text{MAD} = \frac{1}{n} \sum_{i=1}^n |x_i - \bar{x}|\]</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -902,7 +958,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -914,7 +970,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -927,7 +983,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -939,7 +995,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1006,7 +1062,7 @@ dtype: float64
 \[\text{Mediana}(|x_1 - m|,\; |x_2 - m|,\;...,\;|x_n - m|)\]</div>
 <p>También es posible computar la varianza muestral truncada en analogía a la media truncada.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1023,7 +1079,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1036,7 +1092,7 @@ dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1055,7 +1111,7 @@ dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1116,6 +1172,76 @@ dtype: float64
 </table>
 </div></div>
 </div>
+</div>
+<div class="section" id="Métricas-basadas-en-la-distribución-de-los-datos">
+<h3>Métricas basadas en la distribución de los datos<a class="headerlink" href="#Métricas-basadas-en-la-distribución-de-los-datos" title="Enlazar permanentemente con este título"></a></h3>
+<p><strong>Función de Densidad Acumulada Empírica (ECDF)</strong></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">ecdf</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">param_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="n">param_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">props</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;marker&#39;</span><span class="p">:</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;linestyle&#39;</span><span class="p">:</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">props</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">props</span><span class="p">,</span> <span class="o">**</span><span class="n">param_dict</span><span class="p">}</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">props</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">ecdf</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">iris</span><span class="o">.</span><span class="n">sepal_length</span><span class="p">[</span><span class="n">iris</span><span class="o">.</span><span class="n">species</span> <span class="o">==</span> <span class="s1">&#39;virginica&#39;</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_descriptive_statistics_1-03_dispersion_31_0.png" src="../../_images/notebooks_descriptive_statistics_1-03_dispersion_31_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sns</span><span class="o">.</span><span class="n">displot</span><span class="p">(</span>
+    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;ecdf&quot;</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;Values&quot;</span><span class="p">,</span>
+    <span class="n">hue</span><span class="o">=</span><span class="s1">&#39;species&#39;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">iris_melt</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+    <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span>
+    <span class="n">linestyle</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span>
+    <span class="n">markersize</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_descriptive_statistics_1-03_dispersion_32_0.png" src="../../_images/notebooks_descriptive_statistics_1-03_dispersion_32_0.png" />
+</div>
+</div>
 <p><strong>Estadísticos de orden:</strong> Métricas calculadas sobre los datos ordenados.</p>
 <ul class="simple">
 <li><p><strong>Percentil</strong> <span class="math notranslate nohighlight">\(p\)</span>: Valor para el cual el <span class="math notranslate nohighlight">\(p\)</span> por ciento de los datos son menores o iguales.</p></li>
@@ -1135,7 +1261,76 @@ dtype: float64
 <div class="math notranslate nohighlight">
 \[\text{IQR} = \text{Cuartil superior} - \text{Cuartil inferior}\]</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Cálculo de los cuartiles</span>
+<span class="c1">#</span>
+<span class="n">iris</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># the quantile(s) to compute</span>
+    <span class="n">q</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">],</span>
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Specifies the interpolation method to use, when the desired quantile lies</span>
+    <span class="c1"># between two data points i and j:</span>
+    <span class="c1"># {‘linear’, ‘lower’, ‘higher’, ‘midpoint’, ‘nearest’}</span>
+    <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>sepal_length</th>
+      <th>sepal_width</th>
+      <th>petal_length</th>
+      <th>petal_width</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.25</th>
+      <td>5.1</td>
+      <td>2.8</td>
+      <td>1.6</td>
+      <td>0.3</td>
+    </tr>
+    <tr>
+      <th>0.75</th>
+      <td>6.4</td>
+      <td>3.3</td>
+      <td>5.1</td>
+      <td>1.8</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1174,7 +1369,7 @@ Name: 0.75, dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1183,7 +1378,7 @@ Name: 0.75, dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1245,7 +1440,7 @@ Name: 0.75, dtype: float64
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1254,7 +1449,7 @@ Name: 0.75, dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1316,78 +1511,7 @@ Name: 0.75, dtype: float64
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">iris</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">&quot;species&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="output_area rendered_html docutils container">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>sepal_length</th>
-      <th>sepal_width</th>
-      <th>petal_length</th>
-      <th>petal_width</th>
-    </tr>
-    <tr>
-      <th>species</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>setosa</th>
-      <td>5.2</td>
-      <td>3.675</td>
-      <td>1.575</td>
-      <td>0.3</td>
-    </tr>
-    <tr>
-      <th>versicolor</th>
-      <td>6.3</td>
-      <td>3.000</td>
-      <td>4.600</td>
-      <td>1.5</td>
-    </tr>
-    <tr>
-      <th>virginica</th>
-      <td>6.9</td>
-      <td>3.175</td>
-      <td>5.875</td>
-      <td>2.3</td>
-    </tr>
-  </tbody>
-</table>
-</div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1396,7 +1520,7 @@ Name: 0.75, dtype: float64
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1458,16 +1582,20 @@ Name: 0.75, dtype: float64
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">iris</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># El método describe de pandas computa los principales estadísticos para las</span>
+<span class="c1"># columnas numéricas del dataframe</span>
+<span class="c1">#</span>
+<span class="n">iris</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
@@ -1557,7 +1685,7 @@ Name: 0.75, dtype: float64
 </div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1604,21 +1732,19 @@ virginica    50.0  2.026  0.274650  1.4  1.8  2.0  2.3  2.5
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># El método describe de pandas computa los</span>
-<span class="c1"># principales estadísticos para las columnas</span>
-<span class="c1"># numéricas del dataframe</span>
+<span class="c1"># Método describe aplicado a una columna particular</span>
 <span class="c1">#</span>
 <span class="n">iris</span><span class="o">.</span><span class="n">sepal_length</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -1635,7 +1761,7 @@ Name: sepal_length, dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1665,12 +1791,43 @@ Name: sepal_length, dtype: float64
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../../_images/notebooks_descriptive_statistics_1-03_univariate_dispersion_40_0.png" src="../../_images/notebooks_descriptive_statistics_1-03_univariate_dispersion_40_0.png" />
+<img alt="../../_images/notebooks_descriptive_statistics_1-03_dispersion_47_0.png" src="../../_images/notebooks_descriptive_statistics_1-03_dispersion_47_0.png" />
+</div>
+</div>
+<p><strong>Diagramas de caja y bigote</strong></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># La caja central representa los cuartiles del 25% y 75%.</span>
+<span class="c1"># La línea centra de la caja representa la mediana</span>
+<span class="c1"># Los bigotes están ubicados a 1.5 veces el rango interquartil.</span>
+<span class="c1"># Los puntos por fuera de los bigotes representan outliers.</span>
+<span class="c1">#</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">catplot</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="s2">&quot;species&quot;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s2">&quot;Values&quot;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">iris_melt</span><span class="p">,</span>
+    <span class="n">col</span><span class="o">=</span><span class="s2">&quot;Variables&quot;</span><span class="p">,</span>
+    <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;box&quot;</span><span class="p">,</span>
+    <span class="n">col_wrap</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../_images/notebooks_descriptive_statistics_1-03_dispersion_49_0.png" src="../../_images/notebooks_descriptive_statistics_1-03_dispersion_49_0.png" />
 </div>
 </div>
 <p><strong>Medidas de forma</strong></p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1700,7 +1857,7 @@ Name: sepal_length, dtype: float64
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1728,6 +1885,7 @@ Name: sepal_length, dtype: float64
 <div class="highlight"><pre>
 -0.5735679489249765
 </pre></div></div>
+</div>
 </div>
 </div>
 </div>
