@@ -143,6 +143,8 @@ Sesión 04 --- 2021-10-29
             /notebooks/data_manipulation_with_pandas/2-*
 
 
+* `LAB --- Programacion usando Pandas <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/002-manipulacion_de_datos_con-pandas.ipynb>`_.
+
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -182,6 +184,7 @@ Sesión 05 --- 2021-11-05
             /notebooks/data_cleaning_with_pandas/1-*
 
 
+* `LAB --- Programacion en SQL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/003-sql.ipynb>`_.
 
 
 .. raw:: html
@@ -273,6 +276,8 @@ Sesión 07 --- 2021-11-19
                 /notebooks/sklearn_dataset_transformations/3-09*
 
         
+* `LAB --- Fundamentos de ML <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/004-fundamentos_ml.ipynb>`_.
+
 
 **Formación como Científico de Datos (I)**
 
