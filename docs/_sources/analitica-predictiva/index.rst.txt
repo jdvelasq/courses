@@ -65,6 +65,12 @@ Sesión 02 --- 2021-10-16
         /notebooks/sklearn_dataset_utilities/3-*
 
 
+ * `LAB --- Optimización usando el gradiente descendente <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/02-001_optimizacion_usando_el_gradiente_descendente.ipynb>`_.
+
+
+ * `LAB --- Tasas óptimas <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/02-002_busqueda_de_la_tasa_de_aprendizaje_y_momentum_optimos.ipynb>`_.
+
+
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -270,6 +276,10 @@ Sesión 06 --- 2021-11-13
 
 
 
+* `LAB --- Hongos venenosos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/06-001_identificacion_de_hongos_venenosos_usando_regresion_logistica.ipynb>`_.
+
+
+* `LAB --- Créditos riesgosos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/06-002_identificacion_de_creditos_riesgosos_usando_svm.ipynb>`_.
 
 
 .. raw:: html
@@ -348,6 +358,7 @@ Sesión 07 --- 2021-11-20
 
 
 
+* `LAB --- Predicción diabetes <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/07-001_prediccion_de_la_evolucion_de_la_diabetes_usando_mlp.ipynb>`_.
 
 
 
@@ -409,9 +420,15 @@ Si alguien le presenta un modelo que desarrollo, usted que le pediria?
 
 
 
+* `LAB --- ML <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/08-001-fundamentos_ml.ipynb>`_.
 
 
-    
+* `LAB --- Análisis de sentimientos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/08-002_analisis_de_sentimientos_en_amazon_usando_bayes.ipynb>`_.
+
+
+* `LAB --- Topic modeling <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/08-003-latent_dirichlet_allocation.ipynb>`_.
+
+
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
