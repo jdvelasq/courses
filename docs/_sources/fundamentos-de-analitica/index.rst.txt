@@ -5,7 +5,7 @@ Fundamentos de Analítica
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 01 --- Octubre 5, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -17,7 +17,7 @@ No hay clase
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesion 02 --- Octubre 12, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -29,7 +29,7 @@ Sesion 02 --- Octubre 12, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 03 --- Octubre 19, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -54,7 +54,7 @@ Sesión 03 --- Octubre 19, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 04 --- Octubre 26, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -89,7 +89,7 @@ Sesión 04 --- Octubre 26, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 05 --- Noviembre 2, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -111,7 +111,7 @@ Sesión 05 --- Noviembre 2, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 06 --- Noviembre 9, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -147,7 +147,7 @@ Sesión 06 --- Noviembre 9, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 07 --- Noviembre 16, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -176,7 +176,7 @@ Sesión 07 --- Noviembre 16, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 08 --- Noviembre 23, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -199,7 +199,7 @@ Sesión 08 --- Noviembre 23, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 09 --- Noviembre 30, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -217,14 +217,18 @@ Sesión 09 --- Noviembre 30, 2021
             /notebooks/data_visualization_with_matplotlib/1-*
 
 
-    **Visualización de Datos con Seaborn**
+**Fundamentos de Análisis Exploratorio de Datos**
 
-    PENDIENTE
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/descriptive_statistics/1-*
 
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 10 --- Diciembre 7, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -233,17 +237,18 @@ Sesión 10 --- Diciembre 7, 2021
 
     **Visualización de Datos con Bokeh**
 
-    PENDIENTE   
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/data_visualization_with_bokeh/1-*
 
 
-    **Visualización de Datos Geoespaciales**
-
-    PENDIENTE   
 
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 11 --- Diciembre 14, 2021
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -275,7 +280,7 @@ Sesión 11 --- Diciembre 14, 2021
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 12 --- Enero 11, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -305,7 +310,7 @@ Sesión 12 --- Enero 11, 2022
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 13 --- Enero 18, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -335,7 +340,7 @@ Sesión 13 --- Enero 18, 2022
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 14 --- Enero 25, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -372,7 +377,7 @@ Sesión 14 --- Enero 25, 2022
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 15 --- Febrero 1, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -398,7 +403,7 @@ Sesión 15 --- Febrero 1, 2022
 
 .. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sesión 16 --- Febrero 8, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
