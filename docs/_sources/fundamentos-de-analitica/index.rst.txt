@@ -107,6 +107,7 @@ Sesión 05 --- Noviembre 2, 2021
             /notebooks/python_for_data_analysis/4-*
 
 
+`LAB: Programación en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 
 
 .. raw:: html
@@ -174,6 +175,8 @@ Sesión 07 --- Noviembre 16, 2021
             /notebooks/data_manipulation_with_pandas/2-*
 
 
+`LAB: Manipulación de Datos con Pandas <https://classroom.github.com/a/UEifK_xF>`_.
+
 .. raw:: html
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
@@ -196,6 +199,9 @@ Sesión 08 --- Noviembre 23, 2021
     **--- Limpieza de Dtatos con SQL ---**
 
 
+
+
+`LAB: Manipulación de Datos con SQL <https://classroom.github.com/a/plVTEd2E>`_.
 
 .. raw:: html
 
@@ -338,6 +344,11 @@ Sesión 13 --- Enero 18, 2022
             /notebooks/sklearn_supervised_02_linear_models/1-12*
     
 
+`LAB: Regresión Lineal 04 <>`_.
+
+
+`LAB: Regresión Logística 05 <>`_.
+
 .. raw:: html
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
@@ -374,6 +385,7 @@ Sesión 14 --- Enero 25, 2022
 
             /notebooks/sklearn_supervised_05_neighbors/1-*         
 
+`LAB: k-NN 06 <>`_.
 
 .. raw:: html
 
