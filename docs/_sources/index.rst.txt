@@ -14,7 +14,7 @@ Material de apoyo para cursos
     :hidden:
     :maxdepth: 1
     
-    fundamentos-de-analitica/index
+    fundamentos_de_analitica/index
     redes_neuronales_y_algoritmos_bioinspirados/index
 
 
@@ -24,10 +24,10 @@ Material de apoyo para cursos
     :hidden:
     :maxdepth: 1
 
-    analitica-de-grandes-datos/index
-    analitica-predictiva/index
-    ciencia-de-los-datos/index    
-    productos-de-datos/index
+    analitica_de_grandes_datos/index
+    analitica_predictiva/index
+    ciencia_de_los_datos/index    
+    productos_de_datos/index
     analitica_avanzada/index
 
 
