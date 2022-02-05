@@ -2,7 +2,7 @@ Analítica de Grandes Datos
 =========================================================================================
 
 
-Sesión 01
+Sesión 01 --- 2022-05-13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Introducción al curso**
@@ -21,14 +21,14 @@ Sesión 01
             :maxdepth: 1
             :glob:
 
-/notebooks/bash/1-*
-/notebooks/bash/2-*
-/notebooks/bash/3-*
-/notebooks/bash/4-*
-/notebooks/bash/5-*
+            /notebooks/bash/1-*
+            /notebooks/bash/2-*
+            /notebooks/bash/3-*
+            /notebooks/bash/4-*
+            /notebooks/bash/5-*
 
 
-Sesión 02
+Sesión 02 --- 2022-05-20
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Ingeniería de Datos --- Apache Hadoop**
@@ -38,7 +38,7 @@ Sesión 02
             :maxdepth: 1
             :glob:
 
-/notebooks/hadoop/1-*
+            /notebooks/hadoop/1-*
 
 
     **Ingeniería de Datos --- Apache Pig I**
@@ -47,10 +47,10 @@ Sesión 02
             :maxdepth: 1
             :glob:
 
-/notebooks/pig/1-*
+            /notebooks/pig/1-*
 
 
-Sesión 03
+Sesión 03 --- 2022-05-27
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Ingeniería de Datos --- Apache Pig II**
@@ -60,7 +60,7 @@ Sesión 03
             :glob:
 
 
-/notebooks/pig/2-*
+            /notebooks/pig/2-*
 
         
     **Ingeniería de Datos --- Apache Hive I**
@@ -69,9 +69,9 @@ Sesión 03
             :maxdepth: 1
             :glob:
 
-/notebooks/hive/1-*
+            /notebooks/hive/1-*
 
-Sesión 04
+Sesión 04 --- 2022-06-03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Ingeniería de Datos --- Apache Hive II**
@@ -81,7 +81,7 @@ Sesión 04
             :glob:
 
 
-/notebooks/hive/2-*        
+            /notebooks/hive/2-*        
 
 
     **Ingeniería de Datos --- Programación funcional en Apache Spark**
@@ -90,7 +90,7 @@ Sesión 04
             :maxdepth: 1
             :glob:
 
-/notebooks/pyspark/1-*
+            /notebooks/pyspark/1-*
 
 
     **Ingeniería de Datos --- Apache Spark RDD**
@@ -99,10 +99,10 @@ Sesión 04
             :maxdepth: 1
             :glob:
     
-/notebooks/pyspark/2-*
+            /notebooks/pyspark/2-*
 
 
-Sesión 05
+Sesión 05 --- 2022-06-10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Ingeniería de Datos --- Apache Spark SQL**
@@ -111,7 +111,7 @@ Sesión 05
             :maxdepth: 1
             :glob:
 
-/notebooks/pyspark/3-*
+            /notebooks/pyspark/3-*
 
     **Analítica Predictiva en Grandes Datos --- Apache Spark ML I**
 
@@ -119,10 +119,10 @@ Sesión 05
             :maxdepth: 1
             :glob:
 
-/notebooks/pyspark/4-*
+            /notebooks/pyspark/4-*
 
 
-Sesión 06
+Sesión 06 --- 2022-06-17
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Analítica Predictiva en Grandes Datos --- Apache Spark ML II**
@@ -131,12 +131,12 @@ Sesión 06
             :maxdepth: 1
             :glob:
 
-/notebooks/pyspark/5-*
-/notebooks/pyspark/6-*
+            /notebooks/pyspark/5-*
+            /notebooks/pyspark/6-*
 
 
 
-Sesión 07
+Sesión 07 --- 2022-06-24
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Analítica de Grandes Datos --- Apache Spark Streaming**
@@ -145,7 +145,7 @@ Sesión 07
             :maxdepth: 1
             :glob:
 
-/notebooks/pyspark/7-*
+            /notebooks/pyspark/7-*
 
     **Analítica Predictiva en Grandes Datos --- Introduccion a Keras con TensorFlow 2.7**
 
@@ -153,11 +153,11 @@ Sesión 07
             :maxdepth: 1
             :glob:
 
-/notebooks/tensorflow/intro/1-*
+        /notebooks/tensorflow/intro/1-*
 
 
 
-Sesión 08
+Sesión 08 --- 2022-07-01
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Analítica Predictiva en Grandes Datos --- Procesamiento básico de texto usando TensorFlow 2.4**
@@ -166,7 +166,7 @@ Sesión 08
             :maxdepth: 1
             :glob:
 
-/notebooks/tensorflow/texto/1-*
+            /notebooks/tensorflow/texto/1-*
 
 
     **Analítica Predictiva en Grandes Datos --- Estimadores en TensorFlow 2.4**
@@ -175,7 +175,7 @@ Sesión 08
             :maxdepth: 1
             :glob:
 
-/notebooks/tensorflow/estimadores/1-*
+            /notebooks/tensorflow/estimadores/1-*
 
 
     * **Evaluación y Cierre**
