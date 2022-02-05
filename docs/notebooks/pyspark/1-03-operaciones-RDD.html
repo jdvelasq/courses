@@ -1,0 +1,1610 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operaciones sobre RDD (resilient distributed datasets) &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Cursos de Analítica y Machine Learning
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Configuración</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Instalación de Vagrant y Docker</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Cursos de Pregrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../redes_neuronales_y_algoritmos_bioinspirados/index.html">Redes Neuronales Artificiales y Aprendizaje Profundo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fundamentos_de_analitica/index.html">Fundamentos de Analítica</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Cursos de Posgrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html">Analítica de Grandes Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_predictiva/index.html">Analítica Predictiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ciencia_de_los_datos/index.html">Ciencia de los Datos Aplicada</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../productos_de_datos/index.html">Productos de Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_avanzada/index.html">Analítica Avanzada</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Cursos de Analítica y Machine Learning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Operaciones sobre RDD (resilient distributed datasets)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/pyspark/1-03-operaciones-RDD.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Operaciones-sobre-RDD-(resilient-distributed-datasets)">
+<h1>Operaciones sobre RDD (resilient distributed datasets)<a class="headerlink" href="#Operaciones-sobre-RDD-(resilient-distributed-datasets)" title="Enlazar permanentemente con este título"></a></h1>
+<ul class="simple">
+<li><p><em>30 min</em> | Última modificación: Junio 22, 2019</p></li>
+</ul>
+<p>Spark (mediante sus interfaces en Scala, Java, Python) permite ejecutar operaciones de transformación en paralelo sobre conjuntos de datos que se encuentran particionados sobre los nodos del cluster. Estas operaciones son usadas principalmente en tareas de extracción, transformación y preparación de datos. Los datos procesados son usados en aplicaciones de aprendizaje automático e inteligencia de negocios.</p>
+<p>Al finalizar este tutorial, el lector estará en capacidad de:</p>
+<ul class="simple">
+<li><p>Crear colecciones paralelizadas en Spark a partir de datos existentes en Python.</p></li>
+<li><p>Cargar archivos de datos en diferentes formatos.</p></li>
+<li><p>Aplicar transformaciones y acciones sobre Datasets.</p></li>
+<li><p>Usar algoritmos simples basados en transformaciones y acciones sobre conjuntos de datos.</p></li>
+</ul>
+<div class="section" id="Archivos-de-datos-de-ejemplo-para-las-corridas">
+<h2>Archivos de datos de ejemplo para las corridas<a class="headerlink" href="#Archivos-de-datos-de-ejemplo-para-las-corridas" title="Enlazar permanentemente con este título"></a></h2>
+<p>En este tutorial se usan archivos de texto para demostrar algunas de las características de Spark. A coninuación se crean dichos archivos de texto y se mueven al HDFS.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Se borra la carpeta y su contenido en la máquina local si existe</span>
+<span class="o">!</span>rm -rf wordcount/
+
+<span class="c1">## Se crea la carpeta vacía</span>
+<span class="o">!</span>mkdir -p wordcount/
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> wordcount/text0.txt
+<span class="n">Analytics</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">discovery</span><span class="p">,</span> <span class="n">interpretation</span><span class="p">,</span> <span class="ow">and</span> <span class="n">communication</span> <span class="n">of</span> <span class="n">meaningful</span> <span class="n">patterns</span>
+<span class="ow">in</span> <span class="n">data</span><span class="o">.</span> <span class="n">Especially</span> <span class="n">valuable</span> <span class="ow">in</span> <span class="n">areas</span> <span class="n">rich</span> <span class="k">with</span> <span class="n">recorded</span> <span class="n">information</span><span class="p">,</span> <span class="n">analytics</span> <span class="n">relies</span>
+<span class="n">on</span> <span class="n">the</span> <span class="n">simultaneous</span> <span class="n">application</span> <span class="n">of</span> <span class="n">statistics</span><span class="p">,</span> <span class="n">computer</span> <span class="n">programming</span> <span class="ow">and</span> <span class="n">operations</span> <span class="n">research</span>
+<span class="n">to</span> <span class="n">quantify</span> <span class="n">performance</span><span class="o">.</span>
+
+<span class="n">Organizations</span> <span class="n">may</span> <span class="n">apply</span> <span class="n">analytics</span> <span class="n">to</span> <span class="n">business</span> <span class="n">data</span> <span class="n">to</span> <span class="n">describe</span><span class="p">,</span> <span class="n">predict</span><span class="p">,</span> <span class="ow">and</span> <span class="n">improve</span> <span class="n">business</span>
+<span class="n">performance</span><span class="o">.</span> <span class="n">Specifically</span><span class="p">,</span> <span class="n">areas</span> <span class="n">within</span> <span class="n">analytics</span> <span class="n">include</span> <span class="n">predictive</span> <span class="n">analytics</span><span class="p">,</span> <span class="n">prescriptive</span>
+<span class="n">analytics</span><span class="p">,</span> <span class="n">enterprise</span> <span class="n">decision</span> <span class="n">management</span><span class="p">,</span> <span class="n">descriptive</span> <span class="n">analytics</span><span class="p">,</span> <span class="n">cognitive</span> <span class="n">analytics</span><span class="p">,</span> <span class="n">Big</span>
+<span class="n">Data</span> <span class="n">Analytics</span><span class="p">,</span> <span class="n">retail</span> <span class="n">analytics</span><span class="p">,</span> <span class="n">store</span> <span class="n">assortment</span> <span class="ow">and</span> <span class="n">stock</span><span class="o">-</span><span class="n">keeping</span> <span class="n">unit</span> <span class="n">optimization</span><span class="p">,</span>
+<span class="n">marketing</span> <span class="n">optimization</span> <span class="ow">and</span> <span class="n">marketing</span> <span class="n">mix</span> <span class="n">modeling</span><span class="p">,</span> <span class="n">web</span> <span class="n">analytics</span><span class="p">,</span> <span class="n">call</span> <span class="n">analytics</span><span class="p">,</span> <span class="n">speech</span>
+<span class="n">analytics</span><span class="p">,</span> <span class="n">sales</span> <span class="n">force</span> <span class="n">sizing</span> <span class="ow">and</span> <span class="n">optimization</span><span class="p">,</span> <span class="n">price</span> <span class="ow">and</span> <span class="n">promotion</span> <span class="n">modeling</span><span class="p">,</span> <span class="n">predictive</span>
+<span class="n">science</span><span class="p">,</span> <span class="n">credit</span> <span class="n">risk</span> <span class="n">analysis</span><span class="p">,</span> <span class="ow">and</span> <span class="n">fraud</span> <span class="n">analytics</span><span class="o">.</span> <span class="n">Since</span> <span class="n">analytics</span> <span class="n">can</span> <span class="n">require</span> <span class="n">extensive</span>
+<span class="n">computation</span> <span class="p">(</span><span class="n">see</span> <span class="n">big</span> <span class="n">data</span><span class="p">),</span> <span class="n">the</span> <span class="n">algorithms</span> <span class="ow">and</span> <span class="n">software</span> <span class="n">used</span> <span class="k">for</span> <span class="n">analytics</span> <span class="n">harness</span> <span class="n">the</span> <span class="n">most</span>
+<span class="n">current</span> <span class="n">methods</span> <span class="ow">in</span> <span class="n">computer</span> <span class="n">science</span><span class="p">,</span> <span class="n">statistics</span><span class="p">,</span> <span class="ow">and</span> <span class="n">mathematics</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing wordcount/text0.txt
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> wordcount/text1.txt
+<span class="n">The</span> <span class="n">field</span> <span class="n">of</span> <span class="n">data</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Analytics</span> <span class="n">often</span> <span class="n">involves</span> <span class="n">studying</span> <span class="n">past</span> <span class="n">historical</span> <span class="n">data</span> <span class="n">to</span>
+<span class="n">research</span> <span class="n">potential</span> <span class="n">trends</span><span class="p">,</span> <span class="n">to</span> <span class="n">analyze</span> <span class="n">the</span> <span class="n">effects</span> <span class="n">of</span> <span class="n">certain</span> <span class="n">decisions</span> <span class="ow">or</span> <span class="n">events</span><span class="p">,</span> <span class="ow">or</span> <span class="n">to</span>
+<span class="n">evaluate</span> <span class="n">the</span> <span class="n">performance</span> <span class="n">of</span> <span class="n">a</span> <span class="n">given</span> <span class="n">tool</span> <span class="ow">or</span> <span class="n">scenario</span><span class="o">.</span> <span class="n">The</span> <span class="n">goal</span> <span class="n">of</span> <span class="n">analytics</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">improve</span>
+<span class="n">the</span> <span class="n">business</span> <span class="n">by</span> <span class="n">gaining</span> <span class="n">knowledge</span> <span class="n">which</span> <span class="n">can</span> <span class="n">be</span> <span class="n">used</span> <span class="n">to</span> <span class="n">make</span> <span class="n">improvements</span> <span class="ow">or</span> <span class="n">changes</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing wordcount/text1.txt
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> wordcount/text2.txt
+<span class="n">Data</span> <span class="n">analytics</span> <span class="p">(</span><span class="n">DA</span><span class="p">)</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">process</span> <span class="n">of</span> <span class="n">examining</span> <span class="n">data</span> <span class="n">sets</span> <span class="ow">in</span> <span class="n">order</span> <span class="n">to</span> <span class="n">draw</span> <span class="n">conclusions</span>
+<span class="n">about</span> <span class="n">the</span> <span class="n">information</span> <span class="n">they</span> <span class="n">contain</span><span class="p">,</span> <span class="n">increasingly</span> <span class="k">with</span> <span class="n">the</span> <span class="n">aid</span> <span class="n">of</span> <span class="n">specialized</span> <span class="n">systems</span>
+<span class="ow">and</span> <span class="n">software</span><span class="o">.</span> <span class="n">Data</span> <span class="n">analytics</span> <span class="n">technologies</span> <span class="ow">and</span> <span class="n">techniques</span> <span class="n">are</span> <span class="n">widely</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">commercial</span>
+<span class="n">industries</span> <span class="n">to</span> <span class="n">enable</span> <span class="n">organizations</span> <span class="n">to</span> <span class="n">make</span> <span class="n">more</span><span class="o">-</span><span class="n">informed</span> <span class="n">business</span> <span class="n">decisions</span> <span class="ow">and</span> <span class="n">by</span>
+<span class="n">scientists</span> <span class="ow">and</span> <span class="n">researchers</span> <span class="n">to</span> <span class="n">verify</span> <span class="ow">or</span> <span class="n">disprove</span> <span class="n">scientific</span> <span class="n">models</span><span class="p">,</span> <span class="n">theories</span> <span class="ow">and</span>
+<span class="n">hypotheses</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing wordcount/text2.txt
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## crea la carpeta /tmp/wordcount en el hdfs</span>
+<span class="o">!</span>hdfs dfs -mkdir /tmp/wordcount
+
+<span class="c1">## copia los archvios del directorio local wordcount/</span>
+<span class="c1">## al directorio /tmp/wordcount/ en el hdfs</span>
+<span class="o">!</span>hdfs dfs -copyFromLocal wordcount/* /tmp/wordcount/
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Inicialización-de-la-aplicación">
+<h2>Inicialización de la aplicación<a class="headerlink" href="#Inicialización-de-la-aplicación" title="Enlazar permanentemente con este título"></a></h2>
+<p>A continuación se realiza la inicialización del sistema. <code class="docutils literal notranslate"><span class="pre">findspark</span></code> permite la conexión de Python con Spark.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## findspark permite usar pyspark (interfaz de Python a Spark),</span>
+<span class="c1">## desde cualquier programa escrito en Python.</span>
+<span class="c1">##</span>
+<span class="kn">import</span> <span class="nn">findspark</span>
+<span class="n">findspark</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="c1">##</span>
+<span class="c1">## A continuación se inicializan las variables obligatorias</span>
+<span class="c1">## requeridas para trabajar con Spark desde Python:</span>
+<span class="c1">##</span>
+<span class="c1">##  SparkContext representa la conexión al cluster de Spark.</span>
+<span class="c1">##  SparkConf representa la configuración particular de una aplicación</span>
+<span class="c1">##     escrita en Spark.</span>
+<span class="c1">##  SparkSession representa la conexión para trabajar con SQL.</span>
+<span class="c1">##</span>
+<span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkConf</span><span class="p">,</span> <span class="n">SparkContext</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="n">sparkConf</span> <span class="o">=</span> <span class="n">SparkConf</span><span class="p">()</span><span class="o">.</span><span class="n">setAppName</span><span class="p">(</span><span class="s2">&quot;My SparkQL Application&quot;</span><span class="p">)</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">SparkContext</span><span class="p">(</span><span class="n">conf</span><span class="o">=</span><span class="n">sparkConf</span><span class="p">)</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Programación-usando-conjuntos-de-datos-distribuidos-(RDD)">
+<h2>Programación usando conjuntos de datos distribuidos (RDD)<a class="headerlink" href="#Programación-usando-conjuntos-de-datos-distribuidos-(RDD)" title="Enlazar permanentemente con este título"></a></h2>
+<div class="section" id="Creación-de-colecciones-paralelizadas-a-partir-de-datos-nativos-en-Python">
+<h3>Creación de colecciones paralelizadas a partir de datos nativos en Python<a class="headerlink" href="#Creación-de-colecciones-paralelizadas-a-partir-de-datos-nativos-en-Python" title="Enlazar permanentemente con este título"></a></h3>
+<p>Se crean mediante la función <code class="docutils literal notranslate"><span class="pre">parallelize</span></code> del <code class="docutils literal notranslate"><span class="pre">SparkContext</span></code>. Sobre estas colecciones se pueden aplicar operaciones en paralelo. Se crean a partir de datos nativos de Python.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## crea una colección a partir de una lista</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+<span class="c1">##</span>
+<span class="c1">## rdd contiene un objeto en memoria donde</span>
+<span class="c1">## se almacena la lista, no la lista como tal.</span>
+<span class="c1">##</span>
+<span class="n">rdd</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+ParallelCollectionRDD[0] at parallelize at PythonRDD.scala:195
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Retorna una lista que contiene todos los</span>
+<span class="c1">## elementos en un RDD</span>
+<span class="c1">##</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1, 2, 3, 4, 5]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## En el siguiente ejemplo se paraleliza un diccionario.</span>
+<span class="c1">## collect() retorna las claves.</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">({</span><span class="s2">&quot;a&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span><span class="mi">4</span><span class="p">})</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Lectura-de-archivos-con-formato-&lt;clave,-valor&gt;">
+<h3>Lectura de archivos con formato &lt;clave, valor&gt;<a class="headerlink" href="#Lectura-de-archivos-con-formato-<clave,-valor>" title="Enlazar permanentemente con este título"></a></h3>
+<p>Spark permite la carga de datos desde el sistema local, servicios web y formato <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> de Hadoop.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## crea una secuencia de parejas clave-valor</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Una vez se tiene un objeto RDD, es posible aplicar operaciones</span>
+<span class="c1">## en paralelo sobre él. En la siguiente línea de código, se aplica</span>
+<span class="c1">## la función lambda x:(x, x**2) a cada elemento del RDD, mediante</span>
+<span class="c1">## la función map. Como resultado se genera una secuencia de pares</span>
+<span class="c1">## [(1, 1), (2, 4), ..., (5, 25)]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Salva la secuencia al hdfs</span>
+<span class="c1">##</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">saveAsSequenceFile</span><span class="p">(</span><span class="s1">&#39;/tmp/out&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## El archivo se almacena en /tmp/out/. Aquí se usa</span>
+<span class="c1">## ls para listar los archivos de la carpeta /tmp/</span>
+<span class="c1">## en el sistema hdfs. Note se creó la carpeta</span>
+<span class="c1">## /tmp/out como resultado del paso anterior</span>
+<span class="c1">##</span>
+<span class="o">!</span>hdfs dfs -ls /tmp/out/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 5 items
+-rw-r--r--   1 root supergroup          0 2019-11-15 00:44 /tmp/out/_SUCCESS
+-rw-r--r--   1 root supergroup        108 2019-11-15 00:44 /tmp/out/part-00000
+-rw-r--r--   1 root supergroup        108 2019-11-15 00:44 /tmp/out/part-00001
+-rw-r--r--   1 root supergroup        108 2019-11-15 00:44 /tmp/out/part-00002
+-rw-r--r--   1 root supergroup        124 2019-11-15 00:44 /tmp/out/part-00003
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Una vez se tiene una secuencia de pares almacenada en el hdfs,</span>
+<span class="c1">## es posible volverla a cargar mediante sequenceFile().</span>
+<span class="c1">##</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">sequenceFile</span><span class="p">(</span><span class="s2">&quot;/tmp/out&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(1, 1), (2, 4), (3, 9), (4, 16), (5, 25)]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Se limpia el hdfs</span>
+<span class="o">!</span>hdfs dfs -rm -r -f /tmp/out
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Deleted /tmp/out
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Lectura-de-archivos-de-texto-con-textFile-y-wholeTextFiles">
+<h2>Lectura de archivos de texto con textFile y wholeTextFiles<a class="headerlink" href="#Lectura-de-archivos-de-texto-con-textFile-y-wholeTextFiles" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## textFile() puede leer un archivo de texto o los archivos</span>
+<span class="c1">## especificados. A continuación, se leen todos los archivos</span>
+<span class="c1">## de texto de la carpeta /tmp/wordcount/ en el hdfs</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/wordcount/&quot;</span><span class="p">)</span>
+<span class="n">rdd</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/tmp/wordcount/ MapPartitionsRDD[11] at textFile at NativeMethodAccessorImpl.java:0
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Se obtiene el timpo de dato almacenado en la variable rdd</span>
+<span class="c1">##</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">rdd</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+pyspark.rdd.RDD
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## rdd almacena como strings, el contenido de los archivos</span>
+<span class="c1">## text0.txt, text1.txt y text2.txt</span>
+<span class="c1">##</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;Analytics is the discovery, interpretation, and communication of meaningful patterns &#39;,
+ &#39;in data. Especially valuable in areas rich with recorded information, analytics relies &#39;,
+ &#39;on the simultaneous application of statistics, computer programming and operations research &#39;,
+ &#39;to quantify performance.&#39;,
+ &#39;&#39;,
+ &#39;Organizations may apply analytics to business data to describe, predict, and improve business &#39;,
+ &#39;performance. Specifically, areas within analytics include predictive analytics, prescriptive &#39;,
+ &#39;analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big &#39;,
+ &#39;Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, &#39;,
+ &#39;marketing optimization and marketing mix modeling, web analytics, call analytics, speech &#39;,
+ &#39;analytics, sales force sizing and optimization, price and promotion modeling, predictive &#39;,
+ &#39;science, credit risk analysis, and fraud analytics. Since analytics can require extensive &#39;,
+ &#39;computation (see big data), the algorithms and software used for analytics harness the most &#39;,
+ &#39;current methods in computer science, statistics, and mathematics.&#39;,
+ &#39;The field of data analysis. Analytics often involves studying past historical data to &#39;,
+ &#39;research potential trends, to analyze the effects of certain decisions or events, or to &#39;,
+ &#39;evaluate the performance of a given tool or scenario. The goal of analytics is to improve &#39;,
+ &#39;the business by gaining knowledge which can be used to make improvements or changes.&#39;,
+ &#39;Data analytics (DA) is the process of examining data sets in order to draw conclusions &#39;,
+ &#39;about the information they contain, increasingly with the aid of specialized systems &#39;,
+ &#39;and software. Data analytics technologies and techniques are widely used in commercial &#39;,
+ &#39;industries to enable organizations to make more-informed business decisions and by &#39;,
+ &#39;scientists and researchers to verify or disprove scientific models, theories and &#39;,
+ &#39;hypotheses.&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## wholeTextFiles() retorna una lista de pares que contienen el nombre</span>
+<span class="c1">## del archivo y su correspondiente texto</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">wholeTextFiles</span><span class="p">(</span><span class="s2">&quot;/tmp/wordcount/&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&#39;hdfs://0.0.0.0:9000/tmp/wordcount/text0.txt&#39;, &#39;Analytics is the discovery, interpretation, and communication of meaningful patterns \nin data. Especially valuable in areas rich with recorded information, analytics relies \non the simultaneous application of statistics, computer programming and operations research \nto quantify performance.\n\nOrganizations may apply analytics to business data to describe, predict, and improve business \nperformance. Specifically, areas within analytics include predictive analytics, prescriptive \nanalytics, enterprise decision management, descriptive analytics, cognitive analytics, Big \nData Analytics, retail analytics, store assortment and stock-keeping unit optimization, \nmarketing optimization and marketing mix modeling, web analytics, call analytics, speech \nanalytics, sales force sizing and optimization, price and promotion modeling, predictive \nscience, credit risk analysis, and fraud analytics. Since analytics can require extensive \ncomputation (see big data), the algorithms and software used for analytics harness the most \ncurrent methods in computer science, statistics, and mathematics.\n&#39;)
+----
+(&#39;hdfs://0.0.0.0:9000/tmp/wordcount/text1.txt&#39;, &#39;The field of data analysis. Analytics often involves studying past historical data to \nresearch potential trends, to analyze the effects of certain decisions or events, or to \nevaluate the performance of a given tool or scenario. The goal of analytics is to improve \nthe business by gaining knowledge which can be used to make improvements or changes.\n&#39;)
+----
+(&#39;hdfs://0.0.0.0:9000/tmp/wordcount/text2.txt&#39;, &#39;Data analytics (DA) is the process of examining data sets in order to draw conclusions \nabout the information they contain, increasingly with the aid of specialized systems \nand software. Data analytics technologies and techniques are widely used in commercial \nindustries to enable organizations to make more-informed business decisions and by \nscientists and researchers to verify or disprove scientific models, theories and \nhypotheses.\n&#39;)
+----
+</pre></div></div>
+</div>
+<div class="section" id="Operaciones-sobre-RDD">
+<h3>Operaciones sobre RDD<a class="headerlink" href="#Operaciones-sobre-RDD" title="Enlazar permanentemente con este título"></a></h3>
+<p>Spark soporta dos tipos de transformaciones sobre RDD:</p>
+<ul class="simple">
+<li><p>Transformaciones: Son funciones que crean un nuevo RDD a partir de uno existente. Estas pueden entenderse como equivalentes a la función Map en el algorimto MapReduce.</p></li>
+<li><p>Acciones: Retornan un valor después de realizar una computación sobre el RDD. Pueden entenderse como un reducer.</p></li>
+</ul>
+<p>Ver <a class="reference external" href="http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.DataFrame">http://spark.apache.org/docs/latest/api/python/pyspark.sql.html#pyspark.sql.DataFrame</a></p>
+<p>En este ejemplo se computa la cantidad de caracteres leídos de un grupo de archivos.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Carga de los archivos.</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/wordcount/&quot;</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Calculo de la longitud de cada línea usando la función len().</span>
+<span class="c1">## Se aplica la función len() a cada elemento del rdd</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+
+<span class="c1">##</span>
+<span class="c1">## Calculo del total de caracteres</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span>
+<span class="n">rdd</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[85, 87, 92, 24, 0, 94, 93, 91, 88, 89, 89, 90, 92, 65, 86, 88, 90, 84, 87, 85, 87, 83, 81, 11]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1861
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## En este ejemplo se pasa una función arbitraria a `map`.</span>
+<span class="c1">## La función add es equivalente a `lambda a, b: a+b`</span>
+<span class="c1">##</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">add</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/wordcount/&quot;</span><span class="p">)</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">len</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">rdd</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[85, 87, 92, 24, 0, 94, 93, 91, 88, 89, 89, 90, 92, 65, 86, 88, 90, 84, 87, 85, 87, 83, 81, 11]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+1861
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Transformaciones">
+<h3>Transformaciones<a class="headerlink" href="#Transformaciones" title="Enlazar permanentemente con este título"></a></h3>
+<p>Las transformaciones son las siguientes:</p>
+<ul class="simple">
+<li><p><strong>map</strong>( f ): Aplica la función f a cada elemento del dataset.</p></li>
+<li><p><strong>filter</strong>( f ): retorna un dataset con los elementos para los cuales f retorna <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>flatMap</strong>( f ): Es similar a <code class="docutils literal notranslate"><span class="pre">map</span></code> pero cada item de entrada es mapeado a los items de salida.</p></li>
+<li><p><strong>mapPattitions</strong>( f ): Similar a <code class="docutils literal notranslate"><span class="pre">map</span></code> pero se ejecuta separadamente en cada partición.</p></li>
+<li><p><strong>sample</strong>( withReplacement, fraction, seed ): muestrea una fracción de los datos.</p></li>
+<li><p><strong>union</strong>( otherRDD ): retorna la unión de los dos RDD.</p></li>
+<li><p><strong>intersection</strong>( otherRDD ): retorna la intersección de los dos RDD.</p></li>
+<li><p><strong>distinct</strong>(): retorna los elementos diferentes en el RDD.</p></li>
+<li><p><strong>groupByKey</strong>(): retorna los elementos agrupados por clave.</p></li>
+<li><p><strong>reduceByKey</strong>( f ): reduce por clave usando la función f.</p></li>
+<li><p><strong>aggregateByKey</strong>(): agrega los elementos por clave.</p></li>
+<li><p><strong>sortByKey</strong>(): retorna RDD ordenado por clave.</p></li>
+<li><p><strong>join</strong>( otherRDD ): para los RDD (K, V) y (K, W) retorna (K, (V, W)).</p></li>
+<li><p><strong>cogroup</strong>( otherRDD ): para los RDD (K, V) y (K, W) retorna (K, (iterable(V), iterable(K))).</p></li>
+<li><p><strong>cartesian</strong>( otherRDD ): retorna el producto cartesiano de los dos RDD.</p></li>
+</ul>
+</div>
+<div class="section" id="Acciones">
+<h3>Acciones<a class="headerlink" href="#Acciones" title="Enlazar permanentemente con este título"></a></h3>
+<ul class="simple">
+<li><p><strong>reduce</strong>( f ): agrega los elementos con la misma clave usando f.</p></li>
+<li><p><strong>collect</strong>(): retorna todos los elementos del RDD.</p></li>
+<li><p><strong>count</strong>(): Retorna el número de elementos del RDD.</p></li>
+<li><p><strong>first</strong>(): Retorna el primer elemento del RDD.</p></li>
+<li><p><strong>take</strong>( n ): Retorna los primeros n elementos del RDD.</p></li>
+<li><p><strong>takeSample</strong>(withReplacement, n): Retorna una muestra aleatoria del dataset.</p></li>
+<li><p><strong>takeOrdered</strong>(n): Retorna los primeros n elementos del RDD ordenado.</p></li>
+<li><p><strong>saveAsText</strong>(path): Salva el RDD como un arhivo en disco.</p></li>
+<li><p><strong>saveAsSequenceFile</strong>(path): Salva como clave-valor a Hadoop.</p></li>
+<li><p><strong>countByKey</strong>(): cuenta los elementos por clave.</p></li>
+<li><p><strong>foreach</strong>( f ): le aplica la función f a cada elemento del RDD.</p></li>
+</ul>
+</div>
+<div class="section" id="Ejemplos">
+<h3>Ejemplos<a class="headerlink" href="#Ejemplos" title="Enlazar permanentemente con este título"></a></h3>
+<p>A continuación se presentan varios ejemplos de cálculos comúnes, implementados como operaciones sobre RDDs.</p>
+<div class="section" id="Ejemplo-1">
+<h4>Ejemplo 1<a class="headerlink" href="#Ejemplo-1" title="Enlazar permanentemente con este título"></a></h4>
+<p>Conteo de frecuencia de palabras.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## creación de parejas (key, value). Se desea</span>
+<span class="c1">## contar el número de ocurrencias de cada letra</span>
+<span class="c1">## en la siguiente lista.</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">parallelize</span><span class="p">([</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se crean las parejas &lt;clave, valor&gt;</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(&#39;a&#39;, 1), (&#39;b&#39;, 1), (&#39;a&#39;, 1), (&#39;c&#39;, 1), (&#39;d&#39;, 1), (&#39;a&#39;, 1), (&#39;b&#39;, 1)]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Se reducen las parejas con la misma clave, sumando</span>
+<span class="c1">## los valores.</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(&#39;b&#39;, 2), (&#39;c&#39;, 1), (&#39;a&#39;, 3), (&#39;d&#39;, 1)]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Ejemplo-2">
+<h4>Ejemplo 2<a class="headerlink" href="#Ejemplo-2" title="Enlazar permanentemente con este título"></a></h4>
+<p>Para este ejemplo, se genera el siguiente archivo de datos separados por tabuladores.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> data.txt
+<span class="n">E</span>   <span class="mi">1</span>       <span class="n">b</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">f</span>   <span class="n">jjj</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">2</span>
+<span class="n">A</span>   <span class="mi">2</span>       <span class="n">a</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">c</span>   <span class="n">ccc</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">9</span>
+<span class="n">B</span>   <span class="mi">5</span>       <span class="n">f</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">c</span> <span class="n">ddd</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">A</span>   <span class="mi">3</span>       <span class="n">a</span><span class="p">,</span><span class="n">b</span>     <span class="n">hhh</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">C</span>   <span class="mi">6</span>       <span class="n">f</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">a</span> <span class="n">iii</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">3</span>
+<span class="n">A</span>   <span class="mi">7</span>       <span class="n">c</span><span class="p">,</span><span class="n">d</span>     <span class="n">bbb</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">7</span>
+<span class="n">A</span>   <span class="mi">9</span>       <span class="n">g</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">a</span>   <span class="n">aaa</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">B</span>   <span class="mi">1</span>       <span class="n">b</span><span class="p">,</span><span class="n">a</span>     <span class="n">fff</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">2</span>
+<span class="n">E</span>   <span class="mi">2</span>       <span class="n">d</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">f</span> <span class="n">eee</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">0</span>
+<span class="n">B</span>   <span class="mi">3</span>       <span class="n">d</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">g</span><span class="p">,</span><span class="n">f</span> <span class="n">bbb</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">3</span>
+<span class="n">C</span>   <span class="mi">7</span>       <span class="n">d</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">b</span> <span class="n">hhh</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">C</span>   <span class="mi">5</span>       <span class="n">d</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">c</span> <span class="n">bbb</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">9</span>
+<span class="n">D</span>   <span class="mi">3</span>       <span class="n">g</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">b</span> <span class="n">bbb</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">2</span>
+<span class="n">E</span>   <span class="mi">8</span>       <span class="n">c</span><span class="p">,</span><span class="n">f</span>     <span class="n">aaa</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">B</span>   <span class="mi">9</span>       <span class="n">d</span><span class="p">,</span><span class="n">b</span>     <span class="n">ccc</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">2</span>
+<span class="n">D</span>   <span class="mi">1</span>       <span class="n">f</span><span class="p">,</span><span class="n">e</span>     <span class="n">ccc</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">3</span>
+<span class="n">E</span>   <span class="mi">3</span>       <span class="n">e</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">f</span>   <span class="n">bbb</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">2</span>
+<span class="n">D</span>   <span class="mi">5</span>       <span class="n">g</span><span class="p">,</span><span class="n">a</span>     <span class="n">hhh</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">9</span>
+<span class="n">E</span>   <span class="mi">8</span>       <span class="n">e</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">a</span> <span class="n">ccc</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">9</span>
+<span class="n">E</span>   <span class="mi">9</span>       <span class="n">e</span><span class="p">,</span><span class="n">a</span>     <span class="n">bbb</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">E</span>   <span class="mi">7</span>       <span class="n">e</span><span class="p">,</span><span class="n">f</span>     <span class="n">ddd</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">4</span>
+<span class="n">E</span>   <span class="mi">3</span>       <span class="n">c</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">g</span>   <span class="n">ccc</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">7</span>
+<span class="n">D</span>   <span class="mi">5</span>       <span class="n">c</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">a</span>   <span class="n">eee</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">7</span>
+<span class="n">A</span>   <span class="mi">1</span>       <span class="n">f</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">d</span>   <span class="n">jjj</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">3</span>
+<span class="n">E</span>   <span class="mi">4</span>       <span class="n">c</span><span class="p">,</span><span class="n">d</span>     <span class="n">jjj</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">8</span>
+<span class="n">E</span>   <span class="mi">6</span>       <span class="n">e</span><span class="p">,</span><span class="n">d</span><span class="p">,</span><span class="n">c</span>   <span class="n">fff</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">A</span>   <span class="mi">8</span>       <span class="n">a</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">f</span>   <span class="n">fff</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">4</span>
+<span class="n">E</span>   <span class="mi">5</span>       <span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">g</span>   <span class="n">ggg</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">7</span>
+<span class="n">A</span>   <span class="mi">6</span>       <span class="n">f</span><span class="p">,</span><span class="n">e</span>     <span class="n">hhh</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">3</span>
+<span class="n">C</span>   <span class="mi">0</span>       <span class="n">f</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">g</span> <span class="n">eee</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">6</span>
+<span class="n">A</span>   <span class="mi">1</span>       <span class="n">b</span><span class="p">,</span><span class="n">f</span>     <span class="n">ccc</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">3</span>
+<span class="n">D</span>   <span class="mi">2</span>       <span class="n">b</span><span class="p">,</span><span class="n">f</span>     <span class="n">bbb</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">aaa</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">5</span>
+<span class="n">E</span>   <span class="mi">5</span>       <span class="n">a</span><span class="p">,</span><span class="n">c</span>     <span class="n">fff</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">5</span>
+<span class="n">B</span>   <span class="mi">4</span>       <span class="n">b</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">c</span>   <span class="n">iii</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">1</span>
+<span class="n">B</span>   <span class="mi">6</span>       <span class="n">f</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">e</span>   <span class="n">hhh</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">7</span>
+<span class="n">D</span>   <span class="mi">7</span>       <span class="n">a</span><span class="p">,</span><span class="n">f</span>     <span class="n">aaa</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">ddd</span><span class="p">:</span><span class="mi">3</span>
+<span class="n">B</span>   <span class="mi">8</span>       <span class="n">c</span><span class="p">,</span><span class="n">a</span>     <span class="n">ddd</span><span class="p">:</span><span class="mi">5</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">7</span><span class="p">,</span><span class="n">ccc</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">bbb</span><span class="p">:</span><span class="mi">4</span>
+<span class="n">C</span>   <span class="mi">9</span>       <span class="n">c</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">e</span><span class="p">,</span><span class="n">f</span> <span class="n">eee</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="n">fff</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">hhh</span><span class="p">:</span><span class="mi">6</span>
+<span class="n">E</span>   <span class="mi">1</span>       <span class="n">e</span><span class="p">,</span><span class="n">d</span>     <span class="n">fff</span><span class="p">:</span><span class="mi">9</span><span class="p">,</span><span class="n">iii</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="n">eee</span><span class="p">:</span><span class="mi">0</span>
+<span class="n">E</span>   <span class="mi">5</span>       <span class="n">f</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">d</span>   <span class="n">hhh</span><span class="p">:</span><span class="mi">8</span><span class="p">,</span><span class="n">ggg</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="n">jjj</span><span class="p">:</span><span class="mi">5</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting data.txt
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Copia el archivo del sistema local al hdfs</span>
+<span class="o">!</span>hdfs dfs -copyFromLocal data.txt /tmp/data.txt
+</pre></div>
+</div>
+</div>
+<p><strong>Parte a</strong></p>
+<p>Compute la suma de la columna 2.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## carga los datos</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/data.txt&quot;</span><span class="p">)</span>
+
+<span class="c1">## separa los datos por los tabuladores</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[&#39;E&#39;, &#39;1&#39;, &#39;b,g,f&#39;, &#39;jjj:3,bbb:0,ddd:9,ggg:8,hhh:2&#39;],
+ [&#39;A&#39;, &#39;2&#39;, &#39;a,f,c&#39;, &#39;ccc:2,ddd:0,aaa:3,hhh:9&#39;],
+ [&#39;B&#39;, &#39;5&#39;, &#39;f,e,a,c&#39;, &#39;ddd:2,ggg:5,ccc:6,jjj:1&#39;],
+ [&#39;A&#39;, &#39;3&#39;, &#39;a,b&#39;, &#39;hhh:9,iii:5,eee:7,bbb:1&#39;],
+ [&#39;C&#39;, &#39;6&#39;, &#39;f,g,d,a&#39;, &#39;iii:6,ddd:5,eee:4,jjj:3&#39;],
+ [&#39;A&#39;, &#39;7&#39;, &#39;c,d&#39;, &#39;bbb:2,hhh:0,ccc:4,fff:1,aaa:7&#39;],
+ [&#39;A&#39;, &#39;9&#39;, &#39;g,d,a&#39;, &#39;aaa:5,fff:8,ddd:2,iii:0,jjj:7,ccc:1&#39;],
+ [&#39;B&#39;, &#39;1&#39;, &#39;b,a&#39;, &#39;fff:3,hhh:1,ddd:2&#39;],
+ [&#39;E&#39;, &#39;2&#39;, &#39;d,e,a,f&#39;, &#39;eee:4,ccc:5,iii:9,fff:7,ggg:6,bbb:0&#39;],
+ [&#39;B&#39;, &#39;3&#39;, &#39;d,b,g,f&#39;, &#39;bbb:7,jjj:9,fff:5,iii:4,ggg:2,eee:3&#39;],
+ [&#39;C&#39;, &#39;7&#39;, &#39;d,c,f,b&#39;, &#39;hhh:6,eee:4,iii:0,fff:2,jjj:1&#39;],
+ [&#39;C&#39;, &#39;5&#39;, &#39;d,e,a,c&#39;, &#39;bbb:7,iii:6,ggg:9&#39;],
+ [&#39;D&#39;, &#39;3&#39;, &#39;g,e,f,b&#39;, &#39;bbb:9,aaa:3,ccc:6,fff:4,eee:2&#39;],
+ [&#39;E&#39;, &#39;8&#39;, &#39;c,f&#39;, &#39;aaa:8,ddd:5,jjj:1&#39;],
+ [&#39;B&#39;, &#39;9&#39;, &#39;d,b&#39;, &#39;ccc:0,jjj:6,fff:7,ddd:3,aaa:2&#39;],
+ [&#39;D&#39;, &#39;1&#39;, &#39;f,e&#39;, &#39;ccc:0,eee:6,bbb:9,ddd:3&#39;],
+ [&#39;E&#39;, &#39;3&#39;, &#39;e,b,f&#39;, &#39;bbb:6,iii:3,hhh:5,fff:4,ggg:9,ddd:2&#39;],
+ [&#39;D&#39;, &#39;5&#39;, &#39;g,a&#39;, &#39;hhh:4,jjj:5,ccc:9&#39;],
+ [&#39;E&#39;, &#39;8&#39;, &#39;e,c,f,a&#39;, &#39;ccc:1,iii:6,fff:9&#39;],
+ [&#39;E&#39;, &#39;9&#39;, &#39;e,a&#39;, &#39;bbb:9,aaa:3,fff:1&#39;],
+ [&#39;E&#39;, &#39;7&#39;, &#39;e,f&#39;, &#39;ddd:9,iii:2,aaa:4&#39;],
+ [&#39;E&#39;, &#39;3&#39;, &#39;c,b,g&#39;, &#39;ccc:5,fff:8,iii:7&#39;],
+ [&#39;D&#39;, &#39;5&#39;, &#39;c,f,a&#39;, &#39;eee:3,jjj:2,ddd:7&#39;],
+ [&#39;A&#39;, &#39;1&#39;, &#39;f,a,d&#39;, &#39;jjj:1,ggg:0,ccc:7,ddd:9,bbb:3&#39;],
+ [&#39;E&#39;, &#39;4&#39;, &#39;c,d&#39;, &#39;jjj:6,ccc:0,aaa:1,hhh:9,iii:7,ggg:8&#39;],
+ [&#39;E&#39;, &#39;6&#39;, &#39;e,d,c&#39;, &#39;fff:3,eee:6,iii:4,bbb:7,ddd:0,ccc:1&#39;],
+ [&#39;A&#39;, &#39;8&#39;, &#39;a,e,f&#39;, &#39;fff:0,ddd:5,ccc:4&#39;],
+ [&#39;E&#39;, &#39;5&#39;, &#39;c,a,g&#39;, &#39;ggg:6,hhh:3,ddd:9,ccc:0,jjj:7&#39;],
+ [&#39;A&#39;, &#39;6&#39;, &#39;f,e&#39;, &#39;hhh:6,jjj:0,eee:5,iii:7,ccc:3&#39;],
+ [&#39;C&#39;, &#39;0&#39;, &#39;f,c,a,g&#39;, &#39;eee:1,fff:4,aaa:2,ccc:7,ggg:0,ddd:6&#39;],
+ [&#39;A&#39;, &#39;1&#39;, &#39;b,f&#39;, &#39;ccc:6,aaa:9,eee:5,ddd:0,bbb:3&#39;],
+ [&#39;D&#39;, &#39;2&#39;, &#39;b,f&#39;, &#39;bbb:7,hhh:1,aaa:6,iii:4,fff:9,ddd:5&#39;],
+ [&#39;E&#39;, &#39;5&#39;, &#39;a,c&#39;, &#39;fff:3,ccc:1,ggg:2,eee:5&#39;],
+ [&#39;B&#39;, &#39;4&#39;, &#39;b,f,c&#39;, &#39;iii:7,ggg:3,ddd:0,jjj:8,hhh:5,ccc:1&#39;],
+ [&#39;B&#39;, &#39;6&#39;, &#39;f,a,e&#39;, &#39;hhh:6,ccc:3,jjj:0,bbb:8,ddd:7&#39;],
+ [&#39;D&#39;, &#39;7&#39;, &#39;a,f&#39;, &#39;aaa:0,fff:5,ddd:3&#39;],
+ [&#39;B&#39;, &#39;8&#39;, &#39;c,a&#39;, &#39;ddd:5,jjj:2,iii:7,ccc:0,bbb:4&#39;],
+ [&#39;C&#39;, &#39;9&#39;, &#39;c,a,e,f&#39;, &#39;eee:0,fff:2,hhh:6&#39;],
+ [&#39;E&#39;, &#39;1&#39;, &#39;e,d&#39;, &#39;fff:9,iii:2,eee:0&#39;],
+ [&#39;E&#39;, &#39;5&#39;, &#39;f,a,d&#39;, &#39;hhh:8,ggg:3,jjj:5&#39;]]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## extrae la segunda columna y la convierte en número</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="c1">## se imprimen los primeros cinco valores</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[1, 2, 5, 3, 6]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">add</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">add</span><span class="p">)</span> <span class="c1">## Se reduce sumando los valores. Note que no hay parejas clave-valor</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+190
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## El codigo se puede reescribir como:</span>
+<span class="c1">##</span>
+<span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/data.txt&quot;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span> \
+    <span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> \
+    <span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+190
+</pre></div></div>
+</div>
+<p><strong>Parte b</strong></p>
+<p>Genere un RDD donde la clave sea el número de la columna 2, y el valor sean las letras correspondientes de la columna 1 del archivo original.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Carga el archivo y lo separa por tabuladores</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/data.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se forman parejas &lt;columna 2, [columna 1]&gt; puesto que</span>
+<span class="c1">## se desea agrupar por la columna 2. Esto es,</span>
+<span class="c1">## [ (1, E), (2, A), ..., (1, E), (5, E)]</span>
+<span class="c1">## Note que el segundo elemento del par es una lista.</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
+
+<span class="c1">##</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="n">add</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(&#39;1&#39;, [&#39;E&#39;, &#39;B&#39;, &#39;D&#39;, &#39;A&#39;, &#39;A&#39;, &#39;E&#39;]),
+ (&#39;9&#39;, [&#39;A&#39;, &#39;B&#39;, &#39;E&#39;, &#39;C&#39;]),
+ (&#39;8&#39;, [&#39;E&#39;, &#39;E&#39;, &#39;A&#39;, &#39;B&#39;]),
+ (&#39;4&#39;, [&#39;E&#39;, &#39;B&#39;]),
+ (&#39;0&#39;, [&#39;C&#39;]),
+ (&#39;2&#39;, [&#39;A&#39;, &#39;E&#39;, &#39;D&#39;]),
+ (&#39;5&#39;, [&#39;B&#39;, &#39;C&#39;, &#39;D&#39;, &#39;D&#39;, &#39;E&#39;, &#39;E&#39;, &#39;E&#39;]),
+ (&#39;3&#39;, [&#39;A&#39;, &#39;B&#39;, &#39;D&#39;, &#39;E&#39;, &#39;E&#39;]),
+ (&#39;6&#39;, [&#39;C&#39;, &#39;E&#39;, &#39;A&#39;, &#39;B&#39;]),
+ (&#39;7&#39;, [&#39;A&#39;, &#39;C&#39;, &#39;E&#39;, &#39;D&#39;])]
+</pre></div></div>
+</div>
+<p><strong>Parte c</strong></p>
+<p>Calcule la cantidad de registros por clave de la columna 4. En otras palabras, ¿cuántos registros hay que tengan la clave <code class="docutils literal notranslate"><span class="pre">aaa</span></code>?</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Carga el archivo y lo separa por tabuladores</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/data.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se obtiene un rdd que contenga únicamente la columna 4.</span>
+<span class="c1">##</span>
+<span class="c1">##  [&#39;jjj:3,bbb:0,ddd:9,ggg:8,hhh:2&#39;,</span>
+<span class="c1">##  ...</span>
+<span class="c1">##  &#39;hhh:8,ggg:3,jjj:5&#39;]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se parte por la &#39;,&#39;. flatMap() genera un nuevo registro</span>
+<span class="c1">## en el rdd por cada valor en la lista retornada por</span>
+<span class="c1">## la función lambda x: x.split(&#39;,&#39;)</span>
+<span class="c1">##</span>
+<span class="c1">##   [&#39;jjj:3&#39;,</span>
+<span class="c1">##    &#39;bbb:0&#39;,</span>
+<span class="c1">##    ......</span>
+<span class="c1">##    &#39;ggg:3&#39;,</span>
+<span class="c1">##    &#39;jjj:5&#39;]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Separa por los &#39;:&#39; y toma el primer elemento.</span>
+<span class="c1">##</span>
+<span class="c1">##   [&#39;jjj&#39;,</span>
+<span class="c1">##    &#39;bbb&#39;,</span>
+<span class="c1">##    .....</span>
+<span class="c1">##    &#39;ggg&#39;,</span>
+<span class="c1">##    &#39;jjj&#39;]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se aplica el algoritmo de conteo de palabras</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="n">add</span><span class="p">)</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(&#39;jjj&#39;, 18),
+ (&#39;ccc&#39;, 23),
+ (&#39;aaa&#39;, 13),
+ (&#39;iii&#39;, 18),
+ (&#39;eee&#39;, 15),
+ (&#39;bbb&#39;, 16),
+ (&#39;ddd&#39;, 23),
+ (&#39;ggg&#39;, 13),
+ (&#39;hhh&#39;, 16),
+ (&#39;fff&#39;, 20)]
+</pre></div></div>
+</div>
+<p><strong>Parte d</strong></p>
+<p>Genere una tabla que contenga la primera columna, la cantidad de elementos en la columna 3 y la cantidad de elementos en la columna 4. La columna 4 es una lista de claves y valores separados por comas.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Carga el archivo y lo separa por tabuladores</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/data.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Elimina la columna 2. Queda así:</span>
+<span class="c1">##</span>
+<span class="c1">##   [[&#39;E&#39;, &#39;b,g,f&#39;, &#39;jjj:3,bbb:0,ddd:9,ggg:8,hhh:2&#39;],</span>
+<span class="c1">##    [&#39;A&#39;, &#39;a,f,c&#39;, &#39;ccc:2,ddd:0,aaa:3,hhh:9&#39;],</span>
+<span class="c1">##   ....</span>
+<span class="c1">##   [&#39;E&#39;, &#39;e,d&#39;, &#39;fff:9,iii:2,eee:0&#39;],</span>
+<span class="c1">##   [&#39;E&#39;, &#39;f,a,d&#39;, &#39;hhh:8,ggg:3,jjj:5&#39;]]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Parte las columnas 2 y 3 por la coma y cuenta los elementos</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> \
+                         <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)),</span> \
+                         <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">))])</span>
+
+
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[&#39;E&#39;, 3, 5],
+ [&#39;A&#39;, 3, 4],
+ [&#39;B&#39;, 4, 4],
+ [&#39;A&#39;, 2, 4],
+ [&#39;C&#39;, 4, 4],
+ [&#39;A&#39;, 2, 5],
+ [&#39;A&#39;, 3, 6],
+ [&#39;B&#39;, 2, 3],
+ [&#39;E&#39;, 4, 6],
+ [&#39;B&#39;, 4, 6],
+ [&#39;C&#39;, 4, 5],
+ [&#39;C&#39;, 4, 3],
+ [&#39;D&#39;, 4, 5],
+ [&#39;E&#39;, 2, 3],
+ [&#39;B&#39;, 2, 5],
+ [&#39;D&#39;, 2, 4],
+ [&#39;E&#39;, 3, 6],
+ [&#39;D&#39;, 2, 3],
+ [&#39;E&#39;, 4, 3],
+ [&#39;E&#39;, 2, 3],
+ [&#39;E&#39;, 2, 3],
+ [&#39;E&#39;, 3, 3],
+ [&#39;D&#39;, 3, 3],
+ [&#39;A&#39;, 3, 5],
+ [&#39;E&#39;, 2, 6],
+ [&#39;E&#39;, 3, 6],
+ [&#39;A&#39;, 3, 3],
+ [&#39;E&#39;, 3, 5],
+ [&#39;A&#39;, 2, 5],
+ [&#39;C&#39;, 4, 6],
+ [&#39;A&#39;, 2, 5],
+ [&#39;D&#39;, 2, 6],
+ [&#39;E&#39;, 2, 4],
+ [&#39;B&#39;, 3, 6],
+ [&#39;B&#39;, 3, 5],
+ [&#39;D&#39;, 2, 3],
+ [&#39;B&#39;, 2, 5],
+ [&#39;C&#39;, 4, 3],
+ [&#39;E&#39;, 2, 3],
+ [&#39;E&#39;, 3, 3]]
+</pre></div></div>
+</div>
+<p><strong>Parte e</strong></p>
+<p>Compute la cantidad de registros por letra de la columna 3 y clave de al columna 4; esto es, por ejemplo, la cantidad de registros en tienen la letra <code class="docutils literal notranslate"><span class="pre">a</span></code> en la columna 3 y la clave <code class="docutils literal notranslate"><span class="pre">aaa</span></code> en la columna 4 es:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>((a,aaa), 5)
+</pre></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Carga el archivo y lo separa por tabuladores</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/data.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">))</span>
+
+<span class="c1">##</span>
+<span class="c1">## Elimina las dos primeras columnas.</span>
+<span class="c1">##</span>
+<span class="c1">## Resultado:</span>
+<span class="c1">##</span>
+<span class="c1">##  [[&#39;b,g,f&#39;, &#39;jjj:3,bbb:0,ddd:9,ggg:8,hhh:2&#39;],</span>
+<span class="c1">##   [&#39;a,f,c&#39;, &#39;ccc:2,ddd:0,aaa:3,hhh:9&#39;],</span>
+<span class="c1">##   ...</span>
+<span class="c1">##   [&#39;e,d&#39;, &#39;fff:9,iii:2,eee:0&#39;],</span>
+<span class="c1">##   [&#39;f,a,d&#39;, &#39;hhh:8,ggg:3,jjj:5&#39;]]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Expande el dataset generando un registro por cada</span>
+<span class="c1">## elemento de la columna 1.</span>
+<span class="c1">##</span>
+<span class="c1">## Resultado:</span>
+<span class="c1">##</span>
+<span class="c1">##  [[&#39;b&#39;, &#39;jjj:3,bbb:0,ddd:9,ggg:8,hhh:2&#39;],</span>
+<span class="c1">##   [&#39;g&#39;, &#39;jjj:3,bbb:0,ddd:9,ggg:8,hhh:2&#39;],</span>
+<span class="c1">##  ...</span>
+<span class="c1">##   [&#39;a&#39;, &#39;hhh:8,ggg:3,jjj:5&#39;],</span>
+<span class="c1">##   [&#39;d&#39;, &#39;hhh:8,ggg:3,jjj:5&#39;]]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[[</span><span class="n">e</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>  <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Cambia la segunda columna por una lista</span>
+<span class="c1">## partiendo los elementos por las comas</span>
+<span class="c1">##</span>
+<span class="c1">## Resultado:</span>
+<span class="c1">##</span>
+<span class="c1">##  [[&#39;b&#39;, [&#39;jjj:3&#39;, &#39;bbb:0&#39;, &#39;ddd:9&#39;, &#39;ggg:8&#39;, &#39;hhh:2&#39;]],</span>
+<span class="c1">##   [&#39;g&#39;, [&#39;jjj:3&#39;, &#39;bbb:0&#39;, &#39;ddd:9&#39;, &#39;ggg:8&#39;, &#39;hhh:2&#39;]],</span>
+<span class="c1">##   ....</span>
+<span class="c1">##   [&#39;a&#39;, [&#39;hhh:8&#39;, &#39;ggg:3&#39;, &#39;jjj:5&#39;]],</span>
+<span class="c1">##   [&#39;d&#39;, [&#39;hhh:8&#39;, &#39;ggg:3&#39;, &#39;jjj:5&#39;]]]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Parte cada elemento por los &#39;:&#39; y toma el primer elemento</span>
+<span class="c1">##</span>
+<span class="c1">## Resultado:</span>
+<span class="c1">##</span>
+<span class="c1">##    [[&#39;b&#39;, [&#39;jjj&#39;, &#39;bbb&#39;, &#39;ddd&#39;, &#39;ggg&#39;, &#39;hhh&#39;]],</span>
+<span class="c1">##     [&#39;g&#39;, [&#39;jjj&#39;, &#39;bbb&#39;, &#39;ddd&#39;, &#39;ggg&#39;, &#39;hhh&#39;]],</span>
+<span class="c1">##     ...</span>
+<span class="c1">##     [&#39;a&#39;, [&#39;hhh&#39;, &#39;ggg&#39;, &#39;jjj&#39;]],</span>
+<span class="c1">##     [&#39;d&#39;, [&#39;hhh&#39;, &#39;ggg&#39;, &#39;jjj&#39;]]]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">]])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Genera las parejas clave valor.</span>
+<span class="c1">##</span>
+<span class="c1">## Resultado:</span>
+<span class="c1">##</span>
+<span class="c1">##   [((&#39;b&#39;, &#39;jjj&#39;), 1),</span>
+<span class="c1">##    ((&#39;b&#39;, &#39;bbb&#39;), 1),</span>
+<span class="c1">##    ...</span>
+<span class="c1">##    ((&#39;d&#39;, &#39;ggg&#39;), 1),</span>
+<span class="c1">##    ((&#39;d&#39;, &#39;jjj&#39;), 1)]</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[((</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">a</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>  <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="c1">##</span>
+<span class="c1">## Reduce por clave para hacer el conteo.</span>
+<span class="c1">## Se usa sortByKey() para ordenas la salida</span>
+<span class="c1">## por claves</span>
+<span class="c1">##</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">reduceByKey</span><span class="p">(</span><span class="n">add</span><span class="p">)</span><span class="o">.</span><span class="n">sortByKey</span><span class="p">()</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[((&#39;a&#39;, &#39;aaa&#39;), 5),
+ ((&#39;a&#39;, &#39;bbb&#39;), 7),
+ ((&#39;a&#39;, &#39;ccc&#39;), 13),
+ ((&#39;a&#39;, &#39;ddd&#39;), 13),
+ ((&#39;a&#39;, &#39;eee&#39;), 7),
+ ((&#39;a&#39;, &#39;fff&#39;), 10),
+ ((&#39;a&#39;, &#39;ggg&#39;), 8),
+ ((&#39;a&#39;, &#39;hhh&#39;), 8),
+ ((&#39;a&#39;, &#39;iii&#39;), 7),
+ ((&#39;a&#39;, &#39;jjj&#39;), 10),
+ ((&#39;b&#39;, &#39;aaa&#39;), 4),
+ ((&#39;b&#39;, &#39;bbb&#39;), 7),
+ ((&#39;b&#39;, &#39;ccc&#39;), 5),
+ ((&#39;b&#39;, &#39;ddd&#39;), 7),
+ ((&#39;b&#39;, &#39;eee&#39;), 5),
+ ((&#39;b&#39;, &#39;fff&#39;), 8),
+ ((&#39;b&#39;, &#39;ggg&#39;), 4),
+ ((&#39;b&#39;, &#39;hhh&#39;), 7),
+ ((&#39;b&#39;, &#39;iii&#39;), 7),
+ ((&#39;b&#39;, &#39;jjj&#39;), 5),
+ ((&#39;c&#39;, &#39;aaa&#39;), 5),
+ ((&#39;c&#39;, &#39;bbb&#39;), 4),
+ ((&#39;c&#39;, &#39;ccc&#39;), 12),
+ ((&#39;c&#39;, &#39;ddd&#39;), 9),
+ ((&#39;c&#39;, &#39;eee&#39;), 6),
+ ((&#39;c&#39;, &#39;fff&#39;), 8),
+ ((&#39;c&#39;, &#39;ggg&#39;), 7),
+ ((&#39;c&#39;, &#39;hhh&#39;), 7),
+ ((&#39;c&#39;, &#39;iii&#39;), 8),
+ ((&#39;c&#39;, &#39;jjj&#39;), 8),
+ ((&#39;d&#39;, &#39;aaa&#39;), 4),
+ ((&#39;d&#39;, &#39;bbb&#39;), 6),
+ ((&#39;d&#39;, &#39;ccc&#39;), 7),
+ ((&#39;d&#39;, &#39;ddd&#39;), 5),
+ ((&#39;d&#39;, &#39;eee&#39;), 6),
+ ((&#39;d&#39;, &#39;fff&#39;), 8),
+ ((&#39;d&#39;, &#39;ggg&#39;), 6),
+ ((&#39;d&#39;, &#39;hhh&#39;), 4),
+ ((&#39;d&#39;, &#39;iii&#39;), 9),
+ ((&#39;d&#39;, &#39;jjj&#39;), 8),
+ ((&#39;e&#39;, &#39;aaa&#39;), 3),
+ ((&#39;e&#39;, &#39;bbb&#39;), 8),
+ ((&#39;e&#39;, &#39;ccc&#39;), 9),
+ ((&#39;e&#39;, &#39;ddd&#39;), 7),
+ ((&#39;e&#39;, &#39;eee&#39;), 7),
+ ((&#39;e&#39;, &#39;fff&#39;), 9),
+ ((&#39;e&#39;, &#39;ggg&#39;), 4),
+ ((&#39;e&#39;, &#39;hhh&#39;), 4),
+ ((&#39;e&#39;, &#39;iii&#39;), 8),
+ ((&#39;e&#39;, &#39;jjj&#39;), 3),
+ ((&#39;f&#39;, &#39;aaa&#39;), 8),
+ ((&#39;f&#39;, &#39;bbb&#39;), 10),
+ ((&#39;f&#39;, &#39;ccc&#39;), 13),
+ ((&#39;f&#39;, &#39;ddd&#39;), 17),
+ ((&#39;f&#39;, &#39;eee&#39;), 11),
+ ((&#39;f&#39;, &#39;fff&#39;), 11),
+ ((&#39;f&#39;, &#39;ggg&#39;), 9),
+ ((&#39;f&#39;, &#39;hhh&#39;), 10),
+ ((&#39;f&#39;, &#39;iii&#39;), 10),
+ ((&#39;f&#39;, &#39;jjj&#39;), 12),
+ ((&#39;g&#39;, &#39;aaa&#39;), 3),
+ ((&#39;g&#39;, &#39;bbb&#39;), 3),
+ ((&#39;g&#39;, &#39;ccc&#39;), 6),
+ ((&#39;g&#39;, &#39;ddd&#39;), 5),
+ ((&#39;g&#39;, &#39;eee&#39;), 4),
+ ((&#39;g&#39;, &#39;fff&#39;), 5),
+ ((&#39;g&#39;, &#39;ggg&#39;), 4),
+ ((&#39;g&#39;, &#39;hhh&#39;), 3),
+ ((&#39;g&#39;, &#39;iii&#39;), 4),
+ ((&#39;g&#39;, &#39;jjj&#39;), 6)]
+</pre></div></div>
+</div>
+<hr class="docutils" />
+<p><strong>Limpieza de la carpeta de trabajo</strong></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>hdfs dfs -rm -r -f /tmp/wordcount
+<span class="o">!</span>hdfs dfs -rm /tmp/data.txt
+<span class="o">!</span>hdfs dfs -ls /tmp
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Deleted /tmp/wordcount
+Deleted /tmp/data.txt
+</pre></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2019-2021, Juan D. Velasquez.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

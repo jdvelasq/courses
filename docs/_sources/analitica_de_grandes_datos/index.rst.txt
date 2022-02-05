@@ -147,7 +147,7 @@ Sesión 07
 
 /notebooks/pyspark/7-*
 
-    **Analítica Predictiva en Grandes Datos --- Introduccion a Keras con TensorFlow 2.4**
+    **Analítica Predictiva en Grandes Datos --- Introduccion a Keras con TensorFlow 2.7**
 
         .. toctree::
             :maxdepth: 1

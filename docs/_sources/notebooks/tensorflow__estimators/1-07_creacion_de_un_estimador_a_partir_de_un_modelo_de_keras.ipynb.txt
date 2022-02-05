@@ -1,0 +1,280 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Creación de un estimador a partir de un modelo de Keras\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* *30 min* | Última modificación: Abril 6, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Basado en https://www.tensorflow.org/tutorials/estimator/keras_model_to_estimator"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Importación de librerías"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2.4.1\n"
+     ]
+    }
+   ],
+   "source": [
+    "import tensorflow as tf\n",
+    "import tensorflow_datasets as tfds\n",
+    "from tensorflow import keras\n",
+    "\n",
+    "tfds.disable_progress_bar()\n",
+    "\n",
+    "print(tf.__version__)\n",
+    "\n",
+    "#\n",
+    "# Establece el nivel de reporte en\n",
+    "# pantalla de TensorFlow\n",
+    "#\n",
+    "import logging\n",
+    "\n",
+    "logger = tf.get_logger().setLevel(logging.ERROR)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Carga y configuración del dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Se crea una función para cargar el dataset\n",
+    "#\n",
+    "def input_fn():\n",
+    "    split = tfds.Split.TRAIN\n",
+    "    dataset = tfds.load(\"iris\", split=split, as_supervised=True)\n",
+    "    dataset = dataset.map(lambda features, labels: ({\"dense_input\": features}, labels))\n",
+    "    dataset = dataset.batch(32).repeat()\n",
+    "    return dataset"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\u001b[1mDownloading and preparing dataset 4.44 KiB (download: 4.44 KiB, generated: Unknown size, total: 4.44 KiB) to /root/tensorflow_datasets/iris/2.0.0...\u001b[0m\n",
+      "\u001b[1mDataset iris downloaded and prepared to /root/tensorflow_datasets/iris/2.0.0. Subsequent calls will reuse this data.\u001b[0m\n",
+      "{'dense_input': <tf.Tensor: shape=(32, 4), dtype=float32, numpy=\n",
+      "array([[5.1, 3.4, 1.5, 0.2],\n",
+      "       [7.7, 3. , 6.1, 2.3],\n",
+      "       [5.7, 2.8, 4.5, 1.3],\n",
+      "       [6.8, 3.2, 5.9, 2.3],\n",
+      "       [5.2, 3.4, 1.4, 0.2],\n",
+      "       [5.6, 2.9, 3.6, 1.3],\n",
+      "       [5.5, 2.6, 4.4, 1.2],\n",
+      "       [5.5, 2.4, 3.7, 1. ],\n",
+      "       [4.6, 3.4, 1.4, 0.3],\n",
+      "       [7.7, 2.8, 6.7, 2. ],\n",
+      "       [7. , 3.2, 4.7, 1.4],\n",
+      "       [4.6, 3.2, 1.4, 0.2],\n",
+      "       [6.5, 3. , 5.2, 2. ],\n",
+      "       [5.5, 4.2, 1.4, 0.2],\n",
+      "       [5.4, 3.9, 1.3, 0.4],\n",
+      "       [5. , 3.5, 1.3, 0.3],\n",
+      "       [5.1, 3.8, 1.5, 0.3],\n",
+      "       [4.8, 3. , 1.4, 0.1],\n",
+      "       [6.5, 3. , 5.8, 2.2],\n",
+      "       [7.6, 3. , 6.6, 2.1],\n",
+      "       [6.7, 3.3, 5.7, 2.1],\n",
+      "       [7.9, 3.8, 6.4, 2. ],\n",
+      "       [6.7, 3. , 5.2, 2.3],\n",
+      "       [5.8, 4. , 1.2, 0.2],\n",
+      "       [6.3, 2.5, 5. , 1.9],\n",
+      "       [5. , 3. , 1.6, 0.2],\n",
+      "       [6.9, 3.1, 5.1, 2.3],\n",
+      "       [6.1, 3. , 4.6, 1.4],\n",
+      "       [5.8, 2.7, 4.1, 1. ],\n",
+      "       [5.2, 2.7, 3.9, 1.4],\n",
+      "       [6.7, 3. , 5. , 1.7],\n",
+      "       [5.7, 2.6, 3.5, 1. ]], dtype=float32)>}\n",
+      "tf.Tensor([0 2 1 2 0 1 1 1 0 2 1 0 2 0 0 0 0 0 2 2 2 2 2 0 2 0 2 1 1 1 1 1], shape=(32,), dtype=int64)\n"
+     ]
+    }
+   ],
+   "source": [
+    "for features_batch, labels_batch in input_fn().take(1):\n",
+    "    print(features_batch)\n",
+    "    print(labels_batch)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Especificación del modelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Model: \"sequential\"\n",
+      "_________________________________________________________________\n",
+      "Layer (type)                 Output Shape              Param #   \n",
+      "=================================================================\n",
+      "dense (Dense)                (None, 16)                80        \n",
+      "_________________________________________________________________\n",
+      "dropout (Dropout)            (None, 16)                0         \n",
+      "_________________________________________________________________\n",
+      "dense_1 (Dense)              (None, 3)                 51        \n",
+      "=================================================================\n",
+      "Total params: 131\n",
+      "Trainable params: 131\n",
+      "Non-trainable params: 0\n",
+      "_________________________________________________________________\n"
+     ]
+    }
+   ],
+   "source": [
+    "keras_model = keras.models.Sequential(\n",
+    "    [\n",
+    "        keras.layers.Dense(16, activation=\"relu\", input_shape=(4,)),\n",
+    "        keras.layers.Dropout(0.2),\n",
+    "        keras.layers.Dense(3, activation=\"sigmoid\"),\n",
+    "    ]\n",
+    ")\n",
+    "\n",
+    "keras_model.compile(\n",
+    "    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),\n",
+    "    optimizer=\"adam\",\n",
+    ")\n",
+    "\n",
+    "keras_model.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Especificación del estimador"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/backend.py:434: UserWarning: `tf.keras.backend.set_learning_phase` is deprecated and will be removed after 2020-10-11. To update it, simply pass a True/False value to the `training` argument of the `__call__` method of your layer or model.\n",
+      "  warnings.warn('`tf.keras.backend.set_learning_phase` is deprecated and '\n"
+     ]
+    }
+   ],
+   "source": [
+    "import tempfile\n",
+    "\n",
+    "model_dir = tempfile.mkdtemp()\n",
+    "\n",
+    "keras_estimator = tf.keras.estimator.model_to_estimator(\n",
+    "    keras_model=keras_model, model_dir=model_dir\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Entrenamiento"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "/usr/local/lib/python3.6/dist-packages/tensorflow/python/keras/engine/training.py:2325: UserWarning: `Model.state_updates` will be removed in a future version. This property should not be used in TensorFlow 2.0, as `updates` are applied automatically.\n",
+      "  warnings.warn('`Model.state_updates` will be removed in a future version. '\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Eval result: {'loss': 0.46195364, 'global_step': 500}\n"
+     ]
+    }
+   ],
+   "source": [
+    "keras_estimator.train(input_fn=input_fn, steps=500)\n",
+    "\n",
+    "eval_result = keras_estimator.evaluate(input_fn=input_fn, steps=10)\n",
+    "\n",
+    "print(\"Eval result: {}\".format(eval_result))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

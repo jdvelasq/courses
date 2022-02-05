@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operaciones SQL en PySpark &mdash; documentación de Cursos de Analítica y Machine Learning - </title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Cursos de Analítica y Machine Learning
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Configuración</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../setup.html">Instalación de Vagrant y Docker</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Cursos de Pregrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../redes_neuronales_y_algoritmos_bioinspirados/index.html">Redes Neuronales Artificiales y Aprendizaje Profundo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fundamentos_de_analitica/index.html">Fundamentos de Analítica</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Cursos de Posgrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html">Analítica de Grandes Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_predictiva/index.html">Analítica Predictiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ciencia_de_los_datos/index.html">Ciencia de los Datos Aplicada</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../productos_de_datos/index.html">Productos de Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_avanzada/index.html">Analítica Avanzada</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Cursos de Analítica y Machine Learning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Operaciones SQL en PySpark</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/pyspark/3-08-SparkQL.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Operaciones-SQL-en-PySpark">
+<h1>Operaciones SQL en PySpark<a class="headerlink" href="#Operaciones-SQL-en-PySpark" title="Enlazar permanentemente con este título"></a></h1>
+<ul class="simple">
+<li><p><em>30 min</em> | Última modificación: Junio 22, 2019</p></li>
+</ul>
+<p>Spark SQL es una interfaz para el procesamiento de datos estructurados usando el lenguaje SQL. En adición, Spark SQL también puede ser usado para leer datos de Apache Hive. Spark SQL opera sobre DataFrames, los cuales son Datasets (RDD) organizado por columnas identificadas por nombres, los cuales equivalen a tablas en los sistemas de bases de datos relacionales.</p>
+<p>Al finalizar este tutorial, el lector estará en capacidad de:</p>
+<ul class="simple">
+<li><p>Crear DataFrames a partir de archivos en distintos formatos.</p></li>
+<li><p>Aplicar operaciones de selección, filtrado y agregación a un DataFrame.</p></li>
+<li><p>Aplicar consultas en SQL sobre un DataFrame.</p></li>
+<li><p>Aplicar consultas en SQL directamente sobre archivos.</p></li>
+<li><p>Escribir los resultados de operaciones al disco.</p></li>
+</ul>
+<p><strong>Preparación</strong></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## findspark permite usar pyspark (interfaz de Python a Spark),</span>
+<span class="c1">## desde cualquier programa escrito en Python.</span>
+<span class="c1">##</span>
+<span class="kn">import</span> <span class="nn">findspark</span>
+<span class="n">findspark</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="c1">##</span>
+<span class="c1">## A continuación se inicializan las variables obligatorias</span>
+<span class="c1">## requeridas para trabajar con Spark desde Python:</span>
+<span class="c1">##</span>
+<span class="c1">##  SparkContext representa la conexión al cluster de Spark.</span>
+<span class="c1">##  SparkConf representa la configuración particular de una aplicación</span>
+<span class="c1">##     escrita en Spark.</span>
+<span class="c1">##  SparkSession representa la conexión para trabajar con SQL.</span>
+<span class="c1">##</span>
+<span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkConf</span><span class="p">,</span> <span class="n">SparkContext</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="n">sparkConf</span> <span class="o">=</span> <span class="n">SparkConf</span><span class="p">()</span><span class="o">.</span><span class="n">setAppName</span><span class="p">(</span><span class="s2">&quot;My SparkQL Application&quot;</span><span class="p">)</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">SparkContext</span><span class="p">(</span><span class="n">conf</span><span class="o">=</span><span class="n">sparkConf</span><span class="p">)</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Creación-de-DataFrames">
+<h2>Creación de DataFrames<a class="headerlink" href="#Creación-de-DataFrames" title="Enlazar permanentemente con este título"></a></h2>
+<p>A continuación se presenta la carga de DataFrames desde diferentes formatos.</p>
+<div class="section" id="Formato-JSON">
+<h3>Formato JSON<a class="headerlink" href="#Formato-JSON" title="Enlazar permanentemente con este título"></a></h3>
+<p>Se crea un archivo en formato JSON en la máquina local.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> people.json
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Vivian&quot;</span><span class="p">,</span>   <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Hamilton&quot;</span><span class="p">,</span> <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1971-07-08&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>  <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Karen&quot;</span><span class="p">,</span>    <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Holcomb&quot;</span><span class="p">,</span>  <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1974-05-23&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>  <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Cody&quot;</span><span class="p">,</span>     <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Garrett&quot;</span><span class="p">,</span>  <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1973-04-22&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Roth&quot;</span><span class="p">,</span>     <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Fry&quot;</span><span class="p">,</span>      <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1975-01-29&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>  <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Zoe&quot;</span><span class="p">,</span>      <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Conway&quot;</span><span class="p">,</span>   <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1974-07-03&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>   <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">2</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Gretchen&quot;</span><span class="p">,</span> <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Kinney&quot;</span><span class="p">,</span>   <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1974-10-18&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;violet&quot;</span><span class="p">,</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Driscoll&quot;</span><span class="p">,</span> <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Klein&quot;</span><span class="p">,</span>    <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1970-10-05&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>   <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Karyn&quot;</span><span class="p">,</span>    <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Diaz&quot;</span><span class="p">,</span>     <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1969-02-24&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>    <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>  <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Merritt&quot;</span><span class="p">,</span>  <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Guy&quot;</span><span class="p">,</span>      <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1974-10-17&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;indigo&quot;</span><span class="p">,</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Kylan&quot;</span><span class="p">,</span>    <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Sexton&quot;</span><span class="p">,</span>   <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1975-02-28&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>  <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Jordan&quot;</span><span class="p">,</span>   <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Estes&quot;</span><span class="p">,</span>    <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1969-12-07&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;indigo&quot;</span><span class="p">,</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Hope&quot;</span><span class="p">,</span>     <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Coffey&quot;</span><span class="p">,</span>   <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1973-12-24&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>  <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Vivian&quot;</span><span class="p">,</span>   <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Crane&quot;</span><span class="p">,</span>    <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1970-08-27&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;gray&quot;</span><span class="p">,</span>   <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Clio&quot;</span><span class="p">,</span>     <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Noel&quot;</span><span class="p">,</span>     <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1972-12-12&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>    <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Hope&quot;</span><span class="p">,</span>     <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Silva&quot;</span><span class="p">,</span>    <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1970-07-01&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>   <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Ayanna&quot;</span><span class="p">,</span>   <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Jarvis&quot;</span><span class="p">,</span>   <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1974-02-11&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;orange&quot;</span><span class="p">,</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">5</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Chanda&quot;</span><span class="p">,</span>   <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Boyer&quot;</span><span class="p">,</span>    <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1973-04-01&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>  <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span>
+<span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Chadwick&quot;</span><span class="p">,</span> <span class="s2">&quot;surname&quot;</span><span class="p">:</span> <span class="s2">&quot;Knight&quot;</span><span class="p">,</span>   <span class="s2">&quot;birthdate&quot;</span><span class="p">:</span> <span class="s2">&quot;1973-04-29&quot;</span><span class="p">,</span>  <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing people.json
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Copia el archivo al HDFS</span>
+<span class="o">!</span>hdfs dfs -copyFromLocal people.json /tmp/people.json
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## La función spark.read.json() carga directamente</span>
+<span class="c1">## el archivo en JSON con un DataFrame.</span>
+<span class="c1">##</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/tmp/people.json&quot;</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## La función show() permite imprimirlo en pantalla</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++----------+------+---------+---+--------+--------+
+| birthdate| color|firstname| id|quantity| surname|
++----------+------+---------+---+--------+--------+
+|1971-07-08| green|   Vivian|  1|       1|Hamilton|
+|1974-05-23| green|    Karen|  2|       4| Holcomb|
+|1973-04-22|orange|     Cody|  3|       1| Garrett|
+|1975-01-29| black|     Roth|  4|       1|     Fry|
+|1974-07-03|  blue|      Zoe|  5|       2|  Conway|
+|1974-10-18|violet| Gretchen|  6|       1|  Kinney|
+|1970-10-05|  blue| Driscoll|  7|       5|   Klein|
+|1969-02-24|   red|    Karyn|  8|       1|    Diaz|
+|1974-10-17|indigo|  Merritt|  9|       4|     Guy|
+|1975-02-28| black|    Kylan| 10|       4|  Sexton|
+|1969-12-07|indigo|   Jordan| 11|       4|   Estes|
+|1973-12-24| green|     Hope| 12|       5|  Coffey|
+|1970-08-27|  gray|   Vivian| 13|       5|   Crane|
+|1972-12-12|   red|     Clio| 14|       5|    Noel|
+|1970-07-01|  blue|     Hope| 15|       5|   Silva|
+|1974-02-11|orange|   Ayanna| 16|       5|  Jarvis|
+|1973-04-01| green|   Chanda| 17|       4|   Boyer|
+|1973-04-29|yellow| Chadwick| 18|       1|  Knight|
++----------+------+---------+---+--------+--------+
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Formato-CSV-y-TXT">
+<h3>Formato CSV y TXT<a class="headerlink" href="#Formato-CSV-y-TXT" title="Enlazar permanentemente con este título"></a></h3>
+<p>A continuación se ejemplifica como procesar un archivo de texto para convertirlo en un DataFrame.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> people.csv
+<span class="mi">1</span><span class="p">,</span><span class="n">Vivian</span><span class="p">,</span><span class="n">Hamilton</span><span class="p">,</span><span class="mi">1971</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">08</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">2</span><span class="p">,</span><span class="n">Karen</span><span class="p">,</span><span class="n">Holcomb</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">23</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">3</span><span class="p">,</span><span class="n">Cody</span><span class="p">,</span><span class="n">Garrett</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">22</span><span class="p">,</span><span class="n">orange</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">4</span><span class="p">,</span><span class="n">Roth</span><span class="p">,</span><span class="n">Fry</span><span class="p">,</span><span class="mi">1975</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">29</span><span class="p">,</span><span class="n">black</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">5</span><span class="p">,</span><span class="n">Zoe</span><span class="p">,</span><span class="n">Conway</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">03</span><span class="p">,</span><span class="n">blue</span><span class="p">,</span><span class="mi">2</span>
+<span class="mi">6</span><span class="p">,</span><span class="n">Gretchen</span><span class="p">,</span><span class="n">Kinney</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span><span class="n">violet</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">7</span><span class="p">,</span><span class="n">Driscoll</span><span class="p">,</span><span class="n">Klein</span><span class="p">,</span><span class="mi">1970</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">05</span><span class="p">,</span><span class="n">blue</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">8</span><span class="p">,</span><span class="n">Karyn</span><span class="p">,</span><span class="n">Diaz</span><span class="p">,</span><span class="mi">1969</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span><span class="n">red</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">9</span><span class="p">,</span><span class="n">Merritt</span><span class="p">,</span><span class="n">Guy</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">17</span><span class="p">,</span><span class="n">indigo</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">10</span><span class="p">,</span><span class="n">Kylan</span><span class="p">,</span><span class="n">Sexton</span><span class="p">,</span><span class="mi">1975</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">28</span><span class="p">,</span><span class="n">black</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">11</span><span class="p">,</span><span class="n">Jordan</span><span class="p">,</span><span class="n">Estes</span><span class="p">,</span><span class="mi">1969</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">07</span><span class="p">,</span><span class="n">indigo</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">12</span><span class="p">,</span><span class="n">Hope</span><span class="p">,</span><span class="n">Coffey</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">13</span><span class="p">,</span><span class="n">Vivian</span><span class="p">,</span><span class="n">Crane</span><span class="p">,</span><span class="mi">1970</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">27</span><span class="p">,</span><span class="n">gray</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">14</span><span class="p">,</span><span class="n">Clio</span><span class="p">,</span><span class="n">Noel</span><span class="p">,</span><span class="mi">1972</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">12</span><span class="p">,</span><span class="n">red</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">15</span><span class="p">,</span><span class="n">Hope</span><span class="p">,</span><span class="n">Silva</span><span class="p">,</span><span class="mi">1970</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">01</span><span class="p">,</span><span class="n">blue</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">16</span><span class="p">,</span><span class="n">Ayanna</span><span class="p">,</span><span class="n">Jarvis</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">11</span><span class="p">,</span><span class="n">orange</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">17</span><span class="p">,</span><span class="n">Chanda</span><span class="p">,</span><span class="n">Boyer</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">01</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">18</span><span class="p">,</span><span class="n">Chadwick</span><span class="p">,</span><span class="n">Knight</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">29</span><span class="p">,</span><span class="n">yellow</span><span class="p">,</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing people.csv
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## copia el archivo al HDFS</span>
+<span class="o">!</span>hdfs dfs -rm /tmp/people.csv
+<span class="o">!</span>hdfs dfs -copyFromLocal people.csv /tmp/people.csv
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+rm: `/tmp/people.csv&#39;: No such file or directory
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Row representa una fila en un RDD</span>
+<span class="c1">##</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">Row</span>
+
+<span class="c1">##</span>
+<span class="c1">## Lectura del archivo como lineas de texto</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/people.csv&quot;</span><span class="p">)</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;1,Vivian,Hamilton,1971-07-08,green,1&#39;,
+ &#39;2,Karen,Holcomb,1974-05-23,green,4&#39;,
+ &#39;3,Cody,Garrett,1973-04-22,orange,1&#39;,
+ &#39;4,Roth,Fry,1975-01-29,black,1&#39;,
+ &#39;5,Zoe,Conway,1974-07-03,blue,2&#39;,
+ &#39;6,Gretchen,Kinney,1974-10-18,violet,1&#39;,
+ &#39;7,Driscoll,Klein,1970-10-05,blue,5&#39;,
+ &#39;8,Karyn,Diaz,1969-02-24,red,1&#39;,
+ &#39;9,Merritt,Guy,1974-10-17,indigo,4&#39;,
+ &#39;10,Kylan,Sexton,1975-02-28,black,4&#39;,
+ &#39;11,Jordan,Estes,1969-12-07,indigo,4&#39;,
+ &#39;12,Hope,Coffey,1973-12-24,green,5&#39;,
+ &#39;13,Vivian,Crane,1970-08-27,gray,5&#39;,
+ &#39;14,Clio,Noel,1972-12-12,red,5&#39;,
+ &#39;15,Hope,Silva,1970-07-01,blue,5&#39;,
+ &#39;16,Ayanna,Jarvis,1974-02-11,orange,5&#39;,
+ &#39;17,Chanda,Boyer,1973-04-01,green,4&#39;,
+ &#39;18,Chadwick,Knight,1973-04-29,yellow,1&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Partición de los strings por las comas</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">))</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[[&#39;1&#39;, &#39;Vivian&#39;, &#39;Hamilton&#39;, &#39;1971-07-08&#39;, &#39;green&#39;, &#39;1&#39;],
+ [&#39;2&#39;, &#39;Karen&#39;, &#39;Holcomb&#39;, &#39;1974-05-23&#39;, &#39;green&#39;, &#39;4&#39;],
+ [&#39;3&#39;, &#39;Cody&#39;, &#39;Garrett&#39;, &#39;1973-04-22&#39;, &#39;orange&#39;, &#39;1&#39;],
+ [&#39;4&#39;, &#39;Roth&#39;, &#39;Fry&#39;, &#39;1975-01-29&#39;, &#39;black&#39;, &#39;1&#39;],
+ [&#39;5&#39;, &#39;Zoe&#39;, &#39;Conway&#39;, &#39;1974-07-03&#39;, &#39;blue&#39;, &#39;2&#39;],
+ [&#39;6&#39;, &#39;Gretchen&#39;, &#39;Kinney&#39;, &#39;1974-10-18&#39;, &#39;violet&#39;, &#39;1&#39;],
+ [&#39;7&#39;, &#39;Driscoll&#39;, &#39;Klein&#39;, &#39;1970-10-05&#39;, &#39;blue&#39;, &#39;5&#39;],
+ [&#39;8&#39;, &#39;Karyn&#39;, &#39;Diaz&#39;, &#39;1969-02-24&#39;, &#39;red&#39;, &#39;1&#39;],
+ [&#39;9&#39;, &#39;Merritt&#39;, &#39;Guy&#39;, &#39;1974-10-17&#39;, &#39;indigo&#39;, &#39;4&#39;],
+ [&#39;10&#39;, &#39;Kylan&#39;, &#39;Sexton&#39;, &#39;1975-02-28&#39;, &#39;black&#39;, &#39;4&#39;],
+ [&#39;11&#39;, &#39;Jordan&#39;, &#39;Estes&#39;, &#39;1969-12-07&#39;, &#39;indigo&#39;, &#39;4&#39;],
+ [&#39;12&#39;, &#39;Hope&#39;, &#39;Coffey&#39;, &#39;1973-12-24&#39;, &#39;green&#39;, &#39;5&#39;],
+ [&#39;13&#39;, &#39;Vivian&#39;, &#39;Crane&#39;, &#39;1970-08-27&#39;, &#39;gray&#39;, &#39;5&#39;],
+ [&#39;14&#39;, &#39;Clio&#39;, &#39;Noel&#39;, &#39;1972-12-12&#39;, &#39;red&#39;, &#39;5&#39;],
+ [&#39;15&#39;, &#39;Hope&#39;, &#39;Silva&#39;, &#39;1970-07-01&#39;, &#39;blue&#39;, &#39;5&#39;],
+ [&#39;16&#39;, &#39;Ayanna&#39;, &#39;Jarvis&#39;, &#39;1974-02-11&#39;, &#39;orange&#39;, &#39;5&#39;],
+ [&#39;17&#39;, &#39;Chanda&#39;, &#39;Boyer&#39;, &#39;1973-04-01&#39;, &#39;green&#39;, &#39;4&#39;],
+ [&#39;18&#39;, &#39;Chadwick&#39;, &#39;Knight&#39;, &#39;1973-04-29&#39;, &#39;yellow&#39;, &#39;1&#39;]]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Se transforma cada elemento del RDD usando la función Row().</span>
+<span class="c1">## Note que esta función agrega el nombre de la columna a la</span>
+<span class="c1">## que pertenece cada dato.</span>
+<span class="c1">##</span>
+<span class="n">rdd</span> <span class="o">=</span> <span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">Row</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                            <span class="n">firstname</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="n">surname</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                            <span class="n">birthdate</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+                            <span class="n">color</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+                            <span class="n">quantity</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">])))</span>
+<span class="n">rdd</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Row(birthdate=&#39;1971-07-08&#39;, color=&#39;green&#39;, firstname=&#39;Vivian&#39;, id=&#39;1&#39;, quantity=1, surname=&#39;Hamilton&#39;),
+ Row(birthdate=&#39;1974-05-23&#39;, color=&#39;green&#39;, firstname=&#39;Karen&#39;, id=&#39;2&#39;, quantity=4, surname=&#39;Holcomb&#39;),
+ Row(birthdate=&#39;1973-04-22&#39;, color=&#39;orange&#39;, firstname=&#39;Cody&#39;, id=&#39;3&#39;, quantity=1, surname=&#39;Garrett&#39;),
+ Row(birthdate=&#39;1975-01-29&#39;, color=&#39;black&#39;, firstname=&#39;Roth&#39;, id=&#39;4&#39;, quantity=1, surname=&#39;Fry&#39;),
+ Row(birthdate=&#39;1974-07-03&#39;, color=&#39;blue&#39;, firstname=&#39;Zoe&#39;, id=&#39;5&#39;, quantity=2, surname=&#39;Conway&#39;),
+ Row(birthdate=&#39;1974-10-18&#39;, color=&#39;violet&#39;, firstname=&#39;Gretchen&#39;, id=&#39;6&#39;, quantity=1, surname=&#39;Kinney&#39;),
+ Row(birthdate=&#39;1970-10-05&#39;, color=&#39;blue&#39;, firstname=&#39;Driscoll&#39;, id=&#39;7&#39;, quantity=5, surname=&#39;Klein&#39;),
+ Row(birthdate=&#39;1969-02-24&#39;, color=&#39;red&#39;, firstname=&#39;Karyn&#39;, id=&#39;8&#39;, quantity=1, surname=&#39;Diaz&#39;),
+ Row(birthdate=&#39;1974-10-17&#39;, color=&#39;indigo&#39;, firstname=&#39;Merritt&#39;, id=&#39;9&#39;, quantity=4, surname=&#39;Guy&#39;),
+ Row(birthdate=&#39;1975-02-28&#39;, color=&#39;black&#39;, firstname=&#39;Kylan&#39;, id=&#39;10&#39;, quantity=4, surname=&#39;Sexton&#39;),
+ Row(birthdate=&#39;1969-12-07&#39;, color=&#39;indigo&#39;, firstname=&#39;Jordan&#39;, id=&#39;11&#39;, quantity=4, surname=&#39;Estes&#39;),
+ Row(birthdate=&#39;1973-12-24&#39;, color=&#39;green&#39;, firstname=&#39;Hope&#39;, id=&#39;12&#39;, quantity=5, surname=&#39;Coffey&#39;),
+ Row(birthdate=&#39;1970-08-27&#39;, color=&#39;gray&#39;, firstname=&#39;Vivian&#39;, id=&#39;13&#39;, quantity=5, surname=&#39;Crane&#39;),
+ Row(birthdate=&#39;1972-12-12&#39;, color=&#39;red&#39;, firstname=&#39;Clio&#39;, id=&#39;14&#39;, quantity=5, surname=&#39;Noel&#39;),
+ Row(birthdate=&#39;1970-07-01&#39;, color=&#39;blue&#39;, firstname=&#39;Hope&#39;, id=&#39;15&#39;, quantity=5, surname=&#39;Silva&#39;),
+ Row(birthdate=&#39;1974-02-11&#39;, color=&#39;orange&#39;, firstname=&#39;Ayanna&#39;, id=&#39;16&#39;, quantity=5, surname=&#39;Jarvis&#39;),
+ Row(birthdate=&#39;1973-04-01&#39;, color=&#39;green&#39;, firstname=&#39;Chanda&#39;, id=&#39;17&#39;, quantity=4, surname=&#39;Boyer&#39;),
+ Row(birthdate=&#39;1973-04-29&#39;, color=&#39;yellow&#39;, firstname=&#39;Chadwick&#39;, id=&#39;18&#39;, quantity=1, surname=&#39;Knight&#39;)]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## createDataFrame() permite crear un DataFrame a partir</span>
+<span class="c1">## de un RDD, una lista o un pandas.DataFrame</span>
+<span class="c1">##</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">createDataFrame</span><span class="p">(</span><span class="n">rdd</span><span class="p">)</span>
+
+<span class="c1">##</span>
+<span class="c1">## Crea o reemplaza una vista local del DataFrame</span>
+<span class="c1">## para poder aplicar funciones como show()</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s2">&quot;miVista&quot;</span><span class="p">)</span>
+<span class="c1">## también podría usarse createTempView()</span>
+<span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">spark</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">dropTempView</span><span class="p">(</span><span class="s1">&#39;miVista&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++----------+------+---------+---+--------+--------+
+| birthdate| color|firstname| id|quantity| surname|
++----------+------+---------+---+--------+--------+
+|1971-07-08| green|   Vivian|  1|       1|Hamilton|
+|1974-05-23| green|    Karen|  2|       4| Holcomb|
+|1973-04-22|orange|     Cody|  3|       1| Garrett|
+|1975-01-29| black|     Roth|  4|       1|     Fry|
+|1974-07-03|  blue|      Zoe|  5|       2|  Conway|
+|1974-10-18|violet| Gretchen|  6|       1|  Kinney|
+|1970-10-05|  blue| Driscoll|  7|       5|   Klein|
+|1969-02-24|   red|    Karyn|  8|       1|    Diaz|
+|1974-10-17|indigo|  Merritt|  9|       4|     Guy|
+|1975-02-28| black|    Kylan| 10|       4|  Sexton|
+|1969-12-07|indigo|   Jordan| 11|       4|   Estes|
+|1973-12-24| green|     Hope| 12|       5|  Coffey|
+|1970-08-27|  gray|   Vivian| 13|       5|   Crane|
+|1972-12-12|   red|     Clio| 14|       5|    Noel|
+|1970-07-01|  blue|     Hope| 15|       5|   Silva|
+|1974-02-11|orange|   Ayanna| 16|       5|  Jarvis|
+|1973-04-01| green|   Chanda| 17|       4|   Boyer|
+|1973-04-29|yellow| Chadwick| 18|       1|  Knight|
++----------+------+---------+---+--------+--------+
+
+</pre></div></div>
+</div>
+<p>A continuación se crea un DataFrame a partir de un archivo CSV.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> people.csv
+<span class="nb">id</span><span class="p">,</span><span class="n">firstname</span><span class="p">,</span><span class="n">surname</span><span class="p">,</span><span class="n">birthdate</span><span class="p">,</span><span class="n">color</span><span class="p">,</span><span class="n">quantity</span>
+<span class="mi">1</span><span class="p">,</span><span class="n">Vivian</span><span class="p">,</span><span class="n">Hamilton</span><span class="p">,</span><span class="mi">1971</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">08</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">2</span><span class="p">,</span><span class="n">Karen</span><span class="p">,</span><span class="n">Holcomb</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">23</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">3</span><span class="p">,</span><span class="n">Cody</span><span class="p">,</span><span class="n">Garrett</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">22</span><span class="p">,</span><span class="n">orange</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">4</span><span class="p">,</span><span class="n">Roth</span><span class="p">,</span><span class="n">Fry</span><span class="p">,</span><span class="mi">1975</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">29</span><span class="p">,</span><span class="n">black</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">5</span><span class="p">,</span><span class="n">Zoe</span><span class="p">,</span><span class="n">Conway</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">03</span><span class="p">,</span><span class="n">blue</span><span class="p">,</span><span class="mi">2</span>
+<span class="mi">6</span><span class="p">,</span><span class="n">Gretchen</span><span class="p">,</span><span class="n">Kinney</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">18</span><span class="p">,</span><span class="n">violet</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">7</span><span class="p">,</span><span class="n">Driscoll</span><span class="p">,</span><span class="n">Klein</span><span class="p">,</span><span class="mi">1970</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">05</span><span class="p">,</span><span class="n">blue</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">8</span><span class="p">,</span><span class="n">Karyn</span><span class="p">,</span><span class="n">Diaz</span><span class="p">,</span><span class="mi">1969</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span><span class="n">red</span><span class="p">,</span><span class="mi">1</span>
+<span class="mi">9</span><span class="p">,</span><span class="n">Merritt</span><span class="p">,</span><span class="n">Guy</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">10</span><span class="o">-</span><span class="mi">17</span><span class="p">,</span><span class="n">indigo</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">10</span><span class="p">,</span><span class="n">Kylan</span><span class="p">,</span><span class="n">Sexton</span><span class="p">,</span><span class="mi">1975</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">28</span><span class="p">,</span><span class="n">black</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">11</span><span class="p">,</span><span class="n">Jordan</span><span class="p">,</span><span class="n">Estes</span><span class="p">,</span><span class="mi">1969</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">07</span><span class="p">,</span><span class="n">indigo</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">12</span><span class="p">,</span><span class="n">Hope</span><span class="p">,</span><span class="n">Coffey</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">13</span><span class="p">,</span><span class="n">Vivian</span><span class="p">,</span><span class="n">Crane</span><span class="p">,</span><span class="mi">1970</span><span class="o">-</span><span class="mi">08</span><span class="o">-</span><span class="mi">27</span><span class="p">,</span><span class="n">gray</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">14</span><span class="p">,</span><span class="n">Clio</span><span class="p">,</span><span class="n">Noel</span><span class="p">,</span><span class="mi">1972</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">12</span><span class="p">,</span><span class="n">red</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">15</span><span class="p">,</span><span class="n">Hope</span><span class="p">,</span><span class="n">Silva</span><span class="p">,</span><span class="mi">1970</span><span class="o">-</span><span class="mi">07</span><span class="o">-</span><span class="mi">01</span><span class="p">,</span><span class="n">blue</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">16</span><span class="p">,</span><span class="n">Ayanna</span><span class="p">,</span><span class="n">Jarvis</span><span class="p">,</span><span class="mi">1974</span><span class="o">-</span><span class="mi">02</span><span class="o">-</span><span class="mi">11</span><span class="p">,</span><span class="n">orange</span><span class="p">,</span><span class="mi">5</span>
+<span class="mi">17</span><span class="p">,</span><span class="n">Chanda</span><span class="p">,</span><span class="n">Boyer</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">01</span><span class="p">,</span><span class="n">green</span><span class="p">,</span><span class="mi">4</span>
+<span class="mi">18</span><span class="p">,</span><span class="n">Chadwick</span><span class="p">,</span><span class="n">Knight</span><span class="p">,</span><span class="mi">1973</span><span class="o">-</span><span class="mi">04</span><span class="o">-</span><span class="mi">29</span><span class="p">,</span><span class="n">yellow</span><span class="p">,</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting people.csv
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## Mueve el archivo al sistema hdfs</span>
+<span class="o">!</span>hdfs dfs -rm /tmp/people.csv
+<span class="o">!</span>hdfs dfs -copyFromLocal people.csv /tmp/people.csv
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Deleted /tmp/people.csv
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Crea un DataFrame a partir del archivo con</span>
+<span class="c1">## formato CSV</span>
+<span class="c1">##</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;/tmp/people.csv&quot;</span><span class="p">,</span>
+                     <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+                     <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+                     <span class="n">inferSchema</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+                     <span class="n">header</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+---------+--------+-------------------+------+--------+
+| id|firstname| surname|          birthdate| color|quantity|
++---+---------+--------+-------------------+------+--------+
+|  1|   Vivian|Hamilton|1971-07-08 00:00:00| green|       1|
+|  2|    Karen| Holcomb|1974-05-23 00:00:00| green|       4|
+|  3|     Cody| Garrett|1973-04-22 00:00:00|orange|       1|
+|  4|     Roth|     Fry|1975-01-29 00:00:00| black|       1|
+|  5|      Zoe|  Conway|1974-07-03 00:00:00|  blue|       2|
+|  6| Gretchen|  Kinney|1974-10-18 00:00:00|violet|       1|
+|  7| Driscoll|   Klein|1970-10-05 00:00:00|  blue|       5|
+|  8|    Karyn|    Diaz|1969-02-24 00:00:00|   red|       1|
+|  9|  Merritt|     Guy|1974-10-17 00:00:00|indigo|       4|
+| 10|    Kylan|  Sexton|1975-02-28 00:00:00| black|       4|
+| 11|   Jordan|   Estes|1969-12-07 00:00:00|indigo|       4|
+| 12|     Hope|  Coffey|1973-12-24 00:00:00| green|       5|
+| 13|   Vivian|   Crane|1970-08-27 00:00:00|  gray|       5|
+| 14|     Clio|    Noel|1972-12-12 00:00:00|   red|       5|
+| 15|     Hope|   Silva|1970-07-01 00:00:00|  blue|       5|
+| 16|   Ayanna|  Jarvis|1974-02-11 00:00:00|orange|       5|
+| 17|   Chanda|   Boyer|1973-04-01 00:00:00| green|       4|
+| 18| Chadwick|  Knight|1973-04-29 00:00:00|yellow|       1|
++---+---------+--------+-------------------+------+--------+
+
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Operaciones-sobre-DataFrames">
+<h2>Operaciones sobre DataFrames<a class="headerlink" href="#Operaciones-sobre-DataFrames" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Imprime el esquema en formato de arbol</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+root
+ |-- id: integer (nullable = true)
+ |-- firstname: string (nullable = true)
+ |-- surname: string (nullable = true)
+ |-- birthdate: timestamp (nullable = true)
+ |-- color: string (nullable = true)
+ |-- quantity: integer (nullable = true)
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Selección de una columna en particular</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;firstname&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---------+
+|firstname|
++---------+
+|   Vivian|
+|    Karen|
+|     Cody|
+|     Roth|
+|      Zoe|
+| Gretchen|
+| Driscoll|
+|    Karyn|
+|  Merritt|
+|    Kylan|
+|   Jordan|
+|     Hope|
+|   Vivian|
+|     Clio|
+|     Hope|
+|   Ayanna|
+|   Chanda|
+| Chadwick|
++---------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Selección de varias columnas</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;firstname&#39;</span><span class="p">,</span> <span class="s1">&#39;surname&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---------+--------+
+|firstname| surname|
++---------+--------+
+|   Vivian|Hamilton|
+|    Karen| Holcomb|
+|     Cody| Garrett|
+|     Roth|     Fry|
+|      Zoe|  Conway|
+| Gretchen|  Kinney|
+| Driscoll|   Klein|
+|    Karyn|    Diaz|
+|  Merritt|     Guy|
+|    Kylan|  Sexton|
+|   Jordan|   Estes|
+|     Hope|  Coffey|
+|   Vivian|   Crane|
+|     Clio|    Noel|
+|     Hope|   Silva|
+|   Ayanna|  Jarvis|
+|   Chanda|   Boyer|
+| Chadwick|  Knight|
++---------+--------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Filtrado de registros usando condicionales</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+---------+-------+-------------------+-----+--------+
+| id|firstname|surname|          birthdate|color|quantity|
++---+---------+-------+-------------------+-----+--------+
+|  5|      Zoe| Conway|1974-07-03 00:00:00| blue|       2|
+|  7| Driscoll|  Klein|1970-10-05 00:00:00| blue|       5|
+| 15|     Hope|  Silva|1970-07-01 00:00:00| blue|       5|
++---+---------+-------+-------------------+-----+--------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Consultas</span>
+<span class="c1">##   Se crea una vista temporal</span>
+<span class="c1">##   que desaparece cuando se cierra la</span>
+<span class="c1">##   sesión actual de Spark</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;peopleview&#39;</span><span class="p">)</span> <span class="c1">## este es el nombre de la tabla</span>
+
+<span class="c1">## Se realiza la consulta usando directamente SQL</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM peopleview&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+---------+--------+-------------------+------+--------+
+| id|firstname| surname|          birthdate| color|quantity|
++---+---------+--------+-------------------+------+--------+
+|  1|   Vivian|Hamilton|1971-07-08 00:00:00| green|       1|
+|  2|    Karen| Holcomb|1974-05-23 00:00:00| green|       4|
+|  3|     Cody| Garrett|1973-04-22 00:00:00|orange|       1|
+|  4|     Roth|     Fry|1975-01-29 00:00:00| black|       1|
+|  5|      Zoe|  Conway|1974-07-03 00:00:00|  blue|       2|
+|  6| Gretchen|  Kinney|1974-10-18 00:00:00|violet|       1|
+|  7| Driscoll|   Klein|1970-10-05 00:00:00|  blue|       5|
+|  8|    Karyn|    Diaz|1969-02-24 00:00:00|   red|       1|
+|  9|  Merritt|     Guy|1974-10-17 00:00:00|indigo|       4|
+| 10|    Kylan|  Sexton|1975-02-28 00:00:00| black|       4|
+| 11|   Jordan|   Estes|1969-12-07 00:00:00|indigo|       4|
+| 12|     Hope|  Coffey|1973-12-24 00:00:00| green|       5|
+| 13|   Vivian|   Crane|1970-08-27 00:00:00|  gray|       5|
+| 14|     Clio|    Noel|1972-12-12 00:00:00|   red|       5|
+| 15|     Hope|   Silva|1970-07-01 00:00:00|  blue|       5|
+| 16|   Ayanna|  Jarvis|1974-02-11 00:00:00|orange|       5|
+| 17|   Chanda|   Boyer|1973-04-01 00:00:00| green|       4|
+| 18| Chadwick|  Knight|1973-04-29 00:00:00|yellow|       1|
++---+---------+--------+-------------------+------+--------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## En el siguiente fragmento de código se</span>
+<span class="c1">## crea una vista temporal que existe entre</span>
+<span class="c1">## sesiones y solo desaparece cuando se cierra</span>
+<span class="c1">## la aplicación actual de Spark</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">createGlobalTempView</span><span class="p">(</span><span class="s2">&quot;peopleview&quot;</span><span class="p">)</span>
+
+<span class="c1">## percatese de la forma de nombrar la tabla</span>
+<span class="c1">## en la consulta SQL</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM global_temp.peopleview&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+---------+--------+-------------------+------+--------+
+| id|firstname| surname|          birthdate| color|quantity|
++---+---------+--------+-------------------+------+--------+
+|  1|   Vivian|Hamilton|1971-07-08 00:00:00| green|       1|
+|  2|    Karen| Holcomb|1974-05-23 00:00:00| green|       4|
+|  3|     Cody| Garrett|1973-04-22 00:00:00|orange|       1|
+|  4|     Roth|     Fry|1975-01-29 00:00:00| black|       1|
+|  5|      Zoe|  Conway|1974-07-03 00:00:00|  blue|       2|
+|  6| Gretchen|  Kinney|1974-10-18 00:00:00|violet|       1|
+|  7| Driscoll|   Klein|1970-10-05 00:00:00|  blue|       5|
+|  8|    Karyn|    Diaz|1969-02-24 00:00:00|   red|       1|
+|  9|  Merritt|     Guy|1974-10-17 00:00:00|indigo|       4|
+| 10|    Kylan|  Sexton|1975-02-28 00:00:00| black|       4|
+| 11|   Jordan|   Estes|1969-12-07 00:00:00|indigo|       4|
+| 12|     Hope|  Coffey|1973-12-24 00:00:00| green|       5|
+| 13|   Vivian|   Crane|1970-08-27 00:00:00|  gray|       5|
+| 14|     Clio|    Noel|1972-12-12 00:00:00|   red|       5|
+| 15|     Hope|   Silva|1970-07-01 00:00:00|  blue|       5|
+| 16|   Ayanna|  Jarvis|1974-02-11 00:00:00|orange|       5|
+| 17|   Chanda|   Boyer|1973-04-01 00:00:00| green|       4|
+| 18| Chadwick|  Knight|1973-04-29 00:00:00|yellow|       1|
++---+---------+--------+-------------------+------+--------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Cuenta cuandos registros hay por cada valor en</span>
+<span class="c1">## la columna quantity</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s1">&#39;quantity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++--------+-----+
+|quantity|count|
++--------+-----+
+|       1|    6|
+|       5|    6|
+|       4|    5|
+|       2|    1|
++--------+-----+
+
+</pre></div></div>
+</div>
+<div class="section" id="Funciones">
+<h3>Funciones<a class="headerlink" href="#Funciones" title="Enlazar permanentemente con este título"></a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## La función agg recibe un diccionario que indica</span>
+<span class="c1">## con que función (valor del diccionario) se agrega</span>
+<span class="c1">## una determinada columna (clave del diccionario)</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s2">&quot;quantity&quot;</span><span class="p">:</span> <span class="s2">&quot;max&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Row(max(quantity)=5)]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Tmabien pueden usarse las funciones implementadas</span>
+<span class="c1">## en el modulo sql de pyspark. En el siguiente ejemplo</span>
+<span class="c1">## se carga el módulo de funciones con el nombre de F.</span>
+<span class="c1">## Se obtiene el valor máximo de la columna quantity</span>
+<span class="c1">##</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+<span class="n">df</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">quantity</span><span class="p">))</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[Row(max(quantity)=5)]
+</pre></div></div>
+</div>
+<p>Las funciones implementadas en el módulo pyspark.sql.functions se encuentran documentadas en <a class="reference external" href="http://spark.apache.org/docs/2.1.0/api/python/pyspark.sql.html#module-pyspark.sql.functions">http://spark.apache.org/docs/2.1.0/api/python/pyspark.sql.html#module-pyspark.sql.functions</a></p>
+</div>
+<div class="section" id="Escritura-de-un-resultado-al-HDFS">
+<h3>Escritura de un resultado al HDFS<a class="headerlink" href="#Escritura-de-un-resultado-al-HDFS" title="Enlazar permanentemente con este título"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Los resultados se escriben al disco con write.save().</span>
+<span class="c1">## El parámetro es el nombre del directorio. La llamada a</span>
+<span class="c1">## la función crea el archivo _SUCCESS que indica que la</span>
+<span class="c1">## función se ejecutó correctamente, y los archivos</span>
+<span class="c1">## con el resultado.</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;blue&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;/tmp/demo&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>hdfs dfs -ls /tmp/demo/*
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+-rw-r--r--   1 root supergroup          0 2019-11-15 00:45 /tmp/demo/_SUCCESS
+-rw-r--r--   1 root supergroup       1553 2019-11-15 00:45 /tmp/demo/part-00000-8ed4efa5-937d-4917-83a0-e3e4d3a0924a-c000.snappy.parquet
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Ejecución-de-SQL-directamente-sobre-archivos">
+<h2>Ejecución de SQL directamente sobre archivos<a class="headerlink" href="#Ejecución-de-SQL-directamente-sobre-archivos" title="Enlazar permanentemente con este título"></a></h2>
+<p>Spark SQL permite ejecutar directamente SQL sobre archivos indicando el tipo de archivo.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## SQL sobre un archivo en formato JSON. Note que</span>
+<span class="c1">## en lugar de la tabla se especifica el formato del</span>
+<span class="c1">## archivo (json) y entre comillas `` el nombre del</span>
+<span class="c1">## archivo.</span>
+<span class="c1">##</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM json.`/tmp/people.json`&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++----------+------+---------+---+--------+--------+
+| birthdate| color|firstname| id|quantity| surname|
++----------+------+---------+---+--------+--------+
+|1971-07-08| green|   Vivian|  1|       1|Hamilton|
+|1974-05-23| green|    Karen|  2|       4| Holcomb|
+|1973-04-22|orange|     Cody|  3|       1| Garrett|
+|1975-01-29| black|     Roth|  4|       1|     Fry|
+|1974-07-03|  blue|      Zoe|  5|       2|  Conway|
+|1974-10-18|violet| Gretchen|  6|       1|  Kinney|
+|1970-10-05|  blue| Driscoll|  7|       5|   Klein|
+|1969-02-24|   red|    Karyn|  8|       1|    Diaz|
+|1974-10-17|indigo|  Merritt|  9|       4|     Guy|
+|1975-02-28| black|    Kylan| 10|       4|  Sexton|
+|1969-12-07|indigo|   Jordan| 11|       4|   Estes|
+|1973-12-24| green|     Hope| 12|       5|  Coffey|
+|1970-08-27|  gray|   Vivian| 13|       5|   Crane|
+|1972-12-12|   red|     Clio| 14|       5|    Noel|
+|1970-07-01|  blue|     Hope| 15|       5|   Silva|
+|1974-02-11|orange|   Ayanna| 16|       5|  Jarvis|
+|1973-04-01| green|   Chanda| 17|       4|   Boyer|
+|1973-04-29|yellow| Chadwick| 18|       1|  Knight|
++----------+------+---------+---+--------+--------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## SQL sobre un archivo en formato CSV. Note que en este</span>
+<span class="c1">## caso, los nombres de las columnas se leen como parte</span>
+<span class="c1">## de la tabla.</span>
+<span class="c1">##</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM csv.`/tmp/people.csv`&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+---------+--------+----------+------+--------+
+|_c0|      _c1|     _c2|       _c3|   _c4|     _c5|
++---+---------+--------+----------+------+--------+
+| id|firstname| surname| birthdate| color|quantity|
+|  1|   Vivian|Hamilton|1971-07-08| green|       1|
+|  2|    Karen| Holcomb|1974-05-23| green|       4|
+|  3|     Cody| Garrett|1973-04-22|orange|       1|
+|  4|     Roth|     Fry|1975-01-29| black|       1|
+|  5|      Zoe|  Conway|1974-07-03|  blue|       2|
+|  6| Gretchen|  Kinney|1974-10-18|violet|       1|
+|  7| Driscoll|   Klein|1970-10-05|  blue|       5|
+|  8|    Karyn|    Diaz|1969-02-24|   red|       1|
+|  9|  Merritt|     Guy|1974-10-17|indigo|       4|
+| 10|    Kylan|  Sexton|1975-02-28| black|       4|
+| 11|   Jordan|   Estes|1969-12-07|indigo|       4|
+| 12|     Hope|  Coffey|1973-12-24| green|       5|
+| 13|   Vivian|   Crane|1970-08-27|  gray|       5|
+| 14|     Clio|    Noel|1972-12-12|   red|       5|
+| 15|     Hope|   Silva|1970-07-01|  blue|       5|
+| 16|   Ayanna|  Jarvis|1974-02-11|orange|       5|
+| 17|   Chanda|   Boyer|1973-04-01| green|       4|
+| 18| Chadwick|  Knight|1973-04-29|yellow|       1|
++---+---------+--------+----------+------+--------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">## SQL sobre un archivo en formato CSV</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT DISTINCT(_c4)  FROM csv.`/tmp/people.csv`&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++------+
+|   _c4|
++------+
+|violet|
+|orange|
+| green|
+|yellow|
+|indigo|
+|  gray|
+|   red|
+| color|
+| black|
+|  blue|
++------+
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Ejemplos">
+<h2>Ejemplos<a class="headerlink" href="#Ejemplos" title="Enlazar permanentemente con este título"></a></h2>
+<p>Los siguientes ejemplos son realizados usando el archivo <code class="docutils literal notranslate"><span class="pre">people.json</span></code> creado al principio de este tutorial.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">json</span><span class="p">(</span><span class="s2">&quot;/tmp/people.json&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Ejemplo-1">
+<h3>Ejemplo 1<a class="headerlink" href="#Ejemplo-1" title="Enlazar permanentemente con este título"></a></h3>
+<p>Seleccione las personas cuya fecha de nacimiento sea del año 1974 en adelante.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Se usa la función filter() del DataFrame</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="s1">&#39;birthdate&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="s1">&#39;1974&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++----------+------+---------+---+--------+-------+
+| birthdate| color|firstname| id|quantity|surname|
++----------+------+---------+---+--------+-------+
+|1974-05-23| green|    Karen|  2|       4|Holcomb|
+|1975-01-29| black|     Roth|  4|       1|    Fry|
+|1974-07-03|  blue|      Zoe|  5|       2| Conway|
+|1974-10-18|violet| Gretchen|  6|       1| Kinney|
+|1974-10-17|indigo|  Merritt|  9|       4|    Guy|
+|1975-02-28| black|    Kylan| 10|       4| Sexton|
+|1974-02-11|orange|   Ayanna| 16|       5| Jarvis|
++----------+------+---------+---+--------+-------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Se crea una vista temporal para ejecutar</span>
+<span class="c1">## una consulta SQL sobre ella</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">createOrReplaceTempView</span><span class="p">(</span><span class="s1">&#39;peopleview&#39;</span><span class="p">)</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM peopleview WHERE YEAR(birthdate) &gt;= 1974&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++----------+------+---------+---+--------+-------+
+| birthdate| color|firstname| id|quantity|surname|
++----------+------+---------+---+--------+-------+
+|1974-05-23| green|    Karen|  2|       4|Holcomb|
+|1975-01-29| black|     Roth|  4|       1|    Fry|
+|1974-07-03|  blue|      Zoe|  5|       2| Conway|
+|1974-10-18|violet| Gretchen|  6|       1| Kinney|
+|1974-10-17|indigo|  Merritt|  9|       4|    Guy|
+|1975-02-28| black|    Kylan| 10|       4| Sexton|
+|1974-02-11|orange|   Ayanna| 16|       5| Jarvis|
++----------+------+---------+---+--------+-------+
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Ejemplo-2">
+<h3>Ejemplo 2<a class="headerlink" href="#Ejemplo-2" title="Enlazar permanentemente con este título"></a></h3>
+<p>Obtenga una lista de colores únicos.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Se usa la función distinct() del DataFrame</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">distinct</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++------+
+| color|
++------+
+|violet|
+|orange|
+| green|
+|yellow|
+|indigo|
+|  gray|
+|   red|
+| black|
+|  blue|
++------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Como una consulta</span>
+<span class="c1">##</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT DISTINCT(color) FROM peopleview&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++------+
+| color|
++------+
+|violet|
+|orange|
+| green|
+|yellow|
+|indigo|
+|  gray|
+|   red|
+| black|
+|  blue|
++------+
+
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Ejemplo-3">
+<h3>Ejemplo 3<a class="headerlink" href="#Ejemplo-3" title="Enlazar permanentemente con este título"></a></h3>
+<p>Ordene la tabla por cantidad y luego por color.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Note que las funciones se aplican de derecha</span>
+<span class="c1">## a izquierda</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;color&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s1">&#39;quantity&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++----------+------+---------+---+--------+--------+
+| birthdate| color|firstname| id|quantity| surname|
++----------+------+---------+---+--------+--------+
+|1969-02-24|   red|    Karyn|  8|       1|    Diaz|
+|1973-04-29|yellow| Chadwick| 18|       1|  Knight|
+|1971-07-08| green|   Vivian|  1|       1|Hamilton|
+|1975-01-29| black|     Roth|  4|       1|     Fry|
+|1974-10-18|violet| Gretchen|  6|       1|  Kinney|
+|1973-04-22|orange|     Cody|  3|       1| Garrett|
+|1974-07-03|  blue|      Zoe|  5|       2|  Conway|
+|1975-02-28| black|    Kylan| 10|       4|  Sexton|
+|1973-04-01| green|   Chanda| 17|       4|   Boyer|
+|1974-10-17|indigo|  Merritt|  9|       4|     Guy|
+|1969-12-07|indigo|   Jordan| 11|       4|   Estes|
+|1974-05-23| green|    Karen|  2|       4| Holcomb|
+|1970-10-05|  blue| Driscoll|  7|       5|   Klein|
+|1972-12-12|   red|     Clio| 14|       5|    Noel|
+|1973-12-24| green|     Hope| 12|       5|  Coffey|
+|1970-07-01|  blue|     Hope| 15|       5|   Silva|
+|1970-08-27|  gray|   Vivian| 13|       5|   Crane|
+|1974-02-11|orange|   Ayanna| 16|       5|  Jarvis|
++----------+------+---------+---+--------+--------+
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">##</span>
+<span class="c1">## Como una consulta de SQL</span>
+<span class="c1">##</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sql</span><span class="p">(</span><span class="s1">&#39;SELECT * FROM peopleview ORDER BY quantity, color&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++----------+------+---------+---+--------+--------+
+| birthdate| color|firstname| id|quantity| surname|
++----------+------+---------+---+--------+--------+
+|1975-01-29| black|     Roth|  4|       1|     Fry|
+|1971-07-08| green|   Vivian|  1|       1|Hamilton|
+|1973-04-22|orange|     Cody|  3|       1| Garrett|
+|1969-02-24|   red|    Karyn|  8|       1|    Diaz|
+|1974-10-18|violet| Gretchen|  6|       1|  Kinney|
+|1973-04-29|yellow| Chadwick| 18|       1|  Knight|
+|1974-07-03|  blue|      Zoe|  5|       2|  Conway|
+|1975-02-28| black|    Kylan| 10|       4|  Sexton|
+|1973-04-01| green|   Chanda| 17|       4|   Boyer|
+|1974-05-23| green|    Karen|  2|       4| Holcomb|
+|1969-12-07|indigo|   Jordan| 11|       4|   Estes|
+|1974-10-17|indigo|  Merritt|  9|       4|     Guy|
+|1970-10-05|  blue| Driscoll|  7|       5|   Klein|
+|1970-07-01|  blue|     Hope| 15|       5|   Silva|
+|1970-08-27|  gray|   Vivian| 13|       5|   Crane|
+|1973-12-24| green|     Hope| 12|       5|  Coffey|
+|1974-02-11|orange|   Ayanna| 16|       5|  Jarvis|
+|1972-12-12|   red|     Clio| 14|       5|    Noel|
++----------+------+---------+---+--------+--------+
+
+</pre></div></div>
+</div>
+<p><strong>Limpieza del directorio de trabajo</strong></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>rm people.*
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>hdfs dfs -rm /tmp/people*
+<span class="o">!</span>hdfs dfs -rm -r -f /tmp/demo/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Deleted /tmp/people.csv
+Deleted /tmp/people.json
+Deleted /tmp/demo
+</pre></div></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2019-2021, Juan D. Velasquez.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
