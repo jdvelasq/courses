@@ -1,0 +1,986 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "fluF3_oOgkWF"
+      },
+      "source": [
+        "##### Copyright 2020 The TensorFlow Authors."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "cellView": "form",
+        "id": "AJs7HHFmg1M9"
+      },
+      "outputs": [],
+      "source": [
+        "#@title Licensed under the Apache License, Version 2.0 (the \"License\");\n",
+        "# you may not use this file except in compliance with the License.\n",
+        "# You may obtain a copy of the License at\n",
+        "#\n",
+        "# https://www.apache.org/licenses/LICENSE-2.0\n",
+        "#\n",
+        "# Unless required by applicable law or agreed to in writing, software\n",
+        "# distributed under the License is distributed on an \"AS IS\" BASIS,\n",
+        "# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n",
+        "# See the License for the specific language governing permissions and\n",
+        "# limitations under the License."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "jYysdyb-CaWM"
+      },
+      "source": [
+        "# Simple audio recognition: Recognizing keywords"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "CNbqmZy0gbyE"
+      },
+      "source": [
+        "<table class=\"tfo-notebook-buttons\" align=\"left\">\n",
+        "  <td>\n",
+        "    <a target=\"_blank\" href=\"https://www.tensorflow.org/tutorials/audio/simple_audio\">\n",
+        "    <img src=\"https://www.tensorflow.org/images/tf_logo_32px.png\" />\n",
+        "    View on TensorFlow.org</a>\n",
+        "  </td>\n",
+        "  <td>\n",
+        "    <a target=\"_blank\" href=\"https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/tutorials/audio/simple_audio.ipynb\">\n",
+        "    <img src=\"https://www.tensorflow.org/images/colab_logo_32px.png\" />\n",
+        "    Run in Google Colab</a>\n",
+        "  </td>\n",
+        "  <td>\n",
+        "    <a target=\"_blank\" href=\"https://github.com/tensorflow/docs/blob/master/site/en/tutorials/audio/simple_audio.ipynb\">\n",
+        "    <img src=\"https://www.tensorflow.org/images/GitHub-Mark-32px.png\" />\n",
+        "    View source on GitHub</a>\n",
+        "  </td>\n",
+        "  <td>\n",
+        "    <a href=\"https://storage.googleapis.com/tensorflow_docs/docs/site/en/tutorials/audio/simple_audio.ipynb\"><img src=\"https://www.tensorflow.org/images/download_logo_32px.png\" />Download notebook</a>\n",
+        "  </td>\n",
+        "</table>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "SPfDNFlb66XF"
+      },
+      "source": [
+        "This tutorial demonstrates how to preprocess audio files in the WAV format and build and train a basic <a href=\"https://en.wikipedia.org/wiki/Speech_recognition\" class=\"external\">automatic speech recognition</a> (ASR) model for recognizing ten different words. You will use a portion of the [Speech Commands dataset](https://www.tensorflow.org/datasets/catalog/speech_commands) (<a href=\"https://arxiv.org/abs/1804.03209\" class=\"external\">Warden, 2018</a>), which contains short (one-second or less) audio clips of commands, such as \"down\", \"go\", \"left\", \"no\", \"right\", \"stop\", \"up\" and \"yes\".\n",
+        "\n",
+        "Real-world speech and audio recognition <a href=\"https://ai.googleblog.com/search/label/Speech%20Recognition\" class=\"external\">systems</a> are complex. But, like [image classification with the MNIST dataset](../quickstart/beginner.ipynb), this tutorial should give you a basic understanding of the techniques involved."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "Go9C3uLL8Izc"
+      },
+      "source": [
+        "## Setup\n",
+        "\n",
+        "Import necessary modules and dependencies. Note that you'll be using <a href=\"https://seaborn.pydata.org/\" class=\"external\">seaborn</a> for visualization in this tutorial."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "dzLKpmZICaWN"
+      },
+      "outputs": [],
+      "source": [
+        "import os\n",
+        "import pathlib\n",
+        "\n",
+        "import matplotlib.pyplot as plt\n",
+        "import numpy as np\n",
+        "import seaborn as sns\n",
+        "import tensorflow as tf\n",
+        "\n",
+        "from tensorflow.keras import layers\n",
+        "from tensorflow.keras import models\n",
+        "from IPython import display\n",
+        "\n",
+        "# Set the seed value for experiment reproducibility.\n",
+        "seed = 42\n",
+        "tf.random.set_seed(seed)\n",
+        "np.random.seed(seed)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "yR0EdgrLCaWR"
+      },
+      "source": [
+        "## Import the mini Speech Commands dataset\n",
+        "\n",
+        "To save time with data loading, you will be working with a smaller version of the Speech Commands dataset. The [original dataset](https://www.tensorflow.org/datasets/catalog/speech_commands) consists of over 105,000 audio files in the <a href=\"https://www.aelius.com/njh/wavemetatools/doc/riffmci.pdf\" class=\"external\">WAV (Waveform) audio file format</a> of people saying 35 different words. This data was collected by Google and released under a CC BY license.\n",
+        "\n",
+        "Download and extract the `mini_speech_commands.zip` file containing the smaller Speech Commands datasets with `tf.keras.utils.get_file`:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "2-rayb7-3Y0I"
+      },
+      "outputs": [],
+      "source": [
+        "DATASET_PATH = 'data/mini_speech_commands'\n",
+        "\n",
+        "data_dir = pathlib.Path(DATASET_PATH)\n",
+        "if not data_dir.exists():\n",
+        "  tf.keras.utils.get_file(\n",
+        "      'mini_speech_commands.zip',\n",
+        "      origin=\"http://storage.googleapis.com/download.tensorflow.org/data/mini_speech_commands.zip\",\n",
+        "      extract=True,\n",
+        "      cache_dir='.', cache_subdir='data')"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "BgvFq3uYiS5G"
+      },
+      "source": [
+        "The dataset's audio clips are stored in eight folders corresponding to each speech command: `no`, `yes`, `down`, `go`, `left`, `up`, `right`, and `stop`:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "70IBxSKxA1N9"
+      },
+      "outputs": [],
+      "source": [
+        "commands = np.array(tf.io.gfile.listdir(str(data_dir)))\n",
+        "commands = commands[commands != 'README.md']\n",
+        "print('Commands:', commands)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "aMvdU9SY8WXN"
+      },
+      "source": [
+        "Extract the audio clips into a list called `filenames`, and shuffle it:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "hlX685l1wD9k"
+      },
+      "outputs": [],
+      "source": [
+        "filenames = tf.io.gfile.glob(str(data_dir) + '/*/*')\n",
+        "filenames = tf.random.shuffle(filenames)\n",
+        "num_samples = len(filenames)\n",
+        "print('Number of total examples:', num_samples)\n",
+        "print('Number of examples per label:',\n",
+        "      len(tf.io.gfile.listdir(str(data_dir/commands[0]))))\n",
+        "print('Example file tensor:', filenames[0])"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "9vK3ymy23MCP"
+      },
+      "source": [
+        "Split `filenames` into training, validation and test sets using a 80:10:10 ratio, respectively:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "Cv_wts-l3KgD"
+      },
+      "outputs": [],
+      "source": [
+        "train_files = filenames[:6400]\n",
+        "val_files = filenames[6400: 6400 + 800]\n",
+        "test_files = filenames[-800:]\n",
+        "\n",
+        "print('Training set size', len(train_files))\n",
+        "print('Validation set size', len(val_files))\n",
+        "print('Test set size', len(test_files))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "g2Cj9FyvfweD"
+      },
+      "source": [
+        "## Read the audio files and their labels"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "j1zjcWteOcBy"
+      },
+      "source": [
+        "In this section you will preprocess the dataset, creating decoded tensors for the waveforms and the corresponding labels. Note that:\n",
+        "\n",
+        "- Each WAV file contains time-series data with a set number of samples per second.\n",
+        "- Each sample represents the <a href=\"https://en.wikipedia.org/wiki/Amplitude\" class=\"external\">amplitude</a> of the audio signal at that specific time.\n",
+        "- In a <a href=\"https://en.wikipedia.org/wiki/Audio_bit_depth\" class=\"external\">16-bit</a> system, like the WAV files in the mini Speech Commands dataset, the amplitude values range from -32,768 to 32,767.\n",
+        "- The <a href=\"https://en.wikipedia.org/wiki/Sampling_(signal_processing)#Audio_sampling\" class=\"external\">sample rate</a> for this dataset is 16kHz.\n",
+        "\n",
+        "The shape of the tensor returned by `tf.audio.decode_wav` is `[samples, channels]`, where `channels` is `1` for mono or `2` for stereo. The mini Speech Commands dataset only contains mono recordings. "
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "d16bb8416f90"
+      },
+      "outputs": [],
+      "source": [
+        "test_file = tf.io.read_file(DATASET_PATH+'/down/0a9f9af7_nohash_0.wav')\n",
+        "test_audio, _ = tf.audio.decode_wav(contents=test_file)\n",
+        "test_audio.shape"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "e6bb8defd2ef"
+      },
+      "source": [
+        "Now, let's define a function that preprocesses the dataset's raw WAV audio files into audio tensors:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "9PjJ2iXYwftD"
+      },
+      "outputs": [],
+      "source": [
+        "def decode_audio(audio_binary):\n",
+        "  # Decode WAV-encoded audio files to `float32` tensors, normalized\n",
+        "  # to the [-1.0, 1.0] range. Return `float32` audio and a sample rate.\n",
+        "  audio, _ = tf.audio.decode_wav(contents=audio_binary)\n",
+        "  # Since all the data is single channel (mono), drop the `channels`\n",
+        "  # axis from the array.\n",
+        "  return tf.squeeze(audio, axis=-1)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GPQseZElOjVN"
+      },
+      "source": [
+        "Define a function that creates labels using the parent directories for each file:\n",
+        "\n",
+        "- Split the file paths into `tf.RaggedTensor`s (tensors with ragged dimensions—with slices that may have different lengths)."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "8VTtX1nr3YT-"
+      },
+      "outputs": [],
+      "source": [
+        "def get_label(file_path):\n",
+        "  parts = tf.strings.split(\n",
+        "      input=file_path,\n",
+        "      sep=os.path.sep)\n",
+        "  # Note: You'll use indexing here instead of tuple unpacking to enable this\n",
+        "  # to work in a TensorFlow graph.\n",
+        "  return parts[-2]"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "E8Y9w_5MOsr-"
+      },
+      "source": [
+        "Define another helper function—`get_waveform_and_label`—that puts it all together:\n",
+        "\n",
+        "- The input is the WAV audio filename.\n",
+        "- The output is a tuple containing the audio and label tensors ready for supervised learning."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "WdgUD5T93NyT"
+      },
+      "outputs": [],
+      "source": [
+        "def get_waveform_and_label(file_path):\n",
+        "  label = get_label(file_path)\n",
+        "  audio_binary = tf.io.read_file(file_path)\n",
+        "  waveform = decode_audio(audio_binary)\n",
+        "  return waveform, label"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "nvN8W_dDjYjc"
+      },
+      "source": [
+        "Build the training set to extract the audio-label pairs:\n",
+        "\n",
+        "- Create a `tf.data.Dataset` with `Dataset.from_tensor_slices` and `Dataset.map`, using `get_waveform_and_label` defined earlier.\n",
+        "\n",
+        "You'll build the validation and test sets using a similar procedure later on."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "0SQl8yXl3kNP"
+      },
+      "outputs": [],
+      "source": [
+        "AUTOTUNE = tf.data.AUTOTUNE\n",
+        "\n",
+        "files_ds = tf.data.Dataset.from_tensor_slices(train_files)\n",
+        "\n",
+        "waveform_ds = files_ds.map(\n",
+        "    map_func=get_waveform_and_label,\n",
+        "    num_parallel_calls=AUTOTUNE)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "voxGEwvuh2L7"
+      },
+      "source": [
+        "Let's plot a few audio waveforms:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "8yuX6Nqzf6wT"
+      },
+      "outputs": [],
+      "source": [
+        "rows = 3\n",
+        "cols = 3\n",
+        "n = rows * cols\n",
+        "fig, axes = plt.subplots(rows, cols, figsize=(10, 12))\n",
+        "\n",
+        "for i, (audio, label) in enumerate(waveform_ds.take(n)):\n",
+        "  r = i // cols\n",
+        "  c = i % cols\n",
+        "  ax = axes[r][c]\n",
+        "  ax.plot(audio.numpy())\n",
+        "  ax.set_yticks(np.arange(-1.2, 1.2, 0.2))\n",
+        "  label = label.numpy().decode('utf-8')\n",
+        "  ax.set_title(label)\n",
+        "\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "EWXPphxm0B4m"
+      },
+      "source": [
+        "## Convert waveforms to spectrograms\n",
+        "\n",
+        "The waveforms in the dataset are represented in the time domain. Next, you'll transform the waveforms from the time-domain signals into the time-frequency-domain signals by computing the <a href=\"https://en.wikipedia.org/wiki/Short-time_Fourier_transform\" class=\"external\">short-time Fourier transform (STFT)</a> to convert the waveforms to as <a href=\"https://en.wikipedia.org/wiki/Spectrogram\" clas=\"external\">spectrograms</a>, which show frequency changes over time and can be represented as 2D images. You will feed the spectrogram images into your neural network to train the model.\n",
+        "\n",
+        "A Fourier transform (`tf.signal.fft`) converts a signal to its component frequencies, but loses all time information. In comparison, STFT (`tf.signal.stft`) splits the signal into windows of time and runs a Fourier transform on each window, preserving some time information, and returning a 2D tensor that you can run standard convolutions on.\n",
+        "\n",
+        "Create a utility function for converting waveforms to spectrograms:\n",
+        "\n",
+        "- The waveforms need to be of the same length, so that when you convert them to spectrograms, the results have similar dimensions. This can be done by simply zero-padding the audio clips that are shorter than one second (using `tf.zeros`).\n",
+        "- When calling `tf.signal.stft`, choose the `frame_length` and `frame_step` parameters such that the generated spectrogram \"image\" is almost square. For more information on the STFT parameters choice, refer to <a href=\"https://www.coursera.org/lecture/audio-signal-processing/stft-2-tjEQe\" class=\"external\">this Coursera video</a> on audio signal processing and STFT.\n",
+        "- The STFT produces an array of complex numbers representing magnitude and phase. However, in this tutorial you'll only use the magnitude, which you can derive by applying `tf.abs` on the output of `tf.signal.stft`."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "_4CK75DHz_OR"
+      },
+      "outputs": [],
+      "source": [
+        "def get_spectrogram(waveform):\n",
+        "  # Zero-padding for an audio waveform with less than 16,000 samples.\n",
+        "  input_len = 16000\n",
+        "  waveform = waveform[:input_len]\n",
+        "  zero_padding = tf.zeros(\n",
+        "      [16000] - tf.shape(waveform),\n",
+        "      dtype=tf.float32)\n",
+        "  # Cast the waveform tensors' dtype to float32.\n",
+        "  waveform = tf.cast(waveform, dtype=tf.float32)\n",
+        "  # Concatenate the waveform with `zero_padding`, which ensures all audio\n",
+        "  # clips are of the same length.\n",
+        "  equal_length = tf.concat([waveform, zero_padding], 0)\n",
+        "  # Convert the waveform to a spectrogram via a STFT.\n",
+        "  spectrogram = tf.signal.stft(\n",
+        "      equal_length, frame_length=255, frame_step=128)\n",
+        "  # Obtain the magnitude of the STFT.\n",
+        "  spectrogram = tf.abs(spectrogram)\n",
+        "  # Add a `channels` dimension, so that the spectrogram can be used\n",
+        "  # as image-like input data with convolution layers (which expect\n",
+        "  # shape (`batch_size`, `height`, `width`, `channels`).\n",
+        "  spectrogram = spectrogram[..., tf.newaxis]\n",
+        "  return spectrogram"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "5rdPiPYJphs2"
+      },
+      "source": [
+        "Next, start exploring the data. Print the shapes of one example's tensorized waveform and the corresponding spectrogram, and play the original audio:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "4Mu6Y7Yz3C-V"
+      },
+      "outputs": [],
+      "source": [
+        "for waveform, label in waveform_ds.take(1):\n",
+        "  label = label.numpy().decode('utf-8')\n",
+        "  spectrogram = get_spectrogram(waveform)\n",
+        "\n",
+        "print('Label:', label)\n",
+        "print('Waveform shape:', waveform.shape)\n",
+        "print('Spectrogram shape:', spectrogram.shape)\n",
+        "print('Audio playback')\n",
+        "display.display(display.Audio(waveform, rate=16000))"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "xnSuqyxJ1isF"
+      },
+      "source": [
+        "Now, define a function for displaying a spectrogram:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "e62jzb36-Jog"
+      },
+      "outputs": [],
+      "source": [
+        "def plot_spectrogram(spectrogram, ax):\n",
+        "  if len(spectrogram.shape) > 2:\n",
+        "    assert len(spectrogram.shape) == 3\n",
+        "    spectrogram = np.squeeze(spectrogram, axis=-1)\n",
+        "  # Convert the frequencies to log scale and transpose, so that the time is\n",
+        "  # represented on the x-axis (columns).\n",
+        "  # Add an epsilon to avoid taking a log of zero.\n",
+        "  log_spec = np.log(spectrogram.T + np.finfo(float).eps)\n",
+        "  height = log_spec.shape[0]\n",
+        "  width = log_spec.shape[1]\n",
+        "  X = np.linspace(0, np.size(spectrogram), num=width, dtype=int)\n",
+        "  Y = range(height)\n",
+        "  ax.pcolormesh(X, Y, log_spec)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "baa5c91e8603"
+      },
+      "source": [
+        "Plot the example's waveform over time and the corresponding spectrogram (frequencies over time):"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "d2_CikgY1tjv"
+      },
+      "outputs": [],
+      "source": [
+        "fig, axes = plt.subplots(2, figsize=(12, 8))\n",
+        "timescale = np.arange(waveform.shape[0])\n",
+        "axes[0].plot(timescale, waveform.numpy())\n",
+        "axes[0].set_title('Waveform')\n",
+        "axes[0].set_xlim([0, 16000])\n",
+        "\n",
+        "plot_spectrogram(spectrogram.numpy(), axes[1])\n",
+        "axes[1].set_title('Spectrogram')\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GyYXjW07jCHA"
+      },
+      "source": [
+        "Now, define a function that transforms the waveform dataset into spectrograms and their corresponding labels as integer IDs:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "43IS2IouEV40"
+      },
+      "outputs": [],
+      "source": [
+        "def get_spectrogram_and_label_id(audio, label):\n",
+        "  spectrogram = get_spectrogram(audio)\n",
+        "  label_id = tf.argmax(label == commands)\n",
+        "  return spectrogram, label_id"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "cf5d5b033a45"
+      },
+      "source": [
+        "Map `get_spectrogram_and_label_id` across the dataset's elements with `Dataset.map`:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "yEVb_oK0oBLQ"
+      },
+      "outputs": [],
+      "source": [
+        "spectrogram_ds = waveform_ds.map(\n",
+        "  map_func=get_spectrogram_and_label_id,\n",
+        "  num_parallel_calls=AUTOTUNE)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "6gQpAAgMnyDi"
+      },
+      "source": [
+        "Examine the spectrograms for different examples of the dataset:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "QUbHfTuon4iF"
+      },
+      "outputs": [],
+      "source": [
+        "rows = 3\n",
+        "cols = 3\n",
+        "n = rows*cols\n",
+        "fig, axes = plt.subplots(rows, cols, figsize=(10, 10))\n",
+        "\n",
+        "for i, (spectrogram, label_id) in enumerate(spectrogram_ds.take(n)):\n",
+        "  r = i // cols\n",
+        "  c = i % cols\n",
+        "  ax = axes[r][c]\n",
+        "  plot_spectrogram(spectrogram.numpy(), ax)\n",
+        "  ax.set_title(commands[label_id.numpy()])\n",
+        "  ax.axis('off')\n",
+        "\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "z5KdY8IF8rkt"
+      },
+      "source": [
+        "## Build and train the model\n",
+        "\n",
+        "Repeat the training set preprocessing on the validation and test sets:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "10UI32QH_45b"
+      },
+      "outputs": [],
+      "source": [
+        "def preprocess_dataset(files):\n",
+        "  files_ds = tf.data.Dataset.from_tensor_slices(files)\n",
+        "  output_ds = files_ds.map(\n",
+        "      map_func=get_waveform_and_label,\n",
+        "      num_parallel_calls=AUTOTUNE)\n",
+        "  output_ds = output_ds.map(\n",
+        "      map_func=get_spectrogram_and_label_id,\n",
+        "      num_parallel_calls=AUTOTUNE)\n",
+        "  return output_ds"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "HNv4xwYkB2P6"
+      },
+      "outputs": [],
+      "source": [
+        "train_ds = spectrogram_ds\n",
+        "val_ds = preprocess_dataset(val_files)\n",
+        "test_ds = preprocess_dataset(test_files)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "assnWo6SB3lR"
+      },
+      "source": [
+        "Batch the training and validation sets for model training:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "UgY9WYzn61EX"
+      },
+      "outputs": [],
+      "source": [
+        "batch_size = 64\n",
+        "train_ds = train_ds.batch(batch_size)\n",
+        "val_ds = val_ds.batch(batch_size)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "GS1uIh6F_TN9"
+      },
+      "source": [
+        "Add `Dataset.cache` and `Dataset.prefetch` operations to reduce read latency while training the model:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "fdZ6M-F5_QzY"
+      },
+      "outputs": [],
+      "source": [
+        "train_ds = train_ds.cache().prefetch(AUTOTUNE)\n",
+        "val_ds = val_ds.cache().prefetch(AUTOTUNE)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "rwHkKCQQb5oW"
+      },
+      "source": [
+        "For the model, you'll use a simple convolutional neural network (CNN), since you have transformed the audio files into spectrogram images.\n",
+        "\n",
+        "Your `tf.keras.Sequential` model will use the following Keras preprocessing layers:\n",
+        "\n",
+        "- `tf.keras.layers.Resizing`: to downsample the input to enable the model to train faster.\n",
+        "- `tf.keras.layers.Normalization`: to normalize each pixel in the image based on its mean and standard deviation.\n",
+        "\n",
+        "For the `Normalization` layer, its `adapt` method would first need to be called on the training data in order to compute aggregate statistics (that is, the mean and the standard deviation)."
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "ALYz7PFCHblP"
+      },
+      "outputs": [],
+      "source": [
+        "for spectrogram, _ in spectrogram_ds.take(1):\n",
+        "  input_shape = spectrogram.shape\n",
+        "print('Input shape:', input_shape)\n",
+        "num_labels = len(commands)\n",
+        "\n",
+        "# Instantiate the `tf.keras.layers.Normalization` layer.\n",
+        "norm_layer = layers.Normalization()\n",
+        "# Fit the state of the layer to the spectrograms\n",
+        "# with `Normalization.adapt`.\n",
+        "norm_layer.adapt(data=spectrogram_ds.map(map_func=lambda spec, label: spec))\n",
+        "\n",
+        "model = models.Sequential([\n",
+        "    layers.Input(shape=input_shape),\n",
+        "    # Downsample the input.\n",
+        "    layers.Resizing(32, 32),\n",
+        "    # Normalize.\n",
+        "    norm_layer,\n",
+        "    layers.Conv2D(32, 3, activation='relu'),\n",
+        "    layers.Conv2D(64, 3, activation='relu'),\n",
+        "    layers.MaxPooling2D(),\n",
+        "    layers.Dropout(0.25),\n",
+        "    layers.Flatten(),\n",
+        "    layers.Dense(128, activation='relu'),\n",
+        "    layers.Dropout(0.5),\n",
+        "    layers.Dense(num_labels),\n",
+        "])\n",
+        "\n",
+        "model.summary()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "de52e5afa2f3"
+      },
+      "source": [
+        "Configure the Keras model with the Adam optimizer and the cross-entropy loss:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "wFjj7-EmsTD-"
+      },
+      "outputs": [],
+      "source": [
+        "model.compile(\n",
+        "    optimizer=tf.keras.optimizers.Adam(),\n",
+        "    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),\n",
+        "    metrics=['accuracy'],\n",
+        ")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "f42b9e3a4705"
+      },
+      "source": [
+        "Train the model over 10 epochs for demonstration purposes:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "ttioPJVMcGtq"
+      },
+      "outputs": [],
+      "source": [
+        "EPOCHS = 10\n",
+        "history = model.fit(\n",
+        "    train_ds,\n",
+        "    validation_data=val_ds,\n",
+        "    epochs=EPOCHS,\n",
+        "    callbacks=tf.keras.callbacks.EarlyStopping(verbose=1, patience=2),\n",
+        ")"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "gjpCDeQ4mUfS"
+      },
+      "source": [
+        "Let's plot the training and validation loss curves to check how your model has improved during training:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "nzhipg3Gu2AY"
+      },
+      "outputs": [],
+      "source": [
+        "metrics = history.history\n",
+        "plt.plot(history.epoch, metrics['loss'], metrics['val_loss'])\n",
+        "plt.legend(['loss', 'val_loss'])\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "5ZTt3kO3mfm4"
+      },
+      "source": [
+        "## Evaluate the model performance\n",
+        "\n",
+        "Run the model on the test set and check the model's performance:"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "biU2MwzyAo8o"
+      },
+      "outputs": [],
+      "source": [
+        "test_audio = []\n",
+        "test_labels = []\n",
+        "\n",
+        "for audio, label in test_ds:\n",
+        "  test_audio.append(audio.numpy())\n",
+        "  test_labels.append(label.numpy())\n",
+        "\n",
+        "test_audio = np.array(test_audio)\n",
+        "test_labels = np.array(test_labels)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "ktUanr9mRZky"
+      },
+      "outputs": [],
+      "source": [
+        "y_pred = np.argmax(model.predict(test_audio), axis=1)\n",
+        "y_true = test_labels\n",
+        "\n",
+        "test_acc = sum(y_pred == y_true) / len(y_true)\n",
+        "print(f'Test set accuracy: {test_acc:.0%}')"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "en9Znt1NOabH"
+      },
+      "source": [
+        "### Display a confusion matrix\n",
+        "\n",
+        "Use a <a href=\"https://developers.google.com/machine-learning/glossary#confusion-matrix\" class=\"external\">confusion matrix</a> to check how well the model did classifying each of the commands in the test set:\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "LvoSAOiXU3lL"
+      },
+      "outputs": [],
+      "source": [
+        "confusion_mtx = tf.math.confusion_matrix(y_true, y_pred)\n",
+        "plt.figure(figsize=(10, 8))\n",
+        "sns.heatmap(confusion_mtx,\n",
+        "            xticklabels=commands,\n",
+        "            yticklabels=commands,\n",
+        "            annot=True, fmt='g')\n",
+        "plt.xlabel('Prediction')\n",
+        "plt.ylabel('Label')\n",
+        "plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "mQGi_mzPcLvl"
+      },
+      "source": [
+        "## Run inference on an audio file\n",
+        "\n",
+        "Finally, verify the model's prediction output using an input audio file of someone saying \"no\". How well does your model perform?"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {
+        "id": "zRxauKMdhofU"
+      },
+      "outputs": [],
+      "source": [
+        "sample_file = data_dir/'no/01bb6a2a_nohash_0.wav'\n",
+        "\n",
+        "sample_ds = preprocess_dataset([str(sample_file)])\n",
+        "\n",
+        "for spectrogram, label in sample_ds.batch(1):\n",
+        "  prediction = model(spectrogram)\n",
+        "  plt.bar(commands, tf.nn.softmax(prediction[0]))\n",
+        "  plt.title(f'Predictions for \"{commands[label[0]]}\"')\n",
+        "  plt.show()"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "VgWICqdqQNaQ"
+      },
+      "source": [
+        "As the output suggests, your model should have recognized the audio command as \"no\"."
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "J3jF933m9z1J"
+      },
+      "source": [
+        "## Next steps\n",
+        "\n",
+        "This tutorial demonstrated how to carry out simple audio classification/automatic speech recognition using a convolutional neural network with TensorFlow and Python. To learn more, consider the following resources:\n",
+        "\n",
+        "- The [Sound classification with YAMNet](https://www.tensorflow.org/hub/tutorials/yamnet) tutorial shows how to use transfer learning for audio classification.\n",
+        "- The notebooks from <a href=\"https://www.kaggle.com/c/tensorflow-speech-recognition-challenge/overview\" class=\"external\">Kaggle's TensorFlow speech recognition challenge</a>.\n",
+        "- The \n",
+        "<a href=\"https://codelabs.developers.google.com/codelabs/tensorflowjs-audio-codelab/index.html#0\" class=\"external\">TensorFlow.js - Audio recognition using transfer learning codelab</a> teaches how to build your own interactive web app for audio classification.\n",
+        "- <a href=\"https://arxiv.org/abs/1709.04396\" class=\"external\">A tutorial on deep learning for music information retrieval</a> (Choi et al., 2017) on arXiv.\n",
+        "- TensorFlow also has additional support for [audio data preparation and augmentation](https://www.tensorflow.org/io/tutorials/audio) to help with your own audio-based projects.\n",
+        "- Consider using the <a href=\"https://librosa.org/\" class=\"external\">librosa</a> library—a Python package for music and audio analysis."
+      ]
+    }
+  ],
+  "metadata": {
+    "accelerator": "GPU",
+    "colab": {
+      "collapsed_sections": [],
+      "name": "simple_audio.ipynb",
+      "toc_visible": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}

@@ -1,0 +1,621 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "f4f0c6f2-f439-48d8-b6c4-2f0a7498c0f8",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Word embeddings --- 0:00 min\n",
+    "===\n",
+    "\n",
+    "* Última modificación: Marzo 1, 2022 | YouTube"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a922388f-f624-4a38-92d4-869b7fae4810",
+   "metadata": {},
+   "source": [
+    "## Importación de librerías"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "1da1f03b-97b4-409b-a23c-33ac6c3cb4d4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "\n",
+    "os.environ[\"TF_CPP_MIN_LOG_LEVEL\"] = \"2\"\n",
+    "\n",
+    "import tensorflow as tf"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c823611e-e420-41b9-a999-aacec133f16c",
+   "metadata": {},
+   "source": [
+    "Configuración\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8bfd29e9-31b9-4c1a-8939-59fac70fc32a",
+   "metadata": {},
+   "source": [
+    "**Descarga de datos**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "122a7a93-39ce-4d80-b778-462e9ff987d2",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Downloading data from https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz\n",
+      "84131840/84125825 [==============================] - 80s 1us/step\n",
+      "84140032/84125825 [==============================] - 80s 1us/step\n"
+     ]
+    }
+   ],
+   "source": [
+    "url = \"https://ai.stanford.edu/~amaas/data/sentiment/aclImdb_v1.tar.gz\"\n",
+    "\n",
+    "dataset = tf.keras.utils.get_file(\n",
+    "    \"aclImdb_v1.tar.gz\",\n",
+    "    url,\n",
+    "    untar=True,\n",
+    "    cache_dir=\".\",\n",
+    "    cache_subdir=\"/tmp/imdb\",\n",
+    ")\n",
+    "\n",
+    "dataset_dir = os.path.join(os.path.dirname(dataset), \"aclImdb\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "f93e7cb3-edc9-4937-b34c-e39cb7140c4d",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['imdbEr.txt', 'train', 'imdb.vocab', 'README', 'test']"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "os.listdir(dataset_dir)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "a714c562-e1ac-4169-9964-503726049636",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['pos',\n",
+       " 'labeledBow.feat',\n",
+       " 'unsup',\n",
+       " 'neg',\n",
+       " 'unsupBow.feat',\n",
+       " 'urls_unsup.txt',\n",
+       " 'urls_neg.txt',\n",
+       " 'urls_pos.txt']"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "train_dir = os.path.join(dataset_dir, \"train\")\n",
+    "os.listdir(train_dir)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "ce4f774d-99ae-437b-b2be-ffa67df196b9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import shutil\n",
+    "\n",
+    "remove_dir = os.path.join(train_dir, \"unsup\")\n",
+    "shutil.rmtree(remove_dir)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "65a1c8f9-f525-48a4-877a-dbf1151e9e9b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 25000 files belonging to 2 classes.\n",
+      "Using 20000 files for training.\n",
+      "Found 25000 files belonging to 2 classes.\n",
+      "Using 5000 files for validation.\n"
+     ]
+    }
+   ],
+   "source": [
+    "batch_size = 1024\n",
+    "seed = 123\n",
+    "\n",
+    "train_ds = tf.keras.utils.text_dataset_from_directory(\n",
+    "    \"/tmp/imdb/aclImdb/train\",\n",
+    "    batch_size=batch_size,\n",
+    "    validation_split=0.2,\n",
+    "    subset=\"training\",\n",
+    "    seed=seed,\n",
+    ")\n",
+    "\n",
+    "val_ds = tf.keras.utils.text_dataset_from_directory(\n",
+    "    \"/tmp/imdb/aclImdb/train\",\n",
+    "    batch_size=batch_size,\n",
+    "    validation_split=0.2,\n",
+    "    subset=\"validation\",\n",
+    "    seed=seed,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "bc899a73-a37f-4fe4-94bd-a2adcbe69518",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1 ----> b'It\\'s always nice to see Angela Bassett getting to do a role that she can really sink her teeth into. She is at times intense, funny and even sexy in her role as Lena, a \"colored\" woman forced to make a home on a desolate mudbank just outside of Cape Town, South Africa. Danny Glover is also good in a not entirely sympathetic role as her partner, Boesman. Willie Jonah gives a finely nuanced performance as the stranger that discovers Boesman and Lena\\'s new living area. It\\'s not often that you get a chance to see an intelligent film dealing with mature themes. Although it is based on a play, the late director John Berry (who also directed Claudine) opens the material up by having the film shot in the widescreen Cinemascope format. He also keeps things visually interesting through the creative blocking of actors and by showing us things only mentioned in the play. Just like Diahann Carroll in Claudine, John Berry may have directed Angela Bassett into an Academy Award nomination. This is definitely a film worth searching for.'\n",
+      "\n",
+      "0 ----> b'This is the biggest piece of lamo I\\'ve ever watched. It is excruciatingly boring I would have rather sat through a seminar on creationism than have watched this if i had known it was going to be as boring as it was. Not even the 40 seconds of the hot chick in the bikini with the big ta tas redeems this of anything lower than a 1.<br /><br />The reviews of this movie claiming that this movie is \"unintentionally funny\" are absurd and just plain WRONG. Not one thing is funny about this movie. they spend the first 50 or so minutes walking through the woods talking about stuff you wouldn\\'t understand nor care about and it is just as lame when the people start dying because you don\\'t even know who the people are because they are so UNINTERESTING. Honestly though, I didn\\'t watch it to the ending, but that should say something about how horrible it is. WORST MOVIE EVER.<br /><br />Immediately after ejecting this filth from my DVD player I started scraping it against the cement in front of my house, not wanting other blockbuster customers to have to fall upon the same mistake i had made as to rent this movie. Then Zach peed his pants. Thankyou for your time.'\n",
+      "\n",
+      "0 ----> b\"Wow, what a snoozer. Definately one of bacon's worst films. The bad acting coupled with a formulatic, if not incredulous, script make me yearn for time I wasted on viewing this on cable television back. Not really much I can say about it, a basketball scout gets too attached to the person he's recruiting, who happens to belong to a tribe that happens to be on the verge of war which happens to be decided by (spoiler) a basketball game. Grade: F+\"\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "for text_batch, label_batch in train_ds.take(1):\n",
+    "    for i in range(3):\n",
+    "        print(label_batch[i].numpy(), \"---->\", text_batch.numpy()[i])\n",
+    "        print()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c0477932-f3de-4991-828d-eba4593e5d17",
+   "metadata": {},
+   "source": [
+    "**Configuración del dataset para desempeño**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "40fb8026-961a-4d94-9e82-a95e1a015870",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "AUTOTUNE = tf.data.AUTOTUNE\n",
+    "\n",
+    "train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)\n",
+    "val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2b11aa9a-3143-43be-91c8-f374c572abe8",
+   "metadata": {},
+   "source": [
+    "Uso de una capa Embedding\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "85f405c8-d424-443a-a492-9d62212b2866",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "embedding_layer = tf.keras.layers.Embedding(1000, 5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "15d87085-c919-4712-99e6-05dce886e36b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[-0.01132011,  0.02213531,  0.02189431, -0.04420274, -0.04720949],\n",
+       "       [-0.04826976, -0.01315316, -0.03228643, -0.04433763,  0.03587538],\n",
+       "       [ 0.00920614, -0.0140573 ,  0.03090834,  0.03418871, -0.003983  ]],\n",
+       "      dtype=float32)"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result = embedding_layer(tf.constant([1, 2, 3]))\n",
+    "result.numpy()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "43593922-d207-47da-900f-31337172d2aa",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TensorShape([2, 3, 5])"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result = embedding_layer(tf.constant([[0, 1, 2], [3, 4, 5]]))\n",
+    "result.shape"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4d5cfc01-2f07-4e03-b080-6abf5956120e",
+   "metadata": {},
+   "source": [
+    "Preprocesamiento de texto\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "d72bbb29-740a-4910-be46-d8c2d1c265f4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def custom_standardization(input_data):\n",
+    "\n",
+    "    lowercase = tf.strings.lower(input_data)\n",
+    "\n",
+    "    stripped_html = tf.strings.regex_replace(lowercase, \"<br />\", \" \")\n",
+    "\n",
+    "    return tf.strings.regex_replace(\n",
+    "        stripped_html, \"[%s]\" % re.escape(string.punctuation), \"\"\n",
+    "    )"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "c577ebb7-3df0-45c3-9e64-580e5649d957",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import re\n",
+    "import string\n",
+    "\n",
+    "vocab_size = 10000\n",
+    "sequence_length = 100\n",
+    "\n",
+    "vectorize_layer = tf.keras.layers.TextVectorization(\n",
+    "    standardize=custom_standardization,\n",
+    "    max_tokens=vocab_size,\n",
+    "    output_mode=\"int\",\n",
+    "    output_sequence_length=sequence_length,\n",
+    ")\n",
+    "\n",
+    "text_ds = train_ds.map(lambda x, y: x)\n",
+    "\n",
+    "vectorize_layer.adapt(text_ds)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "dbef8662-b372-458f-bdd6-5cdeac4d03e6",
+   "metadata": {},
+   "source": [
+    "Creación del modelo de clasificación\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "845e55d4-217c-4ada-a94f-fedb6f8a273a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "embedding_dim = 16\n",
+    "\n",
+    "model = tf.keras.Sequential(\n",
+    "    [\n",
+    "        vectorize_layer,\n",
+    "        tf.keras.layers.Embedding(vocab_size, embedding_dim, name=\"embedding\"),\n",
+    "        tf.keras.layers.GlobalAveragePooling1D(),\n",
+    "        tf.keras.layers.Dense(16, activation=\"relu\"),\n",
+    "        tf.keras.layers.Dense(1),\n",
+    "    ]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c3794e60-6c80-4031-aa12-ac2e2994bdbf",
+   "metadata": {},
+   "source": [
+    "Compilación y entrenamiento del modelo\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "0b7de618-5f53-42a1-8311-cebc6c076f8b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=\"/tmp/embedding/logs\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "id": "0f6ea5eb-2ecb-4fe0-8c7e-582efb11262e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model.compile(\n",
+    "    optimizer=\"adam\",\n",
+    "    loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),\n",
+    "    metrics=[\"accuracy\"],\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "id": "30e5839e-796f-40a6-956c-492d6d6f0436",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Epoch 1/15\n",
+      "20/20 [==============================] - 2s 95ms/step - loss: 0.6918 - accuracy: 0.5028 - val_loss: 0.6899 - val_accuracy: 0.4886\n",
+      "Epoch 2/15\n",
+      "20/20 [==============================] - 1s 51ms/step - loss: 0.6869 - accuracy: 0.5028 - val_loss: 0.6838 - val_accuracy: 0.4886\n",
+      "Epoch 3/15\n",
+      "20/20 [==============================] - 1s 49ms/step - loss: 0.6781 - accuracy: 0.5028 - val_loss: 0.6730 - val_accuracy: 0.4886\n",
+      "Epoch 4/15\n",
+      "20/20 [==============================] - 1s 50ms/step - loss: 0.6643 - accuracy: 0.5028 - val_loss: 0.6579 - val_accuracy: 0.4886\n",
+      "Epoch 5/15\n",
+      "20/20 [==============================] - 1s 49ms/step - loss: 0.6454 - accuracy: 0.5028 - val_loss: 0.6380 - val_accuracy: 0.4886\n",
+      "Epoch 6/15\n",
+      "20/20 [==============================] - 1s 48ms/step - loss: 0.6215 - accuracy: 0.5028 - val_loss: 0.6142 - val_accuracy: 0.4892\n",
+      "Epoch 7/15\n",
+      "20/20 [==============================] - 1s 48ms/step - loss: 0.5934 - accuracy: 0.5401 - val_loss: 0.5876 - val_accuracy: 0.5840\n",
+      "Epoch 8/15\n",
+      "20/20 [==============================] - 1s 52ms/step - loss: 0.5626 - accuracy: 0.6321 - val_loss: 0.5599 - val_accuracy: 0.6422\n",
+      "Epoch 9/15\n",
+      "20/20 [==============================] - 1s 48ms/step - loss: 0.5309 - accuracy: 0.6952 - val_loss: 0.5329 - val_accuracy: 0.6810\n",
+      "Epoch 10/15\n",
+      "20/20 [==============================] - 1s 48ms/step - loss: 0.4998 - accuracy: 0.7382 - val_loss: 0.5076 - val_accuracy: 0.7204\n",
+      "Epoch 11/15\n",
+      "20/20 [==============================] - 1s 48ms/step - loss: 0.4706 - accuracy: 0.7681 - val_loss: 0.4850 - val_accuracy: 0.7444\n",
+      "Epoch 12/15\n",
+      "20/20 [==============================] - 1s 48ms/step - loss: 0.4439 - accuracy: 0.7920 - val_loss: 0.4653 - val_accuracy: 0.7578\n",
+      "Epoch 13/15\n",
+      "20/20 [==============================] - 1s 48ms/step - loss: 0.4199 - accuracy: 0.8088 - val_loss: 0.4485 - val_accuracy: 0.7692\n",
+      "Epoch 14/15\n",
+      "20/20 [==============================] - 1s 47ms/step - loss: 0.3985 - accuracy: 0.8229 - val_loss: 0.4344 - val_accuracy: 0.7796\n",
+      "Epoch 15/15\n",
+      "20/20 [==============================] - 1s 46ms/step - loss: 0.3793 - accuracy: 0.8324 - val_loss: 0.4225 - val_accuracy: 0.7908\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "<keras.callbacks.History at 0x7f2b4da1a2b0>"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "model.fit(\n",
+    "    train_ds,\n",
+    "    validation_data=val_ds,\n",
+    "    epochs=15,\n",
+    "    callbacks=[tensorboard_callback],\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "ca3d7f7b-b01d-4993-b9f7-37372147217a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Model: \"sequential\"\n",
+      "_________________________________________________________________\n",
+      " Layer (type)                Output Shape              Param #   \n",
+      "=================================================================\n",
+      " text_vectorization_2 (TextV  (None, 100)              0         \n",
+      " ectorization)                                                   \n",
+      "                                                                 \n",
+      " embedding (Embedding)       (None, 100, 16)           160000    \n",
+      "                                                                 \n",
+      " global_average_pooling1d (G  (None, 16)               0         \n",
+      " lobalAveragePooling1D)                                          \n",
+      "                                                                 \n",
+      " dense (Dense)               (None, 16)                272       \n",
+      "                                                                 \n",
+      " dense_1 (Dense)             (None, 1)                 17        \n",
+      "                                                                 \n",
+      "=================================================================\n",
+      "Total params: 160,289\n",
+      "Trainable params: 160,289\n",
+      "Non-trainable params: 0\n",
+      "_________________________________________________________________\n"
+     ]
+    }
+   ],
+   "source": [
+    "model.summary()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "17676802-d7be-4836-8330-802dce7da089",
+   "metadata": {},
+   "source": [
+    "```bash\n",
+    "%load_ext tensorboard\n",
+    "%tensorboard --logdir /tmp/embedding/logs\n",
+    "````\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4f084d70-dc2a-454e-9eb8-1504eaa2234a",
+   "metadata": {},
+   "source": [
+    "![assets/embeddings_classifier_accuracy.png](assets/embeddings_classifier_accuracy.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "14c3e206-9696-47d7-969f-f44f4c3840a3",
+   "metadata": {},
+   "source": [
+    "Recuperación de embeddings entrenados y guardado en disco\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "a67f6f23-a595-486c-988a-a81d91075652",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "weights = model.get_layer(\"embedding\").get_weights()[0]\n",
+    "vocab = vectorize_layer.get_vocabulary()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "id": "94e2c86a-6023-44d2-a484-4bf7e85fc51b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import io\n",
+    "\n",
+    "out_v = io.open(\"vectors.tsv\", \"w\", encoding=\"utf-8\")\n",
+    "out_m = io.open(\"metadata.tsv\", \"w\", encoding=\"utf-8\")\n",
+    "\n",
+    "for index, word in enumerate(vocab):\n",
+    "    if index == 0:\n",
+    "        continue  # skip 0, it's padding.\n",
+    "    vec = weights[index]\n",
+    "    out_v.write(\"\\t\".join([str(x) for x in vec]) + \"\\n\")\n",
+    "    out_m.write(word + \"\\n\")\n",
+    "out_v.close()\n",
+    "out_m.close()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bf40e5b5-07ad-46d5-9d71-3d90c6e83be7",
+   "metadata": {},
+   "source": [
+    "Visualización de los embeddings\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "40a0963f-81b8-4962-b7ac-b8d231e5a483",
+   "metadata": {},
+   "source": [
+    "http://projector.tensorflow.org/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c5d13e4c-240d-42f1-8463-1df25ab0340f",
+   "metadata": {},
+   "source": [
+    "![assets/embedding_projector.png](assets/embedding_projector.png)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

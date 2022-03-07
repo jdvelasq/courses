@@ -1,0 +1,475 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "2a177649-a532-4ec9-9e04-bab54c4af5c5",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Clasificación de textos con RNN --- 0:00 min\n",
+    "===\n",
+    "\n",
+    "* Última modificación: Marzo 1, 2022 | YouTube"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ae825a22-f9d0-4019-a475-b23e1b9ba6fa",
+   "metadata": {},
+   "source": [
+    "## Importación de librerías"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "444bd340-d9a1-4c04-9b72-9c462d033e2d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import os\n",
+    "\n",
+    "os.environ[\"TF_CPP_MIN_LOG_LEVEL\"] = \"2\"\n",
+    "\n",
+    "import tensorflow as tf\n",
+    "import tensorflow_datasets as tfds\n",
+    "\n",
+    "tfds.disable_progress_bar()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1ef7e3a4-7fbf-47eb-aae9-fca76c4148d7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import matplotlib.pyplot as plt\n",
+    "\n",
+    "\n",
+    "def plot_graphs(history, metric):\n",
+    "    plt.plot(history.history[metric])\n",
+    "    plt.plot(history.history[\"val_\" + metric], \"\")\n",
+    "    plt.xlabel(\"Epochs\")\n",
+    "    plt.ylabel(metric)\n",
+    "    plt.legend([metric, \"val_\" + metric])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6a311d39-de00-421f-83ca-8d8587748d7a",
+   "metadata": {},
+   "source": [
+    "Configuración de la tubería de entrada\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "409a9196-0a23-48d2-a2a9-9b7d7370a443",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "dataset, info = tfds.load(\n",
+    "    \"imdb_reviews\",\n",
+    "    with_info=True,\n",
+    "    as_supervised=True,\n",
+    ")\n",
+    "train_dataset, test_dataset = dataset[\"train\"], dataset[\"test\"]\n",
+    "\n",
+    "train_dataset.element_spec"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "912f8bf5-bca1-45d8-afc1-20115973642b",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for example, label in train_dataset.take(1):\n",
+    "    print(\"text: \", example.numpy())\n",
+    "    print(\"label: \", label.numpy())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1f9c1520-30ee-4c0a-b7cd-1b46082d6abc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "BUFFER_SIZE = 10000\n",
+    "BATCH_SIZE = 64"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2a637ade-ea88-4931-9a27-26d1314a29ef",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "train_dataset = (\n",
+    "    train_dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)\n",
+    ")\n",
+    "test_dataset = test_dataset.batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4d4a2994-24c3-467d-b47e-4ab90d8bc6fd",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for example, label in train_dataset.take(1):\n",
+    "    print(\"texts: \", example.numpy()[:3])\n",
+    "    print()\n",
+    "    print(\"labels: \", label.numpy()[:3])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b849f7bf-78c4-4baa-877c-8de518156a35",
+   "metadata": {},
+   "source": [
+    "Creación del codificador de texto\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b3e0167f-7ca7-4fc4-87d6-7401b5de73d4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "VOCAB_SIZE = 1000\n",
+    "encoder = tf.keras.layers.TextVectorization(max_tokens=VOCAB_SIZE)\n",
+    "encoder.adapt(train_dataset.map(lambda text, label: text))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "11fbd061-2d1a-40c5-ae54-937bc3fb431f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "vocab = np.array(encoder.get_vocabulary())\n",
+    "vocab[:20]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "cfd3ce37-4eb3-4b33-ab9b-330378e69689",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "encoded_example = encoder(example)[:3].numpy()\n",
+    "encoded_example"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "563a49af-498e-4390-8e3d-320a25a6f0b9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "for n in range(3):\n",
+    "    print(\"Original: \", example[n].numpy())\n",
+    "    print(\"Round-trip: \", \" \".join(vocab[encoded_example[n]]))\n",
+    "    print()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "613fc538-dd70-4de9-a949-46af102d068b",
+   "metadata": {},
+   "source": [
+    "Creación del modelo\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ef36da82-46bf-4e94-a267-11e03dbaebf4",
+   "metadata": {},
+   "source": [
+    "![assets/bidirectional.png](assets/bidirectional.png)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a5bdfb5c-a2f7-4557-a033-9a227951e661",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = tf.keras.Sequential(\n",
+    "    [\n",
+    "        encoder,\n",
+    "        tf.keras.layers.Embedding(\n",
+    "            input_dim=len(encoder.get_vocabulary()),\n",
+    "            output_dim=64,\n",
+    "            # Use masking to handle the variable sequence lengths\n",
+    "            mask_zero=True,\n",
+    "        ),\n",
+    "        tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64)),\n",
+    "        tf.keras.layers.Dense(64, activation=\"relu\"),\n",
+    "        tf.keras.layers.Dense(1),\n",
+    "    ]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "36aa8e17-e809-486d-ac7d-33cf47a2bc68",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "print([layer.supports_masking for layer in model.layers])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6904c839-9d29-43e0-97b2-5a1f27017d06",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sample_text = (\n",
+    "    \"The movie was cool. The animation and the graphics \"\n",
+    "    \"were out of this world. I would recommend this movie.\"\n",
+    ")\n",
+    "predictions = model.predict(np.array([sample_text]))\n",
+    "print(predictions[0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4125c272-ce2a-42ff-87c4-3f372e4fd599",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "padding = \"the \" * 2000\n",
+    "predictions = model.predict(np.array([sample_text, padding]))\n",
+    "print(predictions[0])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "63d2eeb9-4b84-448b-9202-8c10f5415845",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model.compile(\n",
+    "    loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),\n",
+    "    optimizer=tf.keras.optimizers.Adam(1e-4),\n",
+    "    metrics=[\"accuracy\"],\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "49141b57-4da9-4791-8e65-7b209633848d",
+   "metadata": {},
+   "source": [
+    "Entrenamiento del modelo\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6b2ce28d-a8cc-4eab-a71b-ede8b7d603dc",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "history = model.fit(\n",
+    "    train_dataset,\n",
+    "    epochs=10,\n",
+    "    validation_data=test_dataset,\n",
+    "    validation_steps=30,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "24111cb2-b463-4c06-b680-d06eace08231",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_loss, test_acc = model.evaluate(test_dataset)\n",
+    "\n",
+    "print(\"Test Loss:\", test_loss)\n",
+    "print(\"Test Accuracy:\", test_acc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8ca8f9be-df2a-4510-93af-f5edd5715dbf",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(16, 8))\n",
+    "plt.subplot(1, 2, 1)\n",
+    "plot_graphs(history, \"accuracy\")\n",
+    "plt.ylim(None, 1)\n",
+    "plt.subplot(1, 2, 2)\n",
+    "plot_graphs(history, \"loss\")\n",
+    "plt.ylim(0, None)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "18338b75-fd17-4233-ae65-06ba8c14b8f3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sample_text = (\n",
+    "    \"The movie was cool. The animation and the graphics \"\n",
+    "    \"were out of this world. I would recommend this movie.\"\n",
+    ")\n",
+    "predictions = model.predict(np.array([sample_text]))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9d6740a0-ef14-4545-acec-e02ffd57ee9b",
+   "metadata": {},
+   "source": [
+    "Apilamiento de dos o más capas LSTM\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e861f46a-9631-48cb-bc5f-6e2be0dfffec",
+   "metadata": {},
+   "source": [
+    "![assets/layered_bidirectional.png](assets/layered_bidirectional.png)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "42b91fb3-2e77-4694-91d4-fc09545c762f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model = tf.keras.Sequential(\n",
+    "    [\n",
+    "        encoder,\n",
+    "        tf.keras.layers.Embedding(len(encoder.get_vocabulary()), 64, mask_zero=True),\n",
+    "        tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64, return_sequences=True)),\n",
+    "        tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(32)),\n",
+    "        tf.keras.layers.Dense(64, activation=\"relu\"),\n",
+    "        tf.keras.layers.Dropout(0.5),\n",
+    "        tf.keras.layers.Dense(1),\n",
+    "    ]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "75a92866-297c-46db-83ad-ebfe9b64c166",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "model.compile(\n",
+    "    loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),\n",
+    "    optimizer=tf.keras.optimizers.Adam(1e-4),\n",
+    "    metrics=[\"accuracy\"],\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f606c65e-3739-4a33-aae3-8d09ade9d26a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "history = model.fit(\n",
+    "    train_dataset, epochs=10, validation_data=test_dataset, validation_steps=30\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2ffa79b6-7f4a-4cd1-8e37-7190fcddfbcb",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "test_loss, test_acc = model.evaluate(test_dataset)\n",
+    "\n",
+    "print(\"Test Loss:\", test_loss)\n",
+    "print(\"Test Accuracy:\", test_acc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "7c3001a4-5361-4440-b9a0-0fd50932a399",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sample_text = (\n",
+    "    \"The movie was not good. The animation and the graphics \"\n",
+    "    \"were terrible. I would not recommend this movie.\"\n",
+    ")\n",
+    "predictions = model.predict(np.array([sample_text]))\n",
+    "print(predictions)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "0f50220f-f6de-4cbd-a181-ca2d7cd6a183",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "plt.figure(figsize=(16, 6))\n",
+    "plt.subplot(1, 2, 1)\n",
+    "plot_graphs(history, \"accuracy\")\n",
+    "plt.subplot(1, 2, 2)\n",
+    "plot_graphs(history, \"loss\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

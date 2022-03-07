@@ -12,7 +12,7 @@ Material de apoyo para cursos
 .. toctree::
     :caption: Cursos de Pregrado
     :hidden:
-    :maxdepth: 1
+    :maxdepth: 2
     
     redes_neuronales_y_algoritmos_bioinspirados/index
 
