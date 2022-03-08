@@ -25,8 +25,10 @@ Sesión 01 --- 2022-mar-08
 
             course-info
 
-    
-    **Charla --- Introducción a la Inteligencia Computacional**
+
+
+    `Presentación <https://jdvelasq.github.io/intro-redes-neuronales/>`_ 
+
 
 
 .. ......................................................................................
@@ -367,6 +369,15 @@ Sesión 10 --- 2022-may-17
             :glob:
 
             /notebooks/keras_01_models_api/1-*
+
+        **APIs para capas --- min**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/keras_02_layers_api/1-*
+
 
 .. ......................................................................................
 ..
