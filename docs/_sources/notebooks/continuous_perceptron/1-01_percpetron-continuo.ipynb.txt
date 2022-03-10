@@ -4,10 +4,10 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Regresión no lineal usando perceptrones continuos\n",
+    "Lectura: Regresión no lineal usando perceptrones continuos --- 30:00 min\n",
     "===\n",
     "\n",
-    "* *30 min* | Última modificación: Marzo 22, 2020"
+    "* Última modificación: Marzo 10, 2022"
    ]
   },
   {
@@ -15,6 +15,27 @@
    "metadata": {},
    "source": [
     "En este tutorial se describe la forma matemática y el algoritmo de entrenamiento de un perceptrón continuo."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Definición del problema\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En este tutorial se aborda el problema de como construir un modelo de regresión lineal que usa un perceptrón continuo como modelo. En este caso, el modelo es:\n",
+    "\n",
+    "$$\n",
+    "\\sigma \\left( w_0 + \\sum_i w_i x_i \\right) = y\n",
+    "$$\n",
+    "\n",
+    "Note que en este caso, la componente de la entrada al perceptrón es un modelo de regresión lineal."
    ]
   },
   {
@@ -201,6 +222,20 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
+    "**Nota 1** --- Desde el punto de vista histórico, las dos ecuaciones anteriores son de singular importancia. Ello se debe a que en la década de los 80s y 90s, el poder de cómputo era muy limitado en comparación con el poder actual, y el uso de este tipo de funciones resulta computacionalmente eficiente en términos de tiempo. Ello se debe a que si se propagó la señal de entrada hacia adelante en la red neuronal para computar su salida y luego el error instantaneo, ya se conocen los valores de $\\sigma(u)$, y por lo tanto, resulta muy simple el cálculo de la derivada para corregir los pesos usando técnicas de optimización basadas en el gradiente."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "**Nota 2** --- También resulta muy simple el cálculo de la derivada cuando se usa la función reLU, definida como: ```0 if x <= 0 else x```, ya que la derivada será ```0 if x<= 0 else 1```."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "### Ecuación de mejora"
    ]
   },
@@ -243,10 +278,12 @@
    "metadata": {},
    "outputs": [],
    "source": [
+    "import math\n",
+    "\n",
+    "import matplotlib.pyplot as plt\n",
     "import numpy as np\n",
     "import pandas as pd\n",
-    "import matplotlib.pyplot as plt\n",
-    "import math\n",
+    "\n",
     "%matplotlib inline"
    ]
   },
@@ -257,14 +294,29 @@
    "outputs": [],
    "source": [
     "class ContinuousPerceptron:\n",
-    "    def __init__(self, \n",
-    "                 learning_rate=0.001, # tasa de aprendizaje\n",
-    "                 max_epochs=100,      # número máximo de iteraciones sobre el set de datos\n",
-    "                 shuffle=False,       # mezcla patrones para aprendizaje online\n",
-    "                 batch=False,         # ?batch o online\n",
-    "                 random_state=None,   #\n",
-    "                 warm_start=False):   #\n",
-    "        \n",
+    "    def __init__(\n",
+    "        self,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # tasa de aprendizaje usada en el metodo de gradiente descendente\n",
+    "        learning_rate=0.001,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # número máximo de iteraciones sobre el set de datos\n",
+    "        max_epochs=100,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # mezcla patrones para aprendizaje online\n",
+    "        shuffle=False,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # ?batch o online\n",
+    "        batch=False,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Semilla del generador de aleatorios\n",
+    "        random_state=None,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # ?Genera nuevos pesos aleatorios al realizar la optimización o\n",
+    "        # continua con los actuales\n",
+    "        warm_start=False,\n",
+    "    ):  #\n",
+    "\n",
     "        self.learning_rate = learning_rate\n",
     "        self.max_epochs = max_epochs\n",
     "        self.shuffle = shuffle\n",
@@ -273,60 +325,94 @@
     "        self.warm_start = warm_start\n",
     "        self.coef_ = None\n",
     "        self.intercept_ = None\n",
-    "        \n",
+    "\n",
     "    def fit(self, X, y):\n",
-    "        \n",
+    "\n",
+    "        #\n",
+    "        # Si los datos son listas, los convierte a NumPy\n",
+    "        #\n",
     "        if not isinstance(X, np.ndarray):\n",
     "            X = np.array(X)\n",
     "        if not isinstance(y, np.ndarray):\n",
     "            d = np.array(y)\n",
     "        else:\n",
     "            d = y.copy()\n",
-    "            \n",
+    "\n",
+    "        #\n",
+    "        # Semilla del generador de aleatorios\n",
+    "        #\n",
     "        if self.random_state is not None:\n",
     "            np.random.RandomState(self.random_state)\n",
     "\n",
+    "        #\n",
+    "        # ?genera nuevos pesos aleatorios o continua el entrenamiento con los\n",
+    "        # actuales\n",
+    "        #\n",
     "        if self.coef_ is None or self.warm_start is False:\n",
     "            self.coef_ = np.random.uniform(-1, 1, X.shape[1])\n",
-    "            \n",
-    "        if self.intercept_ is None  or self.warm_start is False:\n",
+    "\n",
+    "        if self.intercept_ is None or self.warm_start is False:\n",
     "            self.intercept_ = np.random.uniform(-1, 1, 1)\n",
     "\n",
-    "        history = []            \n",
-    "        \n",
+    "        #\n",
+    "        # Proceso de entrenamiento\n",
+    "        #\n",
+    "        history = []\n",
+    "\n",
     "        if self.batch is True:\n",
+    "            #\n",
+    "            # Se computa el gradiente neto sobre todo el dataset y luego se\n",
+    "            # corrigen los pesos\n",
+    "            #\n",
     "            for epoch in range(self.max_epochs):\n",
+    "                #\n",
+    "                # Note que estas son las ecuaciones de la parte de arriba\n",
+    "                #\n",
     "                u = np.dot(X, self.coef_) + self.intercept_\n",
-    "                s = 1. / (1. + np.exp(-u))\n",
+    "                s = 1.0 / (1.0 + np.exp(-u))\n",
     "                e = d - s\n",
-    "                self.coef_ += 2 * self.learning_rate * np.sum((X.T * e * s * (1. - s)).T, axis=0)\n",
-    "                self.intercept_ += 2 * self.learning_rate * np.sum((e * s * (1. - s)).T, axis=0)\n",
-    "                history.append(sum([a**2 for a in e]))            \n",
+    "                self.coef_ += (\n",
+    "                    2 * self.learning_rate * np.sum((X.T * e * s * (1.0 - s)).T, axis=0)\n",
+    "                )\n",
+    "                self.intercept_ += (\n",
+    "                    2 * self.learning_rate * np.sum((e * s * (1.0 - s)).T, axis=0)\n",
+    "                )\n",
+    "                history.append(sum([a**2 for a in e]))\n",
     "        else:\n",
-    "            \n",
+    "\n",
     "            for epoch in range(self.max_epochs):\n",
-    "            \n",
+    "\n",
     "                if self.shuffle is True:\n",
+    "                    #\n",
+    "                    # Se mezcla aleatoriamente el conjunto de entrenamiento\n",
+    "                    #\n",
     "                    n = list(range(X.shape[0]))\n",
     "                    np.random.shuffle(n)\n",
-    "                    X = X[n,:]\n",
+    "                    X = X[n, :]\n",
     "                    d = d[n]\n",
-    "                    \n",
+    "\n",
     "                for i in range(X.shape[0]):\n",
-    "                    u = np.dot(X[i,:], self.coef_) + self.intercept_\n",
-    "                    s = (1. / (1. + np.exp(-u)))\n",
+    "                    #\n",
+    "                    # Para cada patrón se calcula el gradiente instantaneo y se\n",
+    "                    # corrigen los pesos\n",
+    "                    #\n",
+    "                    u = np.dot(X[i, :], self.coef_) + self.intercept_\n",
+    "                    s = 1.0 / (1.0 + np.exp(-u))\n",
     "                    e = (d[i] - s)[0]\n",
-    "                    self.coef_ += 2 * self.learning_rate * e * s * (1-s) * X[i,:]\n",
-    "                    self.intercept_ += 2 * self.learning_rate * e * s * (1-s)\n",
-    "                    history.append(e**2)    \n",
+    "                    self.coef_ += 2 * self.learning_rate * e * s * (1 - s) * X[i, :]\n",
+    "                    self.intercept_ += 2 * self.learning_rate * e * s * (1 - s)\n",
+    "                    history.append(e**2)\n",
     "\n",
     "        return history\n",
-    "                    \n",
+    "\n",
     "    def predict(self, X):\n",
+    "        #\n",
+    "        # Pronóstico para un nuevo conjunto X\n",
+    "        #\n",
     "        if not isinstance(X, np.ndarray):\n",
-    "            X = np.array(X)        \n",
+    "            X = np.array(X)\n",
     "        u = np.dot(X, self.coef_) + self.intercept_\n",
-    "        return 1. / (1. + np.exp(-u))"
+    "        return 1.0 / (1.0 + np.exp(-u))"
    ]
   },
   {
@@ -362,10 +448,13 @@
     }
    ],
    "source": [
+    "#\n",
+    "# Generación de una muestra artificial\n",
+    "#\n",
     "n_samples = 60\n",
     "np.random.seed(1234)\n",
     "X = np.random.uniform(-5, 5, n_samples)\n",
-    "d = 1./(1 + np.exp(-(1.0 + 1.53 * X))) + 0.05 * np.random.normal(size=n_samples)\n",
+    "d = 1.0 / (1 + np.exp(-(1.0 + 1.53 * X))) + 0.05 * np.random.normal(size=n_samples)\n",
     "X = np.array([[e] for e in X])\n",
     "plt.scatter(X, d);"
    ]
@@ -384,11 +473,12 @@
    "outputs": [],
    "source": [
     "continuousPerceptron = ContinuousPerceptron(\n",
-    "    learning_rate=0.05, \n",
+    "    learning_rate=0.05,\n",
     "    max_epochs=20,\n",
     "    shuffle=True,\n",
-    "    random_state = 12345,\n",
-    "    batch=False)"
+    "    random_state=12345,\n",
+    "    batch=False,\n",
+    ")"
    ]
   },
   {
@@ -447,17 +537,17 @@
     }
    ],
    "source": [
-    "plt.plot(X, d, 'o');\n",
+    "plt.plot(X, d, \"o\")\n",
     "X_pred = np.linspace(start=-5, stop=5, num=50)\n",
     "X_pred = [[x] for x in X_pred]\n",
-    "y = continuousPerceptron.predict(X_pred)\n",
-    "plt.plot(X_pred, y, '-', linewidth = 4);"
+    "y = continuousPerceptron.predict(X_pred) # <--- aca se realiza el pronostico\n",
+    "plt.plot(X_pred, y, \"-\", linewidth=4);"
    ]
   }
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python 3",
+   "display_name": "Python 3 (ipykernel)",
    "language": "python",
    "name": "python3"
   },
@@ -471,7 +561,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.9"
+   "version": "3.9.10"
   }
  },
  "nbformat": 4,
