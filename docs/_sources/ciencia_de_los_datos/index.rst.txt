@@ -55,6 +55,18 @@ Sesión 02 --- 2022-mar-18
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **3:08:54**
 
+    .. note::
+
+        Los siguientes son cursos complementarios sobre programación en Python que pueden
+        complementar y profundizar los temas vistos en el curso.
+
+
+        * `Google IT Automation with Python <https://www.coursera.org/professional-certificates/google-it-automation?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE>`_ 
+
+
+        * `Python for Everybody <https://www.coursera.org/specializations/python?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo=&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE/>`_ 
+
+
     **Formación como Analista de Datos (I)**
 
         **Python para Análisis de Datos (I)** --- 1:10:17 hr
