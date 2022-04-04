@@ -48,6 +48,15 @@ Sesión 01 --- 2022-05-13
             /notebooks/mlflow/2-*
 
 
+   **MLOps con MLflow --- Projects**
+
+      .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/mlflow/3-*
+
+
 .. ......................................................................................
 ..
 ..     #####  #####
