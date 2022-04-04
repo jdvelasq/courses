@@ -31,13 +31,21 @@ Sesión 01 --- 2022-05-13
       * `MLOps --07-- <https://jdvelasq.github.io/mlops_01_intro//>`_ 
 
 
-   **MLflow**
+   **MLOps con MLflow --- Intro**
 
       .. toctree::
             :maxdepth: 1
             :glob:
 
             /notebooks/mlflow/1-*
+
+   **MLOps con MLflow --- Model Tracking**
+
+      .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/mlflow/2-*
 
 
 .. ......................................................................................

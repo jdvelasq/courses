@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entrenamiento de modelos en sklearn con GridSearchCV — 0:00 min &mdash; documentación de Cursos de Analítica y Machine Learning - </title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Tracking con TensorFlow usando el sistema local de archivos — 0:00 min &mdash; documentación de Cursos de Analítica y Machine Learning - </title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -23,8 +23,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Entrenamiento ingenuo de modelos en sklearn con MLflow— 0:00 min" href="1-03_training_naive_mlflow.html" />
-    <link rel="prev" title="Entrenamiento ingenuo de modelos en sklearn — 0:00 min" href="1-01_training_naive.html" /> 
+    <link rel="next" title="Tracking con PySpark usando el sistema local de archivos — 0:00 min" href="2-03_training_pyspark_local.html" />
+    <link rel="prev" title="Tracking con Scikit-Learn usando el sistema local de archivos — 0:00 min" href="2-01_training_naive_gridsearchcv_mlflow.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -85,9 +85,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../productos_de_datos/index.html">Productos de Datos</a> &raquo;</li>
-      <li>Entrenamiento de modelos en sklearn con GridSearchCV — 0:00 min</li>
+      <li>Tracking con TensorFlow usando el sistema local de archivos — 0:00 min</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../../_sources/notebooks/mlflow/1-02_training_gridsearchcv.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+            <a href="../../_sources/notebooks/mlflow/2-02_training_tensorflow_local.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
       </li>
   </ul>
   <hr/>
@@ -365,13 +365,13 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Entrenamiento-de-modelos-en-sklearn-con-GridSearchCV-—-0:00-min">
-<h1>Entrenamiento de modelos en sklearn con GridSearchCV — 0:00 min<a class="headerlink" href="#Entrenamiento-de-modelos-en-sklearn-con-GridSearchCV-—-0:00-min" title="Enlazar permanentemente con este título"></a></h1>
+<div class="section" id="Tracking-con-TensorFlow-usando-el-sistema-local-de-archivos-—-0:00-min">
+<h1>Tracking con TensorFlow usando el sistema local de archivos — 0:00 min<a class="headerlink" href="#Tracking-con-TensorFlow-usando-el-sistema-local-de-archivos-—-0:00-min" title="Enlazar permanentemente con este título"></a></h1>
 <ul class="simple">
 <li><p>0:00 min | Ultima modificación: Abril 4, 2022 | YouTube</p></li>
 </ul>
-<div class="section" id="Carga-de-datos">
-<h2>Carga de datos<a class="headerlink" href="#Carga-de-datos" title="Enlazar permanentemente con este título"></a></h2>
+<div class="section" id="Código-base">
+<h2>Código base<a class="headerlink" href="#Código-base" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -389,19 +389,15 @@ div.rendered_html tbody tr:hover {
     <span class="n">x</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;quality&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Particionamiento-de-los-datos">
-<h2>Particionamiento de los datos<a class="headerlink" href="#Particionamiento-de-los-datos" title="Enlazar permanentemente con este título"></a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">make_train_test_split</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 
+
+<span class="k">def</span> <span class="nf">make_train_test_split</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="c1"># En TF la partición de los datos se realiza por fuera del ambienta. Esto</span>
+    <span class="c1"># es, los archivos ya se encuentran divididos en train y test. En este</span>
+    <span class="c1"># ejemplo se aprovecha sklearn para mantener la compatibilidad con los</span>
+    <span class="c1"># tutoriales anteriores.</span>
+    <span class="c1">#</span>
     <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
 
     <span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
@@ -411,19 +407,15 @@ div.rendered_html tbody tr:hover {
         <span class="n">random_state</span><span class="o">=</span><span class="mi">123456</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Métricas-de-evaluación">
-<h2>Métricas de evaluación<a class="headerlink" href="#Métricas-de-evaluación" title="Enlazar permanentemente con este título"></a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">eval_metrics</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
 
+
+<span class="k">def</span> <span class="nf">eval_metrics</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+
+    <span class="c1">#</span>
+    <span class="c1"># En este ejemplo se puede hacer con sklearn debido a que la muestra es</span>
+    <span class="c1"># pequeña y se desea hacer el ejemplo compatible con el resto de tutoriales</span>
+    <span class="c1"># de esta sección.</span>
+    <span class="c1">#</span>
     <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">mean_absolute_error</span><span class="p">,</span> <span class="n">mean_squared_error</span><span class="p">,</span> <span class="n">r2_score</span>
 
     <span class="n">mse</span> <span class="o">=</span> <span class="n">mean_squared_error</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
@@ -431,15 +423,9 @@ div.rendered_html tbody tr:hover {
     <span class="n">r2</span> <span class="o">=</span> <span class="n">r2_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span><span class="p">):</span>
+
+
+<span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span><span class="p">):</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  MSE: </span><span class="si">{</span><span class="n">mse</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -449,112 +435,135 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 </div>
-<div class="section" id="Almacenamiento-del-modelo">
-<h2>Almacenamiento del modelo<a class="headerlink" href="#Almacenamiento-del-modelo" title="Enlazar permanentemente con este título"></a></h2>
+<div class="section" id="MLflow-Tracking">
+<h2>MLflow Tracking<a class="headerlink" href="#MLflow-Tracking" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">save_best_estimator</span><span class="p">(</span><span class="n">estimator</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">make_experiment</span><span class="p">(</span><span class="n">experiment_name</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 
     <span class="kn">import</span> <span class="nn">os</span>
-    <span class="kn">import</span> <span class="nn">pickle</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">)</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;models/estimator.pickle&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Carga-del-modelo">
-<h2>Carga del modelo<a class="headerlink" href="#Carga-del-modelo" title="Enlazar permanentemente con este título"></a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">load_best_estimator</span><span class="p">():</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;TF_CPP_MIN_LOG_LEVEL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
 
-    <span class="kn">import</span> <span class="nn">os</span>
-    <span class="kn">import</span> <span class="nn">pickle</span>
+    <span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;models&quot;</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;models/estimator.pickle&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-        <span class="n">estimator</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">estimator</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="Entrenamiento">
-<h2>Entrenamiento<a class="headerlink" href="#Entrenamiento" title="Enlazar permanentemente con este título"></a></h2>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">train_estimator</span><span class="p">(</span><span class="n">alphas</span><span class="p">,</span> <span class="n">l1_ratios</span><span class="p">,</span> <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-
-    <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">ElasticNet</span>
-    <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">GridSearchCV</span>
+    <span class="kn">import</span> <span class="nn">mlflow</span>
+    <span class="kn">import</span> <span class="nn">mlflow.sklearn</span>
 
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">()</span>
     <span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">make_train_test_split</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
-    <span class="c1"># -------------------------------------------------------------------------</span>
-    <span class="c1"># Búsqueda de parámetros con validación cruzada</span>
+    <span class="n">FEATURES</span> <span class="o">=</span> <span class="mi">11</span>
+
+
     <span class="c1">#</span>
-    <span class="n">estimator</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span>
-        <span class="n">estimator</span><span class="o">=</span><span class="n">ElasticNet</span><span class="p">(</span>
-            <span class="n">random_state</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
-        <span class="p">),</span>
-        <span class="n">param_grid</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alphas</span><span class="p">,</span>
-            <span class="s2">&quot;l1_ratio&quot;</span><span class="p">:</span> <span class="n">l1_ratios</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">cv</span><span class="o">=</span><span class="n">n_splits</span><span class="p">,</span>
-        <span class="n">refit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">return_train_score</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="c1"># Establece el directorio de tracking. Esta es la dirección absoluta al</span>
+    <span class="c1"># directorio actual en este ejemplo.</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">&quot;mlruns&quot;</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="s2">&quot;mlruns&quot;</span><span class="p">)</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">set_tracking_uri</span><span class="p">(</span><span class="s2">&quot;file:///workspace/mlflow/mlruns&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tracking directory:&quot;</span><span class="p">,</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">get_tracking_uri</span><span class="p">())</span>
+
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">tensorflow</span><span class="o">.</span><span class="n">autolog</span><span class="p">(</span>
+        <span class="n">every_n_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">log_models</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">disable</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">exclusive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">disable_for_unsupported_versions</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">silent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">registered_model_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="c1"># -------------------------------------------------------------------------</span>
 
-    <span class="n">estimator</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x_train</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+    <span class="c1">#</span>
+    <span class="c1"># Almancena las corridas  en el experimento indicado</span>
+    <span class="c1">#</span>
+    <span class="n">mlflow</span><span class="o">.</span><span class="n">set_experiment</span><span class="p">(</span><span class="n">experiment_name</span><span class="p">)</span>
 
-    <span class="n">estimator</span> <span class="o">=</span> <span class="n">estimator</span><span class="o">.</span><span class="n">best_estimator_</span>
+    <span class="k">with</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">()</span> <span class="k">as</span> <span class="n">run</span><span class="p">:</span>
 
-    <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">eval_metrics</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">))</span>
+        <span class="n">run</span> <span class="o">=</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">active_run</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Active run_id: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">run_id</span><span class="p">))</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span>
+                    <span class="n">units</span><span class="p">,</span>
+                    <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">,</span>
+                    <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">FEATURES</span><span class="p">,),</span>
+                <span class="p">),</span>
+                <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="s2">&quot;units&quot;</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+
+
+        <span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(),</span>
+            <span class="n">loss</span><span class="o">=</span><span class="s2">&quot;mean_squared_error&quot;</span><span class="p">,</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="p">[</span>
+                <span class="s2">&quot;mean_squared_error&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;mean_absolute_error&quot;</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+
+        <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+            <span class="n">x_train</span><span class="p">,</span>
+            <span class="n">y_train</span><span class="p">,</span>
+            <span class="n">epochs</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">validation_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span>
+            <span class="n">x_test</span><span class="p">,</span>
+            <span class="n">y_test</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">)</span>
+
+
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+        <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">eval_metrics</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;mse&quot;</span><span class="p">,</span> <span class="n">mse</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;mae&quot;</span><span class="p">,</span> <span class="n">mae</span><span class="p">)</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="s2">&quot;r2&quot;</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
+
+
+    <span class="c1">#</span>
+    <span class="c1"># Reporta el mejor modelo encontrado en la corrida</span>
+    <span class="c1">#</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+    <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">eval_metrics</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">y_pred</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">report</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
-
-    <span class="n">best_estimator</span> <span class="o">=</span> <span class="n">load_best_estimator</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">best_estimator</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">estimator</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">best_estimator</span><span class="o">.</span><span class="n">score</span><span class="p">(</span>
-        <span class="n">x_test</span><span class="p">,</span> <span class="n">y_test</span>
-    <span class="p">):</span>
-        <span class="n">best_estimator</span> <span class="o">=</span> <span class="n">estimator</span>
-
-    <span class="n">save_best_estimator</span><span class="p">(</span><span class="n">best_estimator</span><span class="p">)</span>
+        <span class="n">report</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="n">train_estimator</span><span class="p">(</span>
-    <span class="n">alphas</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-    <span class="n">l1_ratios</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
-    <span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="c1">#</span>
+<span class="c1"># Se tantea para diferentes cantidades de neuronas en la capa oculta. Por</span>
+<span class="c1"># simplicidad no se varian otros parámetros como la tasa de aprendizaje o su</span>
+<span class="c1"># esquema de modificación</span>
+<span class="c1">#</span>
+<span class="k">for</span> <span class="n">units</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Runing for H=</span><span class="si">{</span><span class="n">units</span><span class="si">}</span><span class="s2"> ...&quot;</span><span class="p">)</span>
+    <span class="n">make_experiment</span><span class="p">(</span>
+        <span class="n">units</span><span class="o">=</span><span class="n">units</span><span class="p">,</span>
+        <span class="n">experiment_name</span><span class="o">=</span><span class="s2">&quot;red-wine&quot;</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -563,25 +572,62 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-ElasticNet(alpha=0.0001, l1_ratio=0.16673333333333332, random_state=12345):
-  MSE: 0.4555342217989927
-  MAE: 0.5292810437627216
-  R2: 0.34641239384627454
+Runing for H=1 ...
+Tracking directory: file:///workspace/mlflow/mlruns
+Active run_id: 5d1897e8820b44f5a6eca15234b12cf0
+INFO:tensorflow:Assets written to: /tmp/tmp__h89klc/model/data/model/assets
+
+Runing for H=2 ...
+Tracking directory: file:///workspace/mlflow/mlruns
+Active run_id: 3f9271fb2cbe4d81a0acb07f6541e766
+INFO:tensorflow:Assets written to: /tmp/tmpr_h2fjl7/model/data/model/assets
+
+Runing for H=3 ...
+Tracking directory: file:///workspace/mlflow/mlruns
+Active run_id: 0f4811aa0b244467ac4f3f767a33ad12
+INFO:tensorflow:Assets written to: /tmp/tmpmjdrr4n0/model/data/model/assets
+
+Runing for H=4 ...
+Tracking directory: file:///workspace/mlflow/mlruns
+Active run_id: 22e463953ba04eebb4a4efbe62f2f495
+INFO:tensorflow:Assets written to: /tmp/tmpbudz3o8m/model/data/model/assets
+
 </pre></div></div>
 </div>
+</div>
+<div class="section" id="MLflow-ui">
+<h2>MLflow ui<a class="headerlink" href="#MLflow-ui" title="Enlazar permanentemente con este título"></a></h2>
+<p>Para visualizar la interfase use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mlflow ui
+</pre></div>
+</div>
+<p><strong>Nota:</strong> En docker usar:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mlflow ui --host <span class="m">0</span>.0.0.0
+</pre></div>
+</div>
+<p>con:</p>
+<p><a class="reference external" href="http://127.0.0.1:5001">http://127.0.0.1:5001</a></p>
+<p><img alt="assets/mlflow-tracking-1-sklearn-part-0.png" src="../../_images/mlflow-tracking-2-tensorflow-part-0.png" /></p>
+<p><strong>Detalles de la corrida</strong></p>
+<p><img alt="assets/mlflow-tracking-1-sklearn-part-1.png" src="../../_images/mlflow-tracking-2-tensorflow-part-1.png" /> <img alt="assets/mlflow-tracking-1-sklearn-part-2.png" src="../../_images/mlflow-tracking-2-tensorflow-part-2.png" /> <img alt="assets/mlflow-tracking-1-sklearn-part-3.png" src="../../_images/mlflow-tracking-2-tensorflow-part-3.png" /></p>
 </div>
 <div class="section" id="Chequeo">
 <h2>Chequeo<a class="headerlink" href="#Chequeo" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">def</span> <span class="nf">check_estimator</span><span class="p">():</span>
 
+    <span class="kn">import</span> <span class="nn">mlflow</span>
+
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">()</span>
     <span class="n">x_train</span><span class="p">,</span> <span class="n">x_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">make_train_test_split</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="n">estimator</span> <span class="o">=</span> <span class="n">load_best_estimator</span><span class="p">()</span>
+
+    <span class="c1"># NOTA: este parámetro es copiado directamente de la interfase de MLflow</span>
+    <span class="n">estimator_path</span> <span class="o">=</span> <span class="s2">&quot;runs:/22e463953ba04eebb4a4efbe62f2f495/model&quot;</span>
+    <span class="n">estimator</span> <span class="o">=</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">pyfunc</span><span class="o">.</span><span class="n">load_model</span><span class="p">(</span><span class="n">estimator_path</span><span class="p">)</span>
     <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="n">eval_metrics</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">estimator</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_test</span><span class="p">))</span>
     <span class="n">report</span><span class="p">(</span><span class="n">estimator</span><span class="p">,</span> <span class="n">mse</span><span class="p">,</span> <span class="n">mae</span><span class="p">,</span> <span class="n">r2</span><span class="p">)</span>
 
@@ -593,28 +639,40 @@ ElasticNet(alpha=0.0001, l1_ratio=0.16673333333333332, random_state=12345):
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/usr/local/lib/python3.8/dist-packages/keras/backend.py:450: UserWarning: `tf.keras.backend.set_learning_phase` is deprecated and will be removed after 2020-10-11. To update it, simply pass a True/False value to the `training` argument of the `__call__` method of your layer or model.
+  warnings.warn(&#39;`tf.keras.backend.set_learning_phase` is deprecated and &#39;
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-ElasticNet(alpha=0.0001, l1_ratio=0.16673333333333332, random_state=12345):
-  MSE: 0.4555342217989927
-  MAE: 0.5292810437627216
-  R2: 0.34641239384627454
+mlflow.pyfunc.loaded_model:
+  artifact_path: model
+  flavor: mlflow.keras
+  run_id: 22e463953ba04eebb4a4efbe62f2f495
+:
+  MSE: 0.4458639750098763
+  MAE: 0.5250133907794953
+  R2: 0.36028699019351285
 </pre></div></div>
 </div>
-<ul class="simple">
-<li><p>Solo se almacena el mejor modelo encontrado.</p></li>
-<li><p>No hay un historial de corridas.</p></li>
-</ul>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-bash notranslate"><div class="highlight"><pre>
-<span></span>%%bash
-rm -rf outputs mlruns models
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># No se borran las corridas para comparar resultados con otras librerías</span>
+<span class="c1"># -----------------------------------------------------------------------------</span>
+<span class="c1"># %%bash</span>
+<span class="c1"># rm -rf outputs mlruns models</span>
 </pre></div>
 </div>
 </div>
