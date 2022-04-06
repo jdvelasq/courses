@@ -26,6 +26,14 @@ Sesión 01 --- 2022-05-13
             course-info
 
 
+
+
+   https://dvc.org/doc/start/data-and-model-versioning
+
+
+   https://greatexpectations.io/expectations   
+
+
    **MLOps**
 
       * `MLOps --07-- <https://jdvelasq.github.io/mlops_01_intro//>`_ 
