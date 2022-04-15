@@ -34,6 +34,34 @@ Sesión 01 --- 2022-05-13
    https://greatexpectations.io/expectations   
 
 
+   **Introducción práctica a los problemas en las organziaciones**
+
+      Simulación de la evolución de un sistema de PQRS en una empresa
+
+      .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/dataops_pqrs_01/1-*
+
+
+
+.. ......................................................................................
+..
+..     #####  #####
+..     #   #      #
+..     #   #  #####
+..     #   #  #
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 02 --- 2022-05-20
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
    **MLOps**
 
       * `MLOps --07-- <https://jdvelasq.github.io/mlops_01_intro//>`_ 
@@ -91,31 +119,6 @@ Sesión 01 --- 2022-05-13
 ..
 ..     #####  #####
 ..     #   #      #
-..     #   #  #####
-..     #   #  #
-..     #####  #####
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 02 --- 2022-05-20
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-**Fundamentación de DataOps**
-
-      * `El problema con Data Analytics --10-- <https://jdvelasq.github.io/dataops_01_problem//>`_ 
-
-      * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
-
-      * `DataOps para el Chief Data Officer --12-- <https://jdvelasq.github.io/dataops_03_for_the_chief_data_officer/>`_    
-
-
-.. ......................................................................................
-..
-..     #####  #####
-..     #   #      #
 ..     #   #   ####
 ..     #   #      #
 ..     #####  #####
@@ -127,14 +130,14 @@ Sesión 02 --- 2022-05-20
 Sesión 03 --- 2022-05-27
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **Fundamentación de DataOps**
 
-      * `DataOps para el Data Engineer y el Data Scientist --13-- <https://jdvelasq.github.io/dataops_04_for_the_data_scientist/>`_ 
+**Fundamentación de DataOps**
 
-      * `DataOps para calidad de datos --06-- <https://jdvelasq.github.io/dataops_05_for_data_quality/>`_ 
+      * `El problema con Data Analytics --10-- <https://jdvelasq.github.io/dataops_01_problem//>`_ 
 
-      * `Estructura organizacional para DataOps --09-- <https://jdvelasq.github.io/dataops_06_organizing_for_dataops/>`_    
+      * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
 
+      * `DataOps para el Chief Data Officer --12-- <https://jdvelasq.github.io/dataops_03_for_the_chief_data_officer/>`_    
 
 
 .. ......................................................................................
@@ -155,11 +158,11 @@ Sesión 04 --- 2022-06-03
 
    **Fundamentación de DataOps**
 
-      * `Estrategia de datos --11-- <https://jdvelasq.github.io/dataops_07_data_strategy/>`_    
+      * `DataOps para el Data Engineer y el Data Scientist --13-- <https://jdvelasq.github.io/dataops_04_for_the_data_scientist/>`_ 
 
-      * `Lean thinking --12-- <https://jdvelasq.github.io/dataops_08_lean_thinking/>`_ 
+      * `DataOps para calidad de datos --06-- <https://jdvelasq.github.io/dataops_05_for_data_quality/>`_ 
 
-      * `Agile Collaboration --15-- <https://jdvelasq.github.io/dataops_09_agile_collaboration/>`_ 
+      * `Estructura organizacional para DataOps --09-- <https://jdvelasq.github.io/dataops_06_organizing_for_dataops/>`_    
 
 
 
@@ -177,6 +180,15 @@ Sesión 04 --- 2022-06-03
 
 Sesión 05 --- 2022-06-10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+   **Fundamentación de DataOps**
+
+      * `Estrategia de datos --11-- <https://jdvelasq.github.io/dataops_07_data_strategy/>`_    
+
+      * `Lean thinking --12-- <https://jdvelasq.github.io/dataops_08_lean_thinking/>`_ 
+
+      * `Agile Collaboration --15-- <https://jdvelasq.github.io/dataops_09_agile_collaboration/>`_ 
 
 
 
