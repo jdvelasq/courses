@@ -55,6 +55,7 @@ Sesión 02 --- 2022-mar-14
 
             /notebooks/optimization_for_ML/1-*
 
+    `LAB --- Estimación de coeficientes de una parábola usando gradiente descendente <https://classroom.github.com/a/uOB-lTnx>`_.
 
 
 .. note::
