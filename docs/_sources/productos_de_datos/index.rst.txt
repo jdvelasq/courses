@@ -222,24 +222,19 @@ Sesión 04 --- 2022-06-03
                :glob:
 
                /notebooks/doctest/1-*
-
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
                /notebooks/unittest/1-*
-
-
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
                /notebooks/pytest/1-*
+               /notebooks/faker/1-*
 
 
          **Pruebas sobre los datos**
 
+            .. toctree::
+               :maxdepth: 1
+               :glob:
 
+               /notebooks/datatest/1-*
+               /notebooks/great_expectations/1-*
 
 .. ......................................................................................
 ..
@@ -268,9 +263,6 @@ Sesión 05 --- 2022-06-10
 
 
             - Airflow
-
-
-   **DataOps**
 
 
       **Pasos 2 y 3 --- Control de versiones de código y datos**
@@ -366,7 +358,7 @@ Sesión 07 --- 2022-06-24
 
 
 
-         **Json**
+         **JSON**
 
 
 
@@ -384,13 +376,11 @@ Sesión 07 --- 2022-06-24
          **Acciones de GitHub**
 
 
-   **Fundamentación de DataOps**
+   **Fundamentación Filosófica de DataOps**
 
 
       * `DataOps para el Chief Data Officer --12-- <https://jdvelasq.github.io/dataops_03_for_the_chief_data_officer/>`_    
 
-
-   **Fundamentación de DataOps**
 
       * `DataOps para el Data Engineer y el Data Scientist --13-- <https://jdvelasq.github.io/dataops_04_for_the_data_scientist/>`_ 
 
@@ -417,7 +407,7 @@ Sesión 08 --- 2022-07-01
 
 
 
-   **Fundamentación de DataOps**
+   **Fundamentación Filosófica de DataOps**
 
       * `Estrategia de datos --11-- <https://jdvelasq.github.io/dataops_07_data_strategy/>`_    
 
