@@ -217,6 +217,25 @@ Sesión 04 --- 2022-06-03
 
          **Pruebas de Código**
 
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/doctest/1-*
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/unittest/1-*
+
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/pytest/1-*
+
 
          **Pruebas sobre los datos**
 
