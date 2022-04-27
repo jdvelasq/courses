@@ -53,91 +53,7 @@ Sesión 01 --- 2022-05-13
 Sesión 02 --- 2022-05-20
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **Revisión de conceptos de programación**
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/the_python_tutorial_06_modules/1-*
-
-      **Errores y Excepciones** ---  0:04:33 hr
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/the_python_tutorial_08_errors_and_exceptions/1-*
-
-
-      **Programación Orientada a Objetos** ---  0:0:0 hr
-
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
-               /notebooks/the_python_tutorial_09_clases/1-*
-
-
-      **Librería Estandar** ---  0:17:10 hr
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/the_python_tutorial_10_brief_tour_of_the_standard_library/1-*
-
-
-      **Código Limpio**
-
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
-               /notebooks/clean_code/1-*
-
-
-   **Documentación con Sphinx**
-
-      .. toctree::
-            :maxdepth: 1
-            :glob:
-
-            /notebooks/sphinx_documentation/1-*
-
-
-   **Dashboards y Aplicaciones en Python**
-
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
-               /notebooks/html/1-*
-
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
-               /notebooks/flask/1-*
-
-
-
-.. ......................................................................................
-..
-..     #####  #####
-..     #   #      #
-..     #   #   ####
-..     #   #      #
-..     #####  #####
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 03 --- 2022-05-27
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-   **MLOps con MLflow**
+   **MLOps: Manejo del ciclo de vida de ML con MLflow**
 
 
       * `Intrdoucción a MLOps --07-- <https://jdvelasq.github.io/mlops_01_intro//>`_ 
@@ -187,6 +103,67 @@ Sesión 03 --- 2022-05-27
                /notebooks/mlflow/5-*
 
 
+.. ......................................................................................
+..
+..     #####  #####
+..     #   #      #
+..     #   #   ####
+..     #   #      #
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 03 --- 2022-05-27
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   **MLOps: Despliegue de modelos de ML y dashboards en Python**
+
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/html/1-*
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/flask/1-*
+
+
+
+   **DataOps: Introducción**
+
+
+      * `El problema con Data Analytics --10-- <https://jdvelasq.github.io/dataops_01_problem//>`_ 
+
+      * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
+
+
+   **DataOps: Prerequisito para implementnación --- Código de nivel industrial**
+
+      **Revisión de conceptos de programación en Python.**
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/the_python_tutorial_06_modules/1-*
+               /notebooks/the_python_tutorial_08_errors_and_exceptions/1-*
+               /notebooks/the_python_tutorial_09_clases/1-*
+
+
+      **Código Limpio**
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/clean_code/1-*
+
 
 
 .. ......................................................................................
@@ -204,16 +181,9 @@ Sesión 03 --- 2022-05-27
 Sesión 04 --- 2022-06-03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **DataOps**
+   **DataOps: Implementación**
 
-      **Introducción**
-
-         * `El problema con Data Analytics --10-- <https://jdvelasq.github.io/dataops_01_problem//>`_ 
-
-         * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
-
-
-      **Paso 1 --- Realización de pruebas y monitoreo continuo (1)**
+      **Paso 1 --- Realización de pruebas y monitoreo continuo**
 
 
          **Pruebas de Código**
@@ -267,9 +237,9 @@ Sesión 04 --- 2022-06-03
 Sesión 05 --- 2022-06-10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **DataOps**
+   **DataOps: Implementación**
 
-      **Paso 1 --- Realización de pruebas y monitoreo continuo (2)**
+      **Paso 1 --- Realización de pruebas y monitoreo continuo**
 
 
 
@@ -322,6 +292,8 @@ Sesión 05 --- 2022-06-10
 Sesión 06 --- 2022-06-17
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+   **DataOps: Implementación**
+
       **Paso 4 --- Ambientes de desarrollo y de operación**
 
 
@@ -344,7 +316,7 @@ Sesión 06 --- 2022-06-17
                   /notebooks/vagrant/1-*
 
          
-         **Ambienes de desarrollo en Docker**
+         **Ambientes de desarrollo en Docker**
 
 
             * Jupyter in Docker:
@@ -388,6 +360,7 @@ Sesión 06 --- 2022-06-17
 Sesión 07 --- 2022-06-24
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+   **DataOps: Implementación**
 
 
       **Paso 6 --- Parametrización de los procesos**
@@ -406,8 +379,8 @@ Sesión 07 --- 2022-06-24
          **Acciones de GitHub**
 
 
-   **Fundamentación Filosófica de DataOps**
-
+   **DataOps: Fundamentación filosófica**
+   
 
       * `DataOps para el Chief Data Officer --12-- <https://jdvelasq.github.io/dataops_03_for_the_chief_data_officer/>`_    
 
@@ -434,9 +407,7 @@ Sesión 07 --- 2022-06-24
 Sesión 08 --- 2022-07-01
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
-
-   **Fundamentación Filosófica de DataOps**
+   **DataOps: Fundamentación filosófica**
 
       * `Estrategia de datos --11-- <https://jdvelasq.github.io/dataops_07_data_strategy/>`_    
 
