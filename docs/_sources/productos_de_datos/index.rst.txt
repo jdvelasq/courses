@@ -222,7 +222,7 @@ Sesión 03 --- 2022-05-27
 Sesión 04 --- 2022-06-03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **Implementación de DataOps: Paso 1.--- Adicione tests de lógica y datos**
+   Implementación de DataOps: **Paso 1.--- Adicione tests de lógica y datos**
 
 
       * **Escriba tests de lógica de negocio**
@@ -236,7 +236,7 @@ Sesión 04 --- 2022-06-03
                /notebooks/pytest/1-*
 
 
-      * **Genere de datos para sus tests de lógica negocio**
+      * **Genere ddatos para sus tests de lógica de negocio**
 
          .. toctree::
                :maxdepth: 1
@@ -253,7 +253,7 @@ Sesión 04 --- 2022-06-03
 
             /notebooks/datatest/1-*
 
-      * **Escriba tests de datos con Great Expectations (PENEIENTE)**      
+      * **Escriba tests de datos con Great Expectations (PENDIENTE)**      
 
          .. toctree::
             :maxdepth: 1
@@ -277,7 +277,7 @@ Sesión 04 --- 2022-06-03
 Sesión 05 --- 2022-06-10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   **Implementación de DataOps: Paso 1.--- Adicione tests de lógica y datos (Continuación)**
+   Implementación de DataOps: **Paso 1.--- Adicione tests de lógica y datos (Continuación)**
 
          * **Orqueste sus pipelines con Luigi**
 
@@ -291,7 +291,7 @@ Sesión 05 --- 2022-06-10
          * **Orqueste pipelines con Apache Airflow** (PENDIENTE)
 
 
-   **Implementación de DataOps: Paso 2.--- Use un sistema de control de versiones**
+   Implementación de DataOps: **Paso 2.--- Use un sistema de control de versiones**
 
       * **Realice el control de cambios de código con Git**
 
@@ -311,7 +311,7 @@ Sesión 05 --- 2022-06-10
                /notebooks/dvc/1-*
 
 
-   **Implementación de DataOps: Paso 3.--- Ramifique y fusione**
+   Implementación de DataOps: **Paso 3.--- Ramifique y fusione**
 
       * **Gestione sus ramas de testing y development con Git**
 
@@ -331,6 +331,12 @@ Sesión 05 --- 2022-06-10
                   /notebooks/github/1-*
 
 
+            .. toctree::
+                  :maxdepth: 1
+                  :glob:
+
+                  /notebooks/github/5-*
+
 
 .. ......................................................................................
 ..
@@ -348,7 +354,7 @@ Sesión 06 --- 2022-06-17
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-   **Implementación de DataOps: Paso 4.--- Use múltiples ambientes**
+   Implementación de DataOps: **Paso 4.--- Use múltiples ambientes**
 
       * **Gestione ambientes locales de desarrollo con ambientes virtuales**
 
@@ -358,7 +364,7 @@ Sesión 06 --- 2022-06-17
 
                /notebooks/the_python_tutorial_12_virtual_environments_and_packages/1-*
 
-      * **Cree máquinas virtuales conn Vagrant**
+      * **Cree máquinas virtuales locales con Vagrant**
       
          .. toctree::
                :maxdepth: 1
@@ -366,14 +372,14 @@ Sesión 06 --- 2022-06-17
 
                /notebooks/vagrant/1-*
 
-      * **Comparta ambientes complejos de desarrollo con contenerores**
+      * **Comparta ambientes complejos de desarrollo con contenedores**
 
          * Contenedores de desarrollo en VS Code:  https://code.visualstudio.com/docs/remote/containers
 
 
-   **Implementación de DataOps: Paso 5.--- Reuse y contenerize el código**
+   Implementación de DataOps: **Paso 5.--- Reuse y contenerize el código**
 
-      * **Desarrolle y compartap paquetes en Python**
+      * **Desarrolle y comparta paquetes en Python**
 
          * https://github.com/jdvelasq/package_demo
 
@@ -412,7 +418,7 @@ Sesión 07 --- 2022-06-24
 
 
 
-   **Implementación de DataOps: Paso 6.--- Parametrice el procesamiento**
+   Implementación de DataOps: **Paso 6.--- Parametrice el procesamiento**
 
       * **Parametrice su procesamiento usando archivos de configuración**
 
@@ -430,7 +436,7 @@ Sesión 07 --- 2022-06-24
                /notebooks/the_python_tutorial_10_brief_tour_of_the_standard_library/1-13*
                
 
-   **Implementación de DataOps: Paso 7.--- Trabaje sin miedo o heroísmo**
+   Implementación de DataOps: **Paso 7.--- Trabaje sin miedo o heroísmo**
 
       Revisión de conceptos
 
