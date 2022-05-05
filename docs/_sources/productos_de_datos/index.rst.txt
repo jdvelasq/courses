@@ -143,7 +143,7 @@ Sesión 03 --- 2022-05-27
       * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
 
 
-   **Implementación de DataOps: Paso 0.--- Escriba código de nivel industrial**
+   **DataOps: Paso 0.--- Escriba código de nivel industrial**
 
 
       **Revisión de conceptos de programación en Python.**
@@ -222,7 +222,7 @@ Sesión 03 --- 2022-05-27
 Sesión 04 --- 2022-06-03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   Implementación de DataOps: **Paso 1.--- Adicione tests de lógica y datos**
+   **DataOps: Paso 1.--- Adicione tests de lógica y datos**
 
 
       * **Escriba tests de lógica de negocio**
@@ -277,7 +277,7 @@ Sesión 04 --- 2022-06-03
 Sesión 05 --- 2022-06-10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   Implementación de DataOps: **Paso 1.--- Adicione tests de lógica y datos (Continuación)**
+   **DataOps: Paso 1.--- Adicione tests de lógica y datos (Continuación)**
 
          * **Orqueste sus pipelines con Luigi**
 
@@ -291,7 +291,7 @@ Sesión 05 --- 2022-06-10
          * **Orqueste pipelines con Apache Airflow** (PENDIENTE)
 
 
-   Implementación de DataOps: **Paso 2.--- Use un sistema de control de versiones**
+   **DataOps: Paso 2.--- Use un sistema de control de versiones**
 
       * **Realice el control de cambios de código con Git**
 
@@ -311,7 +311,7 @@ Sesión 05 --- 2022-06-10
                /notebooks/dvc/1-*
 
 
-   Implementación de DataOps: **Paso 3.--- Ramifique y fusione**
+   **DataOps: Paso 3.--- Ramifique y fusione**
 
       * **Gestione sus ramas de testing y development con Git**
 
@@ -354,7 +354,7 @@ Sesión 06 --- 2022-06-17
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-   Implementación de DataOps: **Paso 4.--- Use múltiples ambientes**
+   **DataOps: Paso 4.--- Use múltiples ambientes**
 
       * **Gestione ambientes locales de desarrollo con ambientes virtuales**
 
@@ -377,7 +377,7 @@ Sesión 06 --- 2022-06-17
          * Contenedores de desarrollo en VS Code:  https://code.visualstudio.com/docs/remote/containers
 
 
-   Implementación de DataOps: **Paso 5.--- Reuse y contenerize el código**
+   **DataOps: Paso 5.--- Reuse y contenerize el código**
 
       * **Desarrolle y comparta paquetes en Python**
 
@@ -418,7 +418,7 @@ Sesión 07 --- 2022-06-24
 
 
 
-   Implementación de DataOps: **Paso 6.--- Parametrice el procesamiento**
+   **DataOps: Paso 6.--- Parametrice el procesamiento**
 
       * **Parametrice su procesamiento usando archivos de configuración**
 
@@ -436,7 +436,7 @@ Sesión 07 --- 2022-06-24
                /notebooks/the_python_tutorial_10_brief_tour_of_the_standard_library/1-13*
                
 
-   Implementación de DataOps: **Paso 7.--- Trabaje sin miedo o heroísmo**
+   **DataOps: Paso 7.--- Trabaje sin miedo o heroísmo**
 
       Revisión de conceptos
 
