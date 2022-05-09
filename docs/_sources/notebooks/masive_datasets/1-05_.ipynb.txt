@@ -1,0 +1,424 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "05e78186-cfc5-494b-b4dd-fd94f905d800",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Conteo de palabras con map() y reduce()\n",
+    "===\n",
+    "\n",
+    "* Última modificación: Mayo 14, 2022"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "071bd025-05a3-45dc-9003-75cb540002d3",
+   "metadata": {},
+   "source": [
+    "*Adaptado del libro \"Mastering Large Datasets with Python\".*"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "603aea4e-e6c8-49e1-99a5-54a982535084",
+   "metadata": {},
+   "source": [
+    "Archivos de prueba\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "97908df1-ffb9-49ff-a095-40dbbff40396",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!rm -rf /tmp/input /tmp/output\n",
+    "!mkdir /tmp/input"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "0e9d657d-fd3e-48d4-a8ec-013f7ee7f4d1",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Writing /tmp/input/text0.txt\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile /tmp/input/text0.txt\n",
+    "Analytics is the discovery, interpretation, and communication of meaningful patterns\n",
+    "in data. Especially valuable in areas rich with recorded information, analytics relies\n",
+    "on the simultaneous application of statistics, computer programming and operations research\n",
+    "to quantify performance.\n",
+    "\n",
+    "Organizations may apply analytics to business data to describe, predict, and improve business\n",
+    "performance. Specifically, areas within analytics include predictive analytics, prescriptive\n",
+    "analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big\n",
+    "Data Analytics, retail analytics, store assortment and stock-keeping unit optimization,\n",
+    "marketing optimization and marketing mix modeling, web analytics, call analytics, speech\n",
+    "analytics, sales force sizing and optimization, price and promotion modeling, predictive\n",
+    "science, credit risk analysis, and fraud analytics. Since analytics can require extensive\n",
+    "computation (see big data), the algorithms and software used for analytics harness the most\n",
+    "current methods in computer science, statistics, and mathematics.\n",
+    "\n",
+    "The field of data analysis. Analytics often involves studying past historical data to\n",
+    "research potential trends, to analyze the effects of certain decisions or events, or to\n",
+    "evaluate the performance of a given tool or scenario. The goal of analytics is to improve\n",
+    "the business by gaining knowledge which can be used to make improvements or changes.\n",
+    "\n",
+    "Data analytics (DA) is the process of examining data sets in order to draw conclusions\n",
+    "about the information they contain, increasingly with the aid of specialized systems\n",
+    "and software. Data analytics technologies and techniques are widely used in commercial\n",
+    "industries to enable organizations to make more-informed business decisions and by\n",
+    "scientists and researchers to verify or disprove scientific models, theories and\n",
+    "hypotheses."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "fead7cfc-d315-4147-9fd9-fb2d8727abda",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import shutil\n",
+    "\n",
+    "for i in range(1,10000):\n",
+    "    shutil.copy(\"/tmp/input/text0.txt\", f\"/tmp/input/text{i}.txt\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "88dded71-7903-4c82-b6f7-2c100994865b",
+   "metadata": {},
+   "source": [
+    "Lectura de los archivos línea por línea\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "1501db1c-98e4-4204-961d-061f2bf6997a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import fileinput\n",
+    "import glob\n",
+    "import os\n",
+    "\n",
+    "\n",
+    "def load_data(file_path):\n",
+    "    # -----------------------------------------------------------------------------------\n",
+    "    def make_iterator_from_single_file(file_path):\n",
+    "        with open(file_path, \"rt\") as file:\n",
+    "            for line in file:\n",
+    "                yield line\n",
+    "\n",
+    "    # -----------------------------------------------------------------------------------\n",
+    "    def make_iterator_from_multiple_files(file_path):\n",
+    "        file_path = os.path.join(file_path, \"*\")\n",
+    "        files = glob.glob(file_path)\n",
+    "        with fileinput.input(files=files) as file:\n",
+    "            for line in file:\n",
+    "                yield line\n",
+    "\n",
+    "    # -----------------------------------------------------------------------------------\n",
+    "    if os.path.isfile(file_path):\n",
+    "        return make_iterator_from_single_file(file_path)\n",
+    "    return make_iterator_from_multiple_files(file_path)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7a1841a5-ecfe-47a6-a98b-65f25d02b0ad",
+   "metadata": {},
+   "source": [
+    "Funciones para preprocesamiento\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "86dc399f-4ea1-4691-a8b7-87611548b4ab",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import string\n",
+    "\n",
+    "\n",
+    "def tolower(x):\n",
+    "    return x.lower()\n",
+    "\n",
+    "\n",
+    "def remove_punctuation(x):\n",
+    "    return x.translate(str.maketrans(\"\", \"\", string.punctuation))\n",
+    "\n",
+    "\n",
+    "def remove_newline(x):\n",
+    "    return x.replace(\"\\n\", \"\")\n",
+    "\n",
+    "\n",
+    "def split_lines(x):\n",
+    "    return x.split()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e7c7d65a-503c-4c03-89f1-12fb8d8f820c",
+   "metadata": {},
+   "source": [
+    "Procesamiento\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "12f4dad8-af6d-4ed6-878f-fca7de48b6fa",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['analytics', 'is', 'the', 'discovery', 'interpretation']"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from multiprocessing import Pool\n",
+    "\n",
+    "from toolz.functoolz import compose\n",
+    "from toolz.itertoolz import concat\n",
+    "\n",
+    "compose_pipeline = compose(\n",
+    "    remove_punctuation,\n",
+    "    tolower,\n",
+    "    remove_newline,\n",
+    ")\n",
+    "\n",
+    "with Pool() as pool:\n",
+    "\n",
+    "    result = pool.map(split_lines, load_data(\"/tmp/input/\"))\n",
+    "    result = concat(result)\n",
+    "    result = pool.map(compose_pipeline, result)\n",
+    "\n",
+    "\n",
+    "result[:5]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "f518e16e-4c12-48db-a88e-af0be92a0b64",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'analytics': 200000,\n",
+       " 'is': 30000,\n",
+       " 'the': 120000,\n",
+       " 'discovery': 10000,\n",
+       " 'interpretation': 10000,\n",
+       " 'and': 150000,\n",
+       " 'communication': 10000,\n",
+       " 'of': 80000,\n",
+       " 'meaningful': 10000,\n",
+       " 'patterns': 10000,\n",
+       " 'in': 50000,\n",
+       " 'data': 90000,\n",
+       " 'especially': 10000,\n",
+       " 'valuable': 10000,\n",
+       " 'areas': 20000,\n",
+       " 'rich': 10000,\n",
+       " 'with': 20000,\n",
+       " 'recorded': 10000,\n",
+       " 'information': 20000,\n",
+       " 'relies': 10000,\n",
+       " 'on': 10000,\n",
+       " 'simultaneous': 10000,\n",
+       " 'application': 10000,\n",
+       " 'statistics': 20000,\n",
+       " 'computer': 20000,\n",
+       " 'programming': 10000,\n",
+       " 'operations': 10000,\n",
+       " 'research': 20000,\n",
+       " 'to': 120000,\n",
+       " 'quantify': 10000,\n",
+       " 'performance': 30000,\n",
+       " 'organizations': 20000,\n",
+       " 'may': 10000,\n",
+       " 'apply': 10000,\n",
+       " 'business': 40000,\n",
+       " 'describe': 10000,\n",
+       " 'predict': 10000,\n",
+       " 'improve': 20000,\n",
+       " 'specifically': 10000,\n",
+       " 'within': 10000,\n",
+       " 'include': 10000,\n",
+       " 'predictive': 20000,\n",
+       " 'prescriptive': 10000,\n",
+       " 'enterprise': 10000,\n",
+       " 'decision': 10000,\n",
+       " 'management': 10000,\n",
+       " 'descriptive': 10000,\n",
+       " 'cognitive': 10000,\n",
+       " 'big': 20000,\n",
+       " 'retail': 10000,\n",
+       " 'store': 10000,\n",
+       " 'assortment': 10000,\n",
+       " 'stockkeeping': 10000,\n",
+       " 'unit': 10000,\n",
+       " 'optimization': 30000,\n",
+       " 'marketing': 20000,\n",
+       " 'mix': 10000,\n",
+       " 'modeling': 20000,\n",
+       " 'web': 10000,\n",
+       " 'call': 10000,\n",
+       " 'speech': 10000,\n",
+       " 'sales': 10000,\n",
+       " 'force': 10000,\n",
+       " 'sizing': 10000,\n",
+       " 'price': 10000,\n",
+       " 'promotion': 10000,\n",
+       " 'science': 20000,\n",
+       " 'credit': 10000,\n",
+       " 'risk': 10000,\n",
+       " 'analysis': 20000,\n",
+       " 'fraud': 10000,\n",
+       " 'since': 10000,\n",
+       " 'can': 20000,\n",
+       " 'require': 10000,\n",
+       " 'extensive': 10000,\n",
+       " 'computation': 10000,\n",
+       " 'see': 10000,\n",
+       " 'algorithms': 10000,\n",
+       " 'software': 20000,\n",
+       " 'used': 30000,\n",
+       " 'for': 10000,\n",
+       " 'harness': 10000,\n",
+       " 'most': 10000,\n",
+       " 'current': 10000,\n",
+       " 'methods': 10000,\n",
+       " 'mathematics': 10000,\n",
+       " 'field': 10000,\n",
+       " 'often': 10000,\n",
+       " 'involves': 10000,\n",
+       " 'studying': 10000,\n",
+       " 'past': 10000,\n",
+       " 'historical': 10000,\n",
+       " 'potential': 10000,\n",
+       " 'trends': 10000,\n",
+       " 'analyze': 10000,\n",
+       " 'effects': 10000,\n",
+       " 'certain': 10000,\n",
+       " 'decisions': 20000,\n",
+       " 'or': 50000,\n",
+       " 'events': 10000,\n",
+       " 'evaluate': 10000,\n",
+       " 'a': 10000,\n",
+       " 'given': 10000,\n",
+       " 'tool': 10000,\n",
+       " 'scenario': 10000,\n",
+       " 'goal': 10000,\n",
+       " 'by': 20000,\n",
+       " 'gaining': 10000,\n",
+       " 'knowledge': 10000,\n",
+       " 'which': 10000,\n",
+       " 'be': 10000,\n",
+       " 'make': 20000,\n",
+       " 'improvements': 10000,\n",
+       " 'changes': 10000,\n",
+       " 'da': 10000,\n",
+       " 'process': 10000,\n",
+       " 'examining': 10000,\n",
+       " 'sets': 10000,\n",
+       " 'order': 10000,\n",
+       " 'draw': 10000,\n",
+       " 'conclusions': 10000,\n",
+       " 'about': 10000,\n",
+       " 'they': 10000,\n",
+       " 'contain': 10000,\n",
+       " 'increasingly': 10000,\n",
+       " 'aid': 10000,\n",
+       " 'specialized': 10000,\n",
+       " 'systems': 10000,\n",
+       " 'technologies': 10000,\n",
+       " 'techniques': 10000,\n",
+       " 'are': 10000,\n",
+       " 'widely': 10000,\n",
+       " 'commercial': 10000,\n",
+       " 'industries': 10000,\n",
+       " 'enable': 10000,\n",
+       " 'moreinformed': 10000,\n",
+       " 'scientists': 10000,\n",
+       " 'researchers': 10000,\n",
+       " 'verify': 10000,\n",
+       " 'disprove': 10000,\n",
+       " 'scientific': 10000,\n",
+       " 'models': 10000,\n",
+       " 'theories': 10000,\n",
+       " 'hypotheses': 10000}"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from functools import reduce\n",
+    "\n",
+    "\n",
+    "def make_counts(acc, nxt):\n",
+    "    acc[nxt] = acc.get(nxt, 0) + 1\n",
+    "    return acc\n",
+    "\n",
+    "\n",
+    "reduce(\n",
+    "    make_counts,\n",
+    "    result,\n",
+    "    {},\n",
+    ")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
