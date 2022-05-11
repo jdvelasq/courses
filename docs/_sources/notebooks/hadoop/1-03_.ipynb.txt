@@ -4,10 +4,10 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Conteo de palabras en Python usando Hadoop Streaming standalone\n",
+    "Conteo de palabras en Python usando Hadoop Streaming pseudodistribuido\n",
     "===\n",
     "\n",
-    "* *30 min* | Última modificación: Noviembre 14, 2019"
+    "* *30 min* | Última modificación: Noviembre 05, 2019"
    ]
   },
   {
@@ -16,10 +16,7 @@
    "source": [
     "## Definición del problema\n",
     "\n",
-    "Se desea contar la frecuencia de ocurrencia de palabras en un conjunto de documentos. Debido a los requerimientos de diseño (gran volúmen de datos y tiempos rápidos de respuesta) se desea implementar una arquitectura Big Data. \n",
-    "\n",
-    "\n",
-    "Se desea **probar** la implementación en **Python** y ejecutar Hadoop en **modo standalone** para depuración."
+    "Se desea contar la frecuencia de ocurrencia de palabras en un conjunto de documentos. Debido a los requerimientos de diseño (gran volúmen de datos y tiempos rápidos de respuesta) se desea implementar una arquitectura Big Data. Se desea implementar la solución en **Python** y ejecutar Hadoop en **modo streamming**."
    ]
   },
   {
@@ -81,13 +78,13 @@
     "Si va a iniciar el contendor de Hadoop en la carpeta compartida con su máquina local use:\n",
     "\n",
     "```\n",
-    "docker run --rm -it -v \"$PWD\":/datalake --name hadoop -p 8888:8888 jdvelasq/hadoop:2.8.5-standalone\n",
+    "docker run --rm -it -v \"$PWD\":/datalake --name hadoop -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/hadoop:2.8.5-pseudo\n",
     "```\n",
     "\n",
     "Si desea iniciar la sesión en el `datalake` use:\n",
     "\n",
     "```\n",
-    "docker run --rm -it -v datalake:/datalake --name hadoop -p 8888:8888 jdvelasq/hadoop:2.8.5-standalone\n",
+    "docker run --rm -it -v datalake:/datalake --name hadoop -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/hadoop:2.8.5-pseudo\n",
     "```\n",
     "\n",
     "\n",
@@ -118,8 +115,9 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "## Se crea el directorio de entrada en la carpeta actual simulando el HDFS\n",
-    "!hadoop fs -mkdir input"
+    "## Se crea el directorio de entrada\n",
+    "!rm -rf input output\n",
+    "!mkdir input"
    ]
   },
   {
@@ -201,18 +199,20 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Prueba de la implementación dentro de Hadoop\n",
+    "### Prueba de la implementación fuera de Hadoop\n",
     "\n",
-    "En el modo standalone, el hdfs opera directamente sobre los archivos de la máquina local. En este caso en la máquina virtual creada Vagrant.\n",
+    "Para realizar la implementación solicitada se usará Hadoop Streaming, el cual permite la implementación de aplicaciones MapReduce en cualquier lenguaje que soporte la creación de scripts. Para este caso se ejemplificará la implementación en Python. Hadoop streaming debe su nombre a que usa los streamings de Unix para la entrada y salida en texto (stdin, stdout y stderr respectivamente). El sistema lee y escribe líneas de texto una a una a los respectivos flujos de entrada y salida, tal como ocurre de forma estándar en las herramientas de la línea de comandos de Linux. \n",
     "\n",
-    "La implementación es idéntica y solo cambia el manejo de archivos."
+    "La implementación requiere un programa para realizar el mapeo y otro para la reducción que se ejecutan independientemente; Hadoop se encarga de la coordinación entre ellos. El intercambio de información se hace a traves de texto, que es el lenguaje universal para intercambio de información. "
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "#### Paso 1"
+    "#### Paso 1\n",
+    "\n",
+    "Se implementa la función map en Python y se guarda en el archivo `mapper.py`."
    ]
   },
   {
@@ -230,6 +230,8 @@
    ],
    "source": [
     "%%writefile mapper.py\n",
+    "#! /usr/bin/python3\n",
+    "\n",
     "##\n",
     "## Esta es la funcion que mapea la entrada a parejas (clave, valor)\n",
     "##\n",
@@ -266,18 +268,37 @@
    "cell_type": "code",
    "execution_count": 6,
    "metadata": {},
+   "outputs": [],
+   "source": [
+    "## El programa anterior se hace ejecutable\n",
+    "!chmod +x mapper.py "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "cat: '/tmp/input/text*.txt': No such file or directory\n"
+      "Analytics\t1\n",
+      "is\t1\n",
+      "the\t1\n",
+      "discovery,\t1\n",
+      "interpretation,\t1\n",
+      "and\t1\n",
+      "communication\t1\n",
+      "of\t1\n",
+      "meaningful\t1\n",
+      "patterns\t1\n"
      ]
     }
    ],
    "source": [
     "## la salida de la función anterior es:\n",
-    "!cat /tmp/input/text*.txt | python3 mapper.py | head"
+    "!cat ./input/text*.txt | ./mapper.py | head"
    ]
   },
   {
@@ -304,6 +325,7 @@
    ],
    "source": [
     "%%writefile reducer.py\n",
+    "#! /usr/bin/python3\n",
     "\n",
     "import sys\n",
     "\n",
@@ -355,12 +377,31 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "#### Paso 3"
+    "#### Paso 4"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 8,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## El archivo se hace ejecutable\n",
+    "!chmod +x reducer.py"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Paso 5\n",
+    "\n",
+    "Se realiza la prueba de la implementación en el directorio actual antes de realizar la ejecución en el modo pseudo-distribuido"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
    "metadata": {},
    "outputs": [
     {
@@ -386,14 +427,32 @@
     "## la misma clave queden en lineas consecutivas.\n",
     "## Hace el papel del módulo Shuffle & Sort\n",
     "##\n",
-    "!cat ./input/text*.txt | python3 mapper.py | sort | python3 reducer.py | head"
+    "!cat ./input/text*.txt | ./mapper.py | sort | ./reducer.py | head"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Ejecución en Hadoop en modo standalone"
+    "### Ejecución en Hadoop en modo pseudo-distribuido"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Una vez se tienen las versiones anteriores funcionando, se puede proceder a ejecutar la tarea directamente en Hadoop. "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Verifique que Hadoop se esta ejecutando correctamente. Vaya a las direcciones:\n",
+    "\n",
+    "* NameNode: http://127.0.0.1:50070/\n",
+    "\n",
+    "* Yarn ResourceManager: http://127.0.0.1:8088/"
    ]
   },
   {
@@ -407,45 +466,115 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 9,
+   "execution_count": 1,
    "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "-rw-r--r--   1 root root       1093 2019-11-15 02:17 tmp/input/text0.txt\n",
-      "-rw-r--r--   1 root root        352 2019-11-15 02:17 tmp/input/text1.txt\n",
-      "-rw-r--r--   1 root root        440 2019-11-15 02:17 tmp/input/text2.txt\n"
+      "-rw-r--r--   1 root supergroup       1093 2022-04-04 12:12 input/text0.txt\n",
+      "-rw-r--r--   1 root supergroup        352 2022-04-04 12:12 input/text1.txt\n",
+      "-rw-r--r--   1 root supergroup        440 2022-04-04 12:12 input/text2.txt\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -mkdir tmp\n",
-    "!hadoop fs -mkdir tmp/input\n",
-    "!hadoop fs -copyFromLocal input/* tmp/input\n",
-    "!hadoop fs -ls tmp/input/*"
+    "!hadoop fs -mkdir input\n",
+    "!hadoop fs -copyFromLocal input/* input\n",
+    "!hadoop fs -ls input/*"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Todos los comandos de la opción fs de Hadoop siguen siendo válidos."
+    "**Vaya a la pantalla de monitoreo del NameNode (http://127.0.0.1:50070/) y ubique los archivos en el HDFS.**"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "#### Paso 2"
+    "La gestión de archivos entre el sistema local y el HDFS se realiza mediante comandos similares a los del sistema operativo Unix en Terminal. A continuación se resumen los principales comandos.\n",
+    "\n",
+    "* `hadoop fs -help`:  Imprime la ayuda en pantalla para todos los comandos.\n",
+    "\n",
+    "\n",
+    "**Comandos para la gestion de directorios y archivos.**\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -ls <path>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -mkdir <path>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -rmdir <path>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -cp <src> <dest>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -mv <src> <dest>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -rm <path>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -cat <path>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -head <path>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -tail <path>`\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -text <path>`. Imprime el arachivo en `<path>` y lo imprime en formato texto. Soporta archivos zip, TextRecordInputStream y Avro.\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -stat <path>`: Imprime estadísticos de `<path>`.\n",
+    "\n",
+    "\n",
+    "**Transferencia de información entre el sistema local y el HDFS**.\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -get <src> <localdest>` / `hadoop fs -copyToLocal <src> <localdest>`. Copia el contenido de `<src>` en el HDFS en `<localdest>` en el sistema local.\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -put <localsrc> <dest>` / `hadoop fs -copyFromLocal <src> <localdest>`. Copia el contenido de `<localsrc>` en el sistema local a `<dest>` en el HDFS.\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -count <path>`. Cuenta el número de directorios, archivos y bytes en `<path>`.\n",
+    "\n",
+    "\n",
+    "* `hadoop fs -appendToFile <localsrc> <dest>`: pega al final de `<dest>` el contenido de los archivos en `<localsrc>`.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Paso 2\n",
+    "\n",
+    "Se ejecuta Hadoop Streaming en modo pseudo-distribuido. "
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 10,
+   "execution_count": 2,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "packageJobJar: [/tmp/hadoop-unjar1405787988718610161/] [] /tmp/streamjob3912818675987206327.jar tmpDir=null\n"
+     ]
+    }
+   ],
    "source": [
     "##\n",
     "## Se ejecuta en Hadoop.\n",
@@ -456,12 +585,29 @@
     "##   -maper: programa que ejecuta el map\n",
     "##   -reducer: programa que ejecuta la reducción\n",
     "##\n",
-    "!hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar -input tmp/input  -output tmp/output -mapper 'python3 mapper.py' -reducer 'python3 reducer.py'"
+    "!hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar -files mapper.py,reducer.py  -input input  -output output -mapper mapper.py -reducer reducer.py"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Alternativamente, podria usar:\n",
+    "\n",
+    "```\n",
+    "hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \\\n",
+    "   -files mapper.py,reducer.py  \\\n",
+    "   -input input \\\n",
+    "   -output output \\\n",
+    "   -mapper 'python3 $PWD/mapper.py' \\\n",
+    "   -reducer 'python3 $PWD/reducer.py'\n",
+    "\n",
+    "```"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 3,
    "metadata": {
     "scrolled": true
    },
@@ -471,20 +617,20 @@
      "output_type": "stream",
      "text": [
       "Found 2 items\n",
-      "-rw-r--r--   1 root root          0 2019-11-15 02:17 tmp/output/_SUCCESS\n",
-      "-rw-r--r--   1 root root       1649 2019-11-15 02:17 tmp/output/part-00000\n"
+      "-rw-r--r--   1 root supergroup          0 2022-04-04 12:13 output/_SUCCESS\n",
+      "-rw-r--r--   1 root supergroup       1649 2022-04-04 12:13 output/part-00000\n"
      ]
     }
    ],
    "source": [
     "## contenido del directorio con los \n",
     "## resultados de la corrida\n",
-    "!hadoop fs -ls tmp/output"
+    "!hadoop fs -ls output"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 4,
    "metadata": {},
    "outputs": [
     {
@@ -507,7 +653,63 @@
    "source": [
     "## se visualiza el archivo con los\n",
     "## resultados de la corrida\n",
-    "!hadoop fs -cat tmp/output/part-00000 | head"
+    "!hadoop fs -cat output/part-00000 | head"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Paso 3 (Movimiento de los resultados al sistema local)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "output/_SUCCESS  output/part-00000\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hadoop fs -copyToLocal output output\n",
+    "!ls output/*"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### Paso 4 (Limpieza del hdfs)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Deleted input/text0.txt\n",
+      "Deleted input/text1.txt\n",
+      "Deleted input/text2.txt\n",
+      "Deleted output/_SUCCESS\n",
+      "Deleted output/part-00000\n"
+     ]
+    }
+   ],
+   "source": [
+    "## Se elimina el directorio de salida en el hdfs si existe\n",
+    "!hadoop fs -rm input/*\n",
+    "!hadoop fs -rm output/*\n",
+    "!hadoop fs -rmdir input output"
    ]
   },
   {
@@ -519,19 +721,41 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 17,
    "metadata": {},
    "outputs": [],
    "source": [
     "!rm reducer.py mapper.py\n",
-    "!rm -rf input tmp"
+    "!rm -rf input output"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Notas.\n",
+    "\n",
+    "**Combiners.--** Los combiners son *reducers* que se ejecutan sobre los resultdos que produce cada mapper antes de pasar al modulo de suffle-&-sort, con el fin de reducir la carga computacional. Suelen ser identicos a los *reducers*. Una llamada típica sería:\n",
+    "\n",
+    "\n",
+    "     $HADOOP_HOME/bin/hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \\\n",
+    "        -input input \\\n",
+    "        -output output  \\\n",
+    "        -mapper mapper.py \\\n",
+    "        -reducer reducer.py \\\n",
+    "        -combiner combiner.py\n",
+    "\n",
+    "\n",
+    "**Partitioners.--** Son rutinas que controlan como se enviar las parejas (clave, valor) a cada reducers, tal que elementos con la misma clave son enviados al mismo reducer. \n",
+    "\n",
+    "**Job Chain.--** Se refiere al encadenamiento de varias tareas cuando el cómputo que se desea realizar es muy complejo para que pueda realizarse en un MapReduce."
    ]
   }
  ],
  "metadata": {
   "file_extension": ".py",
   "kernelspec": {
-   "display_name": "Python 3",
+   "display_name": "Python 3 (ipykernel)",
    "language": "python",
    "name": "python3"
   },
@@ -545,7 +769,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.9"
+   "version": "3.8.10"
   },
   "mimetype": "text/x-python",
   "name": "python",

@@ -28,64 +28,84 @@ Sesión 01 --- 2022-05-13
             course-info
 
 
-    **Ingeniería de Datos**
+    **Uso del Terminal para el Procesamiento de Datos**
+
+        .. note::
+
+            Los participantes con sistema opeartivo *Windows* deben tener instalar Docker. El Terminal ya se 
+            encuentra disponible en los sistemas operativos *Linux* y *Mac OS X*.
+
+            Para tener acceso al Terminal (Windows) use el siguiente comando en el símbolo del sistema:
+
+            .. code:: bash
+            
+                $ docker run --rm -it -v "$PWD":/workspace --name hadoop -p 8888:8888 -p 50070:50070 -p 8088:8088 jdvelasq/hadoop:2.8.5
+            
+
+            Para cerrar el Terminal use el siguiente comando:
+
+            .. code:: bash
+            
+                $ exit
+            
 
 
-        **Bash para Procesamiento de Datos**
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/bash/1-*
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
 
-                /notebooks/bash/2-*
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/bash/3-*
+            /notebooks/bash/1-*
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/bash/4-*
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/bash/5-*
+            /notebooks/bash/2-*
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/bash/6-*
-
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/bash/7-*
+            /notebooks/bash/3-*
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/bash/8-*
+            /notebooks/bash/4-*
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/bash/5-*
+
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/bash/6-*
+
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/bash/7-*
+
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/bash/8-*
 
 
 .. ......................................................................................
@@ -103,25 +123,22 @@ Sesión 01 --- 2022-05-13
 Sesión 02 --- 2022-05-20
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos**
+    **Manejo de datasets masivos en Python**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/masive_datasets/1-*
 
 
-        **Manejo de datasets masivos en Python**
+    **Apache Hadoop y Algoritmo MapReduce**
+    
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/masive_datasets/1-*
-
-
-        **Apache Hadoop**
-        
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/hadoop/1-*
+            /notebooks/hadoop/1-*
 
 
 
