@@ -377,12 +377,13 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Carga de las librerías de Spark</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Carga de las librerías de Spark</span>
+<span class="c1">#</span>
 <span class="kn">import</span> <span class="nn">findspark</span>
-<span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkConf</span><span class="p">,</span> <span class="n">SparkContext</span>
 <span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkConf</span><span class="p">,</span> <span class="n">SparkContext</span>
 
 <span class="n">findspark</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
@@ -402,9 +403,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Descarga</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Descarga</span>
+<span class="c1">#</span>
 <span class="o">!</span>wget https://raw.githubusercontent.com/apache/spark/master/data/mllib/kmeans_data.txt
 </pre></div>
 </div>
@@ -432,9 +433,9 @@ kmeans_data.txt     100%[===================&gt;]      72  --.-KB/s    in 0s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Contenido del archivo</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Contenido del archivo</span>
+<span class="c1">#</span>
 <span class="o">!</span>head kmeans_data.txt
 </pre></div>
 </div>
@@ -457,9 +458,9 @@ kmeans_data.txt     100%[===================&gt;]      72  --.-KB/s    in 0s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Mueve el archivo de datos al hdfs</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Mueve el archivo de datos al hdfs</span>
+<span class="c1">#</span>
 <span class="o">!</span>hdfs dfs -copyFromLocal kmeans_data.txt /tmp/kmeans_data.txt
 </pre></div>
 </div>
@@ -469,14 +470,14 @@ kmeans_data.txt     100%[===================&gt;]      72  --.-KB/s    in 0s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
+<span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
 
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">array</span>
 <span class="kn">from</span> <span class="nn">pyspark.mllib.clustering</span> <span class="kn">import</span> <span class="n">KMeans</span><span class="p">,</span> <span class="n">KMeansModel</span>
 
 <span class="c1"># Load and parse the data</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="p">(</span><span class="s2">&quot;/tmp/kmeans_data.txt&quot;</span><span class="p">)</span>
-<span class="n">parsedData</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)]))</span>
+<span class="n">parsedData</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">line</span><span class="p">:</span> <span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)]))</span>
 
 <span class="c1"># Build the model (cluster the data)</span>
 <span class="n">clusters</span> <span class="o">=</span> <span class="n">KMeans</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">parsedData</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">maxIterations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">initializationMode</span><span class="o">=</span><span class="s2">&quot;random&quot;</span><span class="p">)</span>
@@ -485,6 +486,7 @@ kmeans_data.txt     100%[===================&gt;]      72  --.-KB/s    in 0s
 <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="n">point</span><span class="p">):</span>
     <span class="n">center</span> <span class="o">=</span> <span class="n">clusters</span><span class="o">.</span><span class="n">centers</span><span class="p">[</span><span class="n">clusters</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">point</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">point</span> <span class="o">-</span> <span class="n">center</span><span class="p">)]))</span>
+
 
 <span class="n">WSSSE</span> <span class="o">=</span> <span class="n">parsedData</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">point</span><span class="p">:</span> <span class="n">error</span><span class="p">(</span><span class="n">point</span><span class="p">))</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Within Set Sum of Squared Error = &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">WSSSE</span><span class="p">))</span>
@@ -510,9 +512,9 @@ Within Set Sum of Squared Error = 0.6928203230275529
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Descarga</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Descarga</span>
+<span class="c1">#</span>
 <span class="o">!</span>wget https://raw.githubusercontent.com/apache/spark/master/data/mllib/sample_libsvm_data.txt
 </pre></div>
 </div>
@@ -540,9 +542,9 @@ sample_libsvm_data. 100%[===================&gt;] 102.28K   531KB/s    in 0.2s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Contenido del archivo</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Contenido del archivo</span>
+<span class="c1">#</span>
 <span class="o">!</span>head sample_libsvm_data.txt
 </pre></div>
 </div>
@@ -569,9 +571,9 @@ sample_libsvm_data. 100%[===================&gt;] 102.28K   531KB/s    in 0.2s
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">##</span>
-<span class="c1">## Mueve el archivo de datos al hdfs</span>
-<span class="c1">##</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Mueve el archivo de datos al hdfs</span>
+<span class="c1">#</span>
 <span class="o">!</span>hdfs dfs -copyFromLocal sample_libsvm_data.txt /tmp/sample_libsvm_data.txt
 </pre></div>
 </div>

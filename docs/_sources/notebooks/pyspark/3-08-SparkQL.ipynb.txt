@@ -42,22 +42,22 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "##\n",
-    "## findspark permite usar pyspark (interfaz de Python a Spark),\n",
-    "## desde cualquier programa escrito en Python.\n",
-    "##\n",
+    "#\n",
+    "# findspark permite usar pyspark (interfaz de Python a Spark),\n",
+    "# desde cualquier programa escrito en Python.\n",
+    "#\n",
     "import findspark\n",
     "findspark.init()\n",
     "\n",
-    "##\n",
-    "## A continuación se inicializan las variables obligatorias\n",
-    "## requeridas para trabajar con Spark desde Python:\n",
-    "##\n",
-    "##  SparkContext representa la conexión al cluster de Spark.\n",
-    "##  SparkConf representa la configuración particular de una aplicación\n",
-    "##     escrita en Spark.\n",
-    "##  SparkSession representa la conexión para trabajar con SQL.\n",
-    "##\n",
+    "#\n",
+    "# A continuación se inicializan las variables obligatorias\n",
+    "# requeridas para trabajar con Spark desde Python:\n",
+    "#\n",
+    "#  SparkContext representa la conexión al cluster de Spark.\n",
+    "#  SparkConf representa la configuración particular de una aplicación\n",
+    "#     escrita en Spark.\n",
+    "#  SparkSession representa la conexión para trabajar con SQL.\n",
+    "#\n",
     "from pyspark import SparkConf, SparkContext\n",
     "from pyspark.sql import SparkSession\n",
     "\n",
@@ -70,7 +70,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Creación de DataFrames"
+    "Creación de DataFrames\n",
+    "--"
    ]
   },
   {
@@ -84,7 +85,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Formato JSON"
+    "Formato JSON\n",
+    "--"
    ]
   },
   {
@@ -135,7 +137,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "## Copia el archivo al HDFS\n",
+    "# Copia el archivo al HDFS\n",
     "!hdfs dfs -copyFromLocal people.json /tmp/people.json"
    ]
   },
@@ -175,15 +177,15 @@
     }
    ],
    "source": [
-    "##\n",
-    "## La función spark.read.json() carga directamente\n",
-    "## el archivo en JSON con un DataFrame.\n",
-    "##\n",
+    "#\n",
+    "# La función spark.read.json() carga directamente\n",
+    "# el archivo en JSON con un DataFrame.\n",
+    "#\n",
     "df = spark.read.json(\"/tmp/people.json\")\n",
     "\n",
-    "##\n",
-    "## La función show() permite imprimirlo en pantalla\n",
-    "##\n",
+    "#\n",
+    "# La función show() permite imprimirlo en pantalla\n",
+    "#\n",
     "df.show()"
    ]
   },
@@ -191,7 +193,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Formato CSV y TXT"
+    "Formato CSV y TXT\n",
+    "--"
    ]
   },
   {
@@ -250,7 +253,7 @@
     }
    ],
    "source": [
-    "## copia el archivo al HDFS\n",
+    "# copia el archivo al HDFS\n",
     "!hdfs dfs -rm /tmp/people.csv \n",
     "!hdfs dfs -copyFromLocal people.csv /tmp/people.csv"
    ]
@@ -289,14 +292,14 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Row representa una fila en un RDD\n",
-    "##\n",
+    "#\n",
+    "# Row representa una fila en un RDD\n",
+    "#\n",
     "from pyspark.sql import Row\n",
     "\n",
-    "##\n",
-    "## Lectura del archivo como lineas de texto\n",
-    "##\n",
+    "#\n",
+    "# Lectura del archivo como lineas de texto\n",
+    "#\n",
     "rdd = sc.textFile(\"/tmp/people.csv\")\n",
     "rdd.collect()"
    ]
@@ -335,9 +338,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Partición de los strings por las comas\n",
-    "##\n",
+    "#\n",
+    "# Partición de los strings por las comas\n",
+    "#\n",
     "rdd = rdd.map(lambda row: row.split(\",\"))\n",
     "rdd.collect()"
    ]
@@ -376,11 +379,11 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Se transforma cada elemento del RDD usando la función Row().\n",
-    "## Note que esta función agrega el nombre de la columna a la\n",
-    "## que pertenece cada dato.\n",
-    "##\n",
+    "#\n",
+    "# Se transforma cada elemento del RDD usando la función Row().\n",
+    "# Note que esta función agrega el nombre de la columna a la\n",
+    "# que pertenece cada dato.\n",
+    "#\n",
     "rdd = rdd.map(lambda p: Row(id=p[0], \n",
     "                            firstname=p[1],\n",
     "                            surname=p[2],\n",
@@ -426,18 +429,18 @@
     }
    ],
    "source": [
-    "##\n",
-    "## createDataFrame() permite crear un DataFrame a partir\n",
-    "## de un RDD, una lista o un pandas.DataFrame\n",
-    "##\n",
+    "#\n",
+    "# createDataFrame() permite crear un DataFrame a partir\n",
+    "# de un RDD, una lista o un pandas.DataFrame\n",
+    "#\n",
     "df = spark.createDataFrame(rdd)  \n",
     "\n",
-    "##\n",
-    "## Crea o reemplaza una vista local del DataFrame\n",
-    "## para poder aplicar funciones como show()\n",
-    "##\n",
+    "#\n",
+    "# Crea o reemplaza una vista local del DataFrame\n",
+    "# para poder aplicar funciones como show()\n",
+    "#\n",
     "df.createOrReplaceTempView(\"miVista\")\n",
-    "## también podría usarse createTempView()\n",
+    "# también podría usarse createTempView()\n",
     "df.show()\n",
     "\n",
     "spark.catalog.dropTempView('miVista')"
@@ -500,7 +503,7 @@
     }
    ],
    "source": [
-    "## Mueve el archivo al sistema hdfs\n",
+    "# Mueve el archivo al sistema hdfs\n",
     "!hdfs dfs -rm /tmp/people.csv\n",
     "!hdfs dfs -copyFromLocal people.csv /tmp/people.csv"
    ]
@@ -541,10 +544,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Crea un DataFrame a partir del archivo con\n",
-    "## formato CSV\n",
-    "##\n",
+    "#\n",
+    "# Crea un DataFrame a partir del archivo con\n",
+    "# formato CSV\n",
+    "#\n",
     "df = spark.read.load(\"/tmp/people.csv\",\n",
     "                     format=\"csv\", \n",
     "                     sep=\",\", \n",
@@ -557,7 +560,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Operaciones sobre DataFrames"
+    "Operaciones sobre DataFrames\n",
+    "--"
    ]
   },
   {
@@ -581,9 +585,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Imprime el esquema en formato de arbol\n",
-    "##\n",
+    "#\n",
+    "# Imprime el esquema en formato de arbol\n",
+    "#\n",
     "df.printSchema()"
    ]
   },
@@ -623,9 +627,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Selección de una columna en particular\n",
-    "##\n",
+    "#\n",
+    "# Selección de una columna en particular\n",
+    "#\n",
     "df.select('firstname').show()"
    ]
   },
@@ -665,9 +669,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Selección de varias columnas\n",
-    "##\n",
+    "#\n",
+    "# Selección de varias columnas\n",
+    "#\n",
     "df.select(['firstname', 'surname']).show()"
    ]
   },
@@ -692,9 +696,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Filtrado de registros usando condicionales\n",
-    "##\n",
+    "#\n",
+    "# Filtrado de registros usando condicionales\n",
+    "#\n",
     "df.filter(df['color'] == 'blue').show()"
    ]
   },
@@ -734,15 +738,15 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Consultas\n",
-    "##   Se crea una vista temporal\n",
-    "##   que desaparece cuando se cierra la\n",
-    "##   sesión actual de Spark\n",
-    "##\n",
-    "df.createOrReplaceTempView('peopleview') ## este es el nombre de la tabla\n",
+    "#\n",
+    "# Consultas\n",
+    "#   Se crea una vista temporal\n",
+    "#   que desaparece cuando se cierra la\n",
+    "#   sesión actual de Spark\n",
+    "#\n",
+    "df.createOrReplaceTempView('peopleview') # este es el nombre de la tabla\n",
     "\n",
-    "## Se realiza la consulta usando directamente SQL\n",
+    "# Se realiza la consulta usando directamente SQL\n",
     "spark.sql('SELECT * FROM peopleview').show()"
    ]
   },
@@ -782,16 +786,16 @@
     }
    ],
    "source": [
-    "##\n",
-    "## En el siguiente fragmento de código se\n",
-    "## crea una vista temporal que existe entre\n",
-    "## sesiones y solo desaparece cuando se cierra\n",
-    "## la aplicación actual de Spark\n",
-    "##\n",
+    "#\n",
+    "# En el siguiente fragmento de código se\n",
+    "# crea una vista temporal que existe entre\n",
+    "# sesiones y solo desaparece cuando se cierra\n",
+    "# la aplicación actual de Spark\n",
+    "#\n",
     "df.createGlobalTempView(\"peopleview\")\n",
     "\n",
-    "## percatese de la forma de nombrar la tabla\n",
-    "## en la consulta SQL\n",
+    "# percatese de la forma de nombrar la tabla\n",
+    "# en la consulta SQL\n",
     "spark.sql(\"SELECT * FROM global_temp.peopleview\").show()"
    ]
   },
@@ -817,10 +821,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Cuenta cuandos registros hay por cada valor en \n",
-    "## la columna quantity\n",
-    "##\n",
+    "#\n",
+    "# Cuenta cuandos registros hay por cada valor en \n",
+    "# la columna quantity\n",
+    "#\n",
     "df.groupBy('quantity').count().show()"
    ]
   },
@@ -828,7 +832,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Funciones"
+    "Funciones\n",
+    "---"
    ]
   },
   {
@@ -848,11 +853,11 @@
     }
    ],
    "source": [
-    "##\n",
-    "## La función agg recibe un diccionario que indica \n",
-    "## con que función (valor del diccionario) se agrega\n",
-    "## una determinada columna (clave del diccionario)\n",
-    "##\n",
+    "#\n",
+    "# La función agg recibe un diccionario que indica \n",
+    "# con que función (valor del diccionario) se agrega\n",
+    "# una determinada columna (clave del diccionario)\n",
+    "#\n",
     "df.agg({\"quantity\": \"max\"}).collect()"
    ]
   },
@@ -873,12 +878,12 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Tmabien pueden usarse las funciones implementadas\n",
-    "## en el modulo sql de pyspark. En el siguiente ejemplo\n",
-    "## se carga el módulo de funciones con el nombre de F.\n",
-    "## Se obtiene el valor máximo de la columna quantity\n",
-    "##\n",
+    "#\n",
+    "# Tmabien pueden usarse las funciones implementadas\n",
+    "# en el modulo sql de pyspark. En el siguiente ejemplo\n",
+    "# se carga el módulo de funciones con el nombre de F.\n",
+    "# Se obtiene el valor máximo de la columna quantity\n",
+    "#\n",
     "from pyspark.sql import functions as F\n",
     "df.agg(F.max(df.quantity)).collect()"
    ]
@@ -894,7 +899,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Escritura de un resultado al HDFS"
+    "Escritura de un resultado al HDFS\n",
+    "--"
    ]
   },
   {
@@ -903,13 +909,13 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "##\n",
-    "## Los resultados se escriben al disco con write.save().\n",
-    "## El parámetro es el nombre del directorio. La llamada a \n",
-    "## la función crea el archivo _SUCCESS que indica que la \n",
-    "## función se ejecutó correctamente, y los archivos \n",
-    "## con el resultado.\n",
-    "##\n",
+    "#\n",
+    "# Los resultados se escriben al disco con write.save().\n",
+    "# El parámetro es el nombre del directorio. La llamada a \n",
+    "# la función crea el archivo _SUCCESS que indica que la \n",
+    "# función se ejecutó correctamente, y los archivos \n",
+    "# con el resultado.\n",
+    "#\n",
     "df.filter(df['color'] == 'blue').write.save('/tmp/demo')"
    ]
   },
@@ -935,7 +941,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Ejecución de SQL directamente sobre archivos"
+    "Ejecución de SQL directamente sobre archivos\n",
+    "--"
    ]
   },
   {
@@ -981,12 +988,12 @@
     }
    ],
    "source": [
-    "##\n",
-    "## SQL sobre un archivo en formato JSON. Note que\n",
-    "## en lugar de la tabla se especifica el formato del\n",
-    "## archivo (json) y entre comillas `` el nombre del\n",
-    "## archivo.\n",
-    "##\n",
+    "#\n",
+    "# SQL sobre un archivo en formato JSON. Note que\n",
+    "# en lugar de la tabla se especifica el formato del\n",
+    "# archivo (json) y entre comillas `` el nombre del\n",
+    "# archivo.\n",
+    "#\n",
     "spark.sql('SELECT * FROM json.`/tmp/people.json`').show()"
    ]
   },
@@ -1027,11 +1034,11 @@
     }
    ],
    "source": [
-    "##\n",
-    "## SQL sobre un archivo en formato CSV. Note que en este\n",
-    "## caso, los nombres de las columnas se leen como parte\n",
-    "## de la tabla.\n",
-    "##\n",
+    "#\n",
+    "# SQL sobre un archivo en formato CSV. Note que en este\n",
+    "# caso, los nombres de las columnas se leen como parte\n",
+    "# de la tabla.\n",
+    "#\n",
     "spark.sql('SELECT * FROM csv.`/tmp/people.csv`').show()"
    ]
   },
@@ -1063,7 +1070,7 @@
     }
    ],
    "source": [
-    "## SQL sobre un archivo en formato CSV\n",
+    "# SQL sobre un archivo en formato CSV\n",
     "spark.sql('SELECT DISTINCT(_c4)  FROM csv.`/tmp/people.csv`').show()"
    ]
   },
@@ -1071,7 +1078,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Ejemplos"
+    "Ejemplos\n",
+    "--"
    ]
   },
   {
@@ -1094,8 +1102,14 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Ejemplo 1\n",
-    "\n",
+    "Ejemplo 1\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "Seleccione las personas cuya fecha de nacimiento sea del año 1974 en adelante."
    ]
   },
@@ -1124,9 +1138,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Se usa la función filter() del DataFrame\n",
-    "##\n",
+    "#\n",
+    "# Se usa la función filter() del DataFrame\n",
+    "#\n",
     "df.filter(df['birthdate'] >= '1974').show()"
    ]
   },
@@ -1155,10 +1169,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Se crea una vista temporal para ejecutar\n",
-    "## una consulta SQL sobre ella\n",
-    "##\n",
+    "#\n",
+    "# Se crea una vista temporal para ejecutar\n",
+    "# una consulta SQL sobre ella\n",
+    "#\n",
     "df.createOrReplaceTempView('peopleview')\n",
     "spark.sql('SELECT * FROM peopleview WHERE YEAR(birthdate) >= 1974').show()"
    ]
@@ -1167,8 +1181,14 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Ejemplo 2\n",
-    "\n",
+    "Ejemplo 2\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
     "Obtenga una lista de colores únicos."
    ]
   },
@@ -1199,9 +1219,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Se usa la función distinct() del DataFrame\n",
-    "##\n",
+    "#\n",
+    "# Se usa la función distinct() del DataFrame\n",
+    "#\n",
     "df.select('color').distinct().show()"
    ]
   },
@@ -1232,9 +1252,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Como una consulta \n",
-    "##\n",
+    "#\n",
+    "# Como una consulta \n",
+    "#\n",
     "spark.sql('SELECT DISTINCT(color) FROM peopleview').show()"
    ]
   },
@@ -1244,8 +1264,16 @@
     "toc-hr-collapsed": true
    },
    "source": [
-    "### Ejemplo 3\n",
-    "\n",
+    "Ejemplo 3\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "toc-hr-collapsed": true
+   },
+   "source": [
     "Ordene la tabla por cantidad y luego por color."
    ]
   },
@@ -1285,10 +1313,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Note que las funciones se aplican de derecha \n",
-    "## a izquierda\n",
-    "##\n",
+    "#\n",
+    "# Note que las funciones se aplican de derecha \n",
+    "# a izquierda\n",
+    "#\n",
     "df.orderBy('color').orderBy('quantity').show()"
    ]
   },
@@ -1328,9 +1356,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Como una consulta de SQL\n",
-    "##\n",
+    "#\n",
+    "# Como una consulta de SQL\n",
+    "#\n",
     "spark.sql('SELECT * FROM peopleview ORDER BY quantity, color').show()"
    ]
   },
@@ -1373,7 +1401,7 @@
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python 3",
+   "display_name": "Python 3 (ipykernel)",
    "language": "python",
    "name": "python3"
   },
@@ -1387,7 +1415,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.8"
+   "version": "3.8.10"
   },
   "toc-autonumbering": false
  },

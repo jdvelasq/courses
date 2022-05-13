@@ -4,100 +4,20 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "WordCount en Apache Pig\n",
+    "Conteo de palabras en Apache Pig\n",
     "===\n",
     "\n",
-    "* 30 min | Última modificación: Noviembre 05, 2019"
+    "* Última modificación: Noviembre 05, 2019"
    ]
   },
   {
    "cell_type": "markdown",
-   "metadata": {},
+   "metadata": {
+    "tags": []
+   },
    "source": [
-    "## Definición del problema"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "Se desea contar la frecuencia de ocurrencia de palabras en un conjunto de documentos usando Apache Pig."
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## Solución"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### Preparación"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "#### Inicio de la máquina virtual"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "Si usa linux o macOS puede pasar directamente al siguiente paso. Inicie la VM con:\n",
-    "\n",
-    "```bash\n",
-    "vagrant up\n",
-    "```\n",
-    "\n",
-    "y luego vaya a la carpeta de trabajo:\n",
-    "\n",
-    "```\n",
-    "cd /vagrant\n",
-    "```\n"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "#### Ejecución del contendor de Docker"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "Si va a iniciar el contendor de Hadoop en la carpeta compartida con su máquina local use:\n",
-    "\n",
-    "```\n",
-    "docker run --rm -it -v \"$PWD\":/datalake  --name pig -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/pig:0.17.0-pseudo\n",
-    "```\n",
-    "\n",
-    "Si desea iniciar la sesión en el `datalake` use:\n",
-    "\n",
-    "```\n",
-    "docker run --rm -it -v datalake:/datalake --name pig  -p 50070:50070 -p 8088:8088 -p 8888:8888 -p 5000:5000 jdvelasq/pig:0.17.0-pseudo\n",
-    "```\n",
-    "\n",
-    "\n",
-    "Si un contenedor ya se está ejecutando puede abrir un nuevo terminal con:\n",
-    "\n",
-    "```\n",
-    "docker exec -it pig bash\n",
-    "```"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### Archivos de prueba"
+    "Archivos de prueba\n",
+    "---"
    ]
   },
   {
@@ -113,7 +33,9 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "## Se crea el directorio de entrada\n",
+    "#\n",
+    "# Se crea el directorio de entrada\n",
+    "#\n",
     "!rm -rf input output\n",
     "!mkdir input"
    ]
@@ -197,7 +119,63 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Código en Apache Pig"
+    "Creación del contendor\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En el Terminal ejecute el siguiente comando:\n",
+    "\n",
+    "```bash\n",
+    "$ docker run --rm -it -v \"$PWD\":/workspace  --name pig -p 50070:50070 -p 8088:8088 -p 8888:8888  jdvelasq/pig:0.17.0\n",
+    "```\n",
+    "\n",
+    "Como resultado debe ver el siguiente mensaje:\n",
+    "\n",
+    "```\n",
+    "======================================\n",
+    "\n",
+    "Hadoop NameNode at:\n",
+    "\n",
+    "    http://127.0.0.1:50070/\n",
+    "\n",
+    "Yarn ResourceManager at:\n",
+    "\n",
+    "     http://127.0.0.1:8088/\n",
+    "\n",
+    "======================================\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Verificación de que Hadoop está ejecutándose correctamente\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Para verificar que Hadoop se está ejecutando correctamente abra las siguiente direcciones en un explorador de internet:\n",
+    "\n",
+    "* http://127.0.0.1:50070/\n",
+    "\n",
+    "\n",
+    "* http://127.0.0.1:8088/\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Código en Apache Pig\n",
+    "---"
    ]
   },
   {
@@ -252,24 +230,6 @@
    ]
   },
   {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### Ejecución del script en modo batch"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "Verifique que Hadoop se esta ejecutando correctamente. Vaya a las direcciones:\n",
-    "\n",
-    "* NameNode: http://127.0.0.1:50070/\n",
-    "\n",
-    "* Yarn ResourceManager: http://127.0.0.1:8088/"
-   ]
-  },
-  {
    "cell_type": "code",
    "execution_count": 6,
    "metadata": {},
@@ -278,10 +238,55 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "2019-11-14 22:38:01,763 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker is deprecated. Instead, use mapreduce.jobtracker.address\n",
-      "mkdir: `input': File exists\n",
-      "2019-11-14 22:38:02,438 [main] ERROR org.apache.pig.tools.grunt.Grunt - ERROR 2997: Encountered IOException. fs command '-mkdir input' failed. Please check output logs for details\n",
-      "Details at logfile: /datalake/pig/pig_1573771081267.log\n"
+      "2022-05-12 19:49:21,209 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker is deprecated. Instead, use mapreduce.jobtracker.address\n",
+      "2022-05-12 19:49:23,182 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.textoutputformat.separator is deprecated. Instead, use mapreduce.output.textoutputformat.separator\n",
+      "2022-05-12 19:49:23,394 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:49:23,494 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.reduce.markreset.buffer.percent is deprecated. Instead, use mapreduce.reduce.markreset.buffer.percent\n",
+      "2022-05-12 19:49:23,496 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.output.compress is deprecated. Instead, use mapreduce.output.fileoutputformat.compress\n",
+      "2022-05-12 19:49:23,503 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.reduce.tasks is deprecated. Instead, use mapreduce.job.reduces\n",
+      "2022-05-12 19:49:23,508 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.submit.replication is deprecated. Instead, use mapreduce.client.submit.file.replication\n",
+      "2022-05-12 19:49:25,297 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker.http.address is deprecated. Instead, use mapreduce.jobtracker.http.address\n",
+      "2022-05-12 19:49:25,301 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:49:25,309 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id\n",
+      "2022-05-12 19:49:25,372 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:49:25,394 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
+      "2022-05-12 19:49:25,865 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:49:26,348 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0001\n",
+      "2022-05-12 19:49:26,487 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:49:26,687 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0001\n",
+      "2022-05-12 19:49:26,713 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0001/\n",
+      "2022-05-12 19:49:46,875 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:49:46,883 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:49:47,411 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:49:47,416 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:49:47,442 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:49:47,445 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:49:48,822 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:49:48,839 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:49:48,855 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
+      "2022-05-12 19:49:49,287 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:49:49,322 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0002\n",
+      "2022-05-12 19:49:49,325 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:49:49,352 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0002\n",
+      "2022-05-12 19:49:49,356 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0002/\n",
+      "2022-05-12 19:50:04,466 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,470 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,579 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,583 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,607 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,610 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,647 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,650 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,675 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,678 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,705 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,709 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,738 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,741 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,768 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,771 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:04,794 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:04,797 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n"
      ]
     }
    ],
@@ -293,7 +298,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Visualización de los resultados en el HDFS"
+    "Visualización de los resultados en el HDFS\n",
+    "---"
    ]
   },
   {
@@ -305,8 +311,8 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "-rw-r--r--   1 root supergroup          0 2019-11-14 22:37 output/_SUCCESS\n",
-      "-rw-r--r--   1 root supergroup         81 2019-11-14 22:37 output/part-r-00000\n"
+      "-rw-r--r--   1 root supergroup          0 2022-05-12 19:50 output/_SUCCESS\n",
+      "-rw-r--r--   1 root supergroup         81 2022-05-12 19:50 output/part-r-00000\n"
      ]
     }
    ],
@@ -349,7 +355,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Movimiento de los resultados al sistema local"
+    "Movimiento de los resultados al sistema local\n",
+    "---"
    ]
   },
   {
@@ -361,7 +368,10 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "output/_SUCCESS  output/part-r-00000\n"
+      "output/_SUCCESS  output/part-r-00000\n",
+      "\n",
+      "output/output:\n",
+      "_SUCCESS  part-r-00000\n"
      ]
     }
    ],
@@ -374,7 +384,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Visualilzación de resultados en el sistema local"
+    "Visualilzación de resultados en el sistema local\n",
+    "---"
    ]
   },
   {
@@ -387,7 +398,11 @@
      "output_type": "stream",
      "text": [
       "output/_SUCCESS\n",
-      "output/part-r-00000\n"
+      "output/part-r-00000\n",
+      "\n",
+      "output/output:\n",
+      "_SUCCESS\n",
+      "part-r-00000\n"
      ]
     }
    ],
@@ -430,7 +445,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Notas"
+    "Notas\n",
+    "--"
    ]
   },
   {
@@ -568,34 +584,34 @@
      "text": [
       " lines = LOAD 'input/text*.txt' AS (line:CHARARRAY);\n",
       " DUMP lines;\n",
-      "2019-11-14 22:38:15,586 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:15,723 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.reduce.markreset.buffer.percent is deprecated. Instead, use mapreduce.reduce.markreset.buffer.percent\n",
-      "2019-11-14 22:38:15,727 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.output.compress is deprecated. Instead, use mapreduce.output.fileoutputformat.compress\n",
-      "2019-11-14 22:38:15,735 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.submit.replication is deprecated. Instead, use mapreduce.client.submit.file.replication\n",
-      "2019-11-14 22:38:16,004 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker.http.address is deprecated. Instead, use mapreduce.jobtracker.http.address\n",
-      "2019-11-14 22:38:16,009 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:16,021 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id\n",
-      "2019-11-14 22:38:16,094 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2019-11-14 22:38:16,115 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
-      "2019-11-14 22:38:16,169 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2019-11-14 22:38:16,264 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1573770721210_0013\n",
-      "2019-11-14 22:38:16,427 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2019-11-14 22:38:16,492 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1573770721210_0013\n",
-      "2019-11-14 22:38:16,523 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://0f49bf10403a:8088/proxy/application_1573770721210_0013/\n",
-      "2019-11-14 22:38:26,592 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:26,597 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:26,772 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:26,777 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:26,800 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.reduce.tasks is deprecated. Instead, use mapreduce.job.reduces\n",
-      "2019-11-14 22:38:26,802 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:26,806 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:26,859 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:26,863 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:26,891 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:26,895 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:26,917 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:26,921 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:26,976 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
+      "2022-05-12 19:50:14,604 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:14,720 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.reduce.markreset.buffer.percent is deprecated. Instead, use mapreduce.reduce.markreset.buffer.percent\n",
+      "2022-05-12 19:50:14,722 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.output.compress is deprecated. Instead, use mapreduce.output.fileoutputformat.compress\n",
+      "2022-05-12 19:50:14,728 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.submit.replication is deprecated. Instead, use mapreduce.client.submit.file.replication\n",
+      "2022-05-12 19:50:14,891 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker.http.address is deprecated. Instead, use mapreduce.jobtracker.http.address\n",
+      "2022-05-12 19:50:14,894 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:14,902 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id\n",
+      "2022-05-12 19:50:14,951 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:50:14,971 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
+      "2022-05-12 19:50:15,825 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:50:16,178 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0003\n",
+      "2022-05-12 19:50:16,445 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:50:16,502 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0003\n",
+      "2022-05-12 19:50:16,523 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0003/\n",
+      "2022-05-12 19:50:26,632 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:26,639 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:26,780 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:26,784 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:26,802 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.reduce.tasks is deprecated. Instead, use mapreduce.job.reduces\n",
+      "2022-05-12 19:50:26,803 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:26,806 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:26,843 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:26,846 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:26,868 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:26,871 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:26,888 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:26,891 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:26,925 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
       "(Analytics is the discovery, interpretation, and communication of meaningful patterns )\n",
       "(in data. Especially valuable in areas rich with recorded information, analytics relies )\n",
       "(on the simultaneous application of statistics, computer programming and operations research )\n",
@@ -648,28 +664,28 @@
       " -- genera una tabla llamada words con una palabra por registro\n",
       " words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) AS word;\n",
       " DUMP words;\n",
-      "2019-11-14 22:38:27,350 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:27,525 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:27,541 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2019-11-14 22:38:27,559 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
-      "2019-11-14 22:38:27,597 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2019-11-14 22:38:27,631 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1573770721210_0014\n",
-      "2019-11-14 22:38:27,634 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2019-11-14 22:38:27,875 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1573770721210_0014\n",
-      "2019-11-14 22:38:27,880 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://0f49bf10403a:8088/proxy/application_1573770721210_0014/\n",
-      "2019-11-14 22:38:43,124 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,128 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:43,216 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,220 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:43,244 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,247 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:43,279 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,283 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:43,311 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,315 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:43,336 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,341 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:38:43,373 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
+      "2022-05-12 19:50:27,234 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:27,769 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:27,780 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:50:27,789 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
+      "2022-05-12 19:50:27,814 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:50:27,843 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0004\n",
+      "2022-05-12 19:50:27,845 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:50:27,874 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0004\n",
+      "2022-05-12 19:50:27,878 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0004/\n",
+      "2022-05-12 19:50:42,888 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:42,892 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:42,952 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:42,957 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:42,978 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:42,982 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:43,005 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:43,008 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:43,032 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:43,035 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:43,056 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:43,060 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:50:43,087 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
       "(Analytics)\n",
       "(is)\n",
       "(the)\n",
@@ -945,28 +961,28 @@
       " -- agrupa los registros que tienen la misma palabra\n",
       " grouped = GROUP words BY word;\n",
       " DUMP grouped;\n",
-      "2019-11-14 22:38:43,664 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,820 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:38:43,835 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2019-11-14 22:38:43,849 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
-      "2019-11-14 22:38:44,693 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2019-11-14 22:38:44,721 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1573770721210_0015\n",
-      "2019-11-14 22:38:44,724 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2019-11-14 22:38:44,753 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1573770721210_0015\n",
-      "2019-11-14 22:38:44,759 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://0f49bf10403a:8088/proxy/application_1573770721210_0015/\n",
-      "2019-11-14 22:39:04,871 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:04,883 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:04,951 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:04,955 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:04,985 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:04,988 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:05,016 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:05,019 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:05,045 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:05,048 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:05,075 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:05,078 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:05,122 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
+      "2022-05-12 19:50:43,357 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:44,687 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:50:44,697 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:50:44,704 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
+      "2022-05-12 19:50:45,131 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:50:45,552 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0005\n",
+      "2022-05-12 19:50:45,554 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:50:45,574 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0005\n",
+      "2022-05-12 19:50:45,577 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0005/\n",
+      "2022-05-12 19:51:00,711 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:00,724 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:00,778 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:00,781 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:00,803 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:00,805 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:00,825 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:00,828 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:00,846 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:00,849 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:00,870 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:00,872 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:00,897 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
       "(a,{(a)})\n",
       "(DA,{(DA)})\n",
       "(be,{(be)})\n",
@@ -1144,28 +1160,28 @@
       " -- genera una variable que cuenta las ocurrencias por cada grupo\n",
       " wordcount = FOREACH grouped GENERATE group, COUNT(words);\n",
       " DUMP wordcount;\n",
-      "2019-11-14 22:39:05,464 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:06,417 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:06,437 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2019-11-14 22:39:06,456 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
-      "2019-11-14 22:39:06,489 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2019-11-14 22:39:06,909 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1573770721210_0016\n",
-      "2019-11-14 22:39:06,913 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2019-11-14 22:39:07,142 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1573770721210_0016\n",
-      "2019-11-14 22:39:07,146 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://0f49bf10403a:8088/proxy/application_1573770721210_0016/\n",
-      "2019-11-14 22:39:27,278 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:27,285 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:27,334 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:27,337 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:27,358 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:27,360 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:27,380 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:27,383 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:27,405 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:27,408 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:27,428 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:27,431 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:27,459 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
+      "2022-05-12 19:51:01,164 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:02,456 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:02,468 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:51:02,476 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
+      "2022-05-12 19:51:02,902 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:51:03,296 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0006\n",
+      "2022-05-12 19:51:03,301 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:51:03,322 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0006\n",
+      "2022-05-12 19:51:03,325 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0006/\n",
+      "2022-05-12 19:51:23,428 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:23,434 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:23,487 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:23,490 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:23,511 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:23,514 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:23,533 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:23,536 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:23,554 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:23,556 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:23,577 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:23,580 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:23,604 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
       "(a,1)\n",
       "(DA,1)\n",
       "(be,1)\n",
@@ -1343,48 +1359,48 @@
       " -- selecciona las primeras 15 palabras\n",
       " s = LIMIT wordcount 15;\n",
       " DUMP s;\n",
-      "2019-11-14 22:39:27,731 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:28,246 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:28,259 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2019-11-14 22:39:28,271 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
-      "2019-11-14 22:39:28,316 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2019-11-14 22:39:28,370 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1573770721210_0017\n",
-      "2019-11-14 22:39:28,372 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2019-11-14 22:39:28,398 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1573770721210_0017\n",
-      "2019-11-14 22:39:28,401 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://0f49bf10403a:8088/proxy/application_1573770721210_0017/\n",
-      "2019-11-14 22:39:48,857 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:48,865 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:48,933 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:48,937 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:48,958 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:48,961 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:39:49,514 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:39:49,526 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2019-11-14 22:39:49,540 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "2019-11-14 22:39:49,969 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2019-11-14 22:39:49,995 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1573770721210_0018\n",
-      "2019-11-14 22:39:49,998 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2019-11-14 22:39:50,027 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1573770721210_0018\n",
-      "2019-11-14 22:39:50,031 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://0f49bf10403a:8088/proxy/application_1573770721210_0018/\n",
-      "2019-11-14 22:40:10,125 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,135 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,204 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,210 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,230 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,233 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,261 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,264 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,286 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,289 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,308 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,311 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,332 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,335 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,356 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,358 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,379 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2019-11-14 22:40:10,381 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2019-11-14 22:40:10,404 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
+      "2022-05-12 19:51:23,855 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:25,146 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:25,156 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:51:25,164 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3\n",
+      "2022-05-12 19:51:26,001 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:51:26,428 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0007\n",
+      "2022-05-12 19:51:26,432 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:51:26,457 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0007\n",
+      "2022-05-12 19:51:26,460 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0007/\n",
+      "2022-05-12 19:51:41,563 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:41,569 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:41,602 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:41,606 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:41,623 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:41,625 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:43,348 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:43,360 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
+      "2022-05-12 19:51:43,366 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
+      "2022-05-12 19:51:43,789 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
+      "2022-05-12 19:51:44,212 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0008\n",
+      "2022-05-12 19:51:44,217 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
+      "2022-05-12 19:51:44,440 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0008\n",
+      "2022-05-12 19:51:44,443 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0008/\n",
+      "2022-05-12 19:51:59,558 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,565 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,617 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,620 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,640 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,642 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,665 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,667 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,688 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,690 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,710 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,712 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,732 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,734 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,754 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,757 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,777 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
+      "2022-05-12 19:51:59,779 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
+      "2022-05-12 19:51:59,801 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
       "(a,1)\n",
       "(DA,1)\n",
       "(be,1)\n",
@@ -1439,6 +1455,7 @@
       "Deleted input/text1.txt\n",
       "Deleted input/text2.txt\n",
       "Deleted output/_SUCCESS\n",
+      "rm: `output/output': No such file or directory\n",
       "Deleted output/part-r-00000\n"
      ]
     }
@@ -1462,7 +1479,7 @@
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python 3",
+   "display_name": "Python 3 (ipykernel)",
    "language": "python",
    "name": "python3"
   },
@@ -1476,7 +1493,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.8"
+   "version": "3.8.10"
   },
   "toc-autonumbering": false
  },

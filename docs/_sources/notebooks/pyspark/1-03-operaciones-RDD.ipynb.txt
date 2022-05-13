@@ -31,7 +31,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Archivos de datos de ejemplo para las corridas"
+    "# Archivos de datos de ejemplo para las corridas"
    ]
   },
   {
@@ -47,10 +47,10 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "## Se borra la carpeta y su contenido en la máquina local si existe\n",
+    "# Se borra la carpeta y su contenido en la máquina local si existe\n",
     "!rm -rf wordcount/\n",
     "\n",
-    "## Se crea la carpeta vacía\n",
+    "# Se crea la carpeta vacía\n",
     "!mkdir -p wordcount/"
    ]
   },
@@ -135,11 +135,11 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "## crea la carpeta /tmp/wordcount en el hdfs\n",
+    "# crea la carpeta /tmp/wordcount en el hdfs\n",
     "!hdfs dfs -mkdir /tmp/wordcount\n",
     "\n",
-    "## copia los archvios del directorio local wordcount/\n",
-    "## al directorio /tmp/wordcount/ en el hdfs\n",
+    "# copia los archvios del directorio local wordcount/\n",
+    "# al directorio /tmp/wordcount/ en el hdfs\n",
     "!hdfs dfs -copyFromLocal wordcount/* /tmp/wordcount/"
    ]
   },
@@ -147,7 +147,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Inicialización de la aplicación"
+    "# Inicialización de la aplicación"
    ]
   },
   {
@@ -163,22 +163,22 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "##\n",
-    "## findspark permite usar pyspark (interfaz de Python a Spark),\n",
-    "## desde cualquier programa escrito en Python.\n",
-    "##\n",
+    "#\n",
+    "# findspark permite usar pyspark (interfaz de Python a Spark),\n",
+    "# desde cualquier programa escrito en Python.\n",
+    "#\n",
     "import findspark\n",
     "findspark.init()\n",
     "\n",
-    "##\n",
-    "## A continuación se inicializan las variables obligatorias\n",
-    "## requeridas para trabajar con Spark desde Python:\n",
-    "##\n",
-    "##  SparkContext representa la conexión al cluster de Spark.\n",
-    "##  SparkConf representa la configuración particular de una aplicación\n",
-    "##     escrita en Spark.\n",
-    "##  SparkSession representa la conexión para trabajar con SQL.\n",
-    "##\n",
+    "#\n",
+    "# A continuación se inicializan las variables obligatorias\n",
+    "# requeridas para trabajar con Spark desde Python:\n",
+    "#\n",
+    "#  SparkContext representa la conexión al cluster de Spark.\n",
+    "#  SparkConf representa la configuración particular de una aplicación\n",
+    "#     escrita en Spark.\n",
+    "#  SparkSession representa la conexión para trabajar con SQL.\n",
+    "#\n",
     "from pyspark import SparkConf, SparkContext\n",
     "from pyspark.sql import SparkSession\n",
     "\n",
@@ -191,14 +191,14 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Programación usando conjuntos de datos distribuidos (RDD)"
+    "# Programación usando conjuntos de datos distribuidos (RDD)"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Creación de colecciones paralelizadas a partir de datos nativos en Python"
+    "## Creación de colecciones paralelizadas a partir de datos nativos en Python"
    ]
   },
   {
@@ -225,15 +225,15 @@
     }
    ],
    "source": [
-    "##\n",
-    "## crea una colección a partir de una lista\n",
-    "##\n",
+    "#\n",
+    "# crea una colección a partir de una lista\n",
+    "#\n",
     "rdd = sc.parallelize([1, 2, 3, 4, 5])\n",
     "\n",
-    "##\n",
-    "## rdd contiene un objeto en memoria donde\n",
-    "## se almacena la lista, no la lista como tal.\n",
-    "##\n",
+    "#\n",
+    "# rdd contiene un objeto en memoria donde\n",
+    "# se almacena la lista, no la lista como tal.\n",
+    "#\n",
     "rdd"
    ]
   },
@@ -254,10 +254,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Retorna una lista que contiene todos los \n",
-    "## elementos en un RDD\n",
-    "##\n",
+    "#\n",
+    "# Retorna una lista que contiene todos los \n",
+    "# elementos en un RDD\n",
+    "#\n",
     "rdd.collect()"
    ]
   },
@@ -278,10 +278,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## En el siguiente ejemplo se paraleliza un diccionario.\n",
-    "## collect() retorna las claves.\n",
-    "##\n",
+    "#\n",
+    "# En el siguiente ejemplo se paraleliza un diccionario.\n",
+    "# collect() retorna las claves.\n",
+    "#\n",
     "rdd = sc.parallelize({\"a\":1, \"b\":2, \"c\":3, \"d\":4})\n",
     "rdd.collect()"
    ]
@@ -290,7 +290,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Lectura de archivos con formato <clave, valor>"
+    "## Lectura de archivos con formato <clave, valor>"
    ]
   },
   {
@@ -306,23 +306,23 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "##\n",
-    "## crea una secuencia de parejas clave-valor\n",
-    "##\n",
+    "#\n",
+    "# crea una secuencia de parejas clave-valor\n",
+    "#\n",
     "rdd = sc.parallelize([1, 2, 3, 4, 5])\n",
     "\n",
-    "##\n",
-    "## Una vez se tiene un objeto RDD, es posible aplicar operaciones\n",
-    "## en paralelo sobre él. En la siguiente línea de código, se aplica \n",
-    "## la función lambda x:(x, x**2) a cada elemento del RDD, mediante\n",
-    "## la función map. Como resultado se genera una secuencia de pares\n",
-    "## [(1, 1), (2, 4), ..., (5, 25)]\n",
-    "##\n",
+    "#\n",
+    "# Una vez se tiene un objeto RDD, es posible aplicar operaciones\n",
+    "# en paralelo sobre él. En la siguiente línea de código, se aplica \n",
+    "# la función lambda x:(x, x**2) a cada elemento del RDD, mediante\n",
+    "# la función map. Como resultado se genera una secuencia de pares\n",
+    "# [(1, 1), (2, 4), ..., (5, 25)]\n",
+    "#\n",
     "rdd = rdd.map(lambda x:(x, x**2))\n",
     "\n",
-    "##\n",
-    "## Salva la secuencia al hdfs\n",
-    "##\n",
+    "#\n",
+    "# Salva la secuencia al hdfs\n",
+    "#\n",
     "rdd.saveAsSequenceFile('/tmp/out')"
    ]
   },
@@ -345,12 +345,12 @@
     }
    ],
    "source": [
-    "##\n",
-    "## El archivo se almacena en /tmp/out/. Aquí se usa\n",
-    "## ls para listar los archivos de la carpeta /tmp/\n",
-    "## en el sistema hdfs. Note se creó la carpeta \n",
-    "## /tmp/out como resultado del paso anterior\n",
-    "##\n",
+    "#\n",
+    "# El archivo se almacena en /tmp/out/. Aquí se usa\n",
+    "# ls para listar los archivos de la carpeta /tmp/\n",
+    "# en el sistema hdfs. Note se creó la carpeta \n",
+    "# /tmp/out como resultado del paso anterior\n",
+    "#\n",
     "!hdfs dfs -ls /tmp/out/"
    ]
   },
@@ -371,10 +371,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Una vez se tiene una secuencia de pares almacenada en el hdfs,\n",
-    "## es posible volverla a cargar mediante sequenceFile().\n",
-    "## \n",
+    "#\n",
+    "# Una vez se tiene una secuencia de pares almacenada en el hdfs,\n",
+    "# es posible volverla a cargar mediante sequenceFile().\n",
+    "# \n",
     "sc.sequenceFile(\"/tmp/out\").collect()"
    ]
   },
@@ -392,7 +392,7 @@
     }
    ],
    "source": [
-    "## Se limpia el hdfs\n",
+    "# Se limpia el hdfs\n",
     "!hdfs dfs -rm -r -f /tmp/out"
    ]
   },
@@ -400,7 +400,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "## Lectura de archivos de texto con textFile y wholeTextFiles"
+    "# Lectura de archivos de texto con textFile y wholeTextFiles"
    ]
   },
   {
@@ -420,11 +420,11 @@
     }
    ],
    "source": [
-    "##\n",
-    "## textFile() puede leer un archivo de texto o los archivos\n",
-    "## especificados. A continuación, se leen todos los archivos \n",
-    "## de texto de la carpeta /tmp/wordcount/ en el hdfs\n",
-    "##\n",
+    "#\n",
+    "# textFile() puede leer un archivo de texto o los archivos\n",
+    "# especificados. A continuación, se leen todos los archivos \n",
+    "# de texto de la carpeta /tmp/wordcount/ en el hdfs\n",
+    "#\n",
     "rdd = sc.textFile(\"/tmp/wordcount/\")\n",
     "rdd"
    ]
@@ -446,9 +446,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Se obtiene el timpo de dato almacenado en la variable rdd\n",
-    "##\n",
+    "#\n",
+    "# Se obtiene el timpo de dato almacenado en la variable rdd\n",
+    "#\n",
     "type(rdd)"
    ]
   },
@@ -492,10 +492,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## rdd almacena como strings, el contenido de los archivos\n",
-    "## text0.txt, text1.txt y text2.txt\n",
-    "##\n",
+    "#\n",
+    "# rdd almacena como strings, el contenido de los archivos\n",
+    "# text0.txt, text1.txt y text2.txt\n",
+    "#\n",
     "rdd.collect()"
    ]
   },
@@ -518,10 +518,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## wholeTextFiles() retorna una lista de pares que contienen el nombre \n",
-    "## del archivo y su correspondiente texto\n",
-    "##\n",
+    "#\n",
+    "# wholeTextFiles() retorna una lista de pares que contienen el nombre \n",
+    "# del archivo y su correspondiente texto\n",
+    "#\n",
     "rdd = sc.wholeTextFiles(\"/tmp/wordcount/\")\n",
     "for row in rdd.collect():\n",
     "    print(row)\n",
@@ -532,7 +532,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Operaciones sobre RDD\n",
+    "## Operaciones sobre RDD\n",
     "\n",
     "Spark soporta dos tipos de transformaciones sobre RDD:\n",
     "\n",
@@ -574,21 +574,21 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Carga de los archivos.\n",
-    "##\n",
+    "#\n",
+    "# Carga de los archivos.\n",
+    "#\n",
     "rdd = sc.textFile(\"/tmp/wordcount/\")\n",
     "\n",
-    "##\n",
-    "## Calculo de la longitud de cada línea usando la función len().\n",
-    "## Se aplica la función len() a cada elemento del rdd\n",
-    "##\n",
+    "#\n",
+    "# Calculo de la longitud de cada línea usando la función len().\n",
+    "# Se aplica la función len() a cada elemento del rdd\n",
+    "#\n",
     "rdd = rdd.map(len)\n",
     "print(rdd.collect())\n",
     "\n",
-    "##\n",
-    "## Calculo del total de caracteres\n",
-    "##\n",
+    "#\n",
+    "# Calculo del total de caracteres\n",
+    "#\n",
     "rdd = rdd.reduce(lambda a, b: a+b)\n",
     "rdd"
    ]
@@ -617,10 +617,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## En este ejemplo se pasa una función arbitraria a `map`.\n",
-    "## La función add es equivalente a `lambda a, b: a+b`\n",
-    "##\n",
+    "#\n",
+    "# En este ejemplo se pasa una función arbitraria a `map`.\n",
+    "# La función add es equivalente a `lambda a, b: a+b`\n",
+    "#\n",
     "from operator import add\n",
     "rdd = sc.textFile(\"/tmp/wordcount/\")\n",
     "rdd = rdd.map(len)\n",
@@ -633,7 +633,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Transformaciones"
+    "## Transformaciones"
    ]
   },
   {
@@ -691,7 +691,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Acciones"
+    "## Acciones"
    ]
   },
   {
@@ -736,7 +736,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### Ejemplos"
+    "## Ejemplos"
    ]
   },
   {
@@ -750,7 +750,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "#### Ejemplo 1"
+    "### Ejemplo 1"
    ]
   },
   {
@@ -777,15 +777,15 @@
     }
    ],
    "source": [
-    "##\n",
-    "## creación de parejas (key, value). Se desea\n",
-    "## contar el número de ocurrencias de cada letra \n",
-    "## en la siguiente lista.\n",
-    "##\n",
+    "#\n",
+    "# creación de parejas (key, value). Se desea\n",
+    "# contar el número de ocurrencias de cada letra \n",
+    "# en la siguiente lista.\n",
+    "#\n",
     "rdd = sc.parallelize([\"a\", \"b\", \"a\", \"c\", \"d\", \"a\", \"b\"])\n",
     "\n",
     "##\n",
-    "## Se crean las parejas <clave, valor>\n",
+    "# Se crean las parejas <clave, valor>\n",
     "##\n",
     "rdd = rdd.map(lambda s: (s, 1))\n",
     "rdd.collect()"
@@ -805,10 +805,10 @@
     }
    ],
    "source": [
-    "##\n",
-    "## Se reducen las parejas con la misma clave, sumando \n",
-    "## los valores.\n",
-    "##\n",
+    "#\n",
+    "# Se reducen las parejas con la misma clave, sumando \n",
+    "# los valores.\n",
+    "#\n",
     "rdd = rdd.reduceByKey(lambda a, b: a + b)\n",
     "print(rdd.collect())"
    ]
@@ -817,7 +817,7 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "#### Ejemplo 2"
+    "### Ejemplo 2"
    ]
   },
   {
@@ -890,7 +890,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "## Copia el archivo del sistema local al hdfs\n",
+    "# Copia el archivo del sistema local al hdfs\n",
     "!hdfs dfs -copyFromLocal data.txt /tmp/data.txt"
    ]
   },
@@ -959,10 +959,10 @@
     }
    ],
    "source": [
-    "## carga los datos\n",
+    "# carga los datos\n",
     "rdd = sc.textFile(\"/tmp/data.txt\")\n",
     "\n",
-    "## separa los datos por los tabuladores\n",
+    "# separa los datos por los tabuladores\n",
     "rdd = rdd.map(lambda x: x.split('\\t'))\n",
     "rdd.collect()"
    ]
@@ -984,9 +984,9 @@
     }
    ],
    "source": [
-    "## extrae la segunda columna y la convierte en número\n",
+    "# extrae la segunda columna y la convierte en número\n",
     "rdd = rdd.map(lambda x: int(x[1]))\n",
-    "rdd.collect()[0:5] ## se imprimen los primeros cinco valores"
+    "rdd.collect()[0:5] # se imprimen los primeros cinco valores"
    ]
   },
   {
@@ -1007,7 +1007,7 @@
    ],
    "source": [
     "from operator import add\n",
-    "rdd.reduce(add) ## Se reduce sumando los valores. Note que no hay parejas clave-valor"
+    "rdd.reduce(add) # Se reduce sumando los valores. Note que no hay parejas clave-valor"
    ]
   },
   {
@@ -1027,9 +1027,9 @@
     }
    ],
    "source": [
-    "##\n",
-    "## El codigo se puede reescribir como:\n",
-    "##\n",
+    "#\n",
+    "# El codigo se puede reescribir como:\n",
+    "#\n",
     "sc.textFile(\"/tmp/data.txt\") \\\n",
     "    .map(lambda x: x.split('\\t')) \\\n",
     "    .map(lambda x: int(x[1])) \\\n",
@@ -1071,18 +1071,18 @@
     }
    ],
    "source": [
-    "## Carga el archivo y lo separa por tabuladores\n",
+    "# Carga el archivo y lo separa por tabuladores\n",
     "rdd = sc.textFile(\"/tmp/data.txt\").map(lambda x: x.split('\\t'))\n",
     "\n",
-    "##\n",
-    "## Se forman parejas <columna 2, [columna 1]> puesto que \n",
-    "## se desea agrupar por la columna 2. Esto es, \n",
-    "## [ (1, E), (2, A), ..., (1, E), (5, E)]\n",
-    "## Note que el segundo elemento del par es una lista.\n",
-    "##\n",
+    "#\n",
+    "# Se forman parejas <columna 2, [columna 1]> puesto que \n",
+    "# se desea agrupar por la columna 2. Esto es, \n",
+    "# [ (1, E), (2, A), ..., (1, E), (5, E)]\n",
+    "# Note que el segundo elemento del par es una lista.\n",
+    "#\n",
     "rdd = rdd.map(lambda x: (x[1], [x[0]]))\n",
     "\n",
-    "##\n",
+    "#\n",
     "rdd.reduceByKey(add).collect()"
    ]
   },
@@ -1121,45 +1121,45 @@
     }
    ],
    "source": [
-    "## Carga el archivo y lo separa por tabuladores\n",
+    "# Carga el archivo y lo separa por tabuladores\n",
     "rdd = sc.textFile(\"/tmp/data.txt\").map(lambda x: x.split('\\t'))\n",
     "\n",
-    "##\n",
-    "## Se obtiene un rdd que contenga únicamente la columna 4.\n",
-    "##\n",
-    "##  ['jjj:3,bbb:0,ddd:9,ggg:8,hhh:2',\n",
-    "##  ...\n",
-    "##  'hhh:8,ggg:3,jjj:5']\n",
-    "##\n",
+    "#\n",
+    "# Se obtiene un rdd que contenga únicamente la columna 4.\n",
+    "#\n",
+    "#  ['jjj:3,bbb:0,ddd:9,ggg:8,hhh:2',\n",
+    "#  ...\n",
+    "#  'hhh:8,ggg:3,jjj:5']\n",
+    "#\n",
     "rdd = rdd.map(lambda x: x[3])\n",
     "\n",
-    "##\n",
-    "## Se parte por la ','. flatMap() genera un nuevo registro\n",
-    "## en el rdd por cada valor en la lista retornada por \n",
-    "## la función lambda x: x.split(',')\n",
-    "##\n",
-    "##   ['jjj:3',\n",
-    "##    'bbb:0', \n",
-    "##    ......\n",
-    "##    'ggg:3',\n",
-    "##    'jjj:5']\n",
-    "##\n",
+    "#\n",
+    "# Se parte por la ','. flatMap() genera un nuevo registro\n",
+    "# en el rdd por cada valor en la lista retornada por \n",
+    "# la función lambda x: x.split(',')\n",
+    "#\n",
+    "#   ['jjj:3',\n",
+    "#    'bbb:0', \n",
+    "#    ......\n",
+    "#    'ggg:3',\n",
+    "#    'jjj:5']\n",
+    "#\n",
     "rdd = rdd.flatMap(lambda x: x.split(','))\n",
     "\n",
-    "##\n",
-    "## Separa por los ':' y toma el primer elemento.\n",
-    "## \n",
-    "##   ['jjj',\n",
-    "##    'bbb',\n",
-    "##    .....\n",
-    "##    'ggg',\n",
-    "##    'jjj']\n",
-    "##\n",
+    "#\n",
+    "# Separa por los ':' y toma el primer elemento.\n",
+    "# \n",
+    "#   ['jjj',\n",
+    "#    'bbb',\n",
+    "#    .....\n",
+    "#    'ggg',\n",
+    "#    'jjj']\n",
+    "#\n",
     "rdd = rdd.map(lambda x: x.split(':')[0])\n",
     "\n",
-    "##\n",
-    "## Se aplica el algoritmo de conteo de palabras\n",
-    "##\n",
+    "#\n",
+    "# Se aplica el algoritmo de conteo de palabras\n",
+    "#\n",
     "rdd = rdd.map(lambda s: (s, 1)).reduceByKey(add)\n",
     "rdd.collect()"
    ]
@@ -1229,23 +1229,23 @@
     }
    ],
    "source": [
-    "## Carga el archivo y lo separa por tabuladores\n",
+    "# Carga el archivo y lo separa por tabuladores\n",
     "rdd = sc.textFile(\"/tmp/data.txt\").map(lambda x: x.split('\\t'))\n",
     "\n",
-    "##\n",
-    "## Elimina la columna 2. Queda así:\n",
-    "##\n",
-    "##   [['E', 'b,g,f', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
-    "##    ['A', 'a,f,c', 'ccc:2,ddd:0,aaa:3,hhh:9'],\n",
-    "##   ....\n",
-    "##   ['E', 'e,d', 'fff:9,iii:2,eee:0'],\n",
-    "##   ['E', 'f,a,d', 'hhh:8,ggg:3,jjj:5']]\n",
-    "##\n",
+    "#\n",
+    "# Elimina la columna 2. Queda así:\n",
+    "#\n",
+    "#   [['E', 'b,g,f', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
+    "#    ['A', 'a,f,c', 'ccc:2,ddd:0,aaa:3,hhh:9'],\n",
+    "#   ....\n",
+    "#   ['E', 'e,d', 'fff:9,iii:2,eee:0'],\n",
+    "#   ['E', 'f,a,d', 'hhh:8,ggg:3,jjj:5']]\n",
+    "#\n",
     "rdd = rdd.map(lambda x: [x[0], x[2], x[3]])\n",
     "\n",
-    "##\n",
-    "## Parte las columnas 2 y 3 por la coma y cuenta los elementos\n",
-    "##\n",
+    "#\n",
+    "# Parte las columnas 2 y 3 por la coma y cuenta los elementos\n",
+    "#\n",
     "rdd = rdd.map(lambda x: [x[0], \\\n",
     "                         len(x[1].split(',')), \\\n",
     "                         len(x[2].split(','))])\n",
@@ -1351,81 +1351,81 @@
     }
    ],
    "source": [
-    "## Carga el archivo y lo separa por tabuladores\n",
+    "# Carga el archivo y lo separa por tabuladores\n",
     "rdd = sc.textFile(\"/tmp/data.txt\").map(lambda x: x.split('\\t'))\n",
     "\n",
-    "##\n",
-    "## Elimina las dos primeras columnas. \n",
-    "## \n",
-    "## Resultado:\n",
-    "##\n",
-    "##  [['b,g,f', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
-    "##   ['a,f,c', 'ccc:2,ddd:0,aaa:3,hhh:9'],\n",
-    "##   ...\n",
-    "##   ['e,d', 'fff:9,iii:2,eee:0'],\n",
-    "##   ['f,a,d', 'hhh:8,ggg:3,jjj:5']]\n",
-    "##\n",
+    "#\n",
+    "# Elimina las dos primeras columnas. \n",
+    "# \n",
+    "# Resultado:\n",
+    "#\n",
+    "#  [['b,g,f', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
+    "#   ['a,f,c', 'ccc:2,ddd:0,aaa:3,hhh:9'],\n",
+    "#   ...\n",
+    "#   ['e,d', 'fff:9,iii:2,eee:0'],\n",
+    "#   ['f,a,d', 'hhh:8,ggg:3,jjj:5']]\n",
+    "#\n",
     "rdd = rdd.map(lambda x: [x[2], x[3]])\n",
     "\n",
-    "##\n",
-    "## Expande el dataset generando un registro por cada \n",
-    "## elemento de la columna 1.\n",
-    "##\n",
-    "## Resultado:\n",
-    "##\n",
-    "##  [['b', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
-    "##   ['g', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
-    "##  ...\n",
-    "##   ['a', 'hhh:8,ggg:3,jjj:5'],\n",
-    "##   ['d', 'hhh:8,ggg:3,jjj:5']]\n",
-    "##\n",
+    "#\n",
+    "# Expande el dataset generando un registro por cada \n",
+    "# elemento de la columna 1.\n",
+    "#\n",
+    "# Resultado:\n",
+    "#\n",
+    "#  [['b', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
+    "#   ['g', 'jjj:3,bbb:0,ddd:9,ggg:8,hhh:2'],\n",
+    "#  ...\n",
+    "#   ['a', 'hhh:8,ggg:3,jjj:5'],\n",
+    "#   ['d', 'hhh:8,ggg:3,jjj:5']]\n",
+    "#\n",
     "rdd = rdd.flatMap(lambda x: [[e, x[1]]  for e in x[0].split(',')])\n",
     "\n",
+    "#\n",
+    "# Cambia la segunda columna por una lista \n",
+    "# partiendo los elementos por las comas\n",
     "##\n",
-    "## Cambia la segunda columna por una lista \n",
-    "## partiendo los elementos por las comas\n",
-    "##\n",
-    "## Resultado:\n",
-    "##\n",
-    "##  [['b', ['jjj:3', 'bbb:0', 'ddd:9', 'ggg:8', 'hhh:2']],\n",
-    "##   ['g', ['jjj:3', 'bbb:0', 'ddd:9', 'ggg:8', 'hhh:2']],\n",
-    "##   ....\n",
-    "##   ['a', ['hhh:8', 'ggg:3', 'jjj:5']],\n",
-    "##   ['d', ['hhh:8', 'ggg:3', 'jjj:5']]]\n",
-    "##\n",
+    "# Resultado:\n",
+    "#\n",
+    "#  [['b', ['jjj:3', 'bbb:0', 'ddd:9', 'ggg:8', 'hhh:2']],\n",
+    "#   ['g', ['jjj:3', 'bbb:0', 'ddd:9', 'ggg:8', 'hhh:2']],\n",
+    "#   ....\n",
+    "#   ['a', ['hhh:8', 'ggg:3', 'jjj:5']],\n",
+    "#   ['d', ['hhh:8', 'ggg:3', 'jjj:5']]]\n",
+    "#\n",
     "rdd = rdd.map(lambda x: [x[0], x[1].split(',')])\n",
     "\n",
-    "##\n",
-    "## Parte cada elemento por los ':' y toma el primer elemento\n",
-    "##\n",
-    "## Resultado:\n",
-    "##\n",
-    "##    [['b', ['jjj', 'bbb', 'ddd', 'ggg', 'hhh']],\n",
-    "##     ['g', ['jjj', 'bbb', 'ddd', 'ggg', 'hhh']],\n",
-    "##     ...\n",
-    "##     ['a', ['hhh', 'ggg', 'jjj']],\n",
-    "##     ['d', ['hhh', 'ggg', 'jjj']]]\n",
-    "##\n",
+    "#\n",
+    "# Parte cada elemento por los ':' y toma el primer elemento\n",
+    "#\n",
+    "# Resultado:\n",
+    "#\n",
+    "#    [['b', ['jjj', 'bbb', 'ddd', 'ggg', 'hhh']],\n",
+    "#     ['g', ['jjj', 'bbb', 'ddd', 'ggg', 'hhh']],\n",
+    "#     ...\n",
+    "#     ['a', ['hhh', 'ggg', 'jjj']],\n",
+    "#     ['d', ['hhh', 'ggg', 'jjj']]]\n",
+    "#\n",
     "rdd = rdd.map(lambda x: [x[0], [a.split(':')[0] for a in x[1] ]])\n",
     "\n",
-    "##\n",
-    "## Genera las parejas clave valor.\n",
-    "## \n",
-    "## Resultado:\n",
-    "##\n",
-    "##   [(('b', 'jjj'), 1),\n",
-    "##    (('b', 'bbb'), 1),\n",
-    "##    ...\n",
-    "##    (('d', 'ggg'), 1),\n",
-    "##    (('d', 'jjj'), 1)]\n",
-    "##\n",
+    "#\n",
+    "# Genera las parejas clave valor.\n",
+    "# \n",
+    "# Resultado:\n",
+    "#\n",
+    "#   [(('b', 'jjj'), 1),\n",
+    "#    (('b', 'bbb'), 1),\n",
+    "#    ...\n",
+    "#    (('d', 'ggg'), 1),\n",
+    "#    (('d', 'jjj'), 1)]\n",
+    "#\n",
     "rdd = rdd.flatMap(lambda x: [((x[0], a), 1)  for a in x[1]])\n",
     "\n",
-    "##\n",
-    "## Reduce por clave para hacer el conteo.\n",
-    "## Se usa sortByKey() para ordenas la salida\n",
-    "## por claves\n",
-    "##\n",
+    "#\n",
+    "# Reduce por clave para hacer el conteo.\n",
+    "# Se usa sortByKey() para ordenas la salida\n",
+    "# por claves\n",
+    "#\n",
     "rdd.reduceByKey(add).sortByKey().collect()"
    ]
   },
@@ -1466,7 +1466,7 @@
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "Python 3",
+   "display_name": "Python 3 (ipykernel)",
    "language": "python",
    "name": "python3"
   },
@@ -1480,7 +1480,7 @@
    "name": "python",
    "nbconvert_exporter": "python",
    "pygments_lexer": "ipython3",
-   "version": "3.6.8"
+   "version": "3.8.10"
   },
   "toc-autonumbering": false
  },
