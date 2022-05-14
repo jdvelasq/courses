@@ -29,6 +29,35 @@ Sesión 01 --- 2022-05-13
 
    **Introducción práctica a los problemas de productos de datos en las organizaciones**
 
+
+      .. note::
+
+         Esta parte es **opcional**, pero brindará una mejor experiencia para los usuarios que utilizan 
+         Microsoft Windows. Si usted usa Linux o Mac OS X, no necesita realizar ninguna acción, pero,
+         puede usar esta imagen de Python para aislar los cambios de su sistema operativo.
+         
+         Para tener acceso al Terminal (Windows) use el siguiente comando en el símbolo del sistema:
+
+         * Windows PowerShell:
+
+            .. code:: bash
+            
+                  $ docker run --rm -it -v ${PWD}:/workspace --name python3.8 -p 8888:8888 jdvelasq/python:3.8-ubuntu
+         
+
+         * Linux y Mac OS:
+
+            .. code:: bash
+            
+                  $ docker run --rm -it -v "$PWD":/workspace --name python3.8 -p 8888:8888 jdvelasq/python:3.8-ubuntu
+
+         Para cerrar el Terminal use el siguiente comando:
+
+         .. code:: bash
+         
+               $ exit
+
+
       Simulación de las etapas de evolución de un sistema de PQRS en una empresa.
 
       .. toctree::
