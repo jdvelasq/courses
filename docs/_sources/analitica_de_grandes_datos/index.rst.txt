@@ -128,9 +128,9 @@ Sesión 02 --- 2022-05-20
 
             /notebooks/masive_datasets/1-*
 
-
-    **Apache Hadoop y Algoritmo MapReduce**
     
+    **Apache Hadoop (y Algoritmo MapReduce)**
+
         .. toctree::
             :maxdepth: 1
             :glob:
@@ -166,24 +166,25 @@ Sesión 02 --- 2022-05-20
 Sesión 03 --- 2022-05-27
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos**
-
-        **Apache Pig**
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
 
-                /notebooks/pig/1-*
+    **Limpieza de Datos con Apache Pig**
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/pig/1-*
 
 
-                /notebooks/pig/2-*
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+
+            /notebooks/pig/2-*
 
             
 
@@ -203,22 +204,22 @@ Sesión 03 --- 2022-05-27
 Sesión 04 --- 2022-06-03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos**
+    
 
-        **Apache Hive**
+    **Gestión de Bases de Datos con Apache Hive**
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/hive/1-*
+            /notebooks/hive/1-*
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/hive/2-*        
+            /notebooks/hive/2-*        
 
 
 
@@ -237,9 +238,11 @@ Sesión 04 --- 2022-06-03
 Sesión 05 --- 2022-06-10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Ingeniería de Datos**
 
-        **Programación funcional en Apache Spark**
+    **Apache Spark RDD**
+    
+
+        **Programación funcional**
 
             .. toctree::
                 :maxdepth: 1
@@ -247,9 +250,8 @@ Sesión 05 --- 2022-06-10
 
                 /notebooks/pyspark/1-*
 
+        **Aprendizaje de Máquinas**
 
-        **Apache Spark RDD**
-        
             .. toctree::
                 :maxdepth: 1
                 :glob:
@@ -257,13 +259,13 @@ Sesión 05 --- 2022-06-10
                 /notebooks/pyspark/2-*
 
 
-        **Apache Spark SQL**
+    **Gestión de Bases de Datos con Apache Spark SQL**
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/pyspark/3-*
+            /notebooks/pyspark/3-*
 
 
 .. ......................................................................................
@@ -281,39 +283,37 @@ Sesión 05 --- 2022-06-10
 Sesión 06 --- 2022-06-17
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    **Analítica Predictiva**    
+
+    **Aprendizaje de Máquinas con Apache Spark ML**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/pyspark/4-*
 
 
-        **Apache Spark ML**
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/pyspark/4-*
+            /notebooks/pyspark/5-*
 
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/pyspark/5-*
-
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/pyspark/6-*
+            /notebooks/pyspark/6-*
 
 
-        **Apache Spark Streaming**
+    **Apache Spark Streaming**
 
-            .. toctree::
-                :maxdepth: 1
-                :glob:
+        .. toctree::
+            :maxdepth: 1
+            :glob:
 
-                /notebooks/pyspark/7-*
+            /notebooks/pyspark/7-*
 
 
 
@@ -334,7 +334,7 @@ Sesión 07 --- 2022-06-24
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-    **Analítica Predictiva**
+    **Redes Neuronales Artificiales con Keras y TensorFlow**
 
         **Introducción a Keras --- 35:36 min**
 
@@ -370,7 +370,7 @@ Sesión 08 --- 2022-07-01
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:18:10**
 
-    **Analítica Predictiva**
+    **Redes Neuronales Artificiales con Keras y TensorFlow**
 
         **Fundamentos de ML con Keras --- 2:18:10**
 
