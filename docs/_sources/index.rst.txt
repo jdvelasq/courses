@@ -27,7 +27,6 @@ Material de apoyo para cursos
     analitica_predictiva/index
     ciencia_de_los_datos/index    
     productos_de_datos/index
-    analitica_avanzada/index
 
 
 .. toctree::
