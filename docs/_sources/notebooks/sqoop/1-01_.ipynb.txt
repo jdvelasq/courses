@@ -1,0 +1,602 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "816db6f4-6121-45c5-aace-71dfb313994d",
+   "metadata": {},
+   "source": [
+    "Sqoop import (migración desde la BD hacia el HDFS)\n",
+    "===\n",
+    "\n",
+    "* Última modificación: Mayo 19, 2022"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e049cf86-fb2f-4f4e-a442-ad2a4a65a088",
+   "metadata": {},
+   "source": [
+    "Descarga de datos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "1d3c355b-7424-411f-af7e-89df9b8631d9",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "file_name = \"drivers.csv\"\n",
+    "url = \"https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/drivers/\"\n",
+    "!wget --quiet {url + file_name} -P /tmp/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e3cb4fa3-64f2-4dcc-98f0-f0f8ad64b79e",
+   "metadata": {},
+   "source": [
+    "Creación y carga de datos de la base de datos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "65e8ea8b-8ede-4c63-9dca-54d6fd0b559c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import sqlite3\n",
+    "\n",
+    "conn = sqlite3.connect(\"sample.db\")\n",
+    "cur = conn.cursor()\n",
+    "\n",
+    "conn.executescript(\n",
+    "    \"\"\"\n",
+    "    DROP TABLE IF EXISTS drivers;\n",
+    "\n",
+    "    CREATE TABLE drivers (\n",
+    "        driverId       INT,\n",
+    "        name           STRING,\n",
+    "        ssn            STRING,\n",
+    "        location       STRING,\n",
+    "        certified      STRING,\n",
+    "        wage_plan      STRING\n",
+    "    );\n",
+    "    \"\"\"\n",
+    ")\n",
+    "conn.commit()\n",
+    "\n",
+    "with open(\"/tmp/drivers.csv\", \"rt\") as f:\n",
+    "    data = f.readlines()\n",
+    "\n",
+    "data = [line.replace('\\n', '') for line in data]\n",
+    "data = [line.split(\",\") for line in data]\n",
+    "data = [tuple(line) for line in data]\n",
+    "data = data[1:]\n",
+    "\n",
+    "cur.executemany(\"INSERT INTO drivers VALUES (?,?,?,?,?,?)\", data)\n",
+    "conn.commit()\n",
+    "conn.close()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "0cb81e86-144c-4346-87fe-018972bad6c5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10|George Vetticaden|621011971|244-4532 Nulla Rd.|N|miles\n",
+      "11|Jamie Engesser|262112338|366-4125 Ac Street|N|miles\n",
+      "12|Paul Coddin|198041975|Ap #622-957 Risus. Street|Y|hours\n",
+      "13|Joe Niemiec|139907145|2071 Hendrerit. Ave|Y|hours\n",
+      "14|Adis Cesir|820812209|Ap #810-1228 In St.|Y|hours\n",
+      "15|Rohit Bakshi|239005227|648-5681 Dui- Rd.|Y|hours\n",
+      "16|Tom McCuch|363303105|P.O. Box 313- 962 Parturient Rd.|Y|hours\n",
+      "17|Eric Mizell|123808238|P.O. Box 579- 2191 Gravida. Street|Y|hours\n",
+      "18|Grant Liu|171010151|Ap #928-3159 Vestibulum Av.|Y|hours\n",
+      "19|Ajay Singh|160005158|592-9430 Nonummy Avenue|Y|hours\n"
+     ]
+    }
+   ],
+   "source": [
+    "!sqlite3 sample.db \"select * from drivers\" | head"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f84a485d-487a-48d1-b52e-b42eb57d4a71",
+   "metadata": {},
+   "source": [
+    "Importación de una tabla completa\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "c1d7e259-6ae9-4642-a590-87f4baebd987",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
+      "Please set $HBASE_HOME to the root of your HBase installation.\n",
+      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
+      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
+      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
+      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
+      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
+      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
+      "-------------------------------------------------------------------------------------------------------------------------------------------\n",
+      "| driverId             | name                 | ssn                  | location             | certified            | wage_plan            | \n",
+      "-------------------------------------------------------------------------------------------------------------------------------------------\n",
+      "| 10                   | George Vetticaden    | 621011971            | 244-4532 Nulla Rd.   | N                    | miles                | \n",
+      "| 11                   | Jamie Engesser       | 262112338            | 366-4125 Ac Street   | N                    | miles                | \n",
+      "| 12                   | Paul Coddin          | 198041975            | Ap #622-957 Risus. Street | Y                    | hours                | \n",
+      "-------------------------------------------------------------------------------------------------------------------------------------------\n"
+     ]
+    }
+   ],
+   "source": [
+    "!sqoop eval --connect jdbc:sqlite:sample.db --driver org.sqlite.JDBC --query \"SELECT * FROM drivers LIMIT 3\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "d05f95c7-8a5c-4ee9-8494-d85e841145bc",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting /tmp/full_import.sh\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile /tmp/full_import.sh\n",
+    "\n",
+    "hdfs dfs -rm -r /tmp/drivers\n",
+    "\n",
+    "sqoop-import \\\n",
+    "    --connect jdbc:sqlite:sample.db \\\n",
+    "    --driver org.sqlite.JDBC \\\n",
+    "    --table drivers \\\n",
+    "    --target-dir /tmp/drivers \\\n",
+    "    --m 1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "014124e4-f341-45db-97f9-86536ffd1ff5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Deleted /tmp/drivers\n",
+      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
+      "Please set $HBASE_HOME to the root of your HBase installation.\n",
+      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
+      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
+      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
+      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
+      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
+      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
+      "Note: /tmp/sqoop-root/compile/4dd202e347a783dab04b175af2a542fe/drivers.java uses or overrides a deprecated API.\n",
+      "Note: Recompile with -Xlint:deprecation for details.\n",
+      "Error: java.io.IOException: SQLException in nextKeyValue\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
+      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
+      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
+      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
+      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
+      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
+      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
+      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
+      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
+      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
+      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
+      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
+      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
+      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
+      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
+      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
+      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
+      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
+      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
+      "\t... 12 more\n",
+      "\n",
+      "Error: java.io.IOException: SQLException in nextKeyValue\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
+      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
+      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
+      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
+      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
+      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
+      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
+      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
+      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
+      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
+      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
+      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
+      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
+      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
+      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
+      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
+      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
+      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
+      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
+      "\t... 12 more\n",
+      "\n",
+      "Error: java.io.IOException: SQLException in nextKeyValue\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
+      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
+      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
+      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
+      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
+      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
+      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
+      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
+      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
+      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
+      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
+      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
+      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
+      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
+      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
+      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
+      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
+      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
+      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
+      "\t... 12 more\n",
+      "\n",
+      "22/05/19 22:28:34 ERROR tool.ImportTool: Import failed: Import job failed!\n"
+     ]
+    }
+   ],
+   "source": [
+    "!bash /tmp/full_import.sh"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "ee4a7a68-3edc-4dd0-8eda-44099fcf4555",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
+      "Please set $HBASE_HOME to the root of your HBase installation.\n",
+      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
+      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
+      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
+      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
+      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
+      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
+      "Note: /tmp/sqoop-root/compile/990a8af57056ffce0d7e285c173fb8f9/QueryResult.java uses or overrides a deprecated API.\n",
+      "Note: Recompile with -Xlint:deprecation for details.\n",
+      "22/05/19 22:28:37 ERROR tool.ImportTool: Import failed: org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://0.0.0.0:9000/tmp/drivers already exists\n",
+      "\tat org.apache.hadoop.mapreduce.lib.output.FileOutputFormat.checkOutputSpecs(FileOutputFormat.java:146)\n",
+      "\tat org.apache.hadoop.mapreduce.JobSubmitter.checkSpecs(JobSubmitter.java:279)\n",
+      "\tat org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:145)\n",
+      "\tat org.apache.hadoop.mapreduce.Job$11.run(Job.java:1570)\n",
+      "\tat org.apache.hadoop.mapreduce.Job$11.run(Job.java:1567)\n",
+      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
+      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
+      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
+      "\tat org.apache.hadoop.mapreduce.Job.submit(Job.java:1567)\n",
+      "\tat org.apache.hadoop.mapreduce.Job.waitForCompletion(Job.java:1588)\n",
+      "\tat org.apache.sqoop.mapreduce.ImportJobBase.doSubmitJob(ImportJobBase.java:200)\n",
+      "\tat org.apache.sqoop.mapreduce.ImportJobBase.runJob(ImportJobBase.java:173)\n",
+      "\tat org.apache.sqoop.mapreduce.ImportJobBase.runImport(ImportJobBase.java:270)\n",
+      "\tat org.apache.sqoop.manager.SqlManager.importQuery(SqlManager.java:748)\n",
+      "\tat org.apache.sqoop.tool.ImportTool.importTable(ImportTool.java:522)\n",
+      "\tat org.apache.sqoop.tool.ImportTool.run(ImportTool.java:628)\n",
+      "\tat org.apache.sqoop.Sqoop.run(Sqoop.java:147)\n",
+      "\tat org.apache.hadoop.util.ToolRunner.run(ToolRunner.java:76)\n",
+      "\tat org.apache.sqoop.Sqoop.runSqoop(Sqoop.java:183)\n",
+      "\tat org.apache.sqoop.Sqoop.runTool(Sqoop.java:234)\n",
+      "\tat org.apache.sqoop.Sqoop.runTool(Sqoop.java:243)\n",
+      "\tat org.apache.sqoop.Sqoop.main(Sqoop.java:252)\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "!sqoop import --connect jdbc:sqlite:sample.db --driver org.sqlite.JDBC  --query \"SELECT * FROM drivers WHERE driverId=10 AND \\$CONDITIONS\" --target-dir /tmp/drivers -m 1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "5410040b-a1ad-4233-8e00-898c3bee2329",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ls: `/user/root/drivers': No such file or directory\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hdfs dfs -ls /user/root/drivers"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "4af85bf7-0076-4cde-8de2-c2a376f3b2e0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "cat: `/user/root/truck_events/part-m-00000': No such file or directory\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hdfs dfs -cat /user/root/truck_events/part-m-00000"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "39db9018-2ad9-4bc4-9c4d-d2641ba29951",
+   "metadata": {},
+   "source": [
+    "Importación de un subconjunto de datos de una tabla\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "cd52b435-0a79-42ee-b545-9475361ce5d3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting partial-import.sh\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile partial-import.sh\n",
+    "\n",
+    "hdfs dfs -rm -r /tmp/drivers\n",
+    "\n",
+    "sqoop import \\\n",
+    "    --connect jdbc:sqlite:sample.db \\\n",
+    "    --table drivers \\\n",
+    "    --driver org.sqlite.JDBC \\\n",
+    "    -m 1 \\\n",
+    "    --where \"driverId=10\" \\\n",
+    "    --target-dir /tmp/drivers/"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "99ab501c-f0ca-4a9b-9cb5-ee7b422b943c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Deleted /tmp/drivers\n",
+      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
+      "Please set $HBASE_HOME to the root of your HBase installation.\n",
+      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
+      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
+      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
+      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
+      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
+      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
+      "Note: /tmp/sqoop-root/compile/3db8756b79b6cf4b930c3a7a02c2c0a3/drivers.java uses or overrides a deprecated API.\n",
+      "Note: Recompile with -Xlint:deprecation for details.\n",
+      "Error: java.io.IOException: SQLException in nextKeyValue\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
+      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
+      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
+      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
+      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
+      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
+      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
+      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
+      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
+      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
+      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
+      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
+      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
+      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
+      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
+      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
+      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
+      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
+      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
+      "\t... 12 more\n",
+      "\n",
+      "Error: java.io.IOException: SQLException in nextKeyValue\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
+      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
+      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
+      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
+      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
+      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
+      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
+      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
+      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
+      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
+      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
+      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
+      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
+      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
+      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
+      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
+      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
+      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
+      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
+      "\t... 12 more\n",
+      "\n",
+      "Error: java.io.IOException: SQLException in nextKeyValue\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
+      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
+      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
+      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
+      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
+      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
+      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
+      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
+      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
+      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
+      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
+      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
+      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
+      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
+      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
+      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
+      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
+      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
+      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
+      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
+      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
+      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
+      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
+      "\t... 12 more\n",
+      "\n",
+      "22/05/19 22:29:07 ERROR tool.ImportTool: Import failed: Import job failed!\n"
+     ]
+    }
+   ],
+   "source": [
+    "!bash partial-import.sh"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "c831512c-f0eb-4313-a3fe-9b3e7528c261",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!hdfs dfs -ls /tmp/drivers/"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "dfd3b324-a39b-4b34-9be2-e363ab5ad8df",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "cat: `/tmp/drivers/part-m-00000': No such file or directory\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hdfs dfs -cat /tmp/drivers/part-m-00000"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "5c9d3d15-b522-4c48-97fb-3b4d0c83b7d4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!rm sample.db *.java *.sh"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

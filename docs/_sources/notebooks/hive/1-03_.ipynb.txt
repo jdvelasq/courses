@@ -1,0 +1,910 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Operaciones básicas en Hive\n",
+    "\n",
+    "* Última modificación: Mayo 17, 2022"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Este tutorial esta basado en https://es.hortonworks.com/tutorial/beginners-guide-to-apache-pig/\n",
+    "\n",
+    "En este tutorial se ejemplifica: \n",
+    "\n",
+    "* La carga de datos. \n",
+    "\n",
+    "* El uso básico de consultas.\n",
+    "\n",
+    "* La exportación de resultados."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Cell magic `%%hive`\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from IPython.core.magic import Magics, cell_magic, line_magic, magics_class\n",
+    "from pexpect import spawn\n",
+    "\n",
+    "TIMEOUT = 60\n",
+    "PROG = \"hive\"\n",
+    "PROMPT = [\"\\r\\n    > \", \"\\r\\nhive> \"]\n",
+    "QUIT = \"quit;\"\n",
+    "\n",
+    "\n",
+    "@magics_class\n",
+    "class Magic(Magics):\n",
+    "    def __init__(self, shell):\n",
+    "        super().__init__(shell)\n",
+    "        self.app = spawn(PROG, timeout=60)\n",
+    "        self.app.expect(PROMPT)\n",
+    "\n",
+    "    @cell_magic\n",
+    "    def hive(self, line, cell):\n",
+    "        cell_lines = [cell_line.strip() for cell_line in cell.split(\"\\n\")]\n",
+    "        cell_lines = [cell_line for cell_line in cell_lines if cell_line != \"\"]\n",
+    "        for cell_line in cell_lines:\n",
+    "            self.app.sendline(cell_line)\n",
+    "            self.app.expect(PROMPT, timeout=TIMEOUT)\n",
+    "            output = self.app.before.decode()\n",
+    "            output = output.replace(\"\\r\\n\", \"\\n\")\n",
+    "            output = output.split(\"\\n\")\n",
+    "            output = [output_line.strip() for output_line in output]\n",
+    "            for output_line in output:\n",
+    "                if output_line not in cell_lines:\n",
+    "                    print(output_line)\n",
+    "        return None\n",
+    "\n",
+    "    @line_magic\n",
+    "    def quit(self, line):\n",
+    "        self.app.sendline(QUIT)\n",
+    "\n",
+    "\n",
+    "def load_ipython_extension(ip):\n",
+    "    ip.register_magics(Magic(ip))\n",
+    "\n",
+    "\n",
+    "load_ipython_extension(ip=get_ipython())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Preparación\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Los datos se encuentran almacenados en la carpeta `drivers` del directorio actual. A continución se procede a crear la carpeta `/tmp/drivers` en el sistema de archivos de Hadoop (HDFS). "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "--2022-05-17 13:29:26--  https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/drivers/truck_event_text_partition.csv\n",
+      "Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.111.133, 185.199.108.133, 185.199.109.133, ...\n",
+      "Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.111.133|:443... connected.\n",
+      "HTTP request sent, awaiting response... 200 OK\n",
+      "Length: 2272077 (2.2M) [text/plain]\n",
+      "Saving to: ‘truck_event_text_partition.csv’\n",
+      "\n",
+      "truck_event_text_pa 100%[===================>]   2.17M  4.68MB/s    in 0.5s    \n",
+      "\n",
+      "2022-05-17 13:29:27 (4.68 MB/s) - ‘truck_event_text_partition.csv’ saved [2272077/2272077]\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "!wget https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/drivers/truck_event_text_partition.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "-rw-r--r--   1 root supergroup    2272077 2022-05-17 13:30 /tmp/drivers/truck_event_text_partition.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Borra la carpeta si existe\n",
+    "#\n",
+    "!hdfs dfs -rm -r -f /tmp/drivers\n",
+    "\n",
+    "#\n",
+    "# Crea la carpeta drivers en el HDFS\n",
+    "#\n",
+    "!hdfs dfs -mkdir /tmp/drivers\n",
+    "\n",
+    "#\n",
+    "# Copia los archivos al HDFS\n",
+    "#\n",
+    "!hdfs dfs -copyFromLocal truck_event_text_partition.csv  /tmp/drivers/truck_event_text_partition.csv\n",
+    "\n",
+    "#\n",
+    "# Lista los archivos al HDFS para verificar\n",
+    "# que los archivos fueron copiados correctamente.\n",
+    "#\n",
+    "!hdfs dfs -ls /tmp/drivers/*"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Carga de los datos de los eventos de los conductores\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En el siguiente código se crea crea la tabla de eventos de los conductores en el sistema; la primera instrucción borra la tabla si ya existe. Note que se debe especificar que los campos en las filas están delimitados por comas para que Hive los importe correctamente."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "Time taken: 0.061 seconds\n",
+      "OK\n",
+      "Time taken: 0.485 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "DROP TABLE IF EXISTS truck_events;\n",
+    "\n",
+    "CREATE TABLE truck_events (driverId       INT, \n",
+    "                           truckId        INT,\n",
+    "                           eventTime      STRING,\n",
+    "                           eventType      STRING, \n",
+    "                           longitude      DOUBLE, \n",
+    "                           latitude       DOUBLE,\n",
+    "                           eventKey       STRING, \n",
+    "                           correlationId  STRING, \n",
+    "                           driverName     STRING,\n",
+    "                           routeId        BIGINT,\n",
+    "                           routeName      STRING,\n",
+    "                           eventDate      STRING)\n",
+    "\n",
+    "ROW FORMAT DELIMITED \n",
+    "FIELDS TERMINATED BY ','\n",
+    "TBLPROPERTIES (\"skip.header.line.count\"=\"1\");"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Se verifican las tablas existentes en la base de datos."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "docs\n",
+      "truck_events\n",
+      "word_counts\n",
+      "Time taken: 0.03 seconds, Fetched: 3 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SHOW TABLES;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A continuación se muestra la información detallada de creación de la tabla `truck_events`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "CREATE TABLE `truck_events`(\n",
+      "`driverid` int,\n",
+      "`truckid` int,\n",
+      "`eventtime` string,\n",
+      "`eventtype` string,\n",
+      "`longitude` double,\n",
+      "`latitude` double,\n",
+      "`eventkey` string,\n",
+      "`correlationid` string,\n",
+      "`drivername` string,\n",
+      "`routeid` bigint,\n",
+      "`routename` string,\n",
+      "`eventdate` string)\n",
+      "ROW FORMAT SERDE\n",
+      "'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'\n",
+      "WITH SERDEPROPERTIES (\n",
+      "'field.delim'=',',\n",
+      "'serialization.format'=',')\n",
+      "STORED AS INPUTFORMAT\n",
+      "'org.apache.hadoop.mapred.TextInputFormat'\n",
+      "OUTPUTFORMAT\n",
+      "'org.apache.hadoop.hive.ql.io.HiveIgnoreKeyTextOutputFormat'\n",
+      "LOCATION\n",
+      "'hdfs://0.0.0.0:9000/user/hive/warehouse/truck_events'\n",
+      "TBLPROPERTIES (\n",
+      "'skip.header.line.count'='1',\n",
+      "'transient_lastDdlTime'='1652794284')\n",
+      "Time taken: 0.19 seconds, Fetched: 27 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SHOW CREATE TABLE truck_events;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "También es posible visualizar los campos y su contenido con el comando `DESCRIBE`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "driverid            \tint\n",
+      "truckid             \tint\n",
+      "eventtime           \tstring\n",
+      "eventtype           \tstring\n",
+      "longitude           \tdouble\n",
+      "latitude            \tdouble\n",
+      "eventkey            \tstring\n",
+      "correlationid       \tstring\n",
+      "drivername          \tstring\n",
+      "routeid             \tbigint\n",
+      "routename           \tstring\n",
+      "eventdate           \tstring\n",
+      "Time taken: 0.045 seconds, Fetched: 12 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "DESCRIBE truck_events;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Carga de datos\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La carga de datos se realiza con la siguiente consulta."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Loading data to table default.truck_events\n",
+      "OK\n",
+      "Time taken: 0.536 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "LOAD DATA INPATH '/tmp/drivers/truck_event_text_partition.csv' OVERWRITE \n",
+    "INTO TABLE truck_events;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Se verifican las propieades de la tabla después de la carga de datos."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "numFiles\t1\n",
+      "numRows\t0\n",
+      "rawDataSize\t0\n",
+      "skip.header.line.count\t1\n",
+      "totalSize\t2272077\n",
+      "transient_lastDdlTime\t1652794303\n",
+      "Time taken: 0.046 seconds, Fetched: 6 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SHOW TBLPROPERTIES truck_events;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Visualización de datos\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "La visualización se realiza mediante consultas con\n",
+    "`SELECT`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "14\t25\t59:21.4\tNormal\t-94.58\t37.03\t14|25|9223370572464814373\t3.66E+18\tAdis Cesir\t160405074\tJoplin to Kansas City Route 2\t2016-05-27-22\n",
+      "18\t16\t59:21.7\tNormal\t-89.66\t39.78\t18|16|9223370572464814089\t3.66E+18\tGrant Liu\t1565885487\tSpringfield to KC Via Hanibal\t2016-05-27-22\n",
+      "27\t105\t59:21.7\tNormal\t-90.21\t38.65\t27|105|9223370572464814070\t3.66E+18\tMark Lochbihler\t1325562373\tSpringfield to KC Via Columbia Route 2\t2016-05-27-22\n",
+      "11\t74\t59:21.7\tNormal\t-90.2\t38.65\t11|74|9223370572464814123\t3.66E+18\tJamie Engesser\t1567254452\tSaint Louis to Memphis Route2\t2016-05-27-22\n",
+      "22\t87\t59:21.7\tNormal\t-90.04\t35.19\t22|87|9223370572464814101\t3.66E+18\tNadeem Asghar\t1198242881\t Saint Louis to Chicago Route2\t2016-05-27-22\n",
+      "22\t87\t59:22.3\tNormal\t-90.37\t35.21\t22|87|9223370572464813486\t3.66E+18\tNadeem Asghar\t1198242881\t Saint Louis to Chicago Route2\t2016-05-27-22\n",
+      "23\t68\t59:22.4\tNormal\t-89.91\t40.86\t23|68|9223370572464813450\t3.66E+18\tAdam Diaz\t160405074\tJoplin to Kansas City Route 2\t2016-05-27-22\n",
+      "11\t74\t59:22.5\tNormal\t-89.74\t39.1\t11|74|9223370572464813355\t3.66E+18\tJamie Engesser\t1567254452\tSaint Louis to Memphis Route2\t2016-05-27-22\n",
+      "20\t41\t59:22.5\tNormal\t-93.36\t41.69\t20|41|9223370572464813344\t3.66E+18\tChris Harris\t160779139\tDes Moines to Chicago Route 2\t2016-05-27-22\n",
+      "32\t42\t59:22.5\tNormal\t-90.37\t35.21\t32|42|9223370572464813296\t3.66E+18\tRyan Templeton\t1090292248\tPeoria to Ceder Rapids Route 2\t2016-05-27-22\n",
+      "Time taken: 1.051 seconds, Fetched: 10 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SELECT * FROM truck_events LIMIT 10;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Obtención de un subconjunto de datos \n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En hive es posible un subconjunto de datos y almacenarlo en una nueva tabla a partir de una consulta que permita obtener los datos deseados. En el siguiente código, se crea la tabla `truck_events_subset` con los primeros 100 registros de la tabla `truck_events`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "Time taken: 0.022 seconds\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20220517133245_ae2e9ed4-9c7e-4fe6-a66d-6e6cd8d8908e\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 1\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1652793922537_0003, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0003/\n",
+      "Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0003\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1\n",
+      "2022-05-17 13:32:52,118 Stage-1 map = 0%,  reduce = 0%\n",
+      "2022-05-17 13:32:55,316 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.42 sec\n",
+      "2022-05-17 13:33:00,452 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.98 sec\n",
+      "MapReduce Total cumulative CPU time: 2 seconds 980 msec\n",
+      "Ended Job = job_1652793922537_0003\n",
+      "Moving data to directory hdfs://0.0.0.0:9000/user/hive/warehouse/truck_events_subset\n",
+      "MapReduce Jobs Launched:\n",
+      "Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.98 sec   HDFS Read: 28712 HDFS Write: 13676 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 2 seconds 980 msec\n",
+      "OK\n",
+      "Time taken: 15.862 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "DROP TABLE IF EXISTS truck_events_subset;\n",
+    "\n",
+    "CREATE TABLE truck_events_subset \n",
+    "AS\n",
+    "    SELECT *\n",
+    "    FROM truck_events\n",
+    "    LIMIT 100;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El código anterior es equivalente al siguiente, donde se usa `LIKE` en `CREATE TABLE` para indicar que la nueva tabla `truck_events_subset` tiene la misma estructura de la tabla existente `truck_events`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "Time taken: 0.277 seconds\n",
+      "OK\n",
+      "Time taken: 0.063 seconds\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20220517133302_8608c166-9f0a-4c91-ab65-14d3becad10d\n",
+      "Total jobs = 1\n",
+      "Launching Job 1 out of 1\n",
+      "Number of reduce tasks determined at compile time: 1\n",
+      "In order to change the average load for a reducer (in bytes):\n",
+      "set hive.exec.reducers.bytes.per.reducer=<number>\n",
+      "In order to limit the maximum number of reducers:\n",
+      "set hive.exec.reducers.max=<number>\n",
+      "In order to set a constant number of reducers:\n",
+      "set mapreduce.job.reduces=<number>\n",
+      "Starting Job = job_1652793922537_0004, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0004/\n",
+      "Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0004\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 1\n",
+      "2022-05-17 13:33:11,640 Stage-1 map = 0%,  reduce = 0%\n",
+      "2022-05-17 13:33:14,739 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.36 sec\n",
+      "2022-05-17 13:33:19,866 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 2.65 sec\n",
+      "MapReduce Total cumulative CPU time: 2 seconds 650 msec\n",
+      "Ended Job = job_1652793922537_0004\n",
+      "Loading data to table default.truck_events_subset\n",
+      "MapReduce Jobs Launched:\n",
+      "Stage-Stage-1: Map: 1  Reduce: 1   Cumulative CPU: 2.65 sec   HDFS Read: 29426 HDFS Write: 13676 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 2 seconds 650 msec\n",
+      "OK\n",
+      "Time taken: 18.434 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "\n",
+    "DROP TABLE IF EXISTS truck_events_subset;\n",
+    "\n",
+    "CREATE TABLE truck_events_subset LIKE truck_events;\n",
+    "\n",
+    "INSERT OVERWRITE TABLE truck_events_subset\n",
+    "SELECT\n",
+    "    *\n",
+    "FROM\n",
+    "    truck_events\n",
+    "LIMIT\n",
+    "    100;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "31\t18\t59:36.3\tNormal\t-94.58\t37.03\t31|18|9223370572464799462\t3.66E+18\tRommel Garcia\t1594289134\tMemphis to Little Rock Route 2\t2016-05-27-22\n",
+      "18\t16\t59:36.3\tNormal\t-92.42\t39.76\t18|16|9223370572464799486\t3.66E+18\tGrant Liu\t1565885487\tSpringfield to KC Via Hanibal\t2016-05-27-22\n",
+      "26\t57\t59:35.9\tNormal\t-92.74\t37.6\t26|57|9223370572464799895\t3.66E+18\tMichael Aube\t1325712174\tSaint Louis to Tulsa Route2\t2016-05-27-22\n",
+      "14\t25\t59:35.8\tNormal\t-94.46\t37.16\t14|25|9223370572464800006\t3.66E+18\tAdis Cesir\t160405074\tJoplin to Kansas City Route 2\t2016-05-27-22\n",
+      "27\t105\t59:35.6\tNormal\t-92.85\t38.93\t27|105|9223370572464800175\t3.66E+18\tMark Lochbihler\t1325562373\tSpringfield to KC Via Columbia Route 2\t2016-05-27-22\n",
+      "Time taken: 0.105 seconds, Fetched: 5 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "SELECT * FROM truck_events_subset LIMIT 5;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Obtención de un subconjunto de datos\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "En el siguiente código se obtienen algunas columnas de la tabla `truck_events_subset` para ser almacenadas en una tabla diferente."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "Time taken: 0.025 seconds\n",
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20220517133328_bee0c4dd-b470-4137-ab82-65ae82d111c7\n",
+      "Total jobs = 3\n",
+      "Launching Job 1 out of 3\n",
+      "Number of reduce tasks is set to 0 since there's no reduce operator\n",
+      "Starting Job = job_1652793922537_0005, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0005/\n",
+      "Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0005\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0\n",
+      "2022-05-17 13:33:32,359 Stage-1 map = 0%,  reduce = 0%\n",
+      "2022-05-17 13:33:36,475 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.34 sec\n",
+      "MapReduce Total cumulative CPU time: 1 seconds 340 msec\n",
+      "Ended Job = job_1652793922537_0005\n",
+      "Stage-4 is selected by condition resolver.\n",
+      "Stage-3 is filtered out by condition resolver.\n",
+      "Stage-5 is filtered out by condition resolver.\n",
+      "Moving data to directory hdfs://0.0.0.0:9000/user/hive/warehouse/.hive-staging_hive_2022-05-17_13-33-28_831_1063867166954300449-1/-ext-10002\n",
+      "Moving data to directory hdfs://0.0.0.0:9000/user/hive/warehouse/specific_columns\n",
+      "MapReduce Jobs Launched:\n",
+      "Stage-Stage-1: Map: 1   Cumulative CPU: 1.34 sec   HDFS Read: 18146 HDFS Write: 1883 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 1 seconds 340 msec\n",
+      "OK\n",
+      "Time taken: 8.869 seconds\n",
+      "OK\n",
+      "31\t59:36.3\tNormal\n",
+      "18\t59:36.3\tNormal\n",
+      "26\t59:35.9\tNormal\n",
+      "14\t59:35.8\tNormal\n",
+      "27\t59:35.6\tNormal\n",
+      "Time taken: 0.094 seconds, Fetched: 5 row(s)\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "\n",
+    "DROP TABLE IF EXISTS specific_columns; \n",
+    "\n",
+    "CREATE TABLE specific_columns \n",
+    "AS\n",
+    "    SELECT\n",
+    "        driverId, \n",
+    "        eventTime, \n",
+    "        eventType\n",
+    "    FROM\n",
+    "        truck_events_subset;\n",
+    "\n",
+    "SELECT * FROM specific_columns LIMIT 5;"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Escritura de la tabla en el HDFS\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Seguidamente, se procede a escribir el contenido de la tabla en el directorio `/tmp/drivers/specific-columns` del HDFS."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.\n",
+      "Query ID = root_20220517133348_0c6ba7f6-4d7e-4003-b9db-04b378c4c34b\n",
+      "Total jobs = 3\n",
+      "Launching Job 1 out of 3\n",
+      "Number of reduce tasks is set to 0 since there's no reduce operator\n",
+      "Starting Job = job_1652793922537_0006, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0006/\n",
+      "Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0006\n",
+      "Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 0\n",
+      "2022-05-17 13:33:53,250 Stage-1 map = 0%,  reduce = 0%\n",
+      "2022-05-17 13:33:57,366 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.31 sec\n",
+      "MapReduce Total cumulative CPU time: 1 seconds 310 msec\n",
+      "Ended Job = job_1652793922537_0006\n",
+      "Stage-3 is selected by condition resolver.\n",
+      "Stage-2 is filtered out by condition resolver.\n",
+      "Stage-4 is filtered out by condition resolver.\n",
+      "Moving data to directory hdfs://0.0.0.0:9000/tmp/drivers/specific-columns/.hive-staging_hive_2022-05-17_13-33-48_654_2103552764040297975-1/-ext-10000\n",
+      "Moving data to directory /tmp/drivers/specific-columns\n",
+      "MapReduce Jobs Launched:\n",
+      "Stage-Stage-1: Map: 1   Cumulative CPU: 1.31 sec   HDFS Read: 5526 HDFS Write: 1800 SUCCESS\n",
+      "Total MapReduce CPU Time Spent: 1 seconds 310 msec\n",
+      "OK\n",
+      "Time taken: 9.792 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "INSERT OVERWRITE DIRECTORY '/tmp/drivers/specific-columns' \n",
+    "ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' \n",
+    "SELECT \n",
+    "    * \n",
+    "FROM \n",
+    "    specific_columns;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 1 items\n",
+      "-rwxr-xr-x   1 root supergroup       1800 2022-05-17 13:33 /tmp/drivers/specific-columns/000000_0\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se visualiza el contenido del directorio\n",
+    "#\n",
+    "!hdfs dfs -ls /tmp/drivers/specific-columns/"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      ",59:29.6,Normal\n",
+      "13,59:29.5,Normal\n",
+      "27,59:29.3,Normal\n",
+      "17,59:29.2,Normal\n",
+      "12,59:29.1,Normal\n",
+      "15,59:28.8,Normal\n",
+      "16,59:28.8,Normal\n",
+      "13,59:28.5,Normal\n",
+      "23,59:28.4,Normal\n",
+      "11,59:28.3,Normal\n",
+      "30,59:28.0,Normal\n",
+      "24,59:27.9,Normal\n",
+      "25,59:27.8,Normal\n",
+      "28,59:27.7,Normal\n",
+      "27,59:27.7,Normal\n",
+      "13,59:27.6,Normal\n",
+      "23,59:27.4,Normal\n",
+      "25,59:27.0,Normal\n",
+      "26,59:27.0,Normal\n",
+      "28,59:26.9,Normal\n",
+      "10,59:26.8,Normal\n",
+      "22,59:26.6,Normal\n",
+      "23,59:26.6,Normal\n",
+      "25,59:26.2,Normal\n",
+      "27,59:25.9,Normal\n",
+      "19,59:25.9,Normal\n",
+      "13,59:25.9,Normal\n",
+      "21,59:25.7,Normal\n",
+      "16,59:25.3,Normal\n",
+      "26,59:25.2,Normal\n",
+      "19,59:25.1,Normal\n",
+      "18,59:25.0,Normal\n",
+      "22,59:25.0,Normal\n",
+      "29,59:24.7,Normal\n",
+      "25,59:24.3,Normal\n",
+      "24,59:24.3,Normal\n",
+      "32,59:24.2,Normal\n",
+      "22,59:24.2,Normal\n",
+      "14,59:24.2,Normal\n",
+      "25,59:23.5,Normal\n",
+      "31,59:23.5,Normal\n",
+      "16,59:23.4,Normal\n",
+      "15,59:23.4,Normal\n",
+      "28,59:23.3,Normal\n",
+      "14,59:23.3,Normal\n",
+      "17,59:23.2,Normal\n",
+      "27,59:22.6,Normal\n",
+      "32,59:22.5,Normal\n",
+      "20,59:22.5,Normal\n",
+      "11,59:22.5,Normal\n",
+      "23,59:22.4,Normal\n",
+      "22,59:22.3,Normal\n",
+      "22,59:21.7,Normal\n",
+      "11,59:21.7,Normal\n",
+      "27,59:21.7,Normal\n",
+      "18,59:21.7,Normal\n",
+      "14,59:21.4,Normal\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se visualiza la parte final del archivo\n",
+    "#\n",
+    "!hdfs dfs -tail /tmp/drivers/specific-columns/000000_0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OK\n",
+      "Time taken: 0.051 seconds\n",
+      "OK\n",
+      "Time taken: 0.063 seconds\n",
+      "OK\n",
+      "Time taken: 0.02 seconds\n",
+      "OK\n",
+      "Time taken: 0.018 seconds\n",
+      "OK\n",
+      "Time taken: 0.017 seconds\n",
+      "OK\n",
+      "Time taken: 0.059 seconds\n",
+      "OK\n",
+      "Time taken: 0.06 seconds\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hive\n",
+    "DROP TABLE drivers;\n",
+    "DROP TABLE specific_columns;\n",
+    "DROP TABLE temp_drivers;\n",
+    "DROP TABLE temp_timesheet;\n",
+    "DROP TABLE timesheet;\n",
+    "DROP TABLE truck_events;\n",
+    "DROP TABLE truck_events_subset;"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!rm *.csv *.log"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%quit"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

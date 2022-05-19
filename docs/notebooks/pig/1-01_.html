@@ -23,8 +23,8 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Programación Basica" href="1-02_.html" />
-    <link rel="prev" title="Acceso al HDFS con snakebite usando Python" href="../snakebite/1-01_.html" /> 
+    <link rel="next" title="Conteo de palabras en Apache Pig usando Jupyter" href="1-02_.html" />
+    <link rel="prev" title="WordCount usando Structured Streaming" href="../pyspark/7-16-pyspark-strucStream.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -56,12 +56,13 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html">Analítica de Grandes Datos</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-01-2022-05-13">Sesión 01 — 2022-05-13</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-02-2022-05-20">Sesión 02 — 2022-05-20</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-03-2022-05-27">Sesión 03 — 2022-05-27</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-03-2022-05-27">Sesión 03 — 2022-05-27</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-04-2022-06-03">Sesión 04 — 2022-06-03</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-05-2022-06-10">Sesión 05 — 2022-06-10</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-06-2022-06-17">Sesión 06 — 2022-06-17</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-07-2022-06-24">Sesión 07 — 2022-06-24</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-08-2022-07-01">Sesión 08 — 2022-07-01</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#apache-pig">Apache Pig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../analitica_predictiva/index.html">Analítica Predictiva</a></li>
@@ -367,7 +368,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Conteo-de-palabras-en-Apache-Pig">
 <h1>Conteo de palabras en Apache Pig<a class="headerlink" href="#Conteo-de-palabras-en-Apache-Pig" title="Enlazar permanentemente con este título"></a></h1>
 <ul class="simple">
-<li><p>Última modificación: Noviembre 05, 2019</p></li>
+<li><p>Última modificación: Mayo 16, 2021 | YouTube</p></li>
 </ul>
 <div class="section" id="Archivos-de-prueba">
 <h2>Archivos de prueba<a class="headerlink" href="#Archivos-de-prueba" title="Enlazar permanentemente con este título"></a></h2>
@@ -377,11 +378,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Se crea el directorio de entrada</span>
-<span class="c1">#</span>
-<span class="o">!</span>rm -rf input output
-<span class="o">!</span>mkdir input
+<span></span><span class="o">!</span>rm -rf /tmp/input /tmp/output
+<span class="o">!</span>mkdir /tmp/input /tmp/output/
 </pre></div>
 </div>
 </div>
@@ -390,7 +388,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%writefile</span> input/text0.txt
+<span></span><span class="o">%%writefile</span> /tmp/input/text0.txt
 <span class="n">Analytics</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">discovery</span><span class="p">,</span> <span class="n">interpretation</span><span class="p">,</span> <span class="ow">and</span> <span class="n">communication</span> <span class="n">of</span> <span class="n">meaningful</span> <span class="n">patterns</span>
 <span class="ow">in</span> <span class="n">data</span><span class="o">.</span> <span class="n">Especially</span> <span class="n">valuable</span> <span class="ow">in</span> <span class="n">areas</span> <span class="n">rich</span> <span class="k">with</span> <span class="n">recorded</span> <span class="n">information</span><span class="p">,</span> <span class="n">analytics</span> <span class="n">relies</span>
 <span class="n">on</span> <span class="n">the</span> <span class="n">simultaneous</span> <span class="n">application</span> <span class="n">of</span> <span class="n">statistics</span><span class="p">,</span> <span class="n">computer</span> <span class="n">programming</span> <span class="ow">and</span> <span class="n">operations</span> <span class="n">research</span>
@@ -413,7 +411,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Writing input/text0.txt
+Writing /tmp/input/text0.txt
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -421,7 +419,7 @@ Writing input/text0.txt
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%writefile</span> input/text1.txt
+<span></span><span class="o">%%writefile</span> /tmp/input/text1.txt
 <span class="n">The</span> <span class="n">field</span> <span class="n">of</span> <span class="n">data</span> <span class="n">analysis</span><span class="o">.</span> <span class="n">Analytics</span> <span class="n">often</span> <span class="n">involves</span> <span class="n">studying</span> <span class="n">past</span> <span class="n">historical</span> <span class="n">data</span> <span class="n">to</span>
 <span class="n">research</span> <span class="n">potential</span> <span class="n">trends</span><span class="p">,</span> <span class="n">to</span> <span class="n">analyze</span> <span class="n">the</span> <span class="n">effects</span> <span class="n">of</span> <span class="n">certain</span> <span class="n">decisions</span> <span class="ow">or</span> <span class="n">events</span><span class="p">,</span> <span class="ow">or</span> <span class="n">to</span>
 <span class="n">evaluate</span> <span class="n">the</span> <span class="n">performance</span> <span class="n">of</span> <span class="n">a</span> <span class="n">given</span> <span class="n">tool</span> <span class="ow">or</span> <span class="n">scenario</span><span class="o">.</span> <span class="n">The</span> <span class="n">goal</span> <span class="n">of</span> <span class="n">analytics</span> <span class="ow">is</span> <span class="n">to</span> <span class="n">improve</span>
@@ -434,7 +432,7 @@ Writing input/text0.txt
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Writing input/text1.txt
+Writing /tmp/input/text1.txt
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -442,7 +440,7 @@ Writing input/text1.txt
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%writefile</span> input/text2.txt
+<span></span><span class="o">%%writefile</span> /tmp/input/text2.txt
 <span class="n">Data</span> <span class="n">analytics</span> <span class="p">(</span><span class="n">DA</span><span class="p">)</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">process</span> <span class="n">of</span> <span class="n">examining</span> <span class="n">data</span> <span class="n">sets</span> <span class="ow">in</span> <span class="n">order</span> <span class="n">to</span> <span class="n">draw</span> <span class="n">conclusions</span>
 <span class="n">about</span> <span class="n">the</span> <span class="n">information</span> <span class="n">they</span> <span class="n">contain</span><span class="p">,</span> <span class="n">increasingly</span> <span class="k">with</span> <span class="n">the</span> <span class="n">aid</span> <span class="n">of</span> <span class="n">specialized</span> <span class="n">systems</span>
 <span class="ow">and</span> <span class="n">software</span><span class="o">.</span> <span class="n">Data</span> <span class="n">analytics</span> <span class="n">technologies</span> <span class="ow">and</span> <span class="n">techniques</span> <span class="n">are</span> <span class="n">widely</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">commercial</span>
@@ -457,38 +455,9 @@ Writing input/text1.txt
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Writing input/text2.txt
+Writing /tmp/input/text2.txt
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Creación-del-contendor">
-<h2>Creación del contendor<a class="headerlink" href="#Creación-del-contendor" title="Enlazar permanentemente con este título"></a></h2>
-<p>En el Terminal ejecute el siguiente comando:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ docker run --rm -it -v <span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>:/workspace  --name pig -p <span class="m">50070</span>:50070 -p <span class="m">8088</span>:8088 -p <span class="m">8888</span>:8888  jdvelasq/pig:0.17.0
-</pre></div>
-</div>
-<p>Como resultado debe ver el siguiente mensaje:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>======================================
-
-Hadoop NameNode at:
-
-    http://127.0.0.1:50070/
-
-Yarn ResourceManager at:
-
-     http://127.0.0.1:8088/
-
-======================================
-</pre></div>
-</div>
-</div>
-<div class="section" id="Verificación-de-que-Hadoop-está-ejecutándose-correctamente">
-<h2>Verificación de que Hadoop está ejecutándose correctamente<a class="headerlink" href="#Verificación-de-que-Hadoop-está-ejecutándose-correctamente" title="Enlazar permanentemente con este título"></a></h2>
-<p>Para verificar que Hadoop se está ejecutando correctamente abra las siguiente direcciones en un explorador de internet:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://127.0.0.1:50070/">http://127.0.0.1:50070/</a></p></li>
-<li><p><a class="reference external" href="http://127.0.0.1:8088/">http://127.0.0.1:8088/</a></p></li>
-</ul>
 </div>
 <div class="section" id="Código-en-Apache-Pig">
 <h2>Código en Apache Pig<a class="headerlink" href="#Código-en-Apache-Pig" title="Enlazar permanentemente con este título"></a></h2>
@@ -498,13 +467,13 @@ Yarn ResourceManager at:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%writefile</span> script.pig
+<span></span><span class="o">%%writefile</span> /tmp/script.pig
 
 <span class="o">--</span> <span class="n">crea</span> <span class="n">la</span> <span class="n">carpeta</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">el</span> <span class="n">HDFS</span>
 <span class="n">fs</span> <span class="o">-</span><span class="n">mkdir</span> <span class="nb">input</span>
 
 <span class="o">--</span> <span class="n">copia</span> <span class="n">los</span> <span class="n">archivos</span> <span class="k">del</span> <span class="n">sistema</span> <span class="n">local</span> <span class="n">al</span> <span class="n">HDFS</span>
-<span class="n">fs</span> <span class="o">-</span><span class="n">put</span> <span class="nb">input</span><span class="o">/</span> <span class="o">.</span>
+<span class="n">fs</span> <span class="o">-</span><span class="n">put</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span> <span class="o">.</span>
 
 <span class="o">--</span> <span class="n">carga</span> <span class="n">de</span> <span class="n">datos</span>
 <span class="n">lines</span> <span class="o">=</span> <span class="n">LOAD</span> <span class="s1">&#39;input/text*.txt&#39;</span> <span class="n">AS</span> <span class="p">(</span><span class="n">line</span><span class="p">:</span><span class="n">CHARARRAY</span><span class="p">);</span>
@@ -525,7 +494,7 @@ Yarn ResourceManager at:
 <span class="n">STORE</span> <span class="n">s</span> <span class="n">INTO</span> <span class="s1">&#39;output&#39;</span><span class="p">;</span>
 
 <span class="o">--</span> <span class="n">copia</span> <span class="n">los</span> <span class="n">archivos</span> <span class="k">del</span> <span class="n">HDFS</span> <span class="n">al</span> <span class="n">sistema</span> <span class="n">local</span>
-<span class="n">fs</span> <span class="o">-</span><span class="n">get</span> <span class="n">output</span><span class="o">/</span> <span class="o">.</span>
+<span class="n">fs</span> <span class="o">-</span><span class="n">get</span> <span class="n">output</span><span class="o">/</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">output</span><span class="o">/</span>
 
 </pre></div>
 </div>
@@ -535,7 +504,7 @@ Yarn ResourceManager at:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Overwriting script.pig
+Writing /tmp/script.pig
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -543,7 +512,7 @@ Overwriting script.pig
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>pig -execute <span class="s1">&#39;run script.pig&#39;</span>
+<span></span><span class="o">!</span>pig -execute <span class="s1">&#39;run /tmp/script.pig&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -552,55 +521,63 @@ Overwriting script.pig
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-2022-05-12 19:49:21,209 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker is deprecated. Instead, use mapreduce.jobtracker.address
-2022-05-12 19:49:23,182 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.textoutputformat.separator is deprecated. Instead, use mapreduce.output.textoutputformat.separator
-2022-05-12 19:49:23,394 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:49:23,494 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.reduce.markreset.buffer.percent is deprecated. Instead, use mapreduce.reduce.markreset.buffer.percent
-2022-05-12 19:49:23,496 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.output.compress is deprecated. Instead, use mapreduce.output.fileoutputformat.compress
-2022-05-12 19:49:23,503 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.reduce.tasks is deprecated. Instead, use mapreduce.job.reduces
-2022-05-12 19:49:23,508 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.submit.replication is deprecated. Instead, use mapreduce.client.submit.file.replication
-2022-05-12 19:49:25,297 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker.http.address is deprecated. Instead, use mapreduce.jobtracker.http.address
-2022-05-12 19:49:25,301 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:49:25,309 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id
-2022-05-12 19:49:25,372 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:49:25,394 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3
-2022-05-12 19:49:25,865 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:49:26,348 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0001
-2022-05-12 19:49:26,487 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:49:26,687 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0001
-2022-05-12 19:49:26,713 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0001/
-2022-05-12 19:49:46,875 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:49:46,883 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:49:47,411 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:49:47,416 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:49:47,442 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:49:47,445 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:49:48,822 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:49:48,839 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:49:48,855 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
-2022-05-12 19:49:49,287 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:49:49,322 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0002
-2022-05-12 19:49:49,325 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:49:49,352 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0002
-2022-05-12 19:49:49,356 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0002/
-2022-05-12 19:50:04,466 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,470 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,579 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,583 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,607 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,610 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,647 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,650 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,675 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,678 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,705 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,709 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,738 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,741 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,768 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,771 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:04,794 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:04,797 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:30:59,559 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker is deprecated. Instead, use mapreduce.jobtracker.address
+2022-05-16 23:31:01,033 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.textoutputformat.separator is deprecated. Instead, use mapreduce.output.textoutputformat.separator
+2022-05-16 23:31:01,228 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:01,334 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn.system-metrics-publisher.enabled
+2022-05-16 23:31:01,345 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.reduce.markreset.buffer.percent is deprecated. Instead, use mapreduce.reduce.markreset.buffer.percent
+2022-05-16 23:31:01,347 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.output.compress is deprecated. Instead, use mapreduce.output.fileoutputformat.compress
+2022-05-16 23:31:01,356 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.reduce.tasks is deprecated. Instead, use mapreduce.job.reduces
+2022-05-16 23:31:01,362 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.submit.replication is deprecated. Instead, use mapreduce.client.submit.file.replication
+2022-05-16 23:31:02,345 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker.http.address is deprecated. Instead, use mapreduce.jobtracker.http.address
+2022-05-16 23:31:02,349 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:02,358 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id
+2022-05-16 23:31:02,432 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-16 23:31:02,451 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3
+2022-05-16 23:31:02,919 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-16 23:31:02,992 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn.system-metrics-publisher.enabled
+2022-05-16 23:31:03,142 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652743708272_0001
+2022-05-16 23:31:03,238 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-16 23:31:03,300 [JobControl] INFO  org.apache.hadoop.conf.Configuration - resource-types.xml not found
+2022-05-16 23:31:03,300 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Unable to find &#39;resource-types.xml&#39;.
+2022-05-16 23:31:03,303 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = memory-mb, units = Mi, type = COUNTABLE
+2022-05-16 23:31:03,304 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = vcores, units = , type = COUNTABLE
+2022-05-16 23:31:03,525 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652743708272_0001
+2022-05-16 23:31:03,551 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://bce3271148f5:8088/proxy/application_1652743708272_0001/
+2022-05-16 23:31:18,656 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:18,664 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:19,156 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:19,161 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:19,181 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:19,184 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:20,962 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:20,966 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn.system-metrics-publisher.enabled
+2022-05-16 23:31:20,973 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-16 23:31:20,986 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-16 23:31:21,822 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-16 23:31:22,275 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652743708272_0002
+2022-05-16 23:31:22,280 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-16 23:31:22,513 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652743708272_0002
+2022-05-16 23:31:22,519 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://bce3271148f5:8088/proxy/application_1652743708272_0002/
+2022-05-16 23:31:37,625 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,631 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,702 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,708 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,728 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,731 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,758 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,761 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,778 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,780 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,799 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,802 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,820 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,823 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,840 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,843 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,859 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-16 23:31:37,863 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-16 23:31:37,927 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - yarn.resourcemanager.system-metrics-publisher.enabled is deprecated. Instead, use yarn.system-metrics-publisher.enabled
 </pre></div></div>
 </div>
 </div>
@@ -611,7 +588,7 @@ Overwriting script.pig
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>hadoop fs -ls output/*
+<span></span><span class="o">!</span>hdfs dfs -ls output/*
 </pre></div>
 </div>
 </div>
@@ -620,8 +597,8 @@ Overwriting script.pig
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
--rw-r--r--   1 root supergroup          0 2022-05-12 19:50 output/_SUCCESS
--rw-r--r--   1 root supergroup         81 2022-05-12 19:50 output/part-r-00000
+-rw-r--r--   1 root supergroup          0 2022-05-16 23:31 output/_SUCCESS
+-rw-r--r--   1 root supergroup         81 2022-05-16 23:31 output/part-r-00000
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -629,7 +606,7 @@ Overwriting script.pig
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>hadoop fs -cat output/part-r-00000
+<span></span><span class="o">!</span>hdfs dfs -cat output/part-r-00000
 </pre></div>
 </div>
 </div>
@@ -653,41 +630,17 @@ The     2
 aid     1
 and     15
 are     1
-</pre></div></div>
-</div>
-</div>
-<div class="section" id="Movimiento-de-los-resultados-al-sistema-local">
-<h2>Movimiento de los resultados al sistema local<a class="headerlink" href="#Movimiento-de-los-resultados-al-sistema-local" title="Enlazar permanentemente con este título"></a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>hadoop fs -copyToLocal output output
-<span class="o">!</span>ls output/*
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-output/_SUCCESS  output/part-r-00000
-
-output/output:
-_SUCCESS  part-r-00000
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Visualilzación-de-resultados-en-el-sistema-local">
 <h2>Visualilzación de resultados en el sistema local<a class="headerlink" href="#Visualilzación-de-resultados-en-el-sistema-local" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>ls -1 output/*
+<span></span><span class="o">!</span>ls -1 /tmp/output/*
 </pre></div>
 </div>
 </div>
@@ -696,20 +649,16 @@ _SUCCESS  part-r-00000
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-output/_SUCCESS
-output/part-r-00000
-
-output/output:
 _SUCCESS
 part-r-00000
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>cat output/part-r-00000
+<span></span><span class="o">!</span>cat /tmp/output/part-r-00000
 </pre></div>
 </div>
 </div>
@@ -718,21 +667,7 @@ part-r-00000
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-a       1
-DA      1
-be      1
-by      2
-in      5
-is      3
-of      8
-on      1
-or      5
-to      12
-Big     1
-The     2
-aid     1
-and     15
-are     1
+cat: /tmp/output/part-r-00000: No such file or directory
 </pre></div></div>
 </div>
 </div>
@@ -781,934 +716,6 @@ grunt&gt; run script
 </pre></div>
 </div>
 <p>para indicar que se usa el archivo ubicado en la carpeta actual.</p>
-<div class="section" id="Ejecución-de-Pig-en-Jupyter">
-<h4>Ejecución de Pig en Jupyter<a class="headerlink" href="#Ejecución-de-Pig-en-Jupyter" title="Enlazar permanentemente con este título"></a></h4>
-<p>A continuación se describe como ejecutar comandos de Pig en Jupyter usando la extensión de Jupyter <code class="docutils literal notranslate"><span class="pre">bigdata</span></code>.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">load_ext</span> bigdata
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">timeout</span> 300
-</pre></div>
-</div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">pig_start</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="WordCount-en-Apache-Pig">
-<h3>WordCount en Apache Pig<a class="headerlink" href="#WordCount-en-Apache-Pig" title="Enlazar permanentemente con este título"></a></h3>
-<p>Se cargan los archivos en Apache Pig.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="k">pig</span>
-lines = LOAD &#39;input/text*.txt&#39; AS (line:CHARARRAY);
-DUMP lines;
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
- lines = LOAD &#39;input/text*.txt&#39; AS (line:CHARARRAY);
- DUMP lines;
-2022-05-12 19:50:14,604 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:14,720 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.reduce.markreset.buffer.percent is deprecated. Instead, use mapreduce.reduce.markreset.buffer.percent
-2022-05-12 19:50:14,722 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.output.compress is deprecated. Instead, use mapreduce.output.fileoutputformat.compress
-2022-05-12 19:50:14,728 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.submit.replication is deprecated. Instead, use mapreduce.client.submit.file.replication
-2022-05-12 19:50:14,891 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker.http.address is deprecated. Instead, use mapreduce.jobtracker.http.address
-2022-05-12 19:50:14,894 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:14,902 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id
-2022-05-12 19:50:14,951 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:50:14,971 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3
-2022-05-12 19:50:15,825 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:50:16,178 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0003
-2022-05-12 19:50:16,445 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:50:16,502 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0003
-2022-05-12 19:50:16,523 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0003/
-2022-05-12 19:50:26,632 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:26,639 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:26,780 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:26,784 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:26,802 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.reduce.tasks is deprecated. Instead, use mapreduce.job.reduces
-2022-05-12 19:50:26,803 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:26,806 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:26,843 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:26,846 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:26,868 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:26,871 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:26,888 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:26,891 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:26,925 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
-(Analytics is the discovery, interpretation, and communication of meaningful patterns )
-(in data. Especially valuable in areas rich with recorded information, analytics relies )
-(on the simultaneous application of statistics, computer programming and operations research )
-(to quantify performance.)
-()
-(Organizations may apply analytics to business data to describe, predict, and improve business )
-(performance. Specifically, areas within analytics include predictive analytics, prescriptive )
-(analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big )
-(Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, )
-(marketing optimization and marketing mix modeling, web analytics, call analytics, speech )
-(analytics, sales force sizing and optimization, price and promotion modeling, predictive )
-(science, credit risk analysis, and fraud analytics. Since analytics can require extensive )
-(computation (see big data), the algorithms and software used for analytics harness the most )
-(current methods in computer science, statistics, and mathematics.)
-(Data analytics (DA) is the process of examining data sets in order to draw conclusions )
-(about the information they contain, increasingly with the aid of specialized systems )
-(and software. Data analytics technologies and techniques are widely used in commercial )
-(industries to enable organizations to make more-informed business decisions and by )
-(scientists and researchers to verify or disprove scientific models, theories and )
-(hypotheses.)
-(The field of data analysis. Analytics often involves studying past historical data to )
-(research potential trends, to analyze the effects of certain decisions or events, or to )
-(evaluate the performance of a given tool or scenario. The goal of analytics is to improve )
-(the business by gaining knowledge which can be used to make improvements or changes.)
-</pre></div></div>
-</div>
-<p>Realiza el conteo de palabras.</p>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="k">pig</span>
--- genera una tabla llamada words con una palabra por registro
-words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) AS word;
-DUMP words;
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
- -- genera una tabla llamada words con una palabra por registro
- words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) AS word;
- DUMP words;
-2022-05-12 19:50:27,234 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:27,769 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:27,780 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:50:27,789 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3
-2022-05-12 19:50:27,814 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:50:27,843 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0004
-2022-05-12 19:50:27,845 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:50:27,874 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0004
-2022-05-12 19:50:27,878 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0004/
-2022-05-12 19:50:42,888 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:42,892 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:42,952 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:42,957 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:42,978 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:42,982 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:43,005 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:43,008 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:43,032 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:43,035 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:43,056 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:43,060 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:50:43,087 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
-(Analytics)
-(is)
-(the)
-(discovery)
-(interpretation)
-(and)
-(communication)
-(of)
-(meaningful)
-(patterns)
-(in)
-(data.)
-(Especially)
-(valuable)
-(in)
-(areas)
-(rich)
-(with)
-(recorded)
-(information)
-(analytics)
-(relies)
-(on)
-(the)
-(simultaneous)
-(application)
-(of)
-(statistics)
-(computer)
-(programming)
-(and)
-(operations)
-(research)
-(to)
-(quantify)
-(performance.)
-()
-(Organizations)
-(may)
-(apply)
-(analytics)
-(to)
-(business)
-(data)
-(to)
-(describe)
-(predict)
-(and)
-(improve)
-(business)
-(performance.)
-(Specifically)
-(areas)
-(within)
-(analytics)
-(include)
-(predictive)
-(analytics)
-(prescriptive)
-(analytics)
-(enterprise)
-(decision)
-(management)
-(descriptive)
-(analytics)
-(cognitive)
-(analytics)
-(Big)
-(Data)
-(Analytics)
-(retail)
-(analytics)
-(store)
-(assortment)
-(and)
-(stock-keeping)
-(unit)
-(optimization)
-(marketing)
-(optimization)
-(and)
-(marketing)
-(mix)
-(modeling)
-(web)
-(analytics)
-(call)
-(analytics)
-(speech)
-(analytics)
-(sales)
-(force)
-(sizing)
-(and)
-(optimization)
-(price)
-(and)
-(promotion)
-(modeling)
-(predictive)
-(science)
-(credit)
-(risk)
-(analysis)
-(and)
-(fraud)
-(analytics.)
-(Since)
-(analytics)
-(can)
-(require)
-(extensive)
-(computation)
-(see)
-(big)
-(data)
-(the)
-(algorithms)
-(and)
-(software)
-(used)
-(for)
-(analytics)
-(harness)
-(the)
-(most)
-(current)
-(methods)
-(in)
-(computer)
-(science)
-(statistics)
-(and)
-(mathematics.)
-(Data)
-(analytics)
-(DA)
-(is)
-(the)
-(process)
-(of)
-(examining)
-(data)
-(sets)
-(in)
-(order)
-(to)
-(draw)
-(conclusions)
-(about)
-(the)
-(information)
-(they)
-(contain)
-(increasingly)
-(with)
-(the)
-(aid)
-(of)
-(specialized)
-(systems)
-(and)
-(software.)
-(Data)
-(analytics)
-(technologies)
-(and)
-(techniques)
-(are)
-(widely)
-(used)
-(in)
-(commercial)
-(industries)
-(to)
-(enable)
-(organizations)
-(to)
-(make)
-(more-informed)
-(business)
-(decisions)
-(and)
-(by)
-(scientists)
-(and)
-(researchers)
-(to)
-(verify)
-(or)
-(disprove)
-(scientific)
-(models)
-(theories)
-(and)
-(hypotheses.)
-(The)
-(field)
-(of)
-(data)
-(analysis.)
-(Analytics)
-(often)
-(involves)
-(studying)
-(past)
-(historical)
-(data)
-(to)
-(research)
-(potential)
-(trends)
-(to)
-(analyze)
-(the)
-(effects)
-(of)
-(certain)
-(decisions)
-(or)
-(events)
-(or)
-(to)
-(evaluate)
-(the)
-(performance)
-(of)
-(a)
-(given)
-(tool)
-(or)
-(scenario.)
-(The)
-(goal)
-(of)
-(analytics)
-(is)
-(to)
-(improve)
-(the)
-(business)
-(by)
-(gaining)
-(knowledge)
-(which)
-(can)
-(be)
-(used)
-(to)
-(make)
-(improvements)
-(or)
-(changes.)
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="k">pig</span>
--- agrupa los registros que tienen la misma palabra
-grouped = GROUP words BY word;
-DUMP grouped;
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
- -- agrupa los registros que tienen la misma palabra
- grouped = GROUP words BY word;
- DUMP grouped;
-2022-05-12 19:50:43,357 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:44,687 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:50:44,697 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:50:44,704 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3
-2022-05-12 19:50:45,131 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:50:45,552 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0005
-2022-05-12 19:50:45,554 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:50:45,574 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0005
-2022-05-12 19:50:45,577 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0005/
-2022-05-12 19:51:00,711 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:00,724 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:00,778 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:00,781 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:00,803 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:00,805 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:00,825 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:00,828 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:00,846 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:00,849 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:00,870 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:00,872 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:00,897 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
-(a,{(a)})
-(DA,{(DA)})
-(be,{(be)})
-(by,{(by),(by)})
-(in,{(in),(in),(in),(in),(in)})
-(is,{(is),(is),(is)})
-(of,{(of),(of),(of),(of),(of),(of),(of),(of)})
-(on,{(on)})
-(or,{(or),(or),(or),(or),(or)})
-(to,{(to),(to),(to),(to),(to),(to),(to),(to),(to),(to),(to),(to)})
-(Big,{(Big)})
-(The,{(The),(The)})
-(aid,{(aid)})
-(and,{(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and)})
-(are,{(are)})
-(big,{(big)})
-(can,{(can),(can)})
-(for,{(for)})
-(may,{(may)})
-(mix,{(mix)})
-(see,{(see)})
-(the,{(the),(the),(the),(the),(the),(the),(the),(the),(the),(the)})
-(web,{(web)})
-(Data,{(Data),(Data),(Data)})
-(call,{(call)})
-(data,{(data),(data),(data),(data),(data)})
-(draw,{(draw)})
-(goal,{(goal)})
-(make,{(make),(make)})
-(most,{(most)})
-(past,{(past)})
-(rich,{(rich)})
-(risk,{(risk)})
-(sets,{(sets)})
-(they,{(they)})
-(tool,{(tool)})
-(unit,{(unit)})
-(used,{(used),(used),(used)})
-(with,{(with),(with)})
-(Since,{(Since)})
-(about,{(about)})
-(apply,{(apply)})
-(areas,{(areas),(areas)})
-(data.,{(data.)})
-(field,{(field)})
-(force,{(force)})
-(fraud,{(fraud)})
-(given,{(given)})
-(often,{(often)})
-(order,{(order)})
-(price,{(price)})
-(sales,{(sales)})
-(store,{(store)})
-(which,{(which)})
-(credit,{(credit)})
-(enable,{(enable)})
-(events,{(events)})
-(models,{(models)})
-(relies,{(relies)})
-(retail,{(retail)})
-(sizing,{(sizing)})
-(speech,{(speech)})
-(trends,{(trends)})
-(verify,{(verify)})
-(widely,{(widely)})
-(within,{(within)})
-(analyze,{(analyze)})
-(certain,{(certain)})
-(contain,{(contain)})
-(current,{(current)})
-(effects,{(effects)})
-(gaining,{(gaining)})
-(harness,{(harness)})
-(improve,{(improve),(improve)})
-(include,{(include)})
-(methods,{(methods)})
-(predict,{(predict)})
-(process,{(process)})
-(require,{(require)})
-(science,{(science),(science)})
-(systems,{(systems)})
-(analysis,{(analysis)})
-(business,{(business),(business),(business),(business)})
-(changes.,{(changes.)})
-(computer,{(computer),(computer)})
-(decision,{(decision)})
-(describe,{(describe)})
-(disprove,{(disprove)})
-(evaluate,{(evaluate)})
-(involves,{(involves)})
-(modeling,{(modeling),(modeling)})
-(patterns,{(patterns)})
-(quantify,{(quantify)})
-(recorded,{(recorded)})
-(research,{(research),(research)})
-(software,{(software)})
-(studying,{(studying)})
-(theories,{(theories)})
-(valuable,{(valuable)})
-(Analytics,{(Analytics),(Analytics),(Analytics)})
-(analysis.,{(analysis.)})
-(analytics,{(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics)})
-(cognitive,{(cognitive)})
-(decisions,{(decisions),(decisions)})
-(discovery,{(discovery)})
-(examining,{(examining)})
-(extensive,{(extensive)})
-(knowledge,{(knowledge)})
-(marketing,{(marketing),(marketing)})
-(potential,{(potential)})
-(promotion,{(promotion)})
-(scenario.,{(scenario.)})
-(software.,{(software.)})
-(Especially,{(Especially)})
-(algorithms,{(algorithms)})
-(analytics.,{(analytics.)})
-(assortment,{(assortment)})
-(commercial,{(commercial)})
-(enterprise,{(enterprise)})
-(historical,{(historical)})
-(industries,{(industries)})
-(management,{(management)})
-(meaningful,{(meaningful)})
-(operations,{(operations)})
-(predictive,{(predictive),(predictive)})
-(scientific,{(scientific)})
-(scientists,{(scientists)})
-(statistics,{(statistics),(statistics)})
-(techniques,{(techniques)})
-(application,{(application)})
-(computation,{(computation)})
-(conclusions,{(conclusions)})
-(descriptive,{(descriptive)})
-(hypotheses.,{(hypotheses.)})
-(information,{(information),(information)})
-(performance,{(performance)})
-(programming,{(programming)})
-(researchers,{(researchers)})
-(specialized,{(specialized)})
-(Specifically,{(Specifically)})
-(improvements,{(improvements)})
-(increasingly,{(increasingly)})
-(mathematics.,{(mathematics.)})
-(optimization,{(optimization),(optimization),(optimization)})
-(performance.,{(performance.),(performance.)})
-(prescriptive,{(prescriptive)})
-(simultaneous,{(simultaneous)})
-(technologies,{(technologies)})
-(Organizations,{(Organizations)})
-(communication,{(communication)})
-(more-informed,{(more-informed)})
-(organizations,{(organizations)})
-(stock-keeping,{(stock-keeping)})
-(interpretation,{(interpretation)})
-(,{()})
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="k">pig</span>
--- genera una variable que cuenta las ocurrencias por cada grupo
-wordcount = FOREACH grouped GENERATE group, COUNT(words);
-DUMP wordcount;
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
- -- genera una variable que cuenta las ocurrencias por cada grupo
- wordcount = FOREACH grouped GENERATE group, COUNT(words);
- DUMP wordcount;
-2022-05-12 19:51:01,164 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:02,456 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:02,468 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:51:02,476 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3
-2022-05-12 19:51:02,902 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:51:03,296 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0006
-2022-05-12 19:51:03,301 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:51:03,322 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0006
-2022-05-12 19:51:03,325 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0006/
-2022-05-12 19:51:23,428 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:23,434 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:23,487 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:23,490 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:23,511 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:23,514 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:23,533 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:23,536 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:23,554 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:23,556 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:23,577 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:23,580 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:23,604 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
-(a,1)
-(DA,1)
-(be,1)
-(by,2)
-(in,5)
-(is,3)
-(of,8)
-(on,1)
-(or,5)
-(to,12)
-(Big,1)
-(The,2)
-(aid,1)
-(and,15)
-(are,1)
-(big,1)
-(can,2)
-(for,1)
-(may,1)
-(mix,1)
-(see,1)
-(the,10)
-(web,1)
-(Data,3)
-(call,1)
-(data,5)
-(draw,1)
-(goal,1)
-(make,2)
-(most,1)
-(past,1)
-(rich,1)
-(risk,1)
-(sets,1)
-(they,1)
-(tool,1)
-(unit,1)
-(used,3)
-(with,2)
-(Since,1)
-(about,1)
-(apply,1)
-(areas,2)
-(data.,1)
-(field,1)
-(force,1)
-(fraud,1)
-(given,1)
-(often,1)
-(order,1)
-(price,1)
-(sales,1)
-(store,1)
-(which,1)
-(credit,1)
-(enable,1)
-(events,1)
-(models,1)
-(relies,1)
-(retail,1)
-(sizing,1)
-(speech,1)
-(trends,1)
-(verify,1)
-(widely,1)
-(within,1)
-(analyze,1)
-(certain,1)
-(contain,1)
-(current,1)
-(effects,1)
-(gaining,1)
-(harness,1)
-(improve,2)
-(include,1)
-(methods,1)
-(predict,1)
-(process,1)
-(require,1)
-(science,2)
-(systems,1)
-(analysis,1)
-(business,4)
-(changes.,1)
-(computer,2)
-(decision,1)
-(describe,1)
-(disprove,1)
-(evaluate,1)
-(involves,1)
-(modeling,2)
-(patterns,1)
-(quantify,1)
-(recorded,1)
-(research,2)
-(software,1)
-(studying,1)
-(theories,1)
-(valuable,1)
-(Analytics,3)
-(analysis.,1)
-(analytics,16)
-(cognitive,1)
-(decisions,2)
-(discovery,1)
-(examining,1)
-(extensive,1)
-(knowledge,1)
-(marketing,2)
-(potential,1)
-(promotion,1)
-(scenario.,1)
-(software.,1)
-(Especially,1)
-(algorithms,1)
-(analytics.,1)
-(assortment,1)
-(commercial,1)
-(enterprise,1)
-(historical,1)
-(industries,1)
-(management,1)
-(meaningful,1)
-(operations,1)
-(predictive,2)
-(scientific,1)
-(scientists,1)
-(statistics,2)
-(techniques,1)
-(application,1)
-(computation,1)
-(conclusions,1)
-(descriptive,1)
-(hypotheses.,1)
-(information,2)
-(performance,1)
-(programming,1)
-(researchers,1)
-(specialized,1)
-(Specifically,1)
-(improvements,1)
-(increasingly,1)
-(mathematics.,1)
-(optimization,3)
-(performance.,2)
-(prescriptive,1)
-(simultaneous,1)
-(technologies,1)
-(Organizations,1)
-(communication,1)
-(more-informed,1)
-(organizations,1)
-(stock-keeping,1)
-(interpretation,1)
-(,0)
-</pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%%</span><span class="k">pig</span>
--- selecciona las primeras 15 palabras
-s = LIMIT wordcount 15;
-DUMP s;
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
- -- selecciona las primeras 15 palabras
- s = LIMIT wordcount 15;
- DUMP s;
-2022-05-12 19:51:23,855 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:25,146 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:25,156 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:51:25,164 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 3
-2022-05-12 19:51:26,001 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:51:26,428 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0007
-2022-05-12 19:51:26,432 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:51:26,457 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0007
-2022-05-12 19:51:26,460 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0007/
-2022-05-12 19:51:41,563 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:41,569 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:41,602 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:41,606 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:41,623 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:41,625 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:43,348 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:43,360 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
-2022-05-12 19:51:43,366 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
-2022-05-12 19:51:43,789 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
-2022-05-12 19:51:44,212 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652384900661_0008
-2022-05-12 19:51:44,217 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
-2022-05-12 19:51:44,440 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652384900661_0008
-2022-05-12 19:51:44,443 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://650556b976c1:8088/proxy/application_1652384900661_0008/
-2022-05-12 19:51:59,558 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,565 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,617 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,620 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,640 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,642 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,665 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,667 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,688 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,690 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,710 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,712 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,732 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,734 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,754 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,757 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,777 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
-2022-05-12 19:51:59,779 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
-2022-05-12 19:51:59,801 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
-(a,1)
-(DA,1)
-(be,1)
-(by,2)
-(in,5)
-(is,3)
-(of,8)
-(on,1)
-(or,5)
-(to,12)
-(Big,1)
-(The,2)
-(aid,1)
-(and,15)
-(are,1)
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">%</span><span class="k">pig_quit</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="Limpieza-del-HDFS-y-de-la-máquina-local">
-<h4>Limpieza del HDFS y de la máquina local<a class="headerlink" href="#Limpieza-del-HDFS-y-de-la-máquina-local" title="Enlazar permanentemente con este título"></a></h4>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">## Se elimina el directorio de salida en el hdfs si existe</span>
-<span class="o">!</span>hadoop fs -rm input/*
-<span class="o">!</span>hadoop fs -rm output/*
-<span class="o">!</span>hadoop fs -rmdir input output
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Deleted input/text0.txt
-Deleted input/text1.txt
-Deleted input/text2.txt
-Deleted output/_SUCCESS
-rm: `output/output&#39;: No such file or directory
-Deleted output/part-r-00000
-</pre></div></div>
-</div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>rm -rf input output
-</pre></div>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>

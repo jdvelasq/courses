@@ -1,0 +1,629 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "757541b5-2a8d-4a68-b955-c03896066636",
+   "metadata": {},
+   "source": [
+    "Gestión de datos con csvkit\n",
+    "===========================================================\n",
+    "\n",
+    "* Última modificación: Mayo 16, 2022 | YouTube"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2c0503fc-2c27-42fc-96ba-87608f7be878",
+   "metadata": {},
+   "source": [
+    "Preparación\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "57f8a9a6-d4c5-4169-ad13-25750fb83ced",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "/tmp/csvkit_tutorial\n"
+     ]
+    }
+   ],
+   "source": [
+    "!mkdir -p /tmp/csvkit_tutorial\n",
+    "%cd /tmp/csvkit_tutorial\n",
+    "!curl -L -O --silent https://raw.githubusercontent.com/wireservice/csvkit/master/examples/realdata/ne_1033_data.xlsx\n",
+    "!in2csv ne_1033_data.xlsx > data.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "bde69912-ae34-488a-a125-7716db93cd18",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!curl -L -O --silent https://raw.githubusercontent.com/wireservice/csvkit/master/examples/realdata/acs2012_5yr_population.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "a7d463f3-9cb0-464f-ad9d-25e63b16dc2f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "  1. \"fips\"\n",
+      "\n",
+      "\tType of data:          Number\n",
+      "\tContains null values:  False\n",
+      "\tUnique values:         93\n",
+      "\tSmallest value:        31001\n",
+      "\tLargest value:         31185\n",
+      "\tSum:                   2891649\n",
+      "\tMean:                  31093\n",
+      "\tMedian:                31093\n",
+      "\tStDev:                 53.981\n",
+      "\tMost common values:    31001 (1x)\n",
+      "\t                       31003 (1x)\n",
+      "\t                       31005 (1x)\n",
+      "\t                       31007 (1x)\n",
+      "\t                       31009 (1x)\n",
+      "\n",
+      "  2. \"name\"\n",
+      "\n",
+      "\tType of data:          Text\n",
+      "\tContains null values:  False\n",
+      "\tUnique values:         93\n",
+      "\tLongest value:         23 characters\n",
+      "\tMost common values:    Adams County, NE (1x)\n",
+      "\t                       Antelope County, NE (1x)\n",
+      "\t                       Arthur County, NE (1x)\n",
+      "\t                       Banner County, NE (1x)\n",
+      "\t                       Blaine County, NE (1x)\n",
+      "\n",
+      "  3. \"total_population\"\n",
+      "\n",
+      "\tType of data:          Number\n",
+      "\tContains null values:  False\n",
+      "\tUnique values:         93\n",
+      "\tSmallest value:        348\n",
+      "\tLargest value:         518271\n",
+      "\tSum:                   1827306\n",
+      "\tMean:                  19648.452\n",
+      "\tMedian:                6294\n",
+      "\tStDev:                 62501.005\n",
+      "\tMost common values:    31299 (1x)\n",
+      "\t                       6655 (1x)\n",
+      "\t                       490 (1x)\n",
+      "\t                       778 (1x)\n",
+      "\t                       584 (1x)\n",
+      "\n",
+      "  4. \"margin_of_error\"\n",
+      "\n",
+      "\tType of data:          Number\n",
+      "\tContains null values:  False\n",
+      "\tUnique values:         15\n",
+      "\tSmallest value:        0\n",
+      "\tLargest value:         115\n",
+      "\tSum:                   1800\n",
+      "\tMean:                  19.355\n",
+      "\tMedian:                0\n",
+      "\tStDev:                 37.897\n",
+      "\tMost common values:    0 (73x)\n",
+      "\t                       73 (2x)\n",
+      "\t                       114 (2x)\n",
+      "\t                       97 (2x)\n",
+      "\t                       99 (2x)\n",
+      "\n",
+      "Row count: 93\n"
+     ]
+    }
+   ],
+   "source": [
+    "!csvstat acs2012_5yr_population.csv"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9d6bd5d2-abde-4369-8745-5feda4270b94",
+   "metadata": {},
+   "source": [
+    "csvjoin\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "c63b64be-a010-4db6-af58-c2aff3374307",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "state,county,fips,nsn,item_name,quantity,ui,acquisition_cost,total_cost,ship_date,federal_supply_category,federal_supply_category_name,federal_supply_class,federal_supply_class_name,name,total_population,margin_of_error\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299,0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299,0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299,0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299,0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299,0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299,0\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Buffalo County, NE\",46330,0\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Buffalo County, NE\",46330,0\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Buffalo County, NE\",46330,0\n"
+     ]
+    }
+   ],
+   "source": [
+    "!csvjoin -c fips data.csv acs2012_5yr_population.csv > joined.csv\n",
+    "!head joined.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "6b2f4b14-fe1a-41d9-ac21-bc9361b648d8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "| county     | item_name                                                      | total_population |\n",
+      "| ---------- | -------------------------------------------------------------- | ---------------- |\n",
+      "| MCPHERSON  | RIFLE,5.56 MILLIMETER                                          |              348 |\n",
+      "| WHEELER    | RIFLE,5.56 MILLIMETER                                          |              725 |\n",
+      "| GREELEY    | RIFLE,7.62 MILLIMETER                                          |            2,515 |\n",
+      "| GREELEY    | RIFLE,7.62 MILLIMETER                                          |            2,515 |\n",
+      "| GREELEY    | RIFLE,7.62 MILLIMETER                                          |            2,515 |\n",
+      "| NANCE      | RIFLE,5.56 MILLIMETER                                          |            3,730 |\n",
+      "| NANCE      | RIFLE,7.62 MILLIMETER                                          |            3,730 |\n",
+      "| NANCE      | RIFLE,7.62 MILLIMETER                                          |            3,730 |\n"
+     ]
+    }
+   ],
+   "source": [
+    "!csvcut -c county,item_name,total_population joined.csv | csvsort -c total_population | csvlook | head"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "17364945-1524-4344-9690-290e8e6ff33e",
+   "metadata": {},
+   "source": [
+    "csvstack\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "18a4170d-bff2-41bc-9078-4f96dc764032",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!curl -L -O --silent https://raw.githubusercontent.com/wireservice/csvkit/master/examples/realdata/ks_1033_data.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "2fd3cb0d-4723-41bb-8673-80034b4189be",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "state,county,fips,nsn,item_name,quantity,ui,acquisition_cost,total_cost,ship_date,federal_supply_category,federal_supply_category_name,federal_supply_class,federal_supply_class_name\n",
+      "KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,4/16/2012 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n"
+     ]
+    }
+   ],
+   "source": [
+    "!head ks_1033_data.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "174fde32-d855-4adf-9f9a-4e60904cbe24",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!in2csv ne_1033_data.xlsx > ne_1033_data.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "1e9e9bc4-03e0-4039-a94d-db58cd28d318",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "state,county,fips,nsn,item_name,quantity,ui,acquisition_cost,total_cost,ship_date,federal_supply_category,federal_supply_category_name,federal_supply_class,federal_supply_class_name\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n"
+     ]
+    }
+   ],
+   "source": [
+    "!head ne_1033_data.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "7d2244bd-60d8-43eb-a52d-41120b76f14f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "state,county,fips,nsn,item_name,quantity,ui,acquisition_cost,total_cost,ship_date,federal_supply_category,federal_supply_category_name,federal_supply_class,federal_supply_class_name\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\"\n"
+     ]
+    }
+   ],
+   "source": [
+    "!csvstack ne_1033_data.csv ks_1033_data.csv > region.csv\n",
+    "!head region.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "06d227f4-a4bd-42c3-970e-91bb8561ffc4",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "  1. \"state\"\n",
+      "\n",
+      "\tType of data:          Text\n",
+      "\tContains null values:  False\n",
+      "\tUnique values:         2\n",
+      "\tLongest value:         2 characters\n",
+      "\tMost common values:    KS (1575x)\n",
+      "\t                       NE (1036x)\n",
+      "\n",
+      "  8. \"acquisition_cost\"\n",
+      "\n",
+      "\tType of data:          Number\n",
+      "\tContains null values:  False\n",
+      "\tUnique values:         127\n",
+      "\tSmallest value:        0\n",
+      "\tLargest value:         658000\n",
+      "\tSum:                   9440445.91\n",
+      "\tMean:                  3615.644\n",
+      "\tMedian:                138\n",
+      "\tStDev:                 23730.631\n",
+      "\tMost common values:    120 (649x)\n",
+      "\t                       499 (449x)\n",
+      "\t                       138 (311x)\n",
+      "\t                       6800 (304x)\n",
+      "\t                       58.71 (218x)\n",
+      "\n",
+      "Row count: 2611\n"
+     ]
+    }
+   ],
+   "source": [
+    "!csvstat -c state,acquisition_cost region.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "3cffe871-fe32-48ca-a134-c3c313484cbf",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "group,state,county,fips,nsn,item_name,quantity,ui,acquisition_cost,total_cost,ship_date,federal_supply_category,federal_supply_category_name,federal_supply_class,federal_supply_class_name\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1,Each,499,499,4/16/2012 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n",
+      "ne_1033_data.csv,KS,ALLEN,20001,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1,Each,138,138,5/19/2006 0:00:00,10,WEAPONS,1005,\"Guns, through 30 mm\"\n"
+     ]
+    }
+   ],
+   "source": [
+    "!csvstack -g ne_1033_data.csv ks_1033_data.csv > region.csv\n",
+    "!head region.csv"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "27c01924-61a9-4b45-a78d-38b0744da342",
+   "metadata": {},
+   "source": [
+    "csvsql y sql2csv\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "0e19afc2-5bed-49c0-b5b7-a842d7ef8849",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "CREATE TABLE joined (\n",
+      "\tstate VARCHAR NOT NULL, \n",
+      "\tcounty VARCHAR NOT NULL, \n",
+      "\tfips FLOAT NOT NULL, \n",
+      "\tnsn VARCHAR NOT NULL, \n",
+      "\titem_name VARCHAR, \n",
+      "\tquantity FLOAT NOT NULL, \n",
+      "\tui VARCHAR NOT NULL, \n",
+      "\tacquisition_cost FLOAT NOT NULL, \n",
+      "\ttotal_cost FLOAT NOT NULL, \n",
+      "\tship_date DATE NOT NULL, \n",
+      "\tfederal_supply_category FLOAT NOT NULL, \n",
+      "\tfederal_supply_category_name VARCHAR NOT NULL, \n",
+      "\tfederal_supply_class FLOAT NOT NULL, \n",
+      "\tfederal_supply_class_name VARCHAR NOT NULL, \n",
+      "\tname VARCHAR NOT NULL, \n",
+      "\ttotal_population FLOAT NOT NULL, \n",
+      "\tmargin_of_error FLOAT NOT NULL\n",
+      ");\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Muestra el comando SQL para crear la tabla\n",
+    "#\n",
+    "!csvsql -i sqlite joined.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "cd07d996-b864-48fe-910e-2efdbb2a2b9d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "OperationalError: (sqlite3.OperationalError) table joined already exists\n",
+      "[SQL: \n",
+      "CREATE TABLE joined (\n",
+      "\tstate VARCHAR NOT NULL, \n",
+      "\tcounty VARCHAR NOT NULL, \n",
+      "\tfips FLOAT NOT NULL, \n",
+      "\tnsn VARCHAR NOT NULL, \n",
+      "\titem_name VARCHAR, \n",
+      "\tquantity FLOAT NOT NULL, \n",
+      "\tui VARCHAR NOT NULL, \n",
+      "\tacquisition_cost FLOAT NOT NULL, \n",
+      "\ttotal_cost FLOAT NOT NULL, \n",
+      "\tship_date DATE NOT NULL, \n",
+      "\tfederal_supply_category FLOAT NOT NULL, \n",
+      "\tfederal_supply_category_name VARCHAR NOT NULL, \n",
+      "\tfederal_supply_class FLOAT NOT NULL, \n",
+      "\tfederal_supply_class_name VARCHAR NOT NULL, \n",
+      "\tname VARCHAR NOT NULL, \n",
+      "\ttotal_population FLOAT NOT NULL, \n",
+      "\tmargin_of_error FLOAT NOT NULL\n",
+      ")\n",
+      "\n",
+      "]\n",
+      "(Background on this error at: https://sqlalche.me/e/14/e3q8)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Inserta la tabla en la bd\n",
+    "#\n",
+    "!csvsql --db sqlite:///leso.db --insert joined.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "f62256c2-1586-4af5-96ad-1444f4d453dc",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "state,county,fips,nsn,item_name,quantity,ui,acquisition_cost,total_cost,ship_date,federal_supply_category,federal_supply_category_name,federal_supply_class,federal_supply_class_name,name,total_population,margin_of_error\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299.0,0.0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299.0,0.0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299.0,0.0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299.0,0.0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299.0,0.0\n",
+      "NE,ADAMS,31001.0,1005-00-589-1271,\"RIFLE,7.62 MILLIMETER\",1.0,Each,138.0,138.0,2008-07-11,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Adams County, NE\",31299.0,0.0\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Buffalo County, NE\",46330.0,0.0\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Buffalo County, NE\",46330.0,0.0\n",
+      "NE,BUFFALO,31019.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-09-24,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Buffalo County, NE\",46330.0,0.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Consulta la bd\n",
+    "#\n",
+    "!sql2csv --db sqlite:///leso.db --query \"select * from joined\" | head"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "2154306a-c639-4801-b120-826b98d02778",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "state,county,fips,nsn,item_name,quantity,ui,acquisition_cost,total_cost,ship_date,federal_supply_category,federal_supply_category_name,federal_supply_class,federal_supply_class_name,name,total_population,margin_of_error\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n",
+      "NE,DOUGLAS,31055.0,1005-00-073-9421,\"RIFLE,5.56 MILLIMETER\",1.0,Each,499.0,499.0,2008-05-20,10.0,WEAPONS,1005.0,\"Guns, through 30 mm\",\"Douglas County, NE\",518271.0,0.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "!sql2csv --db sqlite:///leso.db --query \"select * from joined where county='DOUGLAS';\" > douglas.csv\n",
+    "!head douglas.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "75f51d7c-7e9d-457a-9c8a-7fb1fe9367d0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "| county  | item_name                              |\n",
+      "| ------- | -------------------------------------- |\n",
+      "| DAKOTA  | SPECTACLES SET,BALL                    |\n",
+      "| DAKOTA  | SPECTACLES SET,BALL                    |\n",
+      "| DOUGLAS | CAMOUFLAGE NET SYSTEM,RADAR SCATTERING |\n",
+      "| DOUGLAS | SPECTACLE KIT,INTER                    |\n",
+      "| DOUGLAS | SAFETY GLASSES,REVI                    |\n",
+      "| DOUGLAS | GOGGLES,INDUSTRIAL                     |\n",
+      "| DOUGLAS |                                        |\n",
+      "| DOUGLAS | CASE SHIPPING                          |\n",
+      "| DOUGLAS | GAITER,NECK                            |\n",
+      "| DOUGLAS | INSECT NET PROTECTO                    |\n",
+      "| DOUGLAS | SHELTER HALF,TENT                      |\n",
+      "| DOUGLAS | LINER,WET WEATHER P                    |\n",
+      "| DOUGLAS | BAG,FLYER'S HELMET                     |\n",
+      "| DOUGLAS | GLOVES,FLYERS'                         |\n",
+      "| DOUGLAS | COVERALLS,COMBAT VE                    |\n",
+      "| DOUGLAS | VEST,TACTICAL LOAD                     |\n",
+      "| DOUGLAS | UNDERSHIRT,COLD WEA                    |\n",
+      "| DOUGLAS | UNDERSHIRT,COLD WEA                    |\n",
+      "| DOUGLAS | SHIRT,COLD WEATHER                     |\n",
+      "| DOUGLAS | SHIRT,COLD WEATHER                     |\n",
+      "| DOUGLAS | SHIRT,COLD WEATHER                     |\n",
+      "| DOUGLAS | OVERALLS,COLD WEATH                    |\n",
+      "| DOUGLAS | SHIRT,COLD WEATHER                     |\n",
+      "| DOUGLAS | SHIRT,COLD WEATHER                     |\n",
+      "| DOUGLAS | ELBOW,PAD                              |\n",
+      "| DOUGLAS | ELBOW,PADS                             |\n",
+      "| DOUGLAS | GLOVES,MEN'S AND WO                    |\n",
+      "| DOUGLAS | PULLOVER FLEECE  POLARTEC  CO          |\n",
+      "| DOUGLAS |                                        |\n",
+      "| DOUGLAS | CASE,SMALL ARMS AMM                    |\n",
+      "| DOUGLAS | BAG DUFFEL                             |\n",
+      "| DOUGLAS | BAG,CLOTHING                           |\n",
+      "| DOUGLAS | FIELD PACK                             |\n",
+      "| DOUGLAS | CANTEEN,WATER                          |\n",
+      "| DOUGLAS | MAT,SLEEPING,SELF-I                    |\n",
+      "| DOUGLAS | SLEEPING BAG                           |\n",
+      "| DOUGLAS | SLEEPING BAG                           |\n",
+      "| DOUGLAS | SLEEPING BAG                           |\n",
+      "| DOUGLAS | SLEEPING BAG                           |\n",
+      "| DOUGLAS | BIVY COVER                             |\n",
+      "| DOUGLAS | FIELD PACK                             |\n",
+      "| DOUGLAS | FIELD PACK                             |\n",
+      "| DOUGLAS | FIELD PACK                             |\n",
+      "| DOUGLAS | FIELD PACK                             |\n",
+      "| DOUGLAS | POUCH,RADIO                            |\n",
+      "| DOUGLAS | LID                                    |\n",
+      "| DOUGLAS | MEDIC BAG                              |\n",
+      "| DOUGLAS | EXTERNAL MEDICAL MO                    |\n",
+      "| DOUGLAS | RIFLEMAN SET                           |\n",
+      "| HALL    | MAGAZINE,CARTRIDGE                     |\n",
+      "| HALL    | LINER,COLD WEATHER                     |\n",
+      "| HALL    | LINER,COLD WEATHER                     |\n",
+      "| HALL    | HOOD,COLD WEATHER                      |\n",
+      "| HALL    | SHIRT,COLD WEATHER                     |\n",
+      "| HALL    | GOGGLES,SUN,WIND AN                    |\n",
+      "| HALL    | MAT,SLEEPING,SELF-I                    |\n"
+     ]
+    }
+   ],
+   "source": [
+    "!csvsql --query \"select county,item_name from joined where quantity > 5;\" joined.csv | csvlook"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

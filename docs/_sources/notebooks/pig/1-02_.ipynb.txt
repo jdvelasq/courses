@@ -4,10 +4,18 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Programación Basica\n",
+    "Conteo de palabras en Apache Pig usando Jupyter\n",
     "===\n",
     "\n",
-    "* 60 min | Última modificación: Noviembre 07, 2019"
+    "* Última modificación: Mayo 16, 2021 | YouTube"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Cell magic `%%pig`\n",
+    "---"
    ]
   },
   {
@@ -16,38 +24,108 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "%load_ext bigdata"
+    "from IPython.core.magic import Magics, cell_magic, line_magic, magics_class\n",
+    "from pexpect import spawn\n",
+    "\n",
+    "TIMEOUT = 60\n",
+    "PROG = \"pig\"\n",
+    "PROMPT = [\"\\r\\n>> \", \"\\r\\ngrunt> \"]\n",
+    "DISCARD = [\"INFO  org.apache\", \"WARN  org.apache\"]\n",
+    "QUIT = \"quit\"\n",
+    "\n",
+    "\n",
+    "@magics_class\n",
+    "class Magic(Magics):\n",
+    "    def __init__(self, shell):\n",
+    "        super().__init__(shell)\n",
+    "        self.app = spawn(PROG, timeout=60)\n",
+    "        self.app.expect(PROMPT)\n",
+    "\n",
+    "    @cell_magic\n",
+    "    def pig(self, line, cell):\n",
+    "        cell_lines = [cell_line.strip() for cell_line in cell.split(\"\\n\")]\n",
+    "        cell_lines = [cell_line for cell_line in cell_lines if cell_line != \"\"]\n",
+    "        for cell_line in cell_lines:\n",
+    "            self.app.sendline(cell_line)\n",
+    "            self.app.expect(PROMPT, timeout=TIMEOUT)\n",
+    "            output = self.app.before.decode()\n",
+    "            output = output.replace(\"\\r\\n\", \"\\n\")\n",
+    "            output = output.split(\"\\n\")\n",
+    "            output = [output_line.strip() for output_line in output]\n",
+    "            for output_line in output:\n",
+    "                if output_line not in cell_lines:\n",
+    "                    if not any(word in output_line for word in DISCARD):\n",
+    "                        print(output_line)\n",
+    "        return None\n",
+    "\n",
+    "    @line_magic\n",
+    "    def quit(self, line):\n",
+    "        self.app.sendline(QUIT)\n",
+    "\n",
+    "\n",
+    "def load_ipython_extension(ip):\n",
+    "    ip.register_magics(Magic(ip))\n",
+    "\n",
+    "\n",
+    "load_ipython_extension(ip=get_ipython())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Archivos de prueba\n",
+    "---"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 2,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "mkdir: cannot create directory ‘/tmp/input’: File exists\n"
+     ]
+    }
+   ],
    "source": [
-    "%pig_start"
+    "!mkdir /tmp/input"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 3,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting /tmp/input/text0.txt\n"
+     ]
+    }
+   ],
    "source": [
-    "%timeout 300"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### LOAD\n",
+    "%%writefile /tmp/input/text0.txt\n",
+    "Analytics is the discovery, interpretation, and communication of meaningful patterns \n",
+    "in data. Especially valuable in areas rich with recorded information, analytics relies \n",
+    "on the simultaneous application of statistics, computer programming and operations research \n",
+    "to quantify performance.\n",
     "\n",
-    "El nombre de archivo soporta wilcards; por ejemplo:\n",
-    "\n",
-    "    x = LOAD 'files/*.txt';\n",
-    "    \n",
-    "leerá todos los archivos terminados en `.txt`. Por defecto, se espera que los campos en los archivos estén separados por comas."
+    "Organizations may apply analytics to business data to describe, predict, and improve business \n",
+    "performance. Specifically, areas within analytics include predictive analytics, prescriptive \n",
+    "analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big \n",
+    "Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, \n",
+    "marketing optimization and marketing mix modeling, web analytics, call analytics, speech \n",
+    "analytics, sales force sizing and optimization, price and promotion modeling, predictive \n",
+    "science, credit risk analysis, and fraud analytics. Since analytics can require extensive \n",
+    "computation (see big data), the algorithms and software used for analytics harness the most \n",
+    "current methods in computer science, statistics, and mathematics."
    ]
   },
   {
@@ -59,30 +137,16 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Writing persons.csv\n"
+      "Overwriting /tmp/input/text1.txt\n"
      ]
     }
    ],
    "source": [
-    "%%writefile persons.csv\n",
-    "1,Vivian,Hamilton,1971-07-08,green,1\n",
-    "2,Karen,Holcomb,1974-05-23,green,4\n",
-    "3,Cody,Garrett,1973-04-22,orange,1\n",
-    "4,Roth,Fry,1975-01-29,black,1\n",
-    "5,Zoe,Conway,1974-07-03,blue,2\n",
-    "6,Gretchen,Kinney,1974-10-18,viole,1\n",
-    "7,Driscoll,Klein,1970-10-05,blue,5\n",
-    "8,Karyn,Diaz,1969-02-24,red,1\n",
-    "9,Merritt,Guy,1974-10-17,indigo,4\n",
-    "10,Kylan,Sexton,1975-02-28,black,4\n",
-    "11,Jordan,Estes,1969-12-07,indigo,4\n",
-    "12,Hope,Coffey,1973-12-24,green,5\n",
-    "13,Vivian,Crane,1970-08-27,gray,5\n",
-    "14,Clio,Noel,1972-12-12,red,5\n",
-    "15,Hope,Silva,1970-07-01,blue,5\n",
-    "16,Ayanna,Jarvis,1974-02-11,orange,5\n",
-    "17,Chanda,Boyer,1973-04-01,green,4\n",
-    "18,Chadwick,Knight,1973-04-29,yellow,1"
+    "%%writefile /tmp/input/text1.txt\n",
+    "The field of data analysis. Analytics often involves studying past historical data to \n",
+    "research potential trends, to analyze the effects of certain decisions or events, or to \n",
+    "evaluate the performance of a given tool or scenario. The goal of analytics is to improve \n",
+    "the business by gaining knowledge which can be used to make improvements or changes."
    ]
   },
   {
@@ -94,106 +158,53 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      " fs -put persons.csv\n"
+      "Overwriting /tmp/input/text2.txt\n"
      ]
     }
    ],
    "source": [
-    "%%pig\n",
-    "fs -put persons.csv"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 6,
-   "metadata": {
-    "scrolled": true
-   },
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      " -- \n",
-      " -- Carga el archivo desde el disco duro\n",
-      " --\n",
-      " u = LOAD 'persons.csv' USING PigStorage(',') \n",
-      "    AS (id:INT, \n",
-      "        firstname:CHARARRAY, \n",
-      "        surname:CHARARRAY, \n",
-      "        birtday:CHARARRAY, \n",
-      "        color:CHARARRAY, \n",
-      "        quantity:INT);\n",
-      " DUMP u;\n",
-      "2022-05-12 21:41:28,019 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:28,125 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.reduce.markreset.buffer.percent is deprecated. Instead, use mapreduce.reduce.markreset.buffer.percent\n",
-      "2022-05-12 21:41:28,128 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.output.compress is deprecated. Instead, use mapreduce.output.fileoutputformat.compress\n",
-      "2022-05-12 21:41:28,134 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.submit.replication is deprecated. Instead, use mapreduce.client.submit.file.replication\n",
-      "2022-05-12 21:41:29,064 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.job.tracker.http.address is deprecated. Instead, use mapreduce.jobtracker.http.address\n",
-      "2022-05-12 21:41:29,068 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:29,077 [JobControl] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.task.id is deprecated. Instead, use mapreduce.task.attempt.id\n",
-      "2022-05-12 21:41:29,138 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2022-05-12 21:41:29,164 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "2022-05-12 21:41:29,633 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2022-05-12 21:41:29,723 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652391618376_0001\n",
-      "2022-05-12 21:41:29,847 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2022-05-12 21:41:30,212 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652391618376_0001\n",
-      "2022-05-12 21:41:30,237 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://983dfd64ffda:8088/proxy/application_1652391618376_0001/\n",
-      "2022-05-12 21:41:45,333 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:45,342 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:45,846 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:45,851 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:45,871 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.reduce.tasks is deprecated. Instead, use mapreduce.job.reduces\n",
-      "2022-05-12 21:41:45,873 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:45,877 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:45,924 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:45,928 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:45,950 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:45,953 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:45,969 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:45,972 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:46,010 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "(1,Vivian,Hamilton,1971-07-08,green,1)\n",
-      "(2,Karen,Holcomb,1974-05-23,green,4)\n",
-      "(3,Cody,Garrett,1973-04-22,orange,1)\n",
-      "(4,Roth,Fry,1975-01-29,black,1)\n",
-      "(5,Zoe,Conway,1974-07-03,blue,2)\n",
-      "(6,Gretchen,Kinney,1974-10-18,viole,1)\n",
-      "(7,Driscoll,Klein,1970-10-05,blue,5)\n",
-      "(8,Karyn,Diaz,1969-02-24,red,1)\n",
-      "(9,Merritt,Guy,1974-10-17,indigo,4)\n",
-      "(10,Kylan,Sexton,1975-02-28,black,4)\n",
-      "(11,Jordan,Estes,1969-12-07,indigo,4)\n",
-      "(12,Hope,Coffey,1973-12-24,green,5)\n",
-      "(13,Vivian,Crane,1970-08-27,gray,5)\n",
-      "(14,Clio,Noel,1972-12-12,red,5)\n",
-      "(15,Hope,Silva,1970-07-01,blue,5)\n",
-      "(16,Ayanna,Jarvis,1974-02-11,orange,5)\n",
-      "(17,Chanda,Boyer,1973-04-01,green,4)\n",
-      "(18,Chadwick,Knight,1973-04-29,yellow,1)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "-- \n",
-    "-- Carga el archivo desde el disco duro\n",
-    "--\n",
-    "u = LOAD 'persons.csv' USING PigStorage(',') \n",
-    "    AS (id:INT, \n",
-    "        firstname:CHARARRAY, \n",
-    "        surname:CHARARRAY, \n",
-    "        birtday:CHARARRAY, \n",
-    "        color:CHARARRAY, \n",
-    "        quantity:INT);\n",
-    "DUMP u;"
+    "%%writefile /tmp/input/text2.txt\n",
+    "Data analytics (DA) is the process of examining data sets in order to draw conclusions \n",
+    "about the information they contain, increasingly with the aid of specialized systems \n",
+    "and software. Data analytics technologies and techniques are widely used in commercial \n",
+    "industries to enable organizations to make more-informed business decisions and by \n",
+    "scientists and researchers to verify or disprove scientific models, theories and \n",
+    "hypotheses."
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "### STORE"
+    "Ejecución de Pig en Jupyter\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "mkdir: `input': File exists\n",
+      "put: `input/text0.txt': File exists\n",
+      "put: `input/text1.txt': File exists\n",
+      "put: `input/text2.txt': File exists\n",
+      "Found 3 items\n",
+      "-rw-r--r--   1 root supergroup       1093 2022-05-16 23:31 input/text0.txt\n",
+      "-rw-r--r--   1 root supergroup        352 2022-05-16 23:31 input/text1.txt\n",
+      "-rw-r--r--   1 root supergroup        440 2022-05-16 23:31 input/text2.txt\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%pig\n",
+    "fs -mkdir input\n",
+    "fs -put /tmp/input/  .\n",
+    "fs -ls input/"
    ]
   },
   {
@@ -205,14 +216,37 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      " fs -rmdir output\n",
-      "rmdir: `output': No such file or directory\n"
+      "(Analytics is the discovery, interpretation, and communication of meaningful patterns )\n",
+      "(in data. Especially valuable in areas rich with recorded information, analytics relies )\n",
+      "(on the simultaneous application of statistics, computer programming and operations research )\n",
+      "(to quantify performance.)\n",
+      "()\n",
+      "(Organizations may apply analytics to business data to describe, predict, and improve business )\n",
+      "(performance. Specifically, areas within analytics include predictive analytics, prescriptive )\n",
+      "(analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big )\n",
+      "(Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, )\n",
+      "(marketing optimization and marketing mix modeling, web analytics, call analytics, speech )\n",
+      "(analytics, sales force sizing and optimization, price and promotion modeling, predictive )\n",
+      "(science, credit risk analysis, and fraud analytics. Since analytics can require extensive )\n",
+      "(computation (see big data), the algorithms and software used for analytics harness the most )\n",
+      "(current methods in computer science, statistics, and mathematics.)\n",
+      "(Data analytics (DA) is the process of examining data sets in order to draw conclusions )\n",
+      "(about the information they contain, increasingly with the aid of specialized systems )\n",
+      "(and software. Data analytics technologies and techniques are widely used in commercial )\n",
+      "(industries to enable organizations to make more-informed business decisions and by )\n",
+      "(scientists and researchers to verify or disprove scientific models, theories and )\n",
+      "(hypotheses.)\n",
+      "(The field of data analysis. Analytics often involves studying past historical data to )\n",
+      "(research potential trends, to analyze the effects of certain decisions or events, or to )\n",
+      "(evaluate the performance of a given tool or scenario. The goal of analytics is to improve )\n",
+      "(the business by gaining knowledge which can be used to make improvements or changes.)\n"
      ]
     }
    ],
    "source": [
     "%%pig\n",
-    "fs -rmdir output"
+    "lines = LOAD 'input/text*.txt' AS (line:CHARARRAY);\n",
+    "DUMP lines;"
    ]
   },
   {
@@ -224,35 +258,267 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      " STORE u INTO 'output';\n",
-      "2022-05-12 21:41:46,212 [main] INFO  org.apache.hadoop.conf.Configuration.deprecation - mapred.textoutputformat.separator is deprecated. Instead, use mapreduce.output.textoutputformat.separator\n",
-      "2022-05-12 21:41:46,250 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:47,962 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:47,973 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2022-05-12 21:41:47,984 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "2022-05-12 21:41:48,823 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2022-05-12 21:41:49,257 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652391618376_0002\n",
-      "2022-05-12 21:41:49,260 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2022-05-12 21:41:49,485 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652391618376_0002\n",
-      "2022-05-12 21:41:49,488 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://983dfd64ffda:8088/proxy/application_1652391618376_0002/\n",
-      "2022-05-12 21:41:59,727 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:59,731 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:59,813 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:59,816 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:59,835 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:59,838 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:59,861 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:59,864 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:59,887 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:59,890 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:41:59,906 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:41:59,909 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n"
+      "(Analytics)\n",
+      "(is)\n",
+      "(the)\n",
+      "(discovery)\n",
+      "(interpretation)\n",
+      "(and)\n",
+      "(communication)\n",
+      "(of)\n",
+      "(meaningful)\n",
+      "(patterns)\n",
+      "(in)\n",
+      "(data.)\n",
+      "(Especially)\n",
+      "(valuable)\n",
+      "(in)\n",
+      "(areas)\n",
+      "(rich)\n",
+      "(with)\n",
+      "(recorded)\n",
+      "(information)\n",
+      "(analytics)\n",
+      "(relies)\n",
+      "(on)\n",
+      "(the)\n",
+      "(simultaneous)\n",
+      "(application)\n",
+      "(of)\n",
+      "(statistics)\n",
+      "(computer)\n",
+      "(programming)\n",
+      "(and)\n",
+      "(operations)\n",
+      "(research)\n",
+      "(to)\n",
+      "(quantify)\n",
+      "(performance.)\n",
+      "()\n",
+      "(Organizations)\n",
+      "(may)\n",
+      "(apply)\n",
+      "(analytics)\n",
+      "(to)\n",
+      "(business)\n",
+      "(data)\n",
+      "(to)\n",
+      "(describe)\n",
+      "(predict)\n",
+      "(and)\n",
+      "(improve)\n",
+      "(business)\n",
+      "(performance.)\n",
+      "(Specifically)\n",
+      "(areas)\n",
+      "(within)\n",
+      "(analytics)\n",
+      "(include)\n",
+      "(predictive)\n",
+      "(analytics)\n",
+      "(prescriptive)\n",
+      "(analytics)\n",
+      "(enterprise)\n",
+      "(decision)\n",
+      "(management)\n",
+      "(descriptive)\n",
+      "(analytics)\n",
+      "(cognitive)\n",
+      "(analytics)\n",
+      "(Big)\n",
+      "(Data)\n",
+      "(Analytics)\n",
+      "(retail)\n",
+      "(analytics)\n",
+      "(store)\n",
+      "(assortment)\n",
+      "(and)\n",
+      "(stock-keeping)\n",
+      "(unit)\n",
+      "(optimization)\n",
+      "(marketing)\n",
+      "(optimization)\n",
+      "(and)\n",
+      "(marketing)\n",
+      "(mix)\n",
+      "(modeling)\n",
+      "(web)\n",
+      "(analytics)\n",
+      "(call)\n",
+      "(analytics)\n",
+      "(speech)\n",
+      "(analytics)\n",
+      "(sales)\n",
+      "(force)\n",
+      "(sizing)\n",
+      "(and)\n",
+      "(optimization)\n",
+      "(price)\n",
+      "(and)\n",
+      "(promotion)\n",
+      "(modeling)\n",
+      "(predictive)\n",
+      "(science)\n",
+      "(credit)\n",
+      "(risk)\n",
+      "(analysis)\n",
+      "(and)\n",
+      "(fraud)\n",
+      "(analytics.)\n",
+      "(Since)\n",
+      "(analytics)\n",
+      "(can)\n",
+      "(require)\n",
+      "(extensive)\n",
+      "(computation)\n",
+      "(see)\n",
+      "(big)\n",
+      "(data)\n",
+      "(the)\n",
+      "(algorithms)\n",
+      "(and)\n",
+      "(software)\n",
+      "(used)\n",
+      "(for)\n",
+      "(analytics)\n",
+      "(harness)\n",
+      "(the)\n",
+      "(most)\n",
+      "(current)\n",
+      "(methods)\n",
+      "(in)\n",
+      "(computer)\n",
+      "(science)\n",
+      "(statistics)\n",
+      "(and)\n",
+      "(mathematics.)\n",
+      "(Data)\n",
+      "(analytics)\n",
+      "(DA)\n",
+      "(is)\n",
+      "(the)\n",
+      "(process)\n",
+      "(of)\n",
+      "(examining)\n",
+      "(data)\n",
+      "(sets)\n",
+      "(in)\n",
+      "(order)\n",
+      "(to)\n",
+      "(draw)\n",
+      "(conclusions)\n",
+      "(about)\n",
+      "(the)\n",
+      "(information)\n",
+      "(they)\n",
+      "(contain)\n",
+      "(increasingly)\n",
+      "(with)\n",
+      "(the)\n",
+      "(aid)\n",
+      "(of)\n",
+      "(specialized)\n",
+      "(systems)\n",
+      "(and)\n",
+      "(software.)\n",
+      "(Data)\n",
+      "(analytics)\n",
+      "(technologies)\n",
+      "(and)\n",
+      "(techniques)\n",
+      "(are)\n",
+      "(widely)\n",
+      "(used)\n",
+      "(in)\n",
+      "(commercial)\n",
+      "(industries)\n",
+      "(to)\n",
+      "(enable)\n",
+      "(organizations)\n",
+      "(to)\n",
+      "(make)\n",
+      "(more-informed)\n",
+      "(business)\n",
+      "(decisions)\n",
+      "(and)\n",
+      "(by)\n",
+      "(scientists)\n",
+      "(and)\n",
+      "(researchers)\n",
+      "(to)\n",
+      "(verify)\n",
+      "(or)\n",
+      "(disprove)\n",
+      "(scientific)\n",
+      "(models)\n",
+      "(theories)\n",
+      "(and)\n",
+      "(hypotheses.)\n",
+      "(The)\n",
+      "(field)\n",
+      "(of)\n",
+      "(data)\n",
+      "(analysis.)\n",
+      "(Analytics)\n",
+      "(often)\n",
+      "(involves)\n",
+      "(studying)\n",
+      "(past)\n",
+      "(historical)\n",
+      "(data)\n",
+      "(to)\n",
+      "(research)\n",
+      "(potential)\n",
+      "(trends)\n",
+      "(to)\n",
+      "(analyze)\n",
+      "(the)\n",
+      "(effects)\n",
+      "(of)\n",
+      "(certain)\n",
+      "(decisions)\n",
+      "(or)\n",
+      "(events)\n",
+      "(or)\n",
+      "(to)\n",
+      "(evaluate)\n",
+      "(the)\n",
+      "(performance)\n",
+      "(of)\n",
+      "(a)\n",
+      "(given)\n",
+      "(tool)\n",
+      "(or)\n",
+      "(scenario.)\n",
+      "(The)\n",
+      "(goal)\n",
+      "(of)\n",
+      "(analytics)\n",
+      "(is)\n",
+      "(to)\n",
+      "(improve)\n",
+      "(the)\n",
+      "(business)\n",
+      "(by)\n",
+      "(gaining)\n",
+      "(knowledge)\n",
+      "(which)\n",
+      "(can)\n",
+      "(be)\n",
+      "(used)\n",
+      "(to)\n",
+      "(make)\n",
+      "(improvements)\n",
+      "(or)\n",
+      "(changes.)\n"
      ]
     }
    ],
    "source": [
     "%%pig\n",
-    "STORE u INTO 'output';"
+    "-- genera una tabla llamada words con una palabra por registro\n",
+    "words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) AS word;\n",
+    "DUMP words;"
    ]
   },
   {
@@ -264,13 +530,169 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "-rw-r--r--   1 root supergroup          0 2022-05-12 21:41 output/_SUCCESS\n",
-      "-rw-r--r--   1 root supergroup        616 2022-05-12 21:41 output/part-m-00000\n"
+      "(a,{(a)})\n",
+      "(DA,{(DA)})\n",
+      "(be,{(be)})\n",
+      "(by,{(by),(by)})\n",
+      "(in,{(in),(in),(in),(in),(in)})\n",
+      "(is,{(is),(is),(is)})\n",
+      "(of,{(of),(of),(of),(of),(of),(of),(of),(of)})\n",
+      "(on,{(on)})\n",
+      "(or,{(or),(or),(or),(or),(or)})\n",
+      "(to,{(to),(to),(to),(to),(to),(to),(to),(to),(to),(to),(to),(to)})\n",
+      "(Big,{(Big)})\n",
+      "(The,{(The),(The)})\n",
+      "(aid,{(aid)})\n",
+      "(and,{(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and)})\n",
+      "(are,{(are)})\n",
+      "(big,{(big)})\n",
+      "(can,{(can),(can)})\n",
+      "(for,{(for)})\n",
+      "(may,{(may)})\n",
+      "(mix,{(mix)})\n",
+      "(see,{(see)})\n",
+      "(the,{(the),(the),(the),(the),(the),(the),(the),(the),(the),(the)})\n",
+      "(web,{(web)})\n",
+      "(Data,{(Data),(Data),(Data)})\n",
+      "(call,{(call)})\n",
+      "(data,{(data),(data),(data),(data),(data)})\n",
+      "(draw,{(draw)})\n",
+      "(goal,{(goal)})\n",
+      "(make,{(make),(make)})\n",
+      "(most,{(most)})\n",
+      "(past,{(past)})\n",
+      "(rich,{(rich)})\n",
+      "(risk,{(risk)})\n",
+      "(sets,{(sets)})\n",
+      "(they,{(they)})\n",
+      "(tool,{(tool)})\n",
+      "(unit,{(unit)})\n",
+      "(used,{(used),(used),(used)})\n",
+      "(with,{(with),(with)})\n",
+      "(Since,{(Since)})\n",
+      "(about,{(about)})\n",
+      "(apply,{(apply)})\n",
+      "(areas,{(areas),(areas)})\n",
+      "(data.,{(data.)})\n",
+      "(field,{(field)})\n",
+      "(force,{(force)})\n",
+      "(fraud,{(fraud)})\n",
+      "(given,{(given)})\n",
+      "(often,{(often)})\n",
+      "(order,{(order)})\n",
+      "(price,{(price)})\n",
+      "(sales,{(sales)})\n",
+      "(store,{(store)})\n",
+      "(which,{(which)})\n",
+      "(credit,{(credit)})\n",
+      "(enable,{(enable)})\n",
+      "(events,{(events)})\n",
+      "(models,{(models)})\n",
+      "(relies,{(relies)})\n",
+      "(retail,{(retail)})\n",
+      "(sizing,{(sizing)})\n",
+      "(speech,{(speech)})\n",
+      "(trends,{(trends)})\n",
+      "(verify,{(verify)})\n",
+      "(widely,{(widely)})\n",
+      "(within,{(within)})\n",
+      "(analyze,{(analyze)})\n",
+      "(certain,{(certain)})\n",
+      "(contain,{(contain)})\n",
+      "(current,{(current)})\n",
+      "(effects,{(effects)})\n",
+      "(gaining,{(gaining)})\n",
+      "(harness,{(harness)})\n",
+      "(improve,{(improve),(improve)})\n",
+      "(include,{(include)})\n",
+      "(methods,{(methods)})\n",
+      "(predict,{(predict)})\n",
+      "(process,{(process)})\n",
+      "(require,{(require)})\n",
+      "(science,{(science),(science)})\n",
+      "(systems,{(systems)})\n",
+      "(analysis,{(analysis)})\n",
+      "(business,{(business),(business),(business),(business)})\n",
+      "(changes.,{(changes.)})\n",
+      "(computer,{(computer),(computer)})\n",
+      "(decision,{(decision)})\n",
+      "(describe,{(describe)})\n",
+      "(disprove,{(disprove)})\n",
+      "(evaluate,{(evaluate)})\n",
+      "(involves,{(involves)})\n",
+      "(modeling,{(modeling),(modeling)})\n",
+      "(patterns,{(patterns)})\n",
+      "(quantify,{(quantify)})\n",
+      "(recorded,{(recorded)})\n",
+      "(research,{(research),(research)})\n",
+      "(software,{(software)})\n",
+      "(studying,{(studying)})\n",
+      "(theories,{(theories)})\n",
+      "(valuable,{(valuable)})\n",
+      "(Analytics,{(Analytics),(Analytics),(Analytics)})\n",
+      "(analysis.,{(analysis.)})\n",
+      "(analytics,{(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics)})\n",
+      "(cognitive,{(cognitive)})\n",
+      "(decisions,{(decisions),(decisions)})\n",
+      "(discovery,{(discovery)})\n",
+      "(examining,{(examining)})\n",
+      "(extensive,{(extensive)})\n",
+      "(knowledge,{(knowledge)})\n",
+      "(marketing,{(marketing),(marketing)})\n",
+      "(potential,{(potential)})\n",
+      "(promotion,{(promotion)})\n",
+      "(scenario.,{(scenario.)})\n",
+      "(software.,{(software.)})\n",
+      "(Especially,{(Especially)})\n",
+      "(algorithms,{(algorithms)})\n",
+      "(analytics.,{(analytics.)})\n",
+      "(assortment,{(assortment)})\n",
+      "(commercial,{(commercial)})\n",
+      "(enterprise,{(enterprise)})\n",
+      "(historical,{(historical)})\n",
+      "(industries,{(industries)})\n",
+      "(management,{(management)})\n",
+      "(meaningful,{(meaningful)})\n",
+      "(operations,{(operations)})\n",
+      "(predictive,{(predictive),(predictive)})\n",
+      "(scientific,{(scientific)})\n",
+      "(scientists,{(scientists)})\n",
+      "(statistics,{(statistics),(statistics)})\n",
+      "(techniques,{(techniques)})\n",
+      "(application,{(application)})\n",
+      "(computation,{(computation)})\n",
+      "(conclusions,{(conclusions)})\n",
+      "(descriptive,{(descriptive)})\n",
+      "(hypotheses.,{(hypotheses.)})\n",
+      "(information,{(information),(information)})\n",
+      "(performance,{(performance)})\n",
+      "(programming,{(programming)})\n",
+      "(researchers,{(researchers)})\n",
+      "(specialized,{(specialized)})\n",
+      "(Specifically,{(Specifically)})\n",
+      "(improvements,{(improvements)})\n",
+      "(increasingly,{(increasingly)})\n",
+      "(mathematics.,{(mathematics.)})\n",
+      "(optimization,{(optimization),(optimization),(optimization)})\n",
+      "(performance.,{(performance.),(performance.)})\n",
+      "(prescriptive,{(prescriptive)})\n",
+      "(simultaneous,{(simultaneous)})\n",
+      "(technologies,{(technologies)})\n",
+      "(Organizations,{(Organizations)})\n",
+      "(communication,{(communication)})\n",
+      "(more-informed,{(more-informed)})\n",
+      "(organizations,{(organizations)})\n",
+      "(stock-keeping,{(stock-keeping)})\n",
+      "(interpretation,{(interpretation)})\n",
+      "(,{()})\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -ls output/*"
+    "%%pig\n",
+    "-- agrupa los registros que tienen la misma palabra\n",
+    "grouped = GROUP words BY word;\n",
+    "DUMP grouped;"
    ]
   },
   {
@@ -282,21 +704,169 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "1\tVivian\tHamilton\t1971-07-08\tgreen\t1\n",
-      "2\tKaren\tHolcomb\t1974-05-23\tgreen\t4\n",
-      "3\tCody\tGarrett\t1973-04-22\torange\t1\n",
-      "4\tRoth\tFry\t1975-01-29\tblack\t1\n",
-      "5\tZoe\tConway\t1974-07-03\tblue\t2\n",
-      "6\tGretchen\tKinney\t1974-10-18\tviole\t1\n",
-      "7\tDriscoll\tKlein\t1970-10-05\tblue\t5\n",
-      "8\tKaryn\tDiaz\t1969-02-24\tred\t1\n",
-      "9\tMerritt\tGuy\t1974-10-17\tindigo\t4\n",
-      "10\tKylan\tSexton\t1975-02-28\tblack\t4\n"
+      "(a,1)\n",
+      "(DA,1)\n",
+      "(be,1)\n",
+      "(by,2)\n",
+      "(in,5)\n",
+      "(is,3)\n",
+      "(of,8)\n",
+      "(on,1)\n",
+      "(or,5)\n",
+      "(to,12)\n",
+      "(Big,1)\n",
+      "(The,2)\n",
+      "(aid,1)\n",
+      "(and,15)\n",
+      "(are,1)\n",
+      "(big,1)\n",
+      "(can,2)\n",
+      "(for,1)\n",
+      "(may,1)\n",
+      "(mix,1)\n",
+      "(see,1)\n",
+      "(the,10)\n",
+      "(web,1)\n",
+      "(Data,3)\n",
+      "(call,1)\n",
+      "(data,5)\n",
+      "(draw,1)\n",
+      "(goal,1)\n",
+      "(make,2)\n",
+      "(most,1)\n",
+      "(past,1)\n",
+      "(rich,1)\n",
+      "(risk,1)\n",
+      "(sets,1)\n",
+      "(they,1)\n",
+      "(tool,1)\n",
+      "(unit,1)\n",
+      "(used,3)\n",
+      "(with,2)\n",
+      "(Since,1)\n",
+      "(about,1)\n",
+      "(apply,1)\n",
+      "(areas,2)\n",
+      "(data.,1)\n",
+      "(field,1)\n",
+      "(force,1)\n",
+      "(fraud,1)\n",
+      "(given,1)\n",
+      "(often,1)\n",
+      "(order,1)\n",
+      "(price,1)\n",
+      "(sales,1)\n",
+      "(store,1)\n",
+      "(which,1)\n",
+      "(credit,1)\n",
+      "(enable,1)\n",
+      "(events,1)\n",
+      "(models,1)\n",
+      "(relies,1)\n",
+      "(retail,1)\n",
+      "(sizing,1)\n",
+      "(speech,1)\n",
+      "(trends,1)\n",
+      "(verify,1)\n",
+      "(widely,1)\n",
+      "(within,1)\n",
+      "(analyze,1)\n",
+      "(certain,1)\n",
+      "(contain,1)\n",
+      "(current,1)\n",
+      "(effects,1)\n",
+      "(gaining,1)\n",
+      "(harness,1)\n",
+      "(improve,2)\n",
+      "(include,1)\n",
+      "(methods,1)\n",
+      "(predict,1)\n",
+      "(process,1)\n",
+      "(require,1)\n",
+      "(science,2)\n",
+      "(systems,1)\n",
+      "(analysis,1)\n",
+      "(business,4)\n",
+      "(changes.,1)\n",
+      "(computer,2)\n",
+      "(decision,1)\n",
+      "(describe,1)\n",
+      "(disprove,1)\n",
+      "(evaluate,1)\n",
+      "(involves,1)\n",
+      "(modeling,2)\n",
+      "(patterns,1)\n",
+      "(quantify,1)\n",
+      "(recorded,1)\n",
+      "(research,2)\n",
+      "(software,1)\n",
+      "(studying,1)\n",
+      "(theories,1)\n",
+      "(valuable,1)\n",
+      "(Analytics,3)\n",
+      "(analysis.,1)\n",
+      "(analytics,16)\n",
+      "(cognitive,1)\n",
+      "(decisions,2)\n",
+      "(discovery,1)\n",
+      "(examining,1)\n",
+      "(extensive,1)\n",
+      "(knowledge,1)\n",
+      "(marketing,2)\n",
+      "(potential,1)\n",
+      "(promotion,1)\n",
+      "(scenario.,1)\n",
+      "(software.,1)\n",
+      "(Especially,1)\n",
+      "(algorithms,1)\n",
+      "(analytics.,1)\n",
+      "(assortment,1)\n",
+      "(commercial,1)\n",
+      "(enterprise,1)\n",
+      "(historical,1)\n",
+      "(industries,1)\n",
+      "(management,1)\n",
+      "(meaningful,1)\n",
+      "(operations,1)\n",
+      "(predictive,2)\n",
+      "(scientific,1)\n",
+      "(scientists,1)\n",
+      "(statistics,2)\n",
+      "(techniques,1)\n",
+      "(application,1)\n",
+      "(computation,1)\n",
+      "(conclusions,1)\n",
+      "(descriptive,1)\n",
+      "(hypotheses.,1)\n",
+      "(information,2)\n",
+      "(performance,1)\n",
+      "(programming,1)\n",
+      "(researchers,1)\n",
+      "(specialized,1)\n",
+      "(Specifically,1)\n",
+      "(improvements,1)\n",
+      "(increasingly,1)\n",
+      "(mathematics.,1)\n",
+      "(optimization,3)\n",
+      "(performance.,2)\n",
+      "(prescriptive,1)\n",
+      "(simultaneous,1)\n",
+      "(technologies,1)\n",
+      "(Organizations,1)\n",
+      "(communication,1)\n",
+      "(more-informed,1)\n",
+      "(organizations,1)\n",
+      "(stock-keeping,1)\n",
+      "(interpretation,1)\n",
+      "(,0)\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -cat output/part-m-00000 | head"
+    "%%pig\n",
+    "-- genera una variable que cuenta las ocurrencias por cada grupo\n",
+    "wordcount = FOREACH grouped GENERATE group, COUNT(words);\n",
+    "DUMP wordcount;"
    ]
   },
   {
@@ -308,550 +878,38 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Deleted output/_SUCCESS\n",
-      "Deleted output/part-m-00000\n"
+      "(a,1)\n",
+      "(DA,1)\n",
+      "(be,1)\n",
+      "(by,2)\n",
+      "(in,5)\n",
+      "(is,3)\n",
+      "(of,8)\n",
+      "(on,1)\n",
+      "(or,5)\n",
+      "(to,12)\n",
+      "(Big,1)\n",
+      "(The,2)\n",
+      "(aid,1)\n",
+      "(and,15)\n",
+      "(are,1)\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -rm output/*  \n",
-    "!hadoop fs -rmdir  output"
+    "%%pig\n",
+    "-- selecciona las primeras 15 palabras\n",
+    "s = LIMIT wordcount 15;\n",
+    "DUMP s;"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 12,
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      " STORE u INTO 'output' USING PigStorage(';');\n",
-      "2022-05-12 21:42:07,039 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:08,363 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:08,375 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2022-05-12 21:42:08,384 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "2022-05-12 21:42:08,814 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2022-05-12 21:42:09,236 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652391618376_0003\n",
-      "2022-05-12 21:42:09,240 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2022-05-12 21:42:09,266 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652391618376_0003\n",
-      "2022-05-12 21:42:09,270 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://983dfd64ffda:8088/proxy/application_1652391618376_0003/\n",
-      "2022-05-12 21:42:19,373 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:19,377 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:19,443 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:19,445 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:19,461 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:19,464 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:19,488 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:19,490 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:19,508 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:19,511 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:19,528 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:19,530 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "STORE u INTO 'output' USING PigStorage(';');"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 13,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "-rw-r--r--   1 root supergroup          0 2022-05-12 21:42 output/_SUCCESS\n",
-      "-rw-r--r--   1 root supergroup        616 2022-05-12 21:42 output/part-m-00000\n"
-     ]
-    }
-   ],
-   "source": [
-    "!hadoop fs -ls output/*"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 14,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "1;Vivian;Hamilton;1971-07-08;green;1\n",
-      "2;Karen;Holcomb;1974-05-23;green;4\n",
-      "3;Cody;Garrett;1973-04-22;orange;1\n",
-      "4;Roth;Fry;1975-01-29;black;1\n",
-      "5;Zoe;Conway;1974-07-03;blue;2\n",
-      "6;Gretchen;Kinney;1974-10-18;viole;1\n",
-      "7;Driscoll;Klein;1970-10-05;blue;5\n",
-      "8;Karyn;Diaz;1969-02-24;red;1\n",
-      "9;Merritt;Guy;1974-10-17;indigo;4\n",
-      "10;Kylan;Sexton;1975-02-28;black;4\n"
-     ]
-    }
-   ],
-   "source": [
-    "!hadoop fs -cat output/part-m-00000 | head"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 15,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Deleted output/_SUCCESS\n",
-      "Deleted output/part-m-00000\n"
-     ]
-    }
-   ],
-   "source": [
-    "!hadoop fs -rm output/*  \n",
-    "!hadoop fs -rmdir  output"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### FOREACH"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 16,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      " --\n",
-      " -- Los campos del archivo puden ser indicados por nombre \n",
-      " -- o por posición iniciando en 0\n",
-      " --\n",
-      " v = FOREACH u GENERATE firstname, $2, $3..$5;\n",
-      " DUMP v;\n",
-      "2022-05-12 21:42:26,981 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:28,340 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:28,351 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2022-05-12 21:42:28,358 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "2022-05-12 21:42:28,379 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2022-05-12 21:42:28,799 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652391618376_0004\n",
-      "2022-05-12 21:42:28,803 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2022-05-12 21:42:29,010 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652391618376_0004\n",
-      "2022-05-12 21:42:29,014 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://983dfd64ffda:8088/proxy/application_1652391618376_0004/\n",
-      "2022-05-12 21:42:39,103 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:39,106 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:39,162 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:39,164 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:39,179 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:39,181 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:39,199 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:39,201 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:39,219 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:39,221 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:39,235 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:39,238 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:39,260 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "(Vivian,Hamilton,1971-07-08,green,1)\n",
-      "(Karen,Holcomb,1974-05-23,green,4)\n",
-      "(Cody,Garrett,1973-04-22,orange,1)\n",
-      "(Roth,Fry,1975-01-29,black,1)\n",
-      "(Zoe,Conway,1974-07-03,blue,2)\n",
-      "(Gretchen,Kinney,1974-10-18,viole,1)\n",
-      "(Driscoll,Klein,1970-10-05,blue,5)\n",
-      "(Karyn,Diaz,1969-02-24,red,1)\n",
-      "(Merritt,Guy,1974-10-17,indigo,4)\n",
-      "(Kylan,Sexton,1975-02-28,black,4)\n",
-      "(Jordan,Estes,1969-12-07,indigo,4)\n",
-      "(Hope,Coffey,1973-12-24,green,5)\n",
-      "(Vivian,Crane,1970-08-27,gray,5)\n",
-      "(Clio,Noel,1972-12-12,red,5)\n",
-      "(Hope,Silva,1970-07-01,blue,5)\n",
-      "(Ayanna,Jarvis,1974-02-11,orange,5)\n",
-      "(Chanda,Boyer,1973-04-01,green,4)\n",
-      "(Chadwick,Knight,1973-04-29,yellow,1)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "--\n",
-    "-- Los campos del archivo puden ser indicados por nombre \n",
-    "-- o por posición iniciando en 0\n",
-    "--\n",
-    "v = FOREACH u GENERATE firstname, $2, $3..$5;\n",
-    "DUMP v;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 17,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      " --\n",
-      " -- uso de condicionales \n",
-      " --\n",
-      " v = FOREACH u GENERATE ($0 > $5 ? 10 : 20) ;\n",
-      " DUMP v;\n",
-      "2022-05-12 21:42:39,610 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:40,098 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:40,106 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).\n",
-      "2022-05-12 21:42:40,113 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "2022-05-12 21:42:40,947 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1\n",
-      "2022-05-12 21:42:40,970 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1652391618376_0005\n",
-      "2022-05-12 21:42:40,973 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.\n",
-      "2022-05-12 21:42:40,993 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1652391618376_0005\n",
-      "2022-05-12 21:42:40,996 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://983dfd64ffda:8088/proxy/application_1652391618376_0005/\n",
-      "2022-05-12 21:42:56,099 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:56,103 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:56,153 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:56,155 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:56,171 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:56,174 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:56,192 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:56,195 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:56,211 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:56,214 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:56,228 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032\n",
-      "2022-05-12 21:42:56,231 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server\n",
-      "2022-05-12 21:42:56,255 [main] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1\n",
-      "(20)\n",
-      "(20)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "--\n",
-    "-- uso de condicionales \n",
-    "--\n",
-    "v = FOREACH u GENERATE ($0 > $5 ? 10 : 20) ;\n",
-    "DUMP v;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      " y = FOREACH u GENERATE $1, $3;\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "y = FOREACH u GENERATE $1, $3;\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
    "outputs": [],
    "source": [
-    "%%pig\n",
-    "y = FOREACH u GENERATE UPPER($1);\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "y = FOREACH u GENERATE [$1, $3];\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### FILTER"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "y = FILTER u BY $4 MATCHES 'blue';\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### GROUP"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "y = GROUP u BY $4;\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "z = FOREACH y GENERATE u, COUNT(u);\n",
-    "DUMP z;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### DESCRIBE\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "DESCRIBE u;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### ORDER .. BY .."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "y = ORDER u BY $4;\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### DISCTINCT"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "-- \n",
-    "-- opera únicamente sobre registros completos\n",
-    "--\n",
-    "y = FOREACH u GENERATE $4;\n",
-    "z = DISCTINCT y;\n",
-    "DUMP z;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### JOIN"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%writefile jointable.csv\n",
-    "1,A\n",
-    "2,B\n",
-    "3,C\n",
-    "24,X\n",
-    "25,Y\n",
-    "26,Z"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "!hadoop fs -put jointable.csv"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "w = LOAD 'jointable.csv' USING PigStorage(',') \n",
-    "    AS (id:INT, \n",
-    "        letter:CHARARRAY);\n",
-    "DUMP w;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "w = JOIN u BY id, w BY id;\n",
-    "DUMP w;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### LIMIT"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "z = LIMIT u 10;\n",
-    "DUMP z;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### SAMPLE"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "w = SAMPLE u 0.2;\n",
-    "DUMP w;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### CASE"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "r = FOREACH u GENERATE (\n",
-    "  CASE $0\n",
-    "    WHEN 1 THEN 10\n",
-    "    WHEN 2 THEN 20\n",
-    "    ELSE 3\n",
-    "  END\n",
-    ");\n",
-    "DUMP r;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### Cierre de Apache Pig"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "%pig_quit"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "## Limpieza del sistema"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "!hadoop fs -rm *.csv\n",
-    "!rm pig_* *.csv *.pig"
+    "%quit"
    ]
   }
  ],
