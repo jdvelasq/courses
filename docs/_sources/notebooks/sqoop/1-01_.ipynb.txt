@@ -5,7 +5,7 @@
    "id": "816db6f4-6121-45c5-aace-71dfb313994d",
    "metadata": {},
    "source": [
-    "Sqoop import (migración desde la BD hacia el HDFS)\n",
+    "Movimiento de datos entre MySQL y el HDFS\n",
     "===\n",
     "\n",
     "* Última modificación: Mayo 19, 2022"
@@ -27,132 +27,389 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "file_name = \"drivers.csv\"\n",
+    "filenames = [\n",
+    "    \"drivers.csv\",\n",
+    "    \"timesheet.csv\",\n",
+    "    \"truck_event_text_partition.csv\",\n",
+    "]\n",
+    "\n",
     "url = \"https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/drivers/\"\n",
-    "!wget --quiet {url + file_name} -P /tmp/"
+    "\n",
+    "for filename in filenames:\n",
+    "    !wget --quiet {url + filename} -P /tmp/"
    ]
   },
   {
    "cell_type": "markdown",
-   "id": "e3cb4fa3-64f2-4dcc-98f0-f0f8ad64b79e",
+   "id": "b9ba3d80-a00e-4b1a-9fdf-04cf356dfcf9",
    "metadata": {},
    "source": [
-    "Creación y carga de datos de la base de datos\n",
+    "Ejecución del contendor con MySQL\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cd2bf330-0d07-48bb-a93a-a85b1064b528",
+   "metadata": {},
+   "source": [
+    "```\n",
+    "docker network create mysql-network\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a813ef13-209a-4971-a710-96b9cbe7034e",
+   "metadata": {},
+   "source": [
+    "```\n",
+    "docker run --name mysql-instance \\\n",
+    "    -e MYSQL_ROOT_PASSWORD=secret \\\n",
+    "    --network mysql-network \\\n",
+    "    -p 3306:3306 \\\n",
+    "    -d mysql:5.7\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "97c86c25-8d0e-4ff6-8733-4979db117439",
+   "metadata": {},
+   "source": [
+    "Creación de la base de datos y permisos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "848309df-65b0-4fac-b2d3-4408df4a967b",
+   "metadata": {},
+   "source": [
+    "```\n",
+    "docker exec mysql-instance mysql -uroot -psecret -e \"CREATE DATABASE demo_db; \"\n",
+    "docker exec mysql-instance mysql -uroot -psecret -e \"CREATE USER 'sqoop'@'%' IDENTIFIED BY 'secret'; \"\n",
+    "docker exec mysql-instance mysql -uroot -psecret -e \"GRANT ALL ON demo_db.* TO 'sqoop'@'%';\"\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0d54367b-ca87-4c9a-9bcd-f90989d53fc5",
+   "metadata": {},
+   "source": [
+    "Ejeución del contendor con Sqoop\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2c0c99d6-ce55-4981-b545-e6766071ac1a",
+   "metadata": {},
+   "source": [
+    "```\n",
+    "docker run --rm -it \\\n",
+    "    --network mysql-network \\\n",
+    "    -v \"$PWD\":/workspace \\\n",
+    "    -p 50070:50070 \\\n",
+    "    -p 8088:8088 \\\n",
+    "    -p 8888:8888 \\\n",
+    "    jdvelasq/sqoop:1.4.7\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "714bc82b-0fc8-436d-9424-fe3286e23dee",
+   "metadata": {},
+   "source": [
+    "Creación y carga de datos en MySQL\n",
     "---"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 2,
-   "id": "65e8ea8b-8ede-4c63-9dca-54d6fd0b559c",
+   "id": "2ed8d026-b366-44c3-a4a9-09ca2c95e5af",
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[(10, 'George Vetticaden', '621011971', '244-4532 Nulla Rd.', 'N', 'miles'),\n",
+       " (11, 'Jamie Engesser', '262112338', '366-4125 Ac Street', 'N', 'miles'),\n",
+       " (12, 'Paul Coddin', '198041975', 'Ap #622-957 Risus. Street', 'Y', 'hours'),\n",
+       " (13, 'Joe Niemiec', '139907145', '2071 Hendrerit. Ave', 'Y', 'hours'),\n",
+       " (14, 'Adis Cesir', '820812209', 'Ap #810-1228 In St.', 'Y', 'hours')]"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
    "source": [
-    "import sqlite3\n",
+    "import mysql.connector\n",
+    "import pandas as pd\n",
     "\n",
-    "conn = sqlite3.connect(\"sample.db\")\n",
+    "conn = mysql.connector.connect(\n",
+    "    host=\"mysql-instance\",\n",
+    "    user='sqoop',\n",
+    "    passwd='secret',\n",
+    "    db='demo_db',\n",
+    ")\n",
     "cur = conn.cursor()\n",
     "\n",
-    "conn.executescript(\n",
+    "cur.execute(\n",
     "    \"\"\"\n",
     "    DROP TABLE IF EXISTS drivers;\n",
+    "    \"\"\"\n",
+    ")\n",
     "\n",
+    "cur.execute(\n",
+    "    \"\"\"\n",
     "    CREATE TABLE drivers (\n",
     "        driverId       INT,\n",
-    "        name           STRING,\n",
-    "        ssn            STRING,\n",
-    "        location       STRING,\n",
-    "        certified      STRING,\n",
-    "        wage_plan      STRING\n",
+    "        name           VARCHAR(20),\n",
+    "        ssn            VARCHAR(20),\n",
+    "        location       VARCHAR(40),\n",
+    "        certified      VARCHAR(20),\n",
+    "        wage_plan      VARCHAR(20)\n",
     "    );\n",
     "    \"\"\"\n",
     ")\n",
+    "\n",
+    "cur.execute(\n",
+    "    \"\"\"\n",
+    "    DROP TABLE IF EXISTS timesheet;\n",
+    "    \"\"\"\n",
+    ")\n",
+    "\n",
+    "cur.execute(\n",
+    "    \"\"\"\n",
+    "    CREATE TABLE timesheet (\n",
+    "        driverId       INT,\n",
+    "        week           INT,\n",
+    "        hours_logged   INT,\n",
+    "        miles_logged   INT\n",
+    "    );\n",
+    "    \"\"\"\n",
+    ")\n",
+    "\n",
     "conn.commit()\n",
     "\n",
-    "with open(\"/tmp/drivers.csv\", \"rt\") as f:\n",
-    "    data = f.readlines()\n",
     "\n",
-    "data = [line.replace('\\n', '') for line in data]\n",
-    "data = [line.split(\",\") for line in data]\n",
-    "data = [tuple(line) for line in data]\n",
-    "data = data[1:]\n",
+    "drivers = pd.read_csv('/tmp/drivers.csv')\n",
     "\n",
-    "cur.executemany(\"INSERT INTO drivers VALUES (?,?,?,?,?,?)\", data)\n",
-    "conn.commit()\n",
-    "conn.close()"
+    "for i, row in drivers.iterrows():\n",
+    "    sql = \"INSERT INTO drivers VALUES (%s,%s,%s,%s,%s,%s)\"\n",
+    "    cur.execute(sql, tuple(row))\n",
+    "    conn.commit()\n",
+    "\n",
+    "cur.execute(\"SELECT * FROM drivers LIMIT 5;\")\n",
+    "result = cur.fetchall()\n",
+    "conn.close()\n",
+    "result"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e6d8f841-1328-419c-a388-76a80e44f045",
+   "metadata": {},
+   "source": [
+    "Listado de las bases de datos em MySQL\n",
+    "---"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 3,
-   "id": "0cb81e86-144c-4346-87fe-018972bad6c5",
+   "id": "384ff429-bf0b-4ae2-9635-ca51c7a7e4a6",
    "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "10|George Vetticaden|621011971|244-4532 Nulla Rd.|N|miles\n",
-      "11|Jamie Engesser|262112338|366-4125 Ac Street|N|miles\n",
-      "12|Paul Coddin|198041975|Ap #622-957 Risus. Street|Y|hours\n",
-      "13|Joe Niemiec|139907145|2071 Hendrerit. Ave|Y|hours\n",
-      "14|Adis Cesir|820812209|Ap #810-1228 In St.|Y|hours\n",
-      "15|Rohit Bakshi|239005227|648-5681 Dui- Rd.|Y|hours\n",
-      "16|Tom McCuch|363303105|P.O. Box 313- 962 Parturient Rd.|Y|hours\n",
-      "17|Eric Mizell|123808238|P.O. Box 579- 2191 Gravida. Street|Y|hours\n",
-      "18|Grant Liu|171010151|Ap #928-3159 Vestibulum Av.|Y|hours\n",
-      "19|Ajay Singh|160005158|592-9430 Nonummy Avenue|Y|hours\n"
+      "Writing list-databases.sh\n"
      ]
     }
    ],
    "source": [
-    "!sqlite3 sample.db \"select * from drivers\" | head"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "id": "f84a485d-487a-48d1-b52e-b42eb57d4a71",
-   "metadata": {},
-   "source": [
-    "Importación de una tabla completa\n",
-    "--"
+    "%%writefile list-databases.sh\n",
+    "sqoop list-databases \\\n",
+    "    --connect jdbc:mysql://mysql-instance:3306/demo_db \\\n",
+    "    --username sqoop \\\n",
+    "    --password secret"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 4,
-   "id": "c1d7e259-6ae9-4642-a590-87f4baebd987",
+   "id": "990ddf4e-dfa2-471d-84a9-e08fe4757aac",
    "metadata": {},
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
+      "Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.\n",
       "Please set $HBASE_HOME to the root of your HBase installation.\n",
-      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
+      "Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.\n",
       "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
-      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
+      "Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.\n",
       "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
-      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
+      "Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.\n",
       "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
-      "-------------------------------------------------------------------------------------------------------------------------------------------\n",
-      "| driverId             | name                 | ssn                  | location             | certified            | wage_plan            | \n",
-      "-------------------------------------------------------------------------------------------------------------------------------------------\n",
-      "| 10                   | George Vetticaden    | 621011971            | 244-4532 Nulla Rd.   | N                    | miles                | \n",
-      "| 11                   | Jamie Engesser       | 262112338            | 366-4125 Ac Street   | N                    | miles                | \n",
-      "| 12                   | Paul Coddin          | 198041975            | Ap #622-957 Risus. Street | Y                    | hours                | \n",
-      "-------------------------------------------------------------------------------------------------------------------------------------------\n"
+      "Fri May 20 15:49:52 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n",
+      "information_schema\n",
+      "demo_db\n"
      ]
     }
    ],
    "source": [
-    "!sqoop eval --connect jdbc:sqlite:sample.db --driver org.sqlite.JDBC --query \"SELECT * FROM drivers LIMIT 3\""
+    "#\n",
+    "# El error es debido a que SQLite3 no tiene databases internamente.\n",
+    "#\n",
+    "!bash list-databases.sh"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "45602c66-2404-4994-8fde-750e7b683995",
+   "metadata": {},
+   "source": [
+    "Listado de las tablas existentes en la base de datos de MySQL\n",
+    "--"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 5,
+   "id": "dc9d979a-10ba-456a-9d89-eee65749718d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Writing list-tables.sh\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile list-tables.sh\n",
+    "sqoop list-tables \\\n",
+    "    --connect jdbc:mysql://mysql-instance:3306/demo_db \\\n",
+    "    --username sqoop \\\n",
+    "    --password secret"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "bca9c7ba-e193-4eb4-a0aa-30f535133042",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.\n",
+      "Please set $HBASE_HOME to the root of your HBase installation.\n",
+      "Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.\n",
+      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
+      "Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.\n",
+      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
+      "Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.\n",
+      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
+      "Fri May 20 15:49:53 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n",
+      "drivers\n",
+      "timesheet\n"
+     ]
+    }
+   ],
+   "source": [
+    "!bash list-tables.sh"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a2b53c55-660a-4197-b64a-b81738df61ce",
+   "metadata": {},
+   "source": [
+    "Verificación de los registros en MySQL con query\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "925e1213-7a8f-40eb-b657-26d51be2bebb",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Writing query.sh\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile query.sh\n",
+    "sqoop eval \\\n",
+    "    --connect jdbc:mysql://mysql-instance:3306/demo_db \\\n",
+    "    --username sqoop \\\n",
+    "    --password secret \\\n",
+    "    --query \"SELECT * FROM drivers LIMIT 3\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "fd84b965-6935-4606-9aee-eca69c0c2393",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.\n",
+      "Please set $HBASE_HOME to the root of your HBase installation.\n",
+      "Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.\n",
+      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
+      "Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.\n",
+      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
+      "Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.\n",
+      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
+      "Fri May 20 15:49:54 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n",
+      "----------------------------------------------------------------------------------------------------------------------------------\n",
+      "| driverId    | name                 | ssn                  | location             | certified            | wage_plan            | \n",
+      "----------------------------------------------------------------------------------------------------------------------------------\n",
+      "| 10          | George Vetticaden    | 621011971            | 244-4532 Nulla Rd.   | N                    | miles                | \n",
+      "| 11          | Jamie Engesser       | 262112338            | 366-4125 Ac Street   | N                    | miles                | \n",
+      "| 12          | Paul Coddin          | 198041975            | Ap #622-957 Risus. Street | Y                    | hours                | \n",
+      "----------------------------------------------------------------------------------------------------------------------------------\n"
+     ]
+    }
+   ],
+   "source": [
+    "!bash query.sh"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "abe189b5-ae06-4bc1-a41c-b528e22d514b",
+   "metadata": {},
+   "source": [
+    "Importación de una tabla completa al HDFS\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
    "id": "d05f95c7-8a5c-4ee9-8494-d85e841145bc",
    "metadata": {},
    "outputs": [
@@ -169,9 +426,10 @@
     "\n",
     "hdfs dfs -rm -r /tmp/drivers\n",
     "\n",
-    "sqoop-import \\\n",
-    "    --connect jdbc:sqlite:sample.db \\\n",
-    "    --driver org.sqlite.JDBC \\\n",
+    "sqoop import \\\n",
+    "    --connect jdbc:mysql://mysql-instance:3306/demo_db \\\n",
+    "    --username sqoop \\\n",
+    "    --password secret \\\n",
     "    --table drivers \\\n",
     "    --target-dir /tmp/drivers \\\n",
     "    --m 1"
@@ -179,7 +437,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 10,
    "id": "014124e4-f341-45db-97f9-86536ffd1ff5",
    "metadata": {},
    "outputs": [
@@ -188,107 +446,18 @@
      "output_type": "stream",
      "text": [
       "Deleted /tmp/drivers\n",
-      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
+      "Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.\n",
       "Please set $HBASE_HOME to the root of your HBase installation.\n",
-      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
+      "Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.\n",
       "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
-      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
+      "Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.\n",
       "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
-      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
+      "Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.\n",
       "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
-      "Note: /tmp/sqoop-root/compile/4dd202e347a783dab04b175af2a542fe/drivers.java uses or overrides a deprecated API.\n",
+      "Fri May 20 15:49:57 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n",
+      "Note: /tmp/sqoop-root/compile/7c6ccfc14343ffffba7485cfd3db64d8/drivers.java uses or overrides a deprecated API.\n",
       "Note: Recompile with -Xlint:deprecation for details.\n",
-      "Error: java.io.IOException: SQLException in nextKeyValue\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
-      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
-      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
-      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
-      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
-      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
-      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
-      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
-      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
-      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
-      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
-      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
-      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
-      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
-      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
-      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
-      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
-      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
-      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
-      "\t... 12 more\n",
-      "\n",
-      "Error: java.io.IOException: SQLException in nextKeyValue\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
-      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
-      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
-      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
-      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
-      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
-      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
-      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
-      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
-      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
-      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
-      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
-      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
-      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
-      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
-      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
-      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
-      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
-      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
-      "\t... 12 more\n",
-      "\n",
-      "Error: java.io.IOException: SQLException in nextKeyValue\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
-      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
-      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
-      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
-      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
-      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
-      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
-      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
-      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
-      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
-      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
-      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
-      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
-      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
-      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
-      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
-      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
-      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
-      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
-      "\t... 12 more\n",
-      "\n",
-      "22/05/19 22:28:34 ERROR tool.ImportTool: Import failed: Import job failed!\n"
+      "Fri May 20 15:50:03 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n"
      ]
     }
    ],
@@ -298,58 +467,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 7,
-   "id": "ee4a7a68-3edc-4dd0-8eda-44099fcf4555",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
-      "Please set $HBASE_HOME to the root of your HBase installation.\n",
-      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
-      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
-      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
-      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
-      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
-      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
-      "Note: /tmp/sqoop-root/compile/990a8af57056ffce0d7e285c173fb8f9/QueryResult.java uses or overrides a deprecated API.\n",
-      "Note: Recompile with -Xlint:deprecation for details.\n",
-      "22/05/19 22:28:37 ERROR tool.ImportTool: Import failed: org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://0.0.0.0:9000/tmp/drivers already exists\n",
-      "\tat org.apache.hadoop.mapreduce.lib.output.FileOutputFormat.checkOutputSpecs(FileOutputFormat.java:146)\n",
-      "\tat org.apache.hadoop.mapreduce.JobSubmitter.checkSpecs(JobSubmitter.java:279)\n",
-      "\tat org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:145)\n",
-      "\tat org.apache.hadoop.mapreduce.Job$11.run(Job.java:1570)\n",
-      "\tat org.apache.hadoop.mapreduce.Job$11.run(Job.java:1567)\n",
-      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
-      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
-      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
-      "\tat org.apache.hadoop.mapreduce.Job.submit(Job.java:1567)\n",
-      "\tat org.apache.hadoop.mapreduce.Job.waitForCompletion(Job.java:1588)\n",
-      "\tat org.apache.sqoop.mapreduce.ImportJobBase.doSubmitJob(ImportJobBase.java:200)\n",
-      "\tat org.apache.sqoop.mapreduce.ImportJobBase.runJob(ImportJobBase.java:173)\n",
-      "\tat org.apache.sqoop.mapreduce.ImportJobBase.runImport(ImportJobBase.java:270)\n",
-      "\tat org.apache.sqoop.manager.SqlManager.importQuery(SqlManager.java:748)\n",
-      "\tat org.apache.sqoop.tool.ImportTool.importTable(ImportTool.java:522)\n",
-      "\tat org.apache.sqoop.tool.ImportTool.run(ImportTool.java:628)\n",
-      "\tat org.apache.sqoop.Sqoop.run(Sqoop.java:147)\n",
-      "\tat org.apache.hadoop.util.ToolRunner.run(ToolRunner.java:76)\n",
-      "\tat org.apache.sqoop.Sqoop.runSqoop(Sqoop.java:183)\n",
-      "\tat org.apache.sqoop.Sqoop.runTool(Sqoop.java:234)\n",
-      "\tat org.apache.sqoop.Sqoop.runTool(Sqoop.java:243)\n",
-      "\tat org.apache.sqoop.Sqoop.main(Sqoop.java:252)\n",
-      "\n"
-     ]
-    }
-   ],
-   "source": [
-    "!sqoop import --connect jdbc:sqlite:sample.db --driver org.sqlite.JDBC  --query \"SELECT * FROM drivers WHERE driverId=10 AND \\$CONDITIONS\" --target-dir /tmp/drivers -m 1"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 8,
+   "execution_count": 11,
    "id": "5410040b-a1ad-4233-8e00-898c3bee2329",
    "metadata": {},
    "outputs": [
@@ -357,17 +475,19 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "ls: `/user/root/drivers': No such file or directory\n"
+      "Found 2 items\n",
+      "-rw-r--r--   1 root supergroup          0 2022-05-20 15:50 /tmp/drivers/_SUCCESS\n",
+      "-rw-r--r--   1 root supergroup       1963 2022-05-20 15:50 /tmp/drivers/part-m-00000\n"
      ]
     }
    ],
    "source": [
-    "!hdfs dfs -ls /user/root/drivers"
+    "!hdfs dfs -ls /tmp/drivers"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 9,
+   "execution_count": 12,
    "id": "4af85bf7-0076-4cde-8de2-c2a376f3b2e0",
    "metadata": {},
    "outputs": [
@@ -375,26 +495,59 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "cat: `/user/root/truck_events/part-m-00000': No such file or directory\n"
+      "10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles\n",
+      "11,Jamie Engesser,262112338,366-4125 Ac Street,N,miles\n",
+      "12,Paul Coddin,198041975,Ap #622-957 Risus. Street,Y,hours\n",
+      "13,Joe Niemiec,139907145,2071 Hendrerit. Ave,Y,hours\n",
+      "14,Adis Cesir,820812209,Ap #810-1228 In St.,Y,hours\n",
+      "15,Rohit Bakshi,239005227,648-5681 Dui- Rd.,Y,hours\n",
+      "16,Tom McCuch,363303105,P.O. Box 313- 962 Parturient Rd.,Y,hours\n",
+      "17,Eric Mizell,123808238,P.O. Box 579- 2191 Gravida. Street,Y,hours\n",
+      "18,Grant Liu,171010151,Ap #928-3159 Vestibulum Av.,Y,hours\n",
+      "19,Ajay Singh,160005158,592-9430 Nonummy Avenue,Y,hours\n",
+      "20,Chris Harris,921812303,883-2691 Proin Avenue,Y,hours\n",
+      "21,Jeff Markham,209408086,Ap #852-7966 Facilisis St.,Y,hours\n",
+      "22,Nadeem Asghar,783204269,154-9147 Aliquam Ave,Y,hours\n",
+      "23,Adam Diaz,928312208,P.O. Box 260- 6127 Vitae Road,Y,hours\n",
+      "24,Don Hilborn,254412152,4361 Ac Road,Y,hours\n",
+      "25,Jean-Philippe Playe,913310051,P.O. Box 812- 6238 Ac Rd.,Y,hours\n",
+      "26,Michael Aube,124705141,P.O. Box 213- 8948 Nec Ave,Y,hours\n",
+      "27,Mark Lochbihler,392603159,8355 Ipsum St.,Y,hours\n",
+      "28,Olivier Renault,959908181,P.O. Box 243- 6509 Erat. Avenue,Y,hours\n",
+      "29,Teddy Choi,185502192,P.O. Box 106- 7003 Amet Rd.,Y,hours\n",
+      "30,Dan Rice,282307061,Ap #881-9267 Mollis Avenue,Y,hours\n",
+      "31,Rommel Garcia,858912101,P.O. Box 945- 6015 Sociis St.,Y,hours\n",
+      "32,Ryan Templeton,290304287,765-6599 Egestas. Av.,Y,hours\n",
+      "33,Sridhara Sabbella,967409015,Ap #477-2507 Sagittis Avenue,Y,hours\n",
+      "34,Frank Romano,391407216,Ap #753-6814 Quis Ave,Y,hours\n",
+      "35,Emil Siemes,971401151,321-2976 Felis Rd.,Y,hours\n",
+      "36,Andrew Grande,245303216,Ap #685-9598 Egestas Rd.,Y,hours\n",
+      "37,Wes Floyd,190504074,P.O. Box 269- 9611 Nulla Street,Y,hours\n",
+      "38,Scott Shaw,386411175,276 Lobortis Road,Y,hours\n",
+      "39,David Kaiser,967706052,9185 At Street,Y,hours\n",
+      "40,Nicolas Maillard,208510217,1027 Quis Rd.,Y,hours\n",
+      "41,Greg Phillips,308103116,P.O. Box 847- 5961 Arcu. Road,Y,hours\n",
+      "42,Randy Gelhausen,853302254,145-4200 In- Avenue,Y,hours\n",
+      "43,Dave Patton,977706052,3028 A- St.,Y,hours\n"
      ]
     }
    ],
    "source": [
-    "!hdfs dfs -cat /user/root/truck_events/part-m-00000"
+    "!hdfs dfs -cat /tmp/drivers/part-m-00000"
    ]
   },
   {
    "cell_type": "markdown",
-   "id": "39db9018-2ad9-4bc4-9c4d-d2641ba29951",
+   "id": "da01ee64-9c30-4ead-8209-1652448bbf69",
    "metadata": {},
    "source": [
-    "Importación de un subconjunto de datos de una tabla\n",
+    "Importación de un subconjunto de datos de una tabla al HDFS\n",
     "--"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 10,
+   "execution_count": 13,
    "id": "cd52b435-0a79-42ee-b545-9475361ce5d3",
    "metadata": {},
    "outputs": [
@@ -402,7 +555,7 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Overwriting partial-import.sh\n"
+      "Writing partial-import.sh\n"
      ]
     }
    ],
@@ -412,17 +565,18 @@
     "hdfs dfs -rm -r /tmp/drivers\n",
     "\n",
     "sqoop import \\\n",
-    "    --connect jdbc:sqlite:sample.db \\\n",
+    "    --connect jdbc:mysql://mysql-instance:3306/demo_db \\\n",
+    "    --username sqoop \\\n",
+    "    --password secret \\\n",
     "    --table drivers \\\n",
-    "    --driver org.sqlite.JDBC \\\n",
+    "    --target-dir /tmp/drivers/ \\\n",
     "    -m 1 \\\n",
-    "    --where \"driverId=10\" \\\n",
-    "    --target-dir /tmp/drivers/"
+    "    --where \"driverId=10\""
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 11,
+   "execution_count": 14,
    "id": "99ab501c-f0ca-4a9b-9cb5-ee7b422b943c",
    "metadata": {},
    "outputs": [
@@ -431,107 +585,18 @@
      "output_type": "stream",
      "text": [
       "Deleted /tmp/drivers\n",
-      "Warning: /opt/hbase does not exist! HBase imports will fail.\n",
+      "Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.\n",
       "Please set $HBASE_HOME to the root of your HBase installation.\n",
-      "Warning: /opt/hbase does not exist! HCatalog jobs will fail.\n",
+      "Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.\n",
       "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
-      "Warning: /opt/accumulo does not exist! Accumulo imports will fail.\n",
+      "Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.\n",
       "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
-      "Warning: /opt/zookeeper does not exist! Accumulo imports will fail.\n",
+      "Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.\n",
       "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
-      "Note: /tmp/sqoop-root/compile/3db8756b79b6cf4b930c3a7a02c2c0a3/drivers.java uses or overrides a deprecated API.\n",
+      "Fri May 20 15:50:20 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n",
+      "Note: /tmp/sqoop-root/compile/db3e5e0d16414871f43b3ea4a8726bbb/drivers.java uses or overrides a deprecated API.\n",
       "Note: Recompile with -Xlint:deprecation for details.\n",
-      "Error: java.io.IOException: SQLException in nextKeyValue\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
-      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
-      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
-      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
-      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
-      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
-      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
-      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
-      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
-      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
-      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
-      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
-      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
-      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
-      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
-      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
-      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
-      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
-      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
-      "\t... 12 more\n",
-      "\n",
-      "Error: java.io.IOException: SQLException in nextKeyValue\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
-      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
-      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
-      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
-      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
-      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
-      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
-      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
-      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
-      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
-      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
-      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
-      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
-      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
-      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
-      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
-      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
-      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
-      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
-      "\t... 12 more\n",
-      "\n",
-      "Error: java.io.IOException: SQLException in nextKeyValue\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)\n",
-      "\tat org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)\n",
-      "\tat org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)\n",
-      "\tat org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)\n",
-      "\tat org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)\n",
-      "\tat org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)\n",
-      "\tat org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)\n",
-      "\tat java.security.AccessController.doPrivileged(Native Method)\n",
-      "\tat javax.security.auth.Subject.doAs(Subject.java:422)\n",
-      "\tat org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)\n",
-      "\tat org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)\n",
-      "Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1030)\n",
-      "\tat org.sqlite.core.DB.newSQLException(DB.java:1042)\n",
-      "\tat org.sqlite.core.DB.throwex(DB.java:1007)\n",
-      "\tat org.sqlite.core.NativeDB.prepare_utf8(Native Method)\n",
-      "\tat org.sqlite.core.NativeDB.prepare(NativeDB.java:137)\n",
-      "\tat org.sqlite.core.DB.prepare(DB.java:257)\n",
-      "\tat org.sqlite.core.CorePreparedStatement.<init>(CorePreparedStatement.java:45)\n",
-      "\tat org.sqlite.jdbc3.JDBC3PreparedStatement.<init>(JDBC3PreparedStatement.java:30)\n",
-      "\tat org.sqlite.jdbc4.JDBC4PreparedStatement.<init>(JDBC4PreparedStatement.java:25)\n",
-      "\tat org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)\n",
-      "\tat org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)\n",
-      "\tat org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)\n",
-      "\t... 12 more\n",
-      "\n",
-      "22/05/19 22:29:07 ERROR tool.ImportTool: Import failed: Import job failed!\n"
+      "Fri May 20 15:50:24 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n"
      ]
     }
    ],
@@ -541,17 +606,27 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 12,
+   "execution_count": 15,
    "id": "c831512c-f0eb-4313-a3fe-9b3e7528c261",
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Found 2 items\n",
+      "-rw-r--r--   1 root supergroup          0 2022-05-20 15:50 /tmp/drivers/_SUCCESS\n",
+      "-rw-r--r--   1 root supergroup         58 2022-05-20 15:50 /tmp/drivers/part-m-00000\n"
+     ]
+    }
+   ],
    "source": [
     "!hdfs dfs -ls /tmp/drivers/"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 16,
    "id": "dfd3b324-a39b-4b34-9be2-e363ab5ad8df",
    "metadata": {},
    "outputs": [
@@ -559,7 +634,7 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "cat: `/tmp/drivers/part-m-00000': No such file or directory\n"
+      "10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles\n"
      ]
     }
    ],
@@ -568,13 +643,185 @@
    ]
   },
   {
+   "cell_type": "markdown",
+   "id": "4afad69a-dc06-404d-a951-edd1fb44f05f",
+   "metadata": {},
+   "source": [
+    "Movimiento de `timesheet.csv` al HDFS\n",
+    "--"
+   ]
+  },
+  {
    "cell_type": "code",
-   "execution_count": 14,
+   "execution_count": 17,
+   "id": "f4e088b2-46a3-4ad6-9598-624914025bbf",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10,1,70,3300\n",
+      "10,2,70,3300\n",
+      "10,3,60,2800\n",
+      "10,4,70,3100\n",
+      "10,5,70,3200\n",
+      "10,6,70,3300\n",
+      "10,7,70,3000\n",
+      "10,8,70,3300\n",
+      "10,9,70,3200\n",
+      "10,10,50,2500\n"
+     ]
+    }
+   ],
+   "source": [
+    "!tail +2 /tmp/timesheet.csv > /tmp/timesheet1.csv\n",
+    "!head /tmp/timesheet1.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "d06d793b-ac61-477f-8923-2e83195dd5f5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Deleted /tmp/timesheet.csv\n",
+      "Found 3 items\n",
+      "drwxr-xr-x   - root supergroup          0 2022-05-20 15:50 /tmp/drivers\n",
+      "drwx------   - root supergroup          0 2022-05-20 15:05 /tmp/hadoop-yarn\n",
+      "-rw-r--r--   1 root supergroup      26164 2022-05-20 15:50 /tmp/timesheet.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "!hdfs dfs -rm /tmp/timesheet.csv\n",
+    "!hdfs dfs -copyFromLocal /tmp/timesheet1.csv /tmp/timesheet.csv\n",
+    "!hdfs dfs -ls /tmp/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0412b0f2-2ff0-4a03-b411-070dcb8b0c2e",
+   "metadata": {},
+   "source": [
+    "Exportación de datos del HDFS a MySQL\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "cba260fd-aaf1-4d37-9c47-081af964b05a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting /tmp/export.sh\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile /tmp/export.sh\n",
+    "\n",
+    "sqoop export \\\n",
+    "    --connect jdbc:mysql://mysql-instance:3306/demo_db \\\n",
+    "    --username sqoop \\\n",
+    "    --password secret \\\n",
+    "    --table timesheet \\\n",
+    "    --export-dir /tmp/timesheet.csv"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "2164c0ed-8eda-48a3-b090-8ff7a03c217e",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.\n",
+      "Please set $HBASE_HOME to the root of your HBase installation.\n",
+      "Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.\n",
+      "Please set $HCAT_HOME to the root of your HCatalog installation.\n",
+      "Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.\n",
+      "Please set $ACCUMULO_HOME to the root of your Accumulo installation.\n",
+      "Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.\n",
+      "Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.\n",
+      "Fri May 20 15:50:45 UTC 2022 WARN: Establishing SSL connection without server's identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn't set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to 'false'. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.\n",
+      "Note: /tmp/sqoop-root/compile/c4bbeeef55f6c8e56619ef8950c5b89c/timesheet.java uses or overrides a deprecated API.\n",
+      "Note: Recompile with -Xlint:deprecation for details.\n"
+     ]
+    }
+   ],
+   "source": [
+    "!bash /tmp/export.sh"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b9a8ee52-d043-43cf-bc3c-6b732b280d7e",
+   "metadata": {},
+   "source": [
+    "Verificación\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "7c711471-cb6d-4374-8f23-fc32072115d7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[(18, 30, 54, 2738),\n",
+       " (18, 31, 55, 2510),\n",
+       " (18, 32, 60, 2695),\n",
+       " (18, 33, 54, 2564),\n",
+       " (18, 34, 53, 2778)]"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "conn = mysql.connector.connect(\n",
+    "    host=\"mysql-instance\",\n",
+    "    user='sqoop',\n",
+    "    passwd='secret',\n",
+    "    db='demo_db',\n",
+    ")\n",
+    "cur = conn.cursor()\n",
+    "\n",
+    "cur.execute(\n",
+    "    \"\"\"\n",
+    "    SELECT * FROM timesheet LIMIT 5;\n",
+    "    \"\"\"\n",
+    ")\n",
+    "result = cur.fetchall()\n",
+    "conn.close()\n",
+    "result"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
    "id": "5c9d3d15-b522-4c48-97fb-3b4d0c83b7d4",
    "metadata": {},
    "outputs": [],
    "source": [
-    "!rm sample.db *.java *.sh"
+    "!rm *.java *.sh"
    ]
   }
  ],

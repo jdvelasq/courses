@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sqoop import (migración desde la BD hacia el HDFS) &mdash; documentación de Cursos de Analítica y Machine Learning - </title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>Movimiento de datos entre MySQL y el HDFS &mdash; documentación de Cursos de Analítica y Machine Learning - </title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -23,7 +23,7 @@
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
-    <link rel="next" title="Sqoop export (migración del HDFS hacia la BD)" href="1-02_.html" />
+    <link rel="next" title="Apache Zeppelin" href="../zeppelin/1-01_.html" />
     <link rel="prev" title="Acceso al HDFS con snakebite usando Python" href="../snakebite/1-01_.html" /> 
 </head>
 
@@ -85,7 +85,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../../analitica_de_grandes_datos/index.html">Analítica de Grandes Datos</a> &raquo;</li>
-      <li>Sqoop import (migración desde la BD hacia el HDFS)</li>
+      <li>Movimiento de datos entre MySQL y el HDFS</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/notebooks/sqoop/1-01_.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
       </li>
@@ -365,8 +365,8 @@ div.rendered_html tbody tr:hover {
     text-align: unset;
 }
 </style>
-<div class="section" id="Sqoop-import-(migración-desde-la-BD-hacia-el-HDFS)">
-<h1>Sqoop import (migración desde la BD hacia el HDFS)<a class="headerlink" href="#Sqoop-import-(migración-desde-la-BD-hacia-el-HDFS)" title="Enlazar permanentemente con este título"></a></h1>
+<div class="section" id="Movimiento-de-datos-entre-MySQL-y-el-HDFS">
+<h1>Movimiento de datos entre MySQL y el HDFS<a class="headerlink" href="#Movimiento-de-datos-entre-MySQL-y-el-HDFS" title="Enlazar permanentemente con este título"></a></h1>
 <ul class="simple">
 <li><p>Última modificación: Mayo 19, 2022</p></li>
 </ul>
@@ -377,61 +377,150 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">file_name</span> <span class="o">=</span> <span class="s2">&quot;drivers.csv&quot;</span>
+<span></span><span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;drivers.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;timesheet.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;truck_event_text_partition.csv&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
 <span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/drivers/&quot;</span>
-<span class="o">!</span>wget --quiet <span class="o">{</span>url + file_name<span class="o">}</span> -P /tmp/
+
+<span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+    <span class="o">!</span>wget --quiet <span class="o">{</span>url + filename<span class="o">}</span> -P /tmp/
 </pre></div>
 </div>
 </div>
 </div>
-<div class="section" id="Creación-y-carga-de-datos-de-la-base-de-datos">
-<h2>Creación y carga de datos de la base de datos<a class="headerlink" href="#Creación-y-carga-de-datos-de-la-base-de-datos" title="Enlazar permanentemente con este título"></a></h2>
-<div class="nbinput nblast docutils container">
+<div class="section" id="Ejecución-del-contendor-con-MySQL">
+<h2>Ejecución del contendor con MySQL<a class="headerlink" href="#Ejecución-del-contendor-con-MySQL" title="Enlazar permanentemente con este título"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker network create mysql-network
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker run --name mysql-instance \
+    -e MYSQL_ROOT_PASSWORD=secret \
+    --network mysql-network \
+    -p 3306:3306 \
+    -d mysql:5.7
+</pre></div>
+</div>
+</div>
+<div class="section" id="Creación-de-la-base-de-datos-y-permisos">
+<h2>Creación de la base de datos y permisos<a class="headerlink" href="#Creación-de-la-base-de-datos-y-permisos" title="Enlazar permanentemente con este título"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker exec mysql-instance mysql -uroot -psecret -e &quot;CREATE DATABASE demo_db; &quot;
+docker exec mysql-instance mysql -uroot -psecret -e &quot;CREATE USER &#39;sqoop&#39;@&#39;%&#39; IDENTIFIED BY &#39;secret&#39;; &quot;
+docker exec mysql-instance mysql -uroot -psecret -e &quot;GRANT ALL ON demo_db.* TO &#39;sqoop&#39;@&#39;%&#39;;&quot;
+</pre></div>
+</div>
+</div>
+<div class="section" id="Ejeución-del-contendor-con-Sqoop">
+<h2>Ejeución del contendor con Sqoop<a class="headerlink" href="#Ejeución-del-contendor-con-Sqoop" title="Enlazar permanentemente con este título"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker run --rm -it \
+    --network mysql-network \
+    -v &quot;$PWD&quot;:/workspace \
+    -p 50070:50070 \
+    -p 8088:8088 \
+    -p 8888:8888 \
+    jdvelasq/sqoop:1.4.7
+</pre></div>
+</div>
+</div>
+<div class="section" id="Creación-y-carga-de-datos-en-MySQL">
+<h2>Creación y carga de datos en MySQL<a class="headerlink" href="#Creación-y-carga-de-datos-en-MySQL" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sqlite3</span>
+<span></span><span class="kn">import</span> <span class="nn">mysql.connector</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;sample.db&quot;</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;mysql-instance&quot;</span><span class="p">,</span>
+    <span class="n">user</span><span class="o">=</span><span class="s1">&#39;sqoop&#39;</span><span class="p">,</span>
+    <span class="n">passwd</span><span class="o">=</span><span class="s1">&#39;secret&#39;</span><span class="p">,</span>
+    <span class="n">db</span><span class="o">=</span><span class="s1">&#39;demo_db&#39;</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
-<span class="n">conn</span><span class="o">.</span><span class="n">executescript</span><span class="p">(</span>
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    DROP TABLE IF EXISTS drivers;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="p">)</span>
 
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    CREATE TABLE drivers (</span>
 <span class="sd">        driverId       INT,</span>
-<span class="sd">        name           STRING,</span>
-<span class="sd">        ssn            STRING,</span>
-<span class="sd">        location       STRING,</span>
-<span class="sd">        certified      STRING,</span>
-<span class="sd">        wage_plan      STRING</span>
+<span class="sd">        name           VARCHAR(20),</span>
+<span class="sd">        ssn            VARCHAR(20),</span>
+<span class="sd">        location       VARCHAR(40),</span>
+<span class="sd">        certified      VARCHAR(20),</span>
+<span class="sd">        wage_plan      VARCHAR(20)</span>
 <span class="sd">    );</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <span class="p">)</span>
+
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DROP TABLE IF EXISTS timesheet;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="p">)</span>
+
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    CREATE TABLE timesheet (</span>
+<span class="sd">        driverId       INT,</span>
+<span class="sd">        week           INT,</span>
+<span class="sd">        hours_logged   INT,</span>
+<span class="sd">        miles_logged   INT</span>
+<span class="sd">    );</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="p">)</span>
+
 <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/tmp/drivers.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
 
-<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+<span class="n">drivers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/drivers.csv&#39;</span><span class="p">)</span>
 
-<span class="n">cur</span><span class="o">.</span><span class="n">executemany</span><span class="p">(</span><span class="s2">&quot;INSERT INTO drivers VALUES (?,?,?,?,?,?)&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-<span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">drivers</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO drivers VALUES (</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">,</span><span class="si">%s</span><span class="s2">)&quot;</span>
+    <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM drivers LIMIT 5;&quot;</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">result</span>
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(10, &#39;George Vetticaden&#39;, &#39;621011971&#39;, &#39;244-4532 Nulla Rd.&#39;, &#39;N&#39;, &#39;miles&#39;),
+ (11, &#39;Jamie Engesser&#39;, &#39;262112338&#39;, &#39;366-4125 Ac Street&#39;, &#39;N&#39;, &#39;miles&#39;),
+ (12, &#39;Paul Coddin&#39;, &#39;198041975&#39;, &#39;Ap #622-957 Risus. Street&#39;, &#39;Y&#39;, &#39;hours&#39;),
+ (13, &#39;Joe Niemiec&#39;, &#39;139907145&#39;, &#39;2071 Hendrerit. Ave&#39;, &#39;Y&#39;, &#39;hours&#39;),
+ (14, &#39;Adis Cesir&#39;, &#39;820812209&#39;, &#39;Ap #810-1228 In St.&#39;, &#39;Y&#39;, &#39;hours&#39;)]
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Listado-de-las-bases-de-datos-em-MySQL">
+<h2>Listado de las bases de datos em MySQL<a class="headerlink" href="#Listado-de-las-bases-de-datos-em-MySQL" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>sqlite3 sample.db <span class="s2">&quot;select * from drivers&quot;</span> <span class="p">|</span> head
+<span></span><span class="o">%%writefile</span> list-databases.sh
+<span class="n">sqoop</span> <span class="nb">list</span><span class="o">-</span><span class="n">databases</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
+    <span class="o">--</span><span class="n">password</span> <span class="n">secret</span>
 </pre></div>
 </div>
 </div>
@@ -440,27 +529,18 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-10|George Vetticaden|621011971|244-4532 Nulla Rd.|N|miles
-11|Jamie Engesser|262112338|366-4125 Ac Street|N|miles
-12|Paul Coddin|198041975|Ap #622-957 Risus. Street|Y|hours
-13|Joe Niemiec|139907145|2071 Hendrerit. Ave|Y|hours
-14|Adis Cesir|820812209|Ap #810-1228 In St.|Y|hours
-15|Rohit Bakshi|239005227|648-5681 Dui- Rd.|Y|hours
-16|Tom McCuch|363303105|P.O. Box 313- 962 Parturient Rd.|Y|hours
-17|Eric Mizell|123808238|P.O. Box 579- 2191 Gravida. Street|Y|hours
-18|Grant Liu|171010151|Ap #928-3159 Vestibulum Av.|Y|hours
-19|Ajay Singh|160005158|592-9430 Nonummy Avenue|Y|hours
+Writing list-databases.sh
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Importación-de-una-tabla-completa">
-<h2>Importación de una tabla completa<a class="headerlink" href="#Importación-de-una-tabla-completa" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>sqoop <span class="nb">eval</span> --connect jdbc:sqlite:sample.db --driver org.sqlite.JDBC --query <span class="s2">&quot;SELECT * FROM drivers LIMIT 3&quot;</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># El error es debido a que SQLite3 no tiene databases internamente.</span>
+<span class="c1">#</span>
+<span class="o">!</span>bash list-databases.sh
 </pre></div>
 </div>
 </div>
@@ -469,25 +549,132 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Warning: /opt/hbase does not exist! HBase imports will fail.
+Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
 Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/hbase does not exist! HCatalog jobs will fail.
+Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
 Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/accumulo does not exist! Accumulo imports will fail.
+Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
 Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/zookeeper does not exist! Accumulo imports will fail.
+Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
 Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
--------------------------------------------------------------------------------------------------------------------------------------------
-| driverId             | name                 | ssn                  | location             | certified            | wage_plan            |
--------------------------------------------------------------------------------------------------------------------------------------------
-| 10                   | George Vetticaden    | 621011971            | 244-4532 Nulla Rd.   | N                    | miles                |
-| 11                   | Jamie Engesser       | 262112338            | 366-4125 Ac Street   | N                    | miles                |
-| 12                   | Paul Coddin          | 198041975            | Ap #622-957 Risus. Street | Y                    | hours                |
--------------------------------------------------------------------------------------------------------------------------------------------
+Fri May 20 15:49:52 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+information_schema
+demo_db
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Listado-de-las-tablas-existentes-en-la-base-de-datos-de-MySQL">
+<h2>Listado de las tablas existentes en la base de datos de MySQL<a class="headerlink" href="#Listado-de-las-tablas-existentes-en-la-base-de-datos-de-MySQL" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> list-tables.sh
+<span class="n">sqoop</span> <span class="nb">list</span><span class="o">-</span><span class="n">tables</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
+    <span class="o">--</span><span class="n">password</span> <span class="n">secret</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing list-tables.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>bash list-tables.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
+Please set $HBASE_HOME to the root of your HBase installation.
+Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
+Please set $HCAT_HOME to the root of your HCatalog installation.
+Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
+Please set $ACCUMULO_HOME to the root of your Accumulo installation.
+Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
+Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
+Fri May 20 15:49:53 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+drivers
+timesheet
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Verificación-de-los-registros-en-MySQL-con-query">
+<h2>Verificación de los registros en MySQL con query<a class="headerlink" href="#Verificación-de-los-registros-en-MySQL-con-query" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> query.sh
+<span class="n">sqoop</span> <span class="nb">eval</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
+    <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
+    <span class="o">--</span><span class="n">query</span> <span class="s2">&quot;SELECT * FROM drivers LIMIT 3&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Writing query.sh
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>bash query.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
+Please set $HBASE_HOME to the root of your HBase installation.
+Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
+Please set $HCAT_HOME to the root of your HCatalog installation.
+Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
+Please set $ACCUMULO_HOME to the root of your Accumulo installation.
+Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
+Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
+Fri May 20 15:49:54 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+----------------------------------------------------------------------------------------------------------------------------------
+| driverId    | name                 | ssn                  | location             | certified            | wage_plan            |
+----------------------------------------------------------------------------------------------------------------------------------
+| 10          | George Vetticaden    | 621011971            | 244-4532 Nulla Rd.   | N                    | miles                |
+| 11          | Jamie Engesser       | 262112338            | 366-4125 Ac Street   | N                    | miles                |
+| 12          | Paul Coddin          | 198041975            | Ap #622-957 Risus. Street | Y                    | hours                |
+----------------------------------------------------------------------------------------------------------------------------------
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Importación-de-una-tabla-completa-al-HDFS">
+<h2>Importación de una tabla completa al HDFS<a class="headerlink" href="#Importación-de-una-tabla-completa-al-HDFS" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -495,9 +682,10 @@ Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
 
 <span class="n">hdfs</span> <span class="n">dfs</span> <span class="o">-</span><span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">drivers</span>
 
-<span class="n">sqoop</span><span class="o">-</span><span class="kn">import</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">sqlite</span><span class="p">:</span><span class="n">sample</span><span class="o">.</span><span class="n">db</span> \
-    <span class="o">--</span><span class="n">driver</span> <span class="n">org</span><span class="o">.</span><span class="n">sqlite</span><span class="o">.</span><span class="n">JDBC</span> \
+<span class="n">sqoop</span> <span class="kn">import</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
+    <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
     <span class="o">--</span><span class="n">table</span> <span class="n">drivers</span> \
     <span class="o">--</span><span class="n">target</span><span class="o">-</span><span class="nb">dir</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">drivers</span> \
     <span class="o">--</span><span class="n">m</span> <span class="mi">1</span>
@@ -513,7 +701,7 @@ Overwriting /tmp/full_import.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -527,115 +715,26 @@ Overwriting /tmp/full_import.sh
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Deleted /tmp/drivers
-Warning: /opt/hbase does not exist! HBase imports will fail.
+Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
 Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/hbase does not exist! HCatalog jobs will fail.
+Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
 Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/accumulo does not exist! Accumulo imports will fail.
+Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
 Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/zookeeper does not exist! Accumulo imports will fail.
+Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
 Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Note: /tmp/sqoop-root/compile/4dd202e347a783dab04b175af2a542fe/drivers.java uses or overrides a deprecated API.
+Fri May 20 15:49:57 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Note: /tmp/sqoop-root/compile/7c6ccfc14343ffffba7485cfd3db64d8/drivers.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-Error: java.io.IOException: SQLException in nextKeyValue
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)
-        at org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)
-        at org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)
-        at org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)
-        at org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)
-        at org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)
-        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)
-        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
-        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
-        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
-Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)
-        at org.sqlite.core.DB.newSQLException(DB.java:1030)
-        at org.sqlite.core.DB.newSQLException(DB.java:1042)
-        at org.sqlite.core.DB.throwex(DB.java:1007)
-        at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
-        at org.sqlite.core.NativeDB.prepare(NativeDB.java:137)
-        at org.sqlite.core.DB.prepare(DB.java:257)
-        at org.sqlite.core.CorePreparedStatement.&lt;init&gt;(CorePreparedStatement.java:45)
-        at org.sqlite.jdbc3.JDBC3PreparedStatement.&lt;init&gt;(JDBC3PreparedStatement.java:30)
-        at org.sqlite.jdbc4.JDBC4PreparedStatement.&lt;init&gt;(JDBC4PreparedStatement.java:25)
-        at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)
-        at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)
-        ... 12 more
-
-Error: java.io.IOException: SQLException in nextKeyValue
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)
-        at org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)
-        at org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)
-        at org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)
-        at org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)
-        at org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)
-        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)
-        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
-        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
-        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
-Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)
-        at org.sqlite.core.DB.newSQLException(DB.java:1030)
-        at org.sqlite.core.DB.newSQLException(DB.java:1042)
-        at org.sqlite.core.DB.throwex(DB.java:1007)
-        at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
-        at org.sqlite.core.NativeDB.prepare(NativeDB.java:137)
-        at org.sqlite.core.DB.prepare(DB.java:257)
-        at org.sqlite.core.CorePreparedStatement.&lt;init&gt;(CorePreparedStatement.java:45)
-        at org.sqlite.jdbc3.JDBC3PreparedStatement.&lt;init&gt;(JDBC3PreparedStatement.java:30)
-        at org.sqlite.jdbc4.JDBC4PreparedStatement.&lt;init&gt;(JDBC4PreparedStatement.java:25)
-        at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)
-        at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)
-        ... 12 more
-
-Error: java.io.IOException: SQLException in nextKeyValue
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)
-        at org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)
-        at org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)
-        at org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)
-        at org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)
-        at org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)
-        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)
-        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
-        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
-        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
-Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)
-        at org.sqlite.core.DB.newSQLException(DB.java:1030)
-        at org.sqlite.core.DB.newSQLException(DB.java:1042)
-        at org.sqlite.core.DB.throwex(DB.java:1007)
-        at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
-        at org.sqlite.core.NativeDB.prepare(NativeDB.java:137)
-        at org.sqlite.core.DB.prepare(DB.java:257)
-        at org.sqlite.core.CorePreparedStatement.&lt;init&gt;(CorePreparedStatement.java:45)
-        at org.sqlite.jdbc3.JDBC3PreparedStatement.&lt;init&gt;(JDBC3PreparedStatement.java:30)
-        at org.sqlite.jdbc4.JDBC4PreparedStatement.&lt;init&gt;(JDBC4PreparedStatement.java:25)
-        at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)
-        at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)
-        ... 12 more
-
-22/05/19 22:28:34 ERROR tool.ImportTool: Import failed: Import job failed!
+Fri May 20 15:50:03 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>sqoop import --connect jdbc:sqlite:sample.db --driver org.sqlite.JDBC  --query <span class="s2">&quot;SELECT * FROM drivers WHERE driverId=10 AND \$CONDITIONS&quot;</span> --target-dir /tmp/drivers -m <span class="m">1</span>
+<span></span><span class="o">!</span>hdfs dfs -ls /tmp/drivers
 </pre></div>
 </div>
 </div>
@@ -644,48 +743,17 @@ Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing datab
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Warning: /opt/hbase does not exist! HBase imports will fail.
-Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/hbase does not exist! HCatalog jobs will fail.
-Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/accumulo does not exist! Accumulo imports will fail.
-Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/zookeeper does not exist! Accumulo imports will fail.
-Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Note: /tmp/sqoop-root/compile/990a8af57056ffce0d7e285c173fb8f9/QueryResult.java uses or overrides a deprecated API.
-Note: Recompile with -Xlint:deprecation for details.
-22/05/19 22:28:37 ERROR tool.ImportTool: Import failed: org.apache.hadoop.mapred.FileAlreadyExistsException: Output directory hdfs://0.0.0.0:9000/tmp/drivers already exists
-        at org.apache.hadoop.mapreduce.lib.output.FileOutputFormat.checkOutputSpecs(FileOutputFormat.java:146)
-        at org.apache.hadoop.mapreduce.JobSubmitter.checkSpecs(JobSubmitter.java:279)
-        at org.apache.hadoop.mapreduce.JobSubmitter.submitJobInternal(JobSubmitter.java:145)
-        at org.apache.hadoop.mapreduce.Job$11.run(Job.java:1570)
-        at org.apache.hadoop.mapreduce.Job$11.run(Job.java:1567)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
-        at org.apache.hadoop.mapreduce.Job.submit(Job.java:1567)
-        at org.apache.hadoop.mapreduce.Job.waitForCompletion(Job.java:1588)
-        at org.apache.sqoop.mapreduce.ImportJobBase.doSubmitJob(ImportJobBase.java:200)
-        at org.apache.sqoop.mapreduce.ImportJobBase.runJob(ImportJobBase.java:173)
-        at org.apache.sqoop.mapreduce.ImportJobBase.runImport(ImportJobBase.java:270)
-        at org.apache.sqoop.manager.SqlManager.importQuery(SqlManager.java:748)
-        at org.apache.sqoop.tool.ImportTool.importTable(ImportTool.java:522)
-        at org.apache.sqoop.tool.ImportTool.run(ImportTool.java:628)
-        at org.apache.sqoop.Sqoop.run(Sqoop.java:147)
-        at org.apache.hadoop.util.ToolRunner.run(ToolRunner.java:76)
-        at org.apache.sqoop.Sqoop.runSqoop(Sqoop.java:183)
-        at org.apache.sqoop.Sqoop.runTool(Sqoop.java:234)
-        at org.apache.sqoop.Sqoop.runTool(Sqoop.java:243)
-        at org.apache.sqoop.Sqoop.main(Sqoop.java:252)
-
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2022-05-20 15:50 /tmp/drivers/_SUCCESS
+-rw-r--r--   1 root supergroup       1963 2022-05-20 15:50 /tmp/drivers/part-m-00000
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>hdfs dfs -ls /user/root/drivers
+<span></span><span class="o">!</span>hdfs dfs -cat /tmp/drivers/part-m-00000
 </pre></div>
 </div>
 </div>
@@ -694,31 +762,47 @@ Note: Recompile with -Xlint:deprecation for details.
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-ls: `/user/root/drivers&#39;: No such file or directory
+10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+11,Jamie Engesser,262112338,366-4125 Ac Street,N,miles
+12,Paul Coddin,198041975,Ap #622-957 Risus. Street,Y,hours
+13,Joe Niemiec,139907145,2071 Hendrerit. Ave,Y,hours
+14,Adis Cesir,820812209,Ap #810-1228 In St.,Y,hours
+15,Rohit Bakshi,239005227,648-5681 Dui- Rd.,Y,hours
+16,Tom McCuch,363303105,P.O. Box 313- 962 Parturient Rd.,Y,hours
+17,Eric Mizell,123808238,P.O. Box 579- 2191 Gravida. Street,Y,hours
+18,Grant Liu,171010151,Ap #928-3159 Vestibulum Av.,Y,hours
+19,Ajay Singh,160005158,592-9430 Nonummy Avenue,Y,hours
+20,Chris Harris,921812303,883-2691 Proin Avenue,Y,hours
+21,Jeff Markham,209408086,Ap #852-7966 Facilisis St.,Y,hours
+22,Nadeem Asghar,783204269,154-9147 Aliquam Ave,Y,hours
+23,Adam Diaz,928312208,P.O. Box 260- 6127 Vitae Road,Y,hours
+24,Don Hilborn,254412152,4361 Ac Road,Y,hours
+25,Jean-Philippe Playe,913310051,P.O. Box 812- 6238 Ac Rd.,Y,hours
+26,Michael Aube,124705141,P.O. Box 213- 8948 Nec Ave,Y,hours
+27,Mark Lochbihler,392603159,8355 Ipsum St.,Y,hours
+28,Olivier Renault,959908181,P.O. Box 243- 6509 Erat. Avenue,Y,hours
+29,Teddy Choi,185502192,P.O. Box 106- 7003 Amet Rd.,Y,hours
+30,Dan Rice,282307061,Ap #881-9267 Mollis Avenue,Y,hours
+31,Rommel Garcia,858912101,P.O. Box 945- 6015 Sociis St.,Y,hours
+32,Ryan Templeton,290304287,765-6599 Egestas. Av.,Y,hours
+33,Sridhara Sabbella,967409015,Ap #477-2507 Sagittis Avenue,Y,hours
+34,Frank Romano,391407216,Ap #753-6814 Quis Ave,Y,hours
+35,Emil Siemes,971401151,321-2976 Felis Rd.,Y,hours
+36,Andrew Grande,245303216,Ap #685-9598 Egestas Rd.,Y,hours
+37,Wes Floyd,190504074,P.O. Box 269- 9611 Nulla Street,Y,hours
+38,Scott Shaw,386411175,276 Lobortis Road,Y,hours
+39,David Kaiser,967706052,9185 At Street,Y,hours
+40,Nicolas Maillard,208510217,1027 Quis Rd.,Y,hours
+41,Greg Phillips,308103116,P.O. Box 847- 5961 Arcu. Road,Y,hours
+42,Randy Gelhausen,853302254,145-4200 In- Avenue,Y,hours
+43,Dave Patton,977706052,3028 A- St.,Y,hours
 </pre></div></div>
 </div>
+</div>
+<div class="section" id="Importación-de-un-subconjunto-de-datos-de-una-tabla-al-HDFS">
+<h2>Importación de un subconjunto de datos de una tabla al HDFS<a class="headerlink" href="#Importación-de-un-subconjunto-de-datos-de-una-tabla-al-HDFS" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>hdfs dfs -cat /user/root/truck_events/part-m-00000
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-cat: `/user/root/truck_events/part-m-00000&#39;: No such file or directory
-</pre></div></div>
-</div>
-</div>
-<div class="section" id="Importación-de-un-subconjunto-de-datos-de-una-tabla">
-<h2>Importación de un subconjunto de datos de una tabla<a class="headerlink" href="#Importación-de-un-subconjunto-de-datos-de-una-tabla" title="Enlazar permanentemente con este título"></a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -727,12 +811,13 @@ cat: `/user/root/truck_events/part-m-00000&#39;: No such file or directory
 <span class="n">hdfs</span> <span class="n">dfs</span> <span class="o">-</span><span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">drivers</span>
 
 <span class="n">sqoop</span> <span class="kn">import</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">sqlite</span><span class="p">:</span><span class="n">sample</span><span class="o">.</span><span class="n">db</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
+    <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
     <span class="o">--</span><span class="n">table</span> <span class="n">drivers</span> \
-    <span class="o">--</span><span class="n">driver</span> <span class="n">org</span><span class="o">.</span><span class="n">sqlite</span><span class="o">.</span><span class="n">JDBC</span> \
+    <span class="o">--</span><span class="n">target</span><span class="o">-</span><span class="nb">dir</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">drivers</span><span class="o">/</span> \
     <span class="o">-</span><span class="n">m</span> <span class="mi">1</span> \
-    <span class="o">--</span><span class="n">where</span> <span class="s2">&quot;driverId=10&quot;</span> \
-    <span class="o">--</span><span class="n">target</span><span class="o">-</span><span class="nb">dir</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">drivers</span><span class="o">/</span>
+    <span class="o">--</span><span class="n">where</span> <span class="s2">&quot;driverId=10&quot;</span>
 </pre></div>
 </div>
 </div>
@@ -741,11 +826,11 @@ cat: `/user/root/truck_events/part-m-00000&#39;: No such file or directory
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Overwriting partial-import.sh
+Writing partial-import.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -759,111 +844,22 @@ Overwriting partial-import.sh
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Deleted /tmp/drivers
-Warning: /opt/hbase does not exist! HBase imports will fail.
+Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
 Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/hbase does not exist! HCatalog jobs will fail.
+Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
 Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/accumulo does not exist! Accumulo imports will fail.
+Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
 Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/zookeeper does not exist! Accumulo imports will fail.
+Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
 Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Note: /tmp/sqoop-root/compile/3db8756b79b6cf4b930c3a7a02c2c0a3/drivers.java uses or overrides a deprecated API.
+Fri May 20 15:50:20 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Note: /tmp/sqoop-root/compile/db3e5e0d16414871f43b3ea4a8726bbb/drivers.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-Error: java.io.IOException: SQLException in nextKeyValue
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)
-        at org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)
-        at org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)
-        at org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)
-        at org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)
-        at org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)
-        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)
-        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
-        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
-        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
-Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)
-        at org.sqlite.core.DB.newSQLException(DB.java:1030)
-        at org.sqlite.core.DB.newSQLException(DB.java:1042)
-        at org.sqlite.core.DB.throwex(DB.java:1007)
-        at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
-        at org.sqlite.core.NativeDB.prepare(NativeDB.java:137)
-        at org.sqlite.core.DB.prepare(DB.java:257)
-        at org.sqlite.core.CorePreparedStatement.&lt;init&gt;(CorePreparedStatement.java:45)
-        at org.sqlite.jdbc3.JDBC3PreparedStatement.&lt;init&gt;(JDBC3PreparedStatement.java:30)
-        at org.sqlite.jdbc4.JDBC4PreparedStatement.&lt;init&gt;(JDBC4PreparedStatement.java:25)
-        at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)
-        at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)
-        ... 12 more
-
-Error: java.io.IOException: SQLException in nextKeyValue
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)
-        at org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)
-        at org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)
-        at org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)
-        at org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)
-        at org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)
-        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)
-        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
-        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
-        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
-Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)
-        at org.sqlite.core.DB.newSQLException(DB.java:1030)
-        at org.sqlite.core.DB.newSQLException(DB.java:1042)
-        at org.sqlite.core.DB.throwex(DB.java:1007)
-        at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
-        at org.sqlite.core.NativeDB.prepare(NativeDB.java:137)
-        at org.sqlite.core.DB.prepare(DB.java:257)
-        at org.sqlite.core.CorePreparedStatement.&lt;init&gt;(CorePreparedStatement.java:45)
-        at org.sqlite.jdbc3.JDBC3PreparedStatement.&lt;init&gt;(JDBC3PreparedStatement.java:30)
-        at org.sqlite.jdbc4.JDBC4PreparedStatement.&lt;init&gt;(JDBC4PreparedStatement.java:25)
-        at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)
-        at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)
-        ... 12 more
-
-Error: java.io.IOException: SQLException in nextKeyValue
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:277)
-        at org.apache.hadoop.mapred.MapTask$NewTrackingRecordReader.nextKeyValue(MapTask.java:562)
-        at org.apache.hadoop.mapreduce.task.MapContextImpl.nextKeyValue(MapContextImpl.java:80)
-        at org.apache.hadoop.mapreduce.lib.map.WrappedMapper$Context.nextKeyValue(WrappedMapper.java:91)
-        at org.apache.hadoop.mapreduce.Mapper.run(Mapper.java:145)
-        at org.apache.sqoop.mapreduce.AutoProgressMapper.run(AutoProgressMapper.java:64)
-        at org.apache.hadoop.mapred.MapTask.runNewMapper(MapTask.java:793)
-        at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
-        at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:177)
-        at java.security.AccessController.doPrivileged(Native Method)
-        at javax.security.auth.Subject.doAs(Subject.java:422)
-        at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1926)
-        at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:171)
-Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing database (no such table: drivers)
-        at org.sqlite.core.DB.newSQLException(DB.java:1030)
-        at org.sqlite.core.DB.newSQLException(DB.java:1042)
-        at org.sqlite.core.DB.throwex(DB.java:1007)
-        at org.sqlite.core.NativeDB.prepare_utf8(Native Method)
-        at org.sqlite.core.NativeDB.prepare(NativeDB.java:137)
-        at org.sqlite.core.DB.prepare(DB.java:257)
-        at org.sqlite.core.CorePreparedStatement.&lt;init&gt;(CorePreparedStatement.java:45)
-        at org.sqlite.jdbc3.JDBC3PreparedStatement.&lt;init&gt;(JDBC3PreparedStatement.java:30)
-        at org.sqlite.jdbc4.JDBC4PreparedStatement.&lt;init&gt;(JDBC4PreparedStatement.java:25)
-        at org.sqlite.jdbc4.JDBC4Connection.prepareStatement(JDBC4Connection.java:35)
-        at org.sqlite.jdbc3.JDBC3Connection.prepareStatement(JDBC3Connection.java:241)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.executeQuery(DBRecordReader.java:101)
-        at org.apache.sqoop.mapreduce.db.DBRecordReader.nextKeyValue(DBRecordReader.java:235)
-        ... 12 more
-
-22/05/19 22:29:07 ERROR tool.ImportTool: Import failed: Import job failed!
+Fri May 20 15:50:24 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
 </pre></div></div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -871,8 +867,18 @@ Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing datab
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2022-05-20 15:50 /tmp/drivers/_SUCCESS
+-rw-r--r--   1 root supergroup         58 2022-05-20 15:50 /tmp/drivers/part-m-00000
+</pre></div></div>
+</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -885,15 +891,162 @@ Caused by: org.sqlite.SQLiteException: [SQLITE_ERROR] SQL error or missing datab
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-cat: `/tmp/drivers/part-m-00000&#39;: No such file or directory
+10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
 </pre></div></div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</div>
+<div class="section" id="Movimiento-de-timesheet.csv-al-HDFS">
+<h2>Movimiento de <code class="docutils literal notranslate"><span class="pre">timesheet.csv</span></code> al HDFS<a class="headerlink" href="#Movimiento-de-timesheet.csv-al-HDFS" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>rm sample.db *.java *.sh
+<span></span><span class="o">!</span>tail +2 /tmp/timesheet.csv &gt; /tmp/timesheet1.csv
+<span class="o">!</span>head /tmp/timesheet1.csv
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+10,1,70,3300
+10,2,70,3300
+10,3,60,2800
+10,4,70,3100
+10,5,70,3200
+10,6,70,3300
+10,7,70,3000
+10,8,70,3300
+10,9,70,3200
+10,10,50,2500
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>hdfs dfs -rm /tmp/timesheet.csv
+<span class="o">!</span>hdfs dfs -copyFromLocal /tmp/timesheet1.csv /tmp/timesheet.csv
+<span class="o">!</span>hdfs dfs -ls /tmp/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Deleted /tmp/timesheet.csv
+Found 3 items
+drwxr-xr-x   - root supergroup          0 2022-05-20 15:50 /tmp/drivers
+drwx------   - root supergroup          0 2022-05-20 15:05 /tmp/hadoop-yarn
+-rw-r--r--   1 root supergroup      26164 2022-05-20 15:50 /tmp/timesheet.csv
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Exportación-de-datos-del-HDFS-a-MySQL">
+<h2>Exportación de datos del HDFS a MySQL<a class="headerlink" href="#Exportación-de-datos-del-HDFS-a-MySQL" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%writefile</span> /tmp/export.sh
+
+<span class="n">sqoop</span> <span class="n">export</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
+    <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
+    <span class="o">--</span><span class="n">table</span> <span class="n">timesheet</span> \
+    <span class="o">--</span><span class="n">export</span><span class="o">-</span><span class="nb">dir</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">timesheet</span><span class="o">.</span><span class="n">csv</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting /tmp/export.sh
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>bash /tmp/export.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
+Please set $HBASE_HOME to the root of your HBase installation.
+Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
+Please set $HCAT_HOME to the root of your HCatalog installation.
+Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
+Please set $ACCUMULO_HOME to the root of your Accumulo installation.
+Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
+Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
+Fri May 20 15:50:45 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
+Note: /tmp/sqoop-root/compile/c4bbeeef55f6c8e56619ef8950c5b89c/timesheet.java uses or overrides a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Verificación">
+<h2>Verificación<a class="headerlink" href="#Verificación" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;mysql-instance&quot;</span><span class="p">,</span>
+    <span class="n">user</span><span class="o">=</span><span class="s1">&#39;sqoop&#39;</span><span class="p">,</span>
+    <span class="n">passwd</span><span class="o">=</span><span class="s1">&#39;secret&#39;</span><span class="p">,</span>
+    <span class="n">db</span><span class="o">=</span><span class="s1">&#39;demo_db&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    SELECT * FROM timesheet LIMIT 5;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">result</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(18, 30, 54, 2738),
+ (18, 31, 55, 2510),
+ (18, 32, 60, 2695),
+ (18, 33, 54, 2564),
+ (18, 34, 53, 2778)]
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>rm *.java *.sh
 </pre></div>
 </div>
 </div>
