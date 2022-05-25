@@ -24,7 +24,7 @@
     <link rel="index" title="Índice" href="../../genindex.html" />
     <link rel="search" title="Búsqueda" href="../../search.html" />
     <link rel="next" title="Apache Zeppelin" href="../zeppelin/1-01_.html" />
-    <link rel="prev" title="Acceso al HDFS con snakebite usando Python" href="../snakebite/1-01_.html" /> 
+    <link rel="prev" title="Transformación de datos de entrada" href="../druid/1-06_.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -391,56 +391,28 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 </div>
-<div class="section" id="Ejecución-del-contendor-con-MySQL">
-<h2>Ejecución del contendor con MySQL<a class="headerlink" href="#Ejecución-del-contendor-con-MySQL" title="Enlazar permanentemente con este título"></a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker network create mysql-network
-</pre></div>
-</div>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker run --name mysql-instance \
-    -e MYSQL_ROOT_PASSWORD=secret \
-    --network mysql-network \
-    -p 3306:3306 \
-    -d mysql:5.7
-</pre></div>
-</div>
-</div>
-<div class="section" id="Creación-de-la-base-de-datos-y-permisos">
-<h2>Creación de la base de datos y permisos<a class="headerlink" href="#Creación-de-la-base-de-datos-y-permisos" title="Enlazar permanentemente con este título"></a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker exec mysql-instance mysql -uroot -psecret -e &quot;CREATE DATABASE demo_db; &quot;
-docker exec mysql-instance mysql -uroot -psecret -e &quot;CREATE USER &#39;sqoop&#39;@&#39;%&#39; IDENTIFIED BY &#39;secret&#39;; &quot;
-docker exec mysql-instance mysql -uroot -psecret -e &quot;GRANT ALL ON demo_db.* TO &#39;sqoop&#39;@&#39;%&#39;;&quot;
-</pre></div>
-</div>
-</div>
-<div class="section" id="Ejeución-del-contendor-con-Sqoop">
-<h2>Ejeución del contendor con Sqoop<a class="headerlink" href="#Ejeución-del-contendor-con-Sqoop" title="Enlazar permanentemente con este título"></a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>docker run --rm -it \
-    --network mysql-network \
-    -v &quot;$PWD&quot;:/workspace \
-    -p 50070:50070 \
-    -p 8088:8088 \
-    -p 8888:8888 \
-    jdvelasq/sqoop:1.4.7
-</pre></div>
-</div>
-</div>
-<div class="section" id="Creación-y-carga-de-datos-en-MySQL">
-<h2>Creación y carga de datos en MySQL<a class="headerlink" href="#Creación-y-carga-de-datos-en-MySQL" title="Enlazar permanentemente con este título"></a></h2>
+<div class="section" id="Preparación-de-la-base-de-datos">
+<h2>Preparación de la base de datos<a class="headerlink" href="#Preparación-de-la-base-de-datos" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">mysql.connector</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span></span><span class="kn">import</span> <span class="nn">mariadb</span>
 
-<span class="n">conn</span> <span class="o">=</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;mysql-instance&quot;</span><span class="p">,</span>
-    <span class="n">user</span><span class="o">=</span><span class="s1">&#39;sqoop&#39;</span><span class="p">,</span>
-    <span class="n">passwd</span><span class="o">=</span><span class="s1">&#39;secret&#39;</span><span class="p">,</span>
-    <span class="n">db</span><span class="o">=</span><span class="s1">&#39;demo_db&#39;</span><span class="p">,</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">mariadb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">user</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+<span class="c1">#</span>
+<span class="c1"># Creación de la BD</span>
+<span class="c1">#</span>
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;DROP DATABASE IF EXISTS demo_db;&quot;</span><span class="p">)</span>
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE DATABASE demo_db;&quot;</span><span class="p">)</span>
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;USE demo_db;&quot;</span><span class="p">)</span>
 
 <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -480,7 +452,7 @@ docker exec mysql-instance mysql -uroot -psecret -e &quot;GRANT ALL ON demo_db.*
 
 <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="n">drivers</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;/tmp/drivers.csv&#39;</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">drivers</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
@@ -490,6 +462,15 @@ docker exec mysql-instance mysql -uroot -psecret -e &quot;GRANT ALL ON demo_db.*
 
 <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM drivers LIMIT 5;&quot;</span><span class="p">)</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+
+<span class="c1">#</span>
+<span class="c1"># Creación y permisos para el usuario remoto</span>
+<span class="c1">#</span>
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;CREATE USER &#39;sqoop&#39;@&#39;%&#39; IDENTIFIED BY &#39;secret&#39;; &quot;</span><span class="p">)</span>
+<span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;GRANT ALL ON demo_db.* TO &#39;sqoop&#39;@&#39;%&#39;;&quot;</span><span class="p">)</span>
+
+
 <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="n">result</span>
 </pre></div>
@@ -508,9 +489,6 @@ docker exec mysql-instance mysql -uroot -psecret -e &quot;GRANT ALL ON demo_db.*
  (14, &#39;Adis Cesir&#39;, &#39;820812209&#39;, &#39;Ap #810-1228 In St.&#39;, &#39;Y&#39;, &#39;hours&#39;)]
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Listado-de-las-bases-de-datos-em-MySQL">
-<h2>Listado de las bases de datos em MySQL<a class="headerlink" href="#Listado-de-las-bases-de-datos-em-MySQL" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
@@ -518,7 +496,7 @@ docker exec mysql-instance mysql -uroot -psecret -e &quot;GRANT ALL ON demo_db.*
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> list-databases.sh
 <span class="n">sqoop</span> <span class="nb">list</span><span class="o">-</span><span class="n">databases</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
     <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
     <span class="o">--</span><span class="n">password</span> <span class="n">secret</span>
 </pre></div>
@@ -529,7 +507,7 @@ docker exec mysql-instance mysql -uroot -psecret -e &quot;GRANT ALL ON demo_db.*
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Writing list-databases.sh
+Overwriting list-databases.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -549,15 +527,6 @@ Writing list-databases.sh
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
-Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
-Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
-Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
-Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Fri May 20 15:49:52 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
 information_schema
 demo_db
 </pre></div></div>
@@ -572,7 +541,7 @@ demo_db
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> list-tables.sh
 <span class="n">sqoop</span> <span class="nb">list</span><span class="o">-</span><span class="n">tables</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
     <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
     <span class="o">--</span><span class="n">password</span> <span class="n">secret</span>
 </pre></div>
@@ -583,7 +552,7 @@ demo_db
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Writing list-tables.sh
+Overwriting list-tables.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -600,17 +569,8 @@ Writing list-tables.sh
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
-Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
-Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
-Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
-Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Fri May 20 15:49:53 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
-drivers
 timesheet
+drivers
 </pre></div></div>
 </div>
 </div>
@@ -623,7 +583,7 @@ timesheet
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> query.sh
 <span class="n">sqoop</span> <span class="nb">eval</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
     <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
     <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
     <span class="o">--</span><span class="n">query</span> <span class="s2">&quot;SELECT * FROM drivers LIMIT 3&quot;</span>
@@ -635,7 +595,7 @@ timesheet
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Writing query.sh
+Overwriting query.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -652,15 +612,6 @@ Writing query.sh
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
-Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
-Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
-Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
-Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Fri May 20 15:49:54 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
 ----------------------------------------------------------------------------------------------------------------------------------
 | driverId    | name                 | ssn                  | location             | certified            | wage_plan            |
 ----------------------------------------------------------------------------------------------------------------------------------
@@ -680,10 +631,8 @@ Fri May 20 15:49:54 UTC 2022 WARN: Establishing SSL connection without server&#3
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> /tmp/full_import.sh
 
-<span class="n">hdfs</span> <span class="n">dfs</span> <span class="o">-</span><span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">drivers</span>
-
 <span class="n">sqoop</span> <span class="kn">import</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
     <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
     <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
     <span class="o">--</span><span class="n">table</span> <span class="n">drivers</span> \
@@ -697,7 +646,7 @@ Fri May 20 15:49:54 UTC 2022 WARN: Establishing SSL connection without server&#3
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Overwriting /tmp/full_import.sh
+Writing /tmp/full_import.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -714,19 +663,8 @@ Overwriting /tmp/full_import.sh
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Deleted /tmp/drivers
-Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
-Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
-Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
-Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
-Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Fri May 20 15:49:57 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
-Note: /tmp/sqoop-root/compile/7c6ccfc14343ffffba7485cfd3db64d8/drivers.java uses or overrides a deprecated API.
+Note: /tmp/sqoop-root/compile/a99e6f279944bf8b64b3521ecd68bf5e/drivers.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-Fri May 20 15:50:03 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -744,8 +682,8 @@ Fri May 20 15:50:03 UTC 2022 WARN: Establishing SSL connection without server&#3
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Found 2 items
--rw-r--r--   1 root supergroup          0 2022-05-20 15:50 /tmp/drivers/_SUCCESS
--rw-r--r--   1 root supergroup       1963 2022-05-20 15:50 /tmp/drivers/part-m-00000
+-rw-r--r--   1 root supergroup          0 2022-05-24 02:28 /tmp/drivers/_SUCCESS
+-rw-r--r--   1 root supergroup       1963 2022-05-24 02:28 /tmp/drivers/part-m-00000
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -811,7 +749,7 @@ Found 2 items
 <span class="n">hdfs</span> <span class="n">dfs</span> <span class="o">-</span><span class="n">rm</span> <span class="o">-</span><span class="n">r</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">drivers</span>
 
 <span class="n">sqoop</span> <span class="kn">import</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
     <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
     <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
     <span class="o">--</span><span class="n">table</span> <span class="n">drivers</span> \
@@ -844,18 +782,8 @@ Writing partial-import.sh
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Deleted /tmp/drivers
-Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
-Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
-Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
-Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
-Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Fri May 20 15:50:20 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
-Note: /tmp/sqoop-root/compile/db3e5e0d16414871f43b3ea4a8726bbb/drivers.java uses or overrides a deprecated API.
+Note: /tmp/sqoop-root/compile/c7cdfc2a9e6c3c0777fa3d9afc6e610f/drivers.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
-Fri May 20 15:50:24 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -873,8 +801,8 @@ Fri May 20 15:50:24 UTC 2022 WARN: Establishing SSL connection without server&#3
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Found 2 items
--rw-r--r--   1 root supergroup          0 2022-05-20 15:50 /tmp/drivers/_SUCCESS
--rw-r--r--   1 root supergroup         58 2022-05-20 15:50 /tmp/drivers/part-m-00000
+-rw-r--r--   1 root supergroup          0 2022-05-24 02:29 /tmp/drivers/_SUCCESS
+-rw-r--r--   1 root supergroup         58 2022-05-24 02:29 /tmp/drivers/part-m-00000
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -940,11 +868,12 @@ Found 2 items
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Deleted /tmp/timesheet.csv
-Found 3 items
-drwxr-xr-x   - root supergroup          0 2022-05-20 15:50 /tmp/drivers
-drwx------   - root supergroup          0 2022-05-20 15:05 /tmp/hadoop-yarn
--rw-r--r--   1 root supergroup      26164 2022-05-20 15:50 /tmp/timesheet.csv
+rm: `/tmp/timesheet.csv&#39;: No such file or directory
+Found 4 items
+drwxr-xr-x   - root supergroup          0 2022-05-24 02:29 /tmp/drivers
+drwxrwx---   - root supergroup          0 2022-05-24 02:27 /tmp/hadoop-yarn
+drwxrwxrwx   - root supergroup          0 2022-05-24 02:27 /tmp/hive
+-rw-r--r--   1 root supergroup      26164 2022-05-24 02:29 /tmp/timesheet.csv
 </pre></div></div>
 </div>
 </div>
@@ -958,7 +887,7 @@ drwx------   - root supergroup          0 2022-05-20 15:05 /tmp/hadoop-yarn
 <span></span><span class="o">%%writefile</span> /tmp/export.sh
 
 <span class="n">sqoop</span> <span class="n">export</span> \
-    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">mysql</span><span class="o">-</span><span class="n">instance</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
+    <span class="o">--</span><span class="n">connect</span> <span class="n">jdbc</span><span class="p">:</span><span class="n">mysql</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">3306</span><span class="o">/</span><span class="n">demo_db</span> \
     <span class="o">--</span><span class="n">username</span> <span class="n">sqoop</span> \
     <span class="o">--</span><span class="n">password</span> <span class="n">secret</span> \
     <span class="o">--</span><span class="n">table</span> <span class="n">timesheet</span> \
@@ -971,7 +900,7 @@ drwx------   - root supergroup          0 2022-05-20 15:05 /tmp/hadoop-yarn
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Overwriting /tmp/export.sh
+Writing /tmp/export.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -988,16 +917,7 @@ Overwriting /tmp/export.sh
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Warning: /opt/sqoop/../hbase does not exist! HBase imports will fail.
-Please set $HBASE_HOME to the root of your HBase installation.
-Warning: /opt/sqoop/../hcatalog does not exist! HCatalog jobs will fail.
-Please set $HCAT_HOME to the root of your HCatalog installation.
-Warning: /opt/sqoop/../accumulo does not exist! Accumulo imports will fail.
-Please set $ACCUMULO_HOME to the root of your Accumulo installation.
-Warning: /opt/sqoop/../zookeeper does not exist! Accumulo imports will fail.
-Please set $ZOOKEEPER_HOME to the root of your Zookeeper installation.
-Fri May 20 15:50:45 UTC 2022 WARN: Establishing SSL connection without server&#39;s identity verification is not recommended. According to MySQL 5.5.45+, 5.6.26+ and 5.7.6+ requirements SSL connection must be established by default if explicit option isn&#39;t set. For compliance with existing applications not using SSL the verifyServerCertificate property is set to &#39;false&#39;. You need either to explicitly disable SSL by setting useSSL=false, or set useSSL=true and provide truststore for server certificate verification.
-Note: /tmp/sqoop-root/compile/c4bbeeef55f6c8e56619ef8950c5b89c/timesheet.java uses or overrides a deprecated API.
+Note: /tmp/sqoop-root/compile/3f1043dea2828b401dfaa562551ceac8/timesheet.java uses or overrides a deprecated API.
 Note: Recompile with -Xlint:deprecation for details.
 </pre></div></div>
 </div>
@@ -1009,11 +929,12 @@ Note: Recompile with -Xlint:deprecation for details.
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">mysql</span><span class="o">.</span><span class="n">connector</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-    <span class="n">host</span><span class="o">=</span><span class="s2">&quot;mysql-instance&quot;</span><span class="p">,</span>
-    <span class="n">user</span><span class="o">=</span><span class="s1">&#39;sqoop&#39;</span><span class="p">,</span>
-    <span class="n">passwd</span><span class="o">=</span><span class="s1">&#39;secret&#39;</span><span class="p">,</span>
-    <span class="n">db</span><span class="o">=</span><span class="s1">&#39;demo_db&#39;</span><span class="p">,</span>
+<span></span><span class="n">conn</span> <span class="o">=</span> <span class="n">mariadb</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+    <span class="n">user</span><span class="o">=</span><span class="s2">&quot;root&quot;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="c1"># host=&quot;localhost&quot;,</span>
+    <span class="c1"># port=3306,</span>
+    <span class="n">database</span><span class="o">=</span><span class="s2">&quot;demo_db&quot;</span>
 <span class="p">)</span>
 <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
 
@@ -1034,21 +955,29 @@ Note: Recompile with -Xlint:deprecation for details.
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[(18, 30, 54, 2738),
- (18, 31, 55, 2510),
- (18, 32, 60, 2695),
- (18, 33, 54, 2564),
- (18, 34, 53, 2778)]
+[(10, 1, 70, 3300),
+ (10, 2, 70, 3300),
+ (10, 3, 60, 2800),
+ (10, 4, 70, 3100),
+ (10, 5, 70, 3200)]
 </pre></div></div>
 </div>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="o">!</span>rm *.java *.sh
+<span></span><span class="o">!</span>rm *.java *.sh *.log
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+rm: cannot remove &#39;*.log&#39;: No such file or directory
+</pre></div></div>
 </div>
 </div>
 </div>

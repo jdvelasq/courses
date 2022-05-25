@@ -1,0 +1,391 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "4894a6a1-d819-4128-8222-00633a8cbe53",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Actualización de datos en Apache Druid\n",
+    "===\n",
+    "\n",
+    "* Ultima modificación: Mayo 24, 2022"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9973e0a5-5760-4532-9c7c-b2f4c0d79aa0",
+   "metadata": {},
+   "source": [
+    "Archivo de datos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "ea7a9c71-0148-463b-b8c1-21280f66df64",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{\"timestamp\":\"2018-01-01T01:01:35Z\",\"animal\":\"tiger\", \"number\":100}\n",
+      "{\"timestamp\":\"2018-01-01T03:01:35Z\",\"animal\":\"aardvark\", \"number\":42}\n",
+      "{\"timestamp\":\"2018-01-01T03:01:35Z\",\"animal\":\"giraffe\", \"number\":14124}\n"
+     ]
+    }
+   ],
+   "source": [
+    "!cat /opt/druid/quickstart/tutorial/updates-data.json"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8bed35a0-85ca-4887-bc6f-59834c92a1d2",
+   "metadata": {},
+   "source": [
+    "Especificación\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "6cff184f-fc14-407a-9cc4-89d2df7ac07a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "     1\t{\n",
+      "     2\t  \"type\" : \"index_parallel\",\n",
+      "     3\t  \"spec\" : {\n",
+      "     4\t    \"dataSchema\" : {\n",
+      "     5\t      \"dataSource\" : \"updates-tutorial\",\n",
+      "     6\t      \"timestampSpec\": {\n",
+      "     7\t        \"column\": \"timestamp\",\n",
+      "     8\t        \"format\": \"iso\"\n",
+      "     9\t      },\n",
+      "    10\t      \"dimensionsSpec\" : {\n",
+      "    11\t        \"dimensions\" : [\n",
+      "    12\t          \"animal\"\n",
+      "    13\t        ]\n",
+      "    14\t      },\n",
+      "    15\t      \"metricsSpec\" : [\n",
+      "    16\t        { \"type\" : \"count\", \"name\" : \"count\" },\n",
+      "    17\t        { \"type\" : \"longSum\", \"name\" : \"number\", \"fieldName\" : \"number\" }\n",
+      "    18\t      ],\n",
+      "    19\t      \"granularitySpec\" : {\n",
+      "    20\t        \"type\" : \"uniform\",\n",
+      "    21\t        \"segmentGranularity\" : \"week\",\n",
+      "    22\t        \"queryGranularity\" : \"minute\",\n",
+      "    23\t        \"intervals\" : [\"2018-01-01/2018-01-03\"],\n",
+      "    24\t        \"rollup\" : true\n",
+      "    25\t      }\n",
+      "    26\t    },\n",
+      "    27\t    \"ioConfig\" : {\n",
+      "    28\t      \"type\" : \"index_parallel\",\n",
+      "    29\t      \"inputSource\" : {\n",
+      "    30\t        \"type\" : \"local\",\n",
+      "    31\t        \"baseDir\" : \"quickstart/tutorial\",\n",
+      "    32\t        \"filter\" : \"updates-data.json\"\n",
+      "    33\t      },\n",
+      "    34\t      \"inputFormat\" : {\n",
+      "    35\t        \"type\" : \"json\"\n",
+      "    36\t      },\n",
+      "    37\t      \"appendToExisting\" : false\n",
+      "    38\t    },\n",
+      "    39\t    \"tuningConfig\" : {\n",
+      "    40\t      \"type\" : \"index_parallel\",\n",
+      "    41\t      \"maxRowsPerSegment\" : 5000000,\n",
+      "    42\t      \"maxRowsInMemory\" : 25000\n",
+      "    43\t    }\n",
+      "    44\t  }\n",
+      "    45\t}\n"
+     ]
+    }
+   ],
+   "source": [
+    "!cat /opt/druid/quickstart/tutorial/updates-init-index.json | nl"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6ec466fc-397e-40b1-a5ea-07539b581267",
+   "metadata": {},
+   "source": [
+    "Ingestión\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "bee6076e-c7fa-4580-9fc4-720aa2fe16a0",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Beginning indexing data for updates-tutorial\n",
+      "\u001b[1mTask started: \u001b[0mindex_parallel_updates-tutorial_hcnhakpf_2022-05-25T04:37:16.543Z\n",
+      "\u001b[1mTask log:     \u001b[0mhttp://localhost:8081/druid/indexer/v1/task/index_parallel_updates-tutorial_hcnhakpf_2022-05-25T04:37:16.543Z/log\n",
+      "\u001b[1mTask status:  \u001b[0mhttp://localhost:8081/druid/indexer/v1/task/index_parallel_updates-tutorial_hcnhakpf_2022-05-25T04:37:16.543Z/status\n",
+      "Task index_parallel_updates-tutorial_hcnhakpf_2022-05-25T04:37:16.543Z still running...\n",
+      "Task index_parallel_updates-tutorial_hcnhakpf_2022-05-25T04:37:16.543Z still running...\n",
+      "Task finished with status: SUCCESS\n",
+      "Completed indexing data for updates-tutorial. Now loading indexed data onto the cluster...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial is 0.0% finished loading...\n",
+      "updates-tutorial loading complete! You may now query your data\n"
+     ]
+    }
+   ],
+   "source": [
+    "!post-index-task --file /opt/druid/quickstart/tutorial/updates-init-index.json --url http://localhost:8081"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "5da41fb1-067c-4861-9671-5e5fca2f244d",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "┌──────────────────────────┬──────────┬───────┬────────┐\n",
+      "│ __time                   │ animal   │ count │ number │\n",
+      "├──────────────────────────┼──────────┼───────┼────────┤\n",
+      "│ 2018-01-01T01:01:00.000Z │ tiger    │     1 │    100 │\n",
+      "│ 2018-01-01T03:01:00.000Z │ aardvark │     1 │     42 │\n",
+      "│ 2018-01-01T03:01:00.000Z │ giraffe  │     1 │  14124 │\n",
+      "└──────────────────────────┴──────────┴───────┴────────┘\n",
+      "Retrieved 3 rows in 0.02s.\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "!dsql -e 'select * from \"updates-tutorial\"'"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "20841108-ed39-4048-975e-f764c37c2602",
+   "metadata": {},
+   "source": [
+    "Sobrescritura de los datos iniciales\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "cc2fb3fa-b6ed-4547-b017-ce4a83b975d4",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "     1\t{\n",
+      "     2\t  \"type\" : \"index_parallel\",\n",
+      "     3\t  \"spec\" : {\n",
+      "     4\t    \"dataSchema\" : {\n",
+      "     5\t      \"dataSource\" : \"updates-tutorial\",\n",
+      "     6\t      \"timestampSpec\": {\n",
+      "     7\t        \"column\": \"timestamp\",\n",
+      "     8\t        \"format\": \"iso\"\n",
+      "     9\t      },\n",
+      "    10\t      \"dimensionsSpec\" : {\n",
+      "    11\t        \"dimensions\" : [\n",
+      "    12\t          \"animal\"\n",
+      "    13\t        ]\n",
+      "    14\t      },\n",
+      "    15\t      \"metricsSpec\" : [\n",
+      "    16\t        { \"type\" : \"count\", \"name\" : \"count\" },\n",
+      "    17\t        { \"type\" : \"longSum\", \"name\" : \"number\", \"fieldName\" : \"number\" }\n",
+      "    18\t      ],\n",
+      "    19\t      \"granularitySpec\" : {\n",
+      "    20\t        \"type\" : \"uniform\",\n",
+      "    21\t        \"segmentGranularity\" : \"week\",\n",
+      "    22\t        \"queryGranularity\" : \"minute\",\n",
+      "    23\t        \"intervals\" : [\"2018-01-01/2018-01-03\"],\n",
+      "    24\t        \"rollup\" : true\n",
+      "    25\t      }\n",
+      "    26\t    },\n",
+      "    27\t    \"ioConfig\" : {\n",
+      "    28\t      \"type\" : \"index_parallel\",\n",
+      "    29\t      \"inputSource\" : {\n",
+      "    30\t        \"type\" : \"local\",\n",
+      "    31\t        \"baseDir\" : \"quickstart/tutorial\",\n",
+      "    32\t        \"filter\" : \"updates-data2.json\"\n",
+      "    33\t      },\n",
+      "    34\t      \"inputFormat\" : {\n",
+      "    35\t        \"type\" : \"json\"\n",
+      "    36\t      },\n",
+      "    37\t      \"appendToExisting\" : false\n",
+      "    38\t    },\n",
+      "    39\t    \"tuningConfig\" : {\n",
+      "    40\t      \"type\" : \"index_parallel\",\n",
+      "    41\t      \"maxRowsPerSegment\" : 5000000,\n",
+      "    42\t      \"maxRowsInMemory\" : 25000\n",
+      "    43\t    }\n",
+      "    44\t  }\n",
+      "    45\t}\n"
+     ]
+    }
+   ],
+   "source": [
+    "!cat /opt/druid/quickstart/tutorial/updates-overwrite-index.json | nl"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "f0b8904e-db50-4dea-9560-6ca41947de55",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Beginning indexing data for updates-tutorial\n",
+      "\u001b[1mTask started: \u001b[0mindex_parallel_updates-tutorial_cennejoa_2022-05-25T04:38:07.689Z\n",
+      "\u001b[1mTask log:     \u001b[0mhttp://localhost:8081/druid/indexer/v1/task/index_parallel_updates-tutorial_cennejoa_2022-05-25T04:38:07.689Z/log\n",
+      "\u001b[1mTask status:  \u001b[0mhttp://localhost:8081/druid/indexer/v1/task/index_parallel_updates-tutorial_cennejoa_2022-05-25T04:38:07.689Z/status\n",
+      "Task index_parallel_updates-tutorial_cennejoa_2022-05-25T04:38:07.689Z still running...\n",
+      "Task index_parallel_updates-tutorial_cennejoa_2022-05-25T04:38:07.689Z still running...\n",
+      "Task finished with status: SUCCESS\n",
+      "Completed indexing data for updates-tutorial. Now loading indexed data onto the cluster...\n",
+      "updates-tutorial loading complete! You may now query your data\n"
+     ]
+    }
+   ],
+   "source": [
+    "!post-index-task --file /opt/druid/quickstart/tutorial/updates-overwrite-index.json --url http://localhost:8081"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "3160a81d-9931-40b3-8167-aed4c7f4ff21",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "┌──────────────────────────┬──────────┬───────┬────────┐\n",
+      "│ __time                   │ animal   │ count │ number │\n",
+      "├──────────────────────────┼──────────┼───────┼────────┤\n",
+      "│ 2018-01-01T01:01:00.000Z │ tiger    │     1 │    100 │\n",
+      "│ 2018-01-01T03:01:00.000Z │ aardvark │     1 │     42 │\n",
+      "│ 2018-01-01T03:01:00.000Z │ giraffe  │     1 │  14124 │\n",
+      "└──────────────────────────┴──────────┴───────┴────────┘\n",
+      "Retrieved 3 rows in 0.02s.\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "!dsql -e 'select * from \"updates-tutorial\"'"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "979fbeed-4425-4c6b-a2ce-e5b93e416dff",
+   "metadata": {},
+   "source": [
+    "Addición de datos (append)\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "9f1d6de4-5a6c-41de-914a-4a4327cae86f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Beginning indexing data for updates-tutorial\n",
+      "\u001b[1mTask started: \u001b[0mindex_parallel_updates-tutorial_kglonpkj_2022-05-25T04:38:18.491Z\n",
+      "\u001b[1mTask log:     \u001b[0mhttp://localhost:8081/druid/indexer/v1/task/index_parallel_updates-tutorial_kglonpkj_2022-05-25T04:38:18.491Z/log\n",
+      "\u001b[1mTask status:  \u001b[0mhttp://localhost:8081/druid/indexer/v1/task/index_parallel_updates-tutorial_kglonpkj_2022-05-25T04:38:18.491Z/status\n",
+      "Task index_parallel_updates-tutorial_kglonpkj_2022-05-25T04:38:18.491Z still running...\n",
+      "Task index_parallel_updates-tutorial_kglonpkj_2022-05-25T04:38:18.491Z still running...\n",
+      "Task finished with status: SUCCESS\n",
+      "Completed indexing data for updates-tutorial. Now loading indexed data onto the cluster...\n",
+      "updates-tutorial loading complete! You may now query your data\n"
+     ]
+    }
+   ],
+   "source": [
+    "!post-index-task --file /opt/druid/quickstart/tutorial/updates-append-index2.json --url http://localhost:8081"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "53bb85ce-b7b7-487b-b710-39a0dbe260fa",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "┌──────────────────────────┬──────────┬───────┬────────┐\n",
+      "│ __time                   │ animal   │ count │ number │\n",
+      "├──────────────────────────┼──────────┼───────┼────────┤\n",
+      "│ 2018-01-01T01:01:00.000Z │ tiger    │     1 │    100 │\n",
+      "│ 2018-01-01T03:01:00.000Z │ aardvark │     1 │     42 │\n",
+      "│ 2018-01-01T03:01:00.000Z │ giraffe  │     1 │  14124 │\n",
+      "└──────────────────────────┴──────────┴───────┴────────┘\n",
+      "Retrieved 3 rows in 0.02s.\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "!dsql -e 'select * from \"updates-tutorial\"'"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

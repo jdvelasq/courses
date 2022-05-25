@@ -198,6 +198,17 @@ Sesión 03 --- 2022-05-27
 Sesión 04 --- 2022-06-03
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **Analíticas interactivas sobre grandes conjuntos de datos usando Apache Druid**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/druid/1-*
+
+
+
+
     **Transferencia de datos con Apache Sqoop**
 
         .. toctree::
