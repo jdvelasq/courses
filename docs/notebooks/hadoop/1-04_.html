@@ -62,7 +62,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-06-2022-06-17">Sesión 06 — 2022-06-17</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-07-2022-06-24">Sesión 07 — 2022-06-24</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-08-2022-07-01">Sesión 08 — 2022-07-01</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#apache-pig">Apache Pig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../analitica_predictiva/index.html">Analítica Predictiva</a></li>
@@ -374,7 +373,7 @@ div.rendered_html tbody tr:hover {
 <h2>Definición del problema<a class="headerlink" href="#Definición-del-problema" title="Enlazar permanentemente con este título"></a></h2>
 <p>Se desea contar la frecuencia de ocurrencia de palabras en un conjunto de documentos. Debido a los requerimientos de diseño (gran volúmen de datos y tiempos rápidos de respuesta) se desea implementar una arquitectura Big Data. Se desea implementar una <strong>solución computacional eficiente</strong> en <strong>Python</strong>.</p>
 <p>A continuación se generarán tres archivos de prueba para probar el sistema.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -382,10 +381,21 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="c1">#</span>
 <span class="c1"># Se crea el directorio de entrada</span>
 <span class="c1">#</span>
-<span class="o">!</span>rm -rf input output
-<span class="o">!</span>mkdir input
+<span class="o">!</span>rm -rf /tmp/wordcount
+<span class="o">!</span>mkdir -p /tmp/wordcount/input
+<span class="o">%</span><span class="k">cd</span> /tmp/wordcount
+<span class="o">!</span>ls
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/tmp/wordcount
+input
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -463,23 +473,6 @@ Writing input/text2.txt
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="Arranque-de-Hadoop-en-modo-pseudo-distribuido">
-<h2>Arranque de Hadoop en modo pseudo-distribuido<a class="headerlink" href="#Arranque-de-Hadoop-en-modo-pseudo-distribuido" title="Enlazar permanentemente con este título"></a></h2>
-<p><strong>Docker</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ docker run --rm -it -v <span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>:/workspace --name hadoop -p <span class="m">8888</span>:8888 -p <span class="m">50070</span>:50070 -p <span class="m">8088</span>:8088 jdvelasq/hadoop:2.8.5
-</pre></div>
-</div>
-<p><strong>Vagrant</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ vagrant up
-$ <span class="nb">cd</span> vagrant
-</pre></div>
-</div>
-<p>Verifique que Hadoop se esta ejecutando correctamente. Vaya a las direcciones:</p>
-<ul class="simple">
-<li><p>NameNode: <a class="reference external" href="http://127.0.0.1:50070/">http://127.0.0.1:50070/</a></p></li>
-<li><p>Yarn ResourceManager: <a class="reference external" href="http://127.0.0.1:8088/">http://127.0.0.1:8088/</a></p></li>
-</ul>
-</div>
 <div class="section" id="Paso-1-—-Implementación-del-mapper">
 <h2>Paso 1 — Implementación del mapper<a class="headerlink" href="#Paso-1-—-Implementación-del-mapper" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
@@ -488,7 +481,7 @@ $ <span class="nb">cd</span> vagrant
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> mapper.py
-<span class="ch">#! /usr/bin/env python3</span>
+<span class="ch">#! /usr/bin/python3</span>
 
 <span class="c1">#</span>
 <span class="c1"># Esta es la funcion que mapea la entrada a parejas (clave, valor)</span>
@@ -610,7 +603,7 @@ Writing mapper.py
 <span></span><span class="c1">#</span>
 <span class="c1"># El programa anterior se hace ejecutable</span>
 <span class="c1">#</span>
-<span class="o">!</span>chmod +x mapper.py
+<span class="o">!</span>chmod +x /tmp/mapper.py
 </pre></div>
 </div>
 </div>
@@ -622,7 +615,7 @@ Writing mapper.py
 <span></span><span class="c1">#</span>
 <span class="c1"># la salida de la función anterior es:</span>
 <span class="c1">#</span>
-<span class="o">!</span>cat ./input/text*.txt <span class="p">|</span> ./mapper.py <span class="p">|</span> head
+<span class="o">!</span>cat input/text*.txt <span class="p">|</span> python3 mapper.py <span class="p">|</span> head
 </pre></div>
 </div>
 </div>
@@ -704,7 +697,7 @@ B
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> reducer.py
-<span class="ch">#!/usr/bin/env python3</span>
+<span class="ch">#! /usr/bin/python3</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
@@ -791,7 +784,7 @@ Writing reducer.py
 <span class="c1"># la misma clave queden en lineas consecutivas.</span>
 <span class="c1"># Hace el papel del módulo Shuffle &amp; Sort</span>
 <span class="c1">#</span>
-<span class="o">!</span>cat ./input/text*.txt <span class="p">|</span> ./mapper.py <span class="p">|</span> sort <span class="p">|</span> ./reducer.py <span class="p">|</span> head
+<span class="o">!</span>cat input/text*.txt <span class="p">|</span> python3 mapper.py <span class="p">|</span> sort <span class="p">|</span> python3 reducer.py <span class="p">|</span> head
 </pre></div>
 </div>
 </div>
@@ -834,9 +827,9 @@ Specifically,   1
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
--rw-r--r--   1 root supergroup       1093 2022-05-12 18:40 input/text0.txt
--rw-r--r--   1 root supergroup        352 2022-05-12 18:40 input/text1.txt
--rw-r--r--   1 root supergroup        440 2022-05-12 18:40 input/text2.txt
+-rw-r--r--   1 root supergroup       1093 2022-05-26 02:31 input/text0.txt
+-rw-r--r--   1 root supergroup        352 2022-05-26 02:31 input/text1.txt
+-rw-r--r--   1 root supergroup        440 2022-05-26 02:31 input/text2.txt
 </pre></div></div>
 </div>
 </div>
@@ -847,14 +840,21 @@ Specifically,   1
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Se ejecuta en Hadoop.</span>
-<span class="c1">#   -input: archivo de entrada</span>
-<span class="c1">#   -output: directorio de salida</span>
-<span class="c1">#   -maper: programa que ejecuta el map</span>
-<span class="c1">#   -reducer: programa que ejecuta la reducción</span>
-<span class="c1">#</span>
-<span class="o">!</span>hadoop jar <span class="nv">$HADOOP_HOME</span>/share/hadoop/tools/lib/hadoop-streaming-*.jar -files mapper.py,reducer.py  -input input  -output output  -mapper mapper.py  -reducer reducer.py
+<span></span>%%writefile app.sh
+#
+# Se ejecuta en Hadoop.
+#   -input: archivo de entrada
+#   -output: directorio de salida
+#   -maper: programa que ejecuta el map
+#   -reducer: programa que ejecuta la reducción
+#
+hadoop jar \
+    $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+    -files mapper.py,reducer.py  \
+    -input input  \
+    -output output \
+    -mapper mapper.py \
+    -reducer reducer.py
 </pre></div>
 </div>
 </div>
@@ -863,11 +863,28 @@ Specifically,   1
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-packageJobJar: [/tmp/hadoop-unjar6011464445144436494/] [] /tmp/streamjob2818315458229313302.jar tmpDir=null
+Writing app.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>bash app.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+packageJobJar: [/tmp/hadoop-unjar5327758262618317368/] [] /tmp/streamjob4110569942363235024.jar tmpDir=null
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -884,12 +901,34 @@ packageJobJar: [/tmp/hadoop-unjar6011464445144436494/] [] /tmp/streamjob28183154
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Found 2 items
--rw-r--r--   1 root supergroup          0 2022-05-12 18:40 output/_SUCCESS
--rw-r--r--   1 root supergroup       1649 2022-05-12 18:40 output/part-00000
+-rw-r--r--   1 root supergroup          0 2022-05-26 02:32 output/_SUCCESS
+-rw-r--r--   1 root supergroup       1649 2022-05-26 02:32 output/part-00000
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1">#</span>
+<span class="c1"># Contenido del directorio con los resultados de la corrida</span>
+<span class="c1">#</span>
+<span class="o">!</span>hadoop fs -ls output
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2022-05-26 02:32 output/_SUCCESS
+-rw-r--r--   1 root supergroup       1649 2022-05-26 02:32 output/part-00000
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -921,7 +960,7 @@ Specifically,   1
 <div class="section" id="Paso-8-—-Movimiento-de-los-resultados-al-sistema-local">
 <h2>Paso 8 — Movimiento de los resultados al sistema local<a class="headerlink" href="#Paso-8-—-Movimiento-de-los-resultados-al-sistema-local" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -942,7 +981,7 @@ output/_SUCCESS  output/part-00000
 <div class="section" id="Paso-9-—-Limpieza-del-HDFS">
 <h2>Paso 9 — Limpieza del HDFS<a class="headerlink" href="#Paso-9-—-Limpieza-del-HDFS" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -971,7 +1010,7 @@ Deleted output/part-00000
 <div class="section" id="Limpieza-de-la-máquina-local">
 <h2>Limpieza de la máquina local<a class="headerlink" href="#Limpieza-de-la-máquina-local" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>

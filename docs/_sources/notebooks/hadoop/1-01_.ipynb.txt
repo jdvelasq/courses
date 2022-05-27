@@ -74,13 +74,24 @@
    "cell_type": "code",
    "execution_count": 1,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "/tmp/wordcount\n",
+      "input\n"
+     ]
+    }
+   ],
    "source": [
     "#\n",
     "# Se crea el directorio de entrada\n",
     "#\n",
-    "!rm -rf input output\n",
-    "!mkdir input"
+    "!rm -rf /tmp/wordcount\n",
+    "!mkdir -p /tmp/wordcount/input\n",
+    "%cd /tmp/wordcount\n",
+    "!ls"
    ]
   },
   {
@@ -162,17 +173,15 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Prueba de la implementación en la máquina local\n",
-    "--\n",
-    "\n",
-    "En un sistema Hadoop, se requiere un programa para realizar el mapeo y otro para la reducción que se ejecutan independientemente; Hadoop se encarga de la coordinación entre ellos. El intercambio de información se hace a traves de texto, que es el lenguaje universal para intercambio de información. "
+    "Paso 1\n",
+    "--"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "**Paso 1**"
+    "En un sistema Hadoop, se requiere un programa para realizar el mapeo y otro para la reducción que se ejecutan independientemente; Hadoop se encarga de la coordinación entre ellos. El intercambio de información se hace a traves de texto, que es el lenguaje universal para intercambio de información. "
    ]
   },
   {
@@ -191,13 +200,30 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
+      "/usr/bin/python3\n"
+     ]
+    }
+   ],
+   "source": [
+    "!which python3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
       "Writing mapper.py\n"
      ]
     }
    ],
    "source": [
     "%%writefile mapper.py\n",
-    "#! /usr/bin/env python3\n",
+    "#! /usr/bin/ python3\n",
     "\n",
     "#\n",
     "# Esta es la funcion que mapea la entrada a parejas (clave, valor)\n",
@@ -228,26 +254,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "**Paso 2**"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 6,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "#\n",
-    "# El programa anterior se hace ejecutable\n",
-    "#\n",
-    "!chmod +x mapper.py "
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "**Nota.** El uso de `chmod` puede obviarse pero se requiere llamar explicitamente a Python para ejecutar el programa."
+    "Paso 2\n",
+    "--"
    ]
   },
   {
@@ -259,24 +267,15 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Analytics\t1\n",
-      "is\t1\n",
-      "the\t1\n",
-      "discovery,\t1\n",
-      "interpretation,\t1\n",
-      "and\t1\n",
-      "communication\t1\n",
-      "of\t1\n",
-      "meaningful\t1\n",
-      "patterns\t1\n"
+      "Writing app.sh\n"
      ]
     }
    ],
    "source": [
-    "#\n",
-    "# la salida de la función anterior es:\n",
-    "#\n",
-    "!cat ./input/text*.txt | ./mapper.py | head"
+    "%%writefile app.sh\n",
+    "cat /tmp/wordcount/input/text*.txt \\\n",
+    "    | python3 mapper.py \\\n",
+    "    | head"
    ]
   },
   {
@@ -302,17 +301,15 @@
     }
    ],
    "source": [
-    "#\n",
-    "# Alternativamente:\n",
-    "#\n",
-    "!cat ./input/text*.txt | python3 mapper.py | head"
+    "!bash app.sh"
    ]
   },
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "**Paso 3**"
+    "Paso 3\n",
+    "--"
    ]
   },
   {
@@ -324,7 +321,7 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 6,
+   "execution_count": 9,
    "metadata": {},
    "outputs": [
     {
@@ -337,7 +334,7 @@
    ],
    "source": [
     "%%writefile reducer.py\n",
-    "#!/usr/bin/env python3\n",
+    "#! /usr/bin python3\n",
     "\n",
     "import sys\n",
     "\n",
@@ -385,25 +382,8 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "**Paso 4**"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 10,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "\n",
-    "# El archivo se hace ejecutable\n",
-    "!chmod +x reducer.py"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "**Paso 5**"
+    "Paso 4\n",
+    "--"
    ]
   },
   {
@@ -411,6 +391,32 @@
    "metadata": {},
    "source": [
     "Se realiza la prueba de la implementación en el directorio actual antes de realizar la ejecución en el modo pseudo-distribuido. En este caso, se simula el comportamiento de Hadoop mediante la función `sort` del sistema operativo Linux."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting app.sh\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile app.sh\n",
+    "#\n",
+    "# La función sort hace que todos los elementos con \n",
+    "# la misma clave queden en lineas consecutivas.\n",
+    "# Hace el papel del módulo Shuffle & Sort\n",
+    "#\n",
+    "cat /tmp/wordcount/input/text*.txt \\\n",
+    "    | python3 /tmp/wordcount/mapper.py \\\n",
+    "    | sort \\\n",
+    "    | python3 /tmp/reducer.py | head"
    ]
   },
   {
@@ -436,59 +442,7 @@
     }
    ],
    "source": [
-    "#\n",
-    "# La función sort hace que todos los elementos con \n",
-    "# la misma clave queden en lineas consecutivas.\n",
-    "# Hace el papel del módulo Shuffle & Sort\n",
-    "#\n",
-    "!cat ./input/text*.txt | ./mapper.py | sort | ./reducer.py | head"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 12,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(DA)\t1\n",
-      "(see\t1\n",
-      "Analytics\t2\n",
-      "Analytics,\t1\n",
-      "Big\t1\n",
-      "Data\t3\n",
-      "Especially\t1\n",
-      "Organizations\t1\n",
-      "Since\t1\n",
-      "Specifically,\t1\n"
-     ]
-    }
-   ],
-   "source": [
-    "#\n",
-    "# Alternativamente\n",
-    "#\n",
-    "!cat ./input/text*.txt | python3 mapper.py | sort | python3 reducer.py | head"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "---"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 13,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "# limpieza de la carpeta de trabajo\n",
-    "!rm reducer.py mapper.py\n",
-    "!rm -rf input "
+    "!bash app.sh"
    ]
   }
  ],

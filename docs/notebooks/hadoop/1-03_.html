@@ -62,7 +62,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-06-2022-06-17">Sesión 06 — 2022-06-17</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-07-2022-06-24">Sesión 07 — 2022-06-24</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-08-2022-07-01">Sesión 08 — 2022-07-01</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#apache-pig">Apache Pig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../analitica_predictiva/index.html">Analítica Predictiva</a></li>
@@ -377,7 +376,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Archivos-de-prueba">
 <h2>Archivos de prueba<a class="headerlink" href="#Archivos-de-prueba" title="Enlazar permanentemente con este título"></a></h2>
 <p>A continuación se generarán tres archivos de prueba para probar el sistema. Puede usar directamente comandos del sistema operativo en el Terminal y el editor de texto <code class="docutils literal notranslate"><span class="pre">pico</span></code> para crear los archivos.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -385,10 +384,21 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="c1">#</span>
 <span class="c1"># Se crea el directorio de entrada</span>
 <span class="c1">#</span>
-<span class="o">!</span>rm -rf input output
-<span class="o">!</span>mkdir input
+<span class="o">!</span>rm -rf /tmp/wordcount
+<span class="o">!</span>mkdir -p /tmp/wordcount/input
+<span class="o">%</span><span class="k">cd</span> /tmp/wordcount
+<span class="o">!</span>ls
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/tmp/wordcount
+input
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -474,6 +484,23 @@ Writing input/text2.txt
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>which python3
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/usr/bin/python3
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> mapper.py
 <span class="ch">#! /usr/bin/python3</span>
 
@@ -492,16 +519,16 @@ Writing input/text2.txt
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Overwriting mapper.py
+Writing mapper.py
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> reducer.py
-<span class="ch">#!/usr/bin/env python3</span>
+<span class="ch">#! /usr/bin/python3</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 
@@ -533,11 +560,11 @@ Overwriting mapper.py
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Overwriting reducer.py
+Writing reducer.py
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -545,29 +572,50 @@ Overwriting reducer.py
 </pre></div>
 </div>
 </div>
-</div>
-<div class="section" id="Arranque-de-Hadoop-en-modo-pseudo-distribuido">
-<h2>Arranque de Hadoop en modo pseudo-distribuido<a class="headerlink" href="#Arranque-de-Hadoop-en-modo-pseudo-distribuido" title="Enlazar permanentemente con este título"></a></h2>
-<p><strong>Docker</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ docker run --rm -it -v <span class="s2">&quot;</span><span class="nv">$PWD</span><span class="s2">&quot;</span>:/workspace --name hadoop -p <span class="m">8888</span>:8888 -p <span class="m">50070</span>:50070 -p <span class="m">8088</span>:8088 jdvelasq/hadoop:2.8.5
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<p><strong>Vagrant</strong></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ vagrant up
-$ <span class="nb">cd</span> vagrant
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>ls  -1
 </pre></div>
 </div>
-<p>Verifique que Hadoop se esta ejecutando correctamente. Vaya a las direcciones:</p>
-<ul class="simple">
-<li><p>NameNode: <a class="reference external" href="http://127.0.0.1:50070/">http://127.0.0.1:50070/</a></p></li>
-<li><p>Yarn ResourceManager: <a class="reference external" href="http://127.0.0.1:8088/">http://127.0.0.1:8088/</a></p></li>
-</ul>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+input
+mapper.py
+reducer.py
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>ls -1 input/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+text0.txt
+text1.txt
+text2.txt
+</pre></div></div>
+</div>
 </div>
 <div class="section" id="Paso-1.-Movimiento-de-los-datos-al-HDFS">
 <h2>Paso 1. Movimiento de los datos al HDFS<a class="headerlink" href="#Paso-1.-Movimiento-de-los-datos-al-HDFS" title="Enlazar permanentemente con este título"></a></h2>
 <p>Se copian los archivos de entrada del sistema local (o del datalake) al HDFS.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -582,24 +630,10 @@ $ <span class="nb">cd</span> vagrant
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-SLF4J: Class path contains multiple SLF4J bindings.
-SLF4J: Found binding in [jar:file:/opt/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: Found binding in [jar:file:/opt/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
-SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
-SLF4J: Class path contains multiple SLF4J bindings.
-SLF4J: Found binding in [jar:file:/opt/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: Found binding in [jar:file:/opt/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
-SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
-SLF4J: Class path contains multiple SLF4J bindings.
-SLF4J: Found binding in [jar:file:/opt/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: Found binding in [jar:file:/opt/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
-SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
--rw-r--r--   1 root supergroup       1093 2022-05-22 17:52 input/text0.txt
--rw-r--r--   1 root supergroup        352 2022-05-22 17:52 input/text1.txt
--rw-r--r--   1 root supergroup        440 2022-05-22 17:52 input/text2.txt
+mkdir: `input&#39;: File exists
+-rw-r--r--   1 root supergroup       1093 2022-05-26 19:08 input/text0.txt
+-rw-r--r--   1 root supergroup        352 2022-05-26 19:08 input/text1.txt
+-rw-r--r--   1 root supergroup        440 2022-05-26 19:08 input/text2.txt
 </pre></div></div>
 </div>
 <p><strong>Vaya a la pantalla de monitoreo del NameNode (http://127.0.0.1:50070/) y ubique los archivos en el HDFS.</strong></p>
@@ -632,21 +666,29 @@ SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
 <div class="section" id="Paso-2.-Ejecución">
 <h2>Paso 2. Ejecución<a class="headerlink" href="#Paso-2.-Ejecución" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Se ejecuta en Hadoop.</span>
-<span class="c1">#   -files: archivos a copiar al hdfs</span>
-<span class="c1">#   -input: archivo de entrada</span>
-<span class="c1">#   -output: directorio de salida</span>
-<span class="c1">#   -file: archivos a copiar de la maquina local al hdfs</span>
-<span class="c1">#   -maper: programa que ejecuta el map</span>
-<span class="c1">#   -reducer: programa que ejecuta la reducción</span>
-<span class="c1">#</span>
-<span class="o">!</span>hadoop jar <span class="nv">$HADOOP_HOME</span>/share/hadoop/tools/lib/hadoop-streaming-*.jar -files mapper.py,reducer.py  -input input  -output output -mapper mapper.py -reducer reducer.py
+<span></span>%%writefile app.sh
+#
+# Se ejecuta en Hadoop.
+#   -files: archivos a copiar al hdfs
+#   -input: archivo de entrada
+#   -output: directorio de salida
+#   -file: archivos a copiar de la maquina local al hdfs
+#   -maper: programa que ejecuta el map
+#   -reducer: programa que ejecuta la reducción
+#
+hdfs dfs -rm -r output
 
+hadoop jar \
+    $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+    -files mapper.py,reducer.py  \
+    -input input  \
+    -output output \
+    -mapper mapper.py \
+    -reducer reducer.py
 </pre></div>
 </div>
 </div>
@@ -655,32 +697,34 @@ SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-SLF4J: Class path contains multiple SLF4J bindings.
-SLF4J: Found binding in [jar:file:/opt/hadoop/share/hadoop/common/lib/slf4j-log4j12-1.7.25.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: Found binding in [jar:file:/opt/tez/lib/slf4j-log4j12-1.7.30.jar!/org/slf4j/impl/StaticLoggerBinder.class]
-SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
-SLF4J: Actual binding is of type [org.slf4j.impl.Log4jLoggerFactory]
-packageJobJar: [/tmp/hadoop-unjar8398639649246545400/] [] /tmp/streamjob8486722819108282690.jar tmpDir=null
-22/05/22 17:52:39 ERROR streaming.StreamJob: Job not successful!
-Streaming Command Failed!
+Writing app.sh
 </pre></div></div>
 </div>
-<p>Alternativamente, podria usar:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>hadoop jar $HADOOP_HOME/share/hadoop/tools/lib/hadoop-streaming-*.jar \
-   -files mapper.py,reducer.py  \
-   -input input \
-   -output output \
-   -mapper &#39;python3 $PWD/mapper.py&#39; \
-   -reducer &#39;python3 $PWD/reducer.py&#39;
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>bash app.sh
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Deleted output
+packageJobJar: [/tmp/hadoop-unjar1274556947240167022/] [] /tmp/streamjob4380793870891757123.jar tmpDir=null
+</pre></div></div>
+</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
-<span class="c1"># contenido del directorio con los resultados de la corrida</span>
+<span class="c1"># Contenido del directorio con los resultados de la corrida</span>
 <span class="c1">#</span>
 <span class="o">!</span>hadoop fs -ls output
 </pre></div>
@@ -692,17 +736,18 @@ Streaming Command Failed!
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Found 2 items
--rw-r--r--   1 root supergroup          0 2022-05-12 18:24 output/_SUCCESS
--rw-r--r--   1 root supergroup       1649 2022-05-12 18:24 output/part-00000
+-rw-r--r--   1 root supergroup          0 2022-05-26 19:08 output/_SUCCESS
+-rw-r--r--   1 root supergroup      14300 2022-05-26 19:08 output/part-00000
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">## se visualiza el archivo con los</span>
-<span class="c1">## resultados de la corrida</span>
+<span></span><span class="c1">#</span>
+<span class="c1"># Se visualiza el archivo con los resultados de la corrida</span>
+<span class="c1">#</span>
 <span class="o">!</span>hadoop fs -cat output/part-00000 <span class="p">|</span> head
 </pre></div>
 </div>
@@ -712,28 +757,28 @@ Found 2 items
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(DA)    1
-(see    1
-Analytics       2
-Analytics,      1
-Big     1
-Data    3
-Especially      1
-Organizations   1
-Since   1
-Specifically,   1
+&#34;*&#34;     19
+&#34;AS 5
+&#34;License&#34;);     5
+&#34;alice,bob  19
+&#34;clumping&#34;      1
+&#34;full_queue_name&#34;       1
+&#34;priority&#34;.     1
+&#34;workflowId&#34;    1
+&amp;quot;kerberos&amp;quot;.   1
+&amp;quot;simple&amp;quot;      1
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Paso-3.-Movimiento-de-los-resultados-al-sistema-local">
 <h2>Paso 3. Movimiento de los resultados al sistema local<a class="headerlink" href="#Paso-3.-Movimiento-de-los-resultados-al-sistema-local" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">!</span>hadoop fs -copyToLocal output output
-<span class="o">!</span>ls output/*
+<span class="o">!</span>ls -1 output/*
 </pre></div>
 </div>
 </div>
@@ -742,22 +787,23 @@ Specifically,   1
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-output/_SUCCESS  output/part-00000
+output/_SUCCESS
+output/part-00000
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Paso-4.-Limpieza-del-hdfs">
 <h2>Paso 4. Limpieza del hdfs<a class="headerlink" href="#Paso-4.-Limpieza-del-hdfs" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1">#</span>
 <span class="c1"># Se elimina el directorio de salida en el hdfs si existe</span>
 <span class="c1">#</span>
-<span class="o">!</span>hadoop fs -rm input/*
-<span class="o">!</span>hadoop fs -rm output/*
+<span class="o">!</span>hadoop fs -rm -r input/*
+<span class="o">!</span>hadoop fs -rm -r output/*
 <span class="o">!</span>hadoop fs -rmdir input output
 </pre></div>
 </div>
@@ -772,13 +818,14 @@ Deleted input/text1.txt
 Deleted input/text2.txt
 Deleted output/_SUCCESS
 Deleted output/part-00000
+rmdir: `input&#39;: Directory is not empty
 </pre></div></div>
 </div>
 </div>
 <div class="section" id="Limpieza-de-la-máquina-local">
 <h2>Limpieza de la máquina local<a class="headerlink" href="#Limpieza-de-la-máquina-local" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>

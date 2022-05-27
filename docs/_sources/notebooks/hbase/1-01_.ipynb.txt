@@ -1,0 +1,394 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Comandos básicos de Apache HBase\n",
+    "===\n",
+    "\n",
+    "* Última modificación: Mayo 25, 2022"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Introducción\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Es un modelo similar a Google Big Table, diseñado para acceso a grandes volúmenes de datos estructurados."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Puede manejar tablas con billones de filas por millones de columnas"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Mientras Big Table se basa en el Google File System, Apache HBase tienes capacidades similares en Hadoop y HDFS."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Es orientado a columnas y escalable horizontalmente."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Su objetivo fundamental es el almacenamiento y recuperación de datos con acceso aleatorio."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Características\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Escalable horizontalmente: se pueden adicionar columnas en cualquier momento."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Integración con Map/Reduce."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Usa mapas ordenados, multidimensionales, persistentes y distribuidos"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Es debilmente tipado"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* No usa relaciones entre los datos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Shell\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "El shell es accesible con:\n",
+    "\n",
+    "```\n",
+    "$ hbase shell\n",
+    "```\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Estado del cluster\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/hbase-00001.png](assets/hbase-00001.png)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Cell magic `%%hbase`\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from IPython.core.magic import Magics, cell_magic, line_magic, magics_class\n",
+    "from pexpect import spawn\n",
+    "\n",
+    "TIMEOUT = 60\n",
+    "PROG = \"hbase shell\"\n",
+    "PROMPT = [\"0>\", \"0>\"]\n",
+    "QUIT = \"exit\"\n",
+    "\n",
+    "\n",
+    "@magics_class\n",
+    "class Magic(Magics):\n",
+    "    def __init__(self, shell):\n",
+    "        super().__init__(shell)\n",
+    "        self.app = spawn(PROG, timeout=60)\n",
+    "        self.app.expect(PROMPT)\n",
+    "\n",
+    "    @cell_magic\n",
+    "    def hbase(self, line, cell):\n",
+    "        cell_lines = [cell_line.strip() for cell_line in cell.split(\"\\n\")]\n",
+    "        cell_lines = [cell_line for cell_line in cell_lines if cell_line != \"\"]\n",
+    "        for cell_line in cell_lines:\n",
+    "            self.app.sendline(cell_line)\n",
+    "            self.app.expect(PROMPT, timeout=TIMEOUT)\n",
+    "            output = self.app.before.decode()\n",
+    "            output = output.replace(\"\\r\\n\", \"\\n\")\n",
+    "            output = output.split(\"\\n\")\n",
+    "            output = [output_line.strip() for output_line in output]\n",
+    "            for output_line in output:\n",
+    "                if output_line not in cell_lines:\n",
+    "                    print(output_line)\n",
+    "        return None\n",
+    "\n",
+    "    @line_magic\n",
+    "    def quit(self, line):\n",
+    "        self.app.sendline(QUIT)\n",
+    "\n",
+    "\n",
+    "def load_ipython_extension(ip):\n",
+    "    ip.register_magics(Magic(ip))\n",
+    "\n",
+    "\n",
+    "load_ipython_extension(ip=get_ipython())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "status\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1 active master, 0 backup masters, 1 servers, 0 dead, 2.0000 average load\n",
+      "Took 0.3893 seconds\n",
+      "hbase(main):002:\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hbase\n",
+    "status"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "version\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2.3.0, re0e1382705c59d3fb3ad8f5bff720a9dc7120fb8, Mon Jul  6 22:27:43 UTC 2020\n",
+      "Took 0.0004 seconds\n",
+      "hbase(main):003:\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hbase\n",
+    "version"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "table_help\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Help for table-reference commands.\n",
+      "\n",
+      "You can either create a table via 'create' and then manipulate the table via commands like 'put', 'get', etc.\n",
+      "See the standard help information for how to use each of these commands.\n",
+      "\n",
+      "However, as of 0.96, you can also get a reference to a table, on which you can invoke commands.\n",
+      "For instance, you can get create a table and keep around a reference to it via:\n",
+      "\n",
+      "hbase> t = create 't', 'cf'\n",
+      "\n",
+      "Or, if you have already created the table, you can get a reference to it:\n",
+      "\n",
+      "hbase> t = get_table 't'\n",
+      "\n",
+      "You can do things like call 'put' on the table:\n",
+      "\n",
+      "hbase> t.put 'r', 'cf:q', 'v'\n",
+      "\n",
+      "which puts a row 'r' with column family 'cf', qualifier 'q' and value 'v' into table t.\n",
+      "\n",
+      "To read the data out, you can scan the table:\n",
+      "\n",
+      "hbase> t.scan\n",
+      "\n",
+      "which will read all the rows in table 't'.\n",
+      "\n",
+      "Essentially, any command that takes a table name can also be done via table reference.\n",
+      "Other commands include things like: get, delete, deleteall,\n",
+      "get_all_columns, get_counter, count, incr. These functions, along with\n",
+      "the standard JRuby object methods are also available via tab completion.\n",
+      "\n",
+      "For more information on how to use each of these commands, you can also just type:\n",
+      "\n",
+      "hbase> t.help 'scan'\n",
+      "\n",
+      "which will output more information on how to use that command.\n",
+      "\n",
+      "You can also do general admin actions directly on a table; things like enable, disable,\n",
+      "flush and drop just by typing:\n",
+      "\n",
+      "hbase> t.enable\n",
+      "hbase> t.flush\n",
+      "hbase> t.disable\n",
+      "hbase> t.drop\n",
+      "\n",
+      "Note that after dropping a table, your reference to it becomes useless and further usage\n",
+      "is undefined (and not recommended).\n",
+      "Took 0.0003 seconds\n",
+      "hbase(main):004:\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hbase\n",
+    "table_help"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "whoami\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "root (auth:SIMPLE)\n",
+      "groups: root\n",
+      "Took 0.0121 seconds\n",
+      "hbase(main):005:\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%hbase\n",
+    "whoami"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%quit"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "toc": {
+   "base_numbering": 1,
+   "nav_menu": {},
+   "number_sections": false,
+   "sideBar": true,
+   "skip_h1_title": false,
+   "title_cell": "Table of Contents",
+   "title_sidebar": "Contents",
+   "toc_cell": false,
+   "toc_position": {},
+   "toc_section_display": true,
+   "toc_window_display": true
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

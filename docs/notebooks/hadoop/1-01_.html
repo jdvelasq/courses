@@ -62,7 +62,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-06-2022-06-17">Sesión 06 — 2022-06-17</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-07-2022-06-24">Sesión 07 — 2022-06-24</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#sesion-08-2022-07-01">Sesión 08 — 2022-07-01</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html#apache-pig">Apache Pig</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../analitica_predictiva/index.html">Analítica Predictiva</a></li>
@@ -385,7 +384,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Archivos-de-prueba">
 <h2>Archivos de prueba<a class="headerlink" href="#Archivos-de-prueba" title="Enlazar permanentemente con este título"></a></h2>
 <p>A continuación se generarán tres archivos de prueba para probar el sistema. Puede usar directamente comandos del sistema operativo en el Terminal y el editor de texto <code class="docutils literal notranslate"><span class="pre">pico</span></code> para crear los archivos.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -393,10 +392,21 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="c1">#</span>
 <span class="c1"># Se crea el directorio de entrada</span>
 <span class="c1">#</span>
-<span class="o">!</span>rm -rf input output
-<span class="o">!</span>mkdir input
+<span class="o">!</span>rm -rf /tmp/wordcount
+<span class="o">!</span>mkdir -p /tmp/wordcount/input
+<span class="o">%</span><span class="k">cd</span> /tmp/wordcount
+<span class="o">!</span>ls
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/tmp/wordcount
+input
+</pre></div></div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -474,18 +484,34 @@ Writing input/text2.txt
 </pre></div></div>
 </div>
 </div>
-<div class="section" id="Prueba-de-la-implementación-en-la-máquina-local">
-<h2>Prueba de la implementación en la máquina local<a class="headerlink" href="#Prueba-de-la-implementación-en-la-máquina-local" title="Enlazar permanentemente con este título"></a></h2>
+<div class="section" id="Paso-1">
+<h2>Paso 1<a class="headerlink" href="#Paso-1" title="Enlazar permanentemente con este título"></a></h2>
 <p>En un sistema Hadoop, se requiere un programa para realizar el mapeo y otro para la reducción que se ejecutan independientemente; Hadoop se encarga de la coordinación entre ellos. El intercambio de información se hace a traves de texto, que es el lenguaje universal para intercambio de información.</p>
-<p><strong>Paso 1</strong></p>
 <p>Se implementa la función map en Python y se guarda en el archivo <code class="docutils literal notranslate"><span class="pre">mapper.py</span></code>. Si esta trabajando en el Terminal puede usar el editor pico con <code class="docutils literal notranslate"><span class="pre">pico</span> <span class="pre">mapper.py</span></code>.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>which python3
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/usr/bin/python3
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> mapper.py
-<span class="ch">#! /usr/bin/env python3</span>
+<span class="ch">#! /usr/bin/ python3</span>
 
 <span class="c1">#</span>
 <span class="c1"># Esta es la funcion que mapea la entrada a parejas (clave, valor)</span>
@@ -520,29 +546,18 @@ Writing input/text2.txt
 Writing mapper.py
 </pre></div></div>
 </div>
-<p><strong>Paso 2</strong></p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
-</pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># El programa anterior se hace ejecutable</span>
-<span class="c1">#</span>
-<span class="o">!</span>chmod +x mapper.py
-</pre></div>
-</div>
-</div>
-<p><strong>Nota.</strong> El uso de <code class="docutils literal notranslate"><span class="pre">chmod</span></code> puede obviarse pero se requiere llamar explicitamente a Python para ejecutar el programa.</p>
+<div class="section" id="Paso-2">
+<h2>Paso 2<a class="headerlink" href="#Paso-2" title="Enlazar permanentemente con este título"></a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># la salida de la función anterior es:</span>
-<span class="c1">#</span>
-<span class="o">!</span>cat ./input/text*.txt <span class="p">|</span> ./mapper.py <span class="p">|</span> head
+<span></span><span class="o">%%writefile</span> app.sh
+<span class="n">cat</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">wordcount</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">text</span><span class="o">*.</span><span class="n">txt</span> \
+    <span class="o">|</span> <span class="n">python3</span> <span class="n">mapper</span><span class="o">.</span><span class="n">py</span> \
+    <span class="o">|</span> <span class="n">head</span>
 </pre></div>
 </div>
 </div>
@@ -551,16 +566,7 @@ Writing mapper.py
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Analytics       1
-is      1
-the     1
-discovery,      1
-interpretation, 1
-and     1
-communication   1
-of      1
-meaningful      1
-patterns        1
+Writing app.sh
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -568,10 +574,7 @@ patterns        1
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Alternativamente:</span>
-<span class="c1">#</span>
-<span class="o">!</span>cat ./input/text*.txt <span class="p">|</span> python3 mapper.py <span class="p">|</span> head
+<span></span><span class="o">!</span>bash app.sh
 </pre></div>
 </div>
 </div>
@@ -592,15 +595,17 @@ meaningful      1
 patterns        1
 </pre></div></div>
 </div>
-<p><strong>Paso 3</strong></p>
+</div>
+<div class="section" id="Paso-3">
+<h2>Paso 3<a class="headerlink" href="#Paso-3" title="Enlazar permanentemente con este título"></a></h2>
 <p>Se implementa la función <code class="docutils literal notranslate"><span class="pre">reduce</span></code> y se salva en el archivo <code class="docutils literal notranslate"><span class="pre">reducer.py</span></code>.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="o">%%writefile</span> reducer.py
-<span class="ch">#!/usr/bin/env python3</span>
+<span class="ch">#! /usr/bin python3</span>
 
 <span class="kn">import</span> <span class="nn">sys</span>
 
@@ -653,31 +658,42 @@ patterns        1
 Writing reducer.py
 </pre></div></div>
 </div>
-<p><strong>Paso 4</strong></p>
-<div class="nbinput nblast docutils container">
+</div>
+<div class="section" id="Paso-4">
+<h2>Paso 4<a class="headerlink" href="#Paso-4" title="Enlazar permanentemente con este título"></a></h2>
+<p>Se realiza la prueba de la implementación en el directorio actual antes de realizar la ejecución en el modo pseudo-distribuido. En este caso, se simula el comportamiento de Hadoop mediante la función <code class="docutils literal notranslate"><span class="pre">sort</span></code> del sistema operativo Linux.</p>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-
-<span></span><span class="c1"># El archivo se hace ejecutable</span>
-<span class="o">!</span>chmod +x reducer.py
+<span></span><span class="o">%%writefile</span> app.sh
+<span class="c1">#</span>
+<span class="c1"># La función sort hace que todos los elementos con</span>
+<span class="c1"># la misma clave queden en lineas consecutivas.</span>
+<span class="c1"># Hace el papel del módulo Shuffle &amp; Sort</span>
+<span class="c1">#</span>
+<span class="n">cat</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">wordcount</span><span class="o">/</span><span class="nb">input</span><span class="o">/</span><span class="n">text</span><span class="o">*.</span><span class="n">txt</span> \
+    <span class="o">|</span> <span class="n">python3</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">wordcount</span><span class="o">/</span><span class="n">mapper</span><span class="o">.</span><span class="n">py</span> \
+    <span class="o">|</span> <span class="n">sort</span> \
+    <span class="o">|</span> <span class="n">python3</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="n">reducer</span><span class="o">.</span><span class="n">py</span> <span class="o">|</span> <span class="n">head</span>
 </pre></div>
 </div>
 </div>
-<p><strong>Paso 5</strong></p>
-<p>Se realiza la prueba de la implementación en el directorio actual antes de realizar la ejecución en el modo pseudo-distribuido. En este caso, se simula el comportamiento de Hadoop mediante la función <code class="docutils literal notranslate"><span class="pre">sort</span></code> del sistema operativo Linux.</p>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting app.sh
+</pre></div></div>
+</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># La función sort hace que todos los elementos con</span>
-<span class="c1"># la misma clave queden en lineas consecutivas.</span>
-<span class="c1"># Hace el papel del módulo Shuffle &amp; Sort</span>
-<span class="c1">#</span>
-<span class="o">!</span>cat ./input/text*.txt <span class="p">|</span> ./mapper.py <span class="p">|</span> sort <span class="p">|</span> ./reducer.py <span class="p">|</span> head
+<span></span><span class="o">!</span>bash app.sh
 </pre></div>
 </div>
 </div>
@@ -697,47 +713,6 @@ Organizations   1
 Since   1
 Specifically,   1
 </pre></div></div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1">#</span>
-<span class="c1"># Alternativamente</span>
-<span class="c1">#</span>
-<span class="o">!</span>cat ./input/text*.txt <span class="p">|</span> python3 mapper.py <span class="p">|</span> sort <span class="p">|</span> python3 reducer.py <span class="p">|</span> head
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-(DA)    1
-(see    1
-Analytics       2
-Analytics,      1
-Big     1
-Data    3
-Especially      1
-Organizations   1
-Since   1
-Specifically,   1
-</pre></div></div>
-</div>
-<hr class="docutils" />
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># limpieza de la carpeta de trabajo</span>
-<span class="o">!</span>rm reducer.py mapper.py
-<span class="o">!</span>rm -rf input
-</pre></div>
-</div>
 </div>
 </div>
 </div>
