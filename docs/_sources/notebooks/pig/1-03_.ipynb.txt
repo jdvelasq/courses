@@ -4,10 +4,10 @@
    "cell_type": "markdown",
    "metadata": {},
    "source": [
-    "Programación Basica\n",
+    "Conteo de palabras en Apache Pig usando Jupyter\n",
     "===\n",
     "\n",
-    "* 60 min | Última modificación: Noviembre 07, 2019"
+    "* Última modificación: Mayo 16, 2021 | YouTube"
    ]
   },
   {
@@ -72,15 +72,12 @@
   },
   {
    "cell_type": "markdown",
-   "metadata": {},
+   "metadata": {
+    "tags": []
+   },
    "source": [
-    "### LOAD\n",
-    "\n",
-    "El nombre de archivo soporta wilcards; por ejemplo:\n",
-    "\n",
-    "    x = LOAD 'files/*.txt';\n",
-    "    \n",
-    "leerá todos los archivos terminados en `.txt`. Por defecto, se espera que los campos en los archivos estén separados por comas."
+    "Archivos de prueba\n",
+    "---"
    ]
   },
   {
@@ -92,104 +89,95 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Writing /tmp/persons.csv\n"
+      "mkdir: cannot create directory ‘/tmp/input’: File exists\n"
      ]
     }
    ],
    "source": [
-    "%%writefile /tmp/persons.csv\n",
-    "1,Vivian,Hamilton,1971-07-08,green,1\n",
-    "2,Karen,Holcomb,1974-05-23,green,4\n",
-    "3,Cody,Garrett,1973-04-22,orange,1\n",
-    "4,Roth,Fry,1975-01-29,black,1\n",
-    "5,Zoe,Conway,1974-07-03,blue,2\n",
-    "6,Gretchen,Kinney,1974-10-18,viole,1\n",
-    "7,Driscoll,Klein,1970-10-05,blue,5\n",
-    "8,Karyn,Diaz,1969-02-24,red,1\n",
-    "9,Merritt,Guy,1974-10-17,indigo,4\n",
-    "10,Kylan,Sexton,1975-02-28,black,4\n",
-    "11,Jordan,Estes,1969-12-07,indigo,4\n",
-    "12,Hope,Coffey,1973-12-24,green,5\n",
-    "13,Vivian,Crane,1970-08-27,gray,5\n",
-    "14,Clio,Noel,1972-12-12,red,5\n",
-    "15,Hope,Silva,1970-07-01,blue,5\n",
-    "16,Ayanna,Jarvis,1974-02-11,orange,5\n",
-    "17,Chanda,Boyer,1973-04-01,green,4\n",
-    "18,Chadwick,Knight,1973-04-29,yellow,1"
+    "!mkdir /tmp/input"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 3,
    "metadata": {},
-   "outputs": [],
-   "source": [
-    "%%pig\n",
-    "fs -put /tmp/persons.csv "
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 4,
-   "metadata": {
-    "scrolled": true
-   },
    "outputs": [
     {
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "(1,Vivian,Hamilton,1971-07-08,green,1)\n",
-      "(2,Karen,Holcomb,1974-05-23,green,4)\n",
-      "(3,Cody,Garrett,1973-04-22,orange,1)\n",
-      "(4,Roth,Fry,1975-01-29,black,1)\n",
-      "(5,Zoe,Conway,1974-07-03,blue,2)\n",
-      "(6,Gretchen,Kinney,1974-10-18,viole,1)\n",
-      "(7,Driscoll,Klein,1970-10-05,blue,5)\n",
-      "(8,Karyn,Diaz,1969-02-24,red,1)\n",
-      "(9,Merritt,Guy,1974-10-17,indigo,4)\n",
-      "(10,Kylan,Sexton,1975-02-28,black,4)\n",
-      "(11,Jordan,Estes,1969-12-07,indigo,4)\n",
-      "(12,Hope,Coffey,1973-12-24,green,5)\n",
-      "(13,Vivian,Crane,1970-08-27,gray,5)\n",
-      "(14,Clio,Noel,1972-12-12,red,5)\n",
-      "(15,Hope,Silva,1970-07-01,blue,5)\n",
-      "(16,Ayanna,Jarvis,1974-02-11,orange,5)\n",
-      "(17,Chanda,Boyer,1973-04-01,green,4)\n",
-      "(18,Chadwick,Knight,1973-04-29,yellow,1)\n"
+      "Overwriting /tmp/input/text0.txt\n"
      ]
     }
    ],
    "source": [
-    "%%pig\n",
-    "-- \n",
-    "-- Carga el archivo desde el disco duro\n",
-    "--\n",
-    "u = LOAD 'persons.csv' USING PigStorage(',') \n",
-    "    AS (id:INT, \n",
-    "        firstname:CHARARRAY, \n",
-    "        surname:CHARARRAY, \n",
-    "        birtday:CHARARRAY, \n",
-    "        color:CHARARRAY, \n",
-    "        quantity:INT);\n",
-    "DUMP u;"
+    "%%writefile /tmp/input/text0.txt\n",
+    "Analytics is the discovery, interpretation, and communication of meaningful patterns \n",
+    "in data. Especially valuable in areas rich with recorded information, analytics relies \n",
+    "on the simultaneous application of statistics, computer programming and operations research \n",
+    "to quantify performance.\n",
+    "\n",
+    "Organizations may apply analytics to business data to describe, predict, and improve business \n",
+    "performance. Specifically, areas within analytics include predictive analytics, prescriptive \n",
+    "analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big \n",
+    "Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, \n",
+    "marketing optimization and marketing mix modeling, web analytics, call analytics, speech \n",
+    "analytics, sales force sizing and optimization, price and promotion modeling, predictive \n",
+    "science, credit risk analysis, and fraud analytics. Since analytics can require extensive \n",
+    "computation (see big data), the algorithms and software used for analytics harness the most \n",
+    "current methods in computer science, statistics, and mathematics."
    ]
   },
   {
-   "cell_type": "markdown",
+   "cell_type": "code",
+   "execution_count": 4,
    "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting /tmp/input/text1.txt\n"
+     ]
+    }
+   ],
    "source": [
-    "### STORE"
+    "%%writefile /tmp/input/text1.txt\n",
+    "The field of data analysis. Analytics often involves studying past historical data to \n",
+    "research potential trends, to analyze the effects of certain decisions or events, or to \n",
+    "evaluate the performance of a given tool or scenario. The goal of analytics is to improve \n",
+    "the business by gaining knowledge which can be used to make improvements or changes."
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 5,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting /tmp/input/text2.txt\n"
+     ]
+    }
+   ],
    "source": [
-    "%%pig\n",
-    "STORE u INTO 'output';"
+    "%%writefile /tmp/input/text2.txt\n",
+    "Data analytics (DA) is the process of examining data sets in order to draw conclusions \n",
+    "about the information they contain, increasingly with the aid of specialized systems \n",
+    "and software. Data analytics technologies and techniques are widely used in commercial \n",
+    "industries to enable organizations to make more-informed business decisions and by \n",
+    "scientists and researchers to verify or disprove scientific models, theories and \n",
+    "hypotheses."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Ejecución de Pig en Jupyter\n",
+    "--"
    ]
   },
   {
@@ -201,13 +189,22 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "-rw-r--r--   1 root supergroup          0 2022-05-17 02:08 output/_SUCCESS\n",
-      "-rw-r--r--   1 root supergroup        616 2022-05-17 02:08 output/part-m-00000\n"
+      "mkdir: `input': File exists\n",
+      "put: `input/text0.txt': File exists\n",
+      "put: `input/text1.txt': File exists\n",
+      "put: `input/text2.txt': File exists\n",
+      "Found 3 items\n",
+      "-rw-r--r--   1 root supergroup       1093 2022-05-16 23:31 input/text0.txt\n",
+      "-rw-r--r--   1 root supergroup        352 2022-05-16 23:31 input/text1.txt\n",
+      "-rw-r--r--   1 root supergroup        440 2022-05-16 23:31 input/text2.txt\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -ls output/*"
+    "%%pig\n",
+    "fs -mkdir input\n",
+    "fs -put /tmp/input/  .\n",
+    "fs -ls input/"
    ]
   },
   {
@@ -219,21 +216,37 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "1\tVivian\tHamilton\t1971-07-08\tgreen\t1\n",
-      "2\tKaren\tHolcomb\t1974-05-23\tgreen\t4\n",
-      "3\tCody\tGarrett\t1973-04-22\torange\t1\n",
-      "4\tRoth\tFry\t1975-01-29\tblack\t1\n",
-      "5\tZoe\tConway\t1974-07-03\tblue\t2\n",
-      "6\tGretchen\tKinney\t1974-10-18\tviole\t1\n",
-      "7\tDriscoll\tKlein\t1970-10-05\tblue\t5\n",
-      "8\tKaryn\tDiaz\t1969-02-24\tred\t1\n",
-      "9\tMerritt\tGuy\t1974-10-17\tindigo\t4\n",
-      "10\tKylan\tSexton\t1975-02-28\tblack\t4\n"
+      "(Analytics is the discovery, interpretation, and communication of meaningful patterns )\n",
+      "(in data. Especially valuable in areas rich with recorded information, analytics relies )\n",
+      "(on the simultaneous application of statistics, computer programming and operations research )\n",
+      "(to quantify performance.)\n",
+      "()\n",
+      "(Organizations may apply analytics to business data to describe, predict, and improve business )\n",
+      "(performance. Specifically, areas within analytics include predictive analytics, prescriptive )\n",
+      "(analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big )\n",
+      "(Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, )\n",
+      "(marketing optimization and marketing mix modeling, web analytics, call analytics, speech )\n",
+      "(analytics, sales force sizing and optimization, price and promotion modeling, predictive )\n",
+      "(science, credit risk analysis, and fraud analytics. Since analytics can require extensive )\n",
+      "(computation (see big data), the algorithms and software used for analytics harness the most )\n",
+      "(current methods in computer science, statistics, and mathematics.)\n",
+      "(Data analytics (DA) is the process of examining data sets in order to draw conclusions )\n",
+      "(about the information they contain, increasingly with the aid of specialized systems )\n",
+      "(and software. Data analytics technologies and techniques are widely used in commercial )\n",
+      "(industries to enable organizations to make more-informed business decisions and by )\n",
+      "(scientists and researchers to verify or disprove scientific models, theories and )\n",
+      "(hypotheses.)\n",
+      "(The field of data analysis. Analytics often involves studying past historical data to )\n",
+      "(research potential trends, to analyze the effects of certain decisions or events, or to )\n",
+      "(evaluate the performance of a given tool or scenario. The goal of analytics is to improve )\n",
+      "(the business by gaining knowledge which can be used to make improvements or changes.)\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -cat output/part-m-00000 | head"
+    "%%pig\n",
+    "lines = LOAD 'input/text*.txt' AS (line:CHARARRAY);\n",
+    "DUMP lines;"
    ]
   },
   {
@@ -245,24 +258,441 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Deleted output/_SUCCESS\n",
-      "Deleted output/part-m-00000\n"
+      "(Analytics)\n",
+      "(is)\n",
+      "(the)\n",
+      "(discovery)\n",
+      "(interpretation)\n",
+      "(and)\n",
+      "(communication)\n",
+      "(of)\n",
+      "(meaningful)\n",
+      "(patterns)\n",
+      "(in)\n",
+      "(data.)\n",
+      "(Especially)\n",
+      "(valuable)\n",
+      "(in)\n",
+      "(areas)\n",
+      "(rich)\n",
+      "(with)\n",
+      "(recorded)\n",
+      "(information)\n",
+      "(analytics)\n",
+      "(relies)\n",
+      "(on)\n",
+      "(the)\n",
+      "(simultaneous)\n",
+      "(application)\n",
+      "(of)\n",
+      "(statistics)\n",
+      "(computer)\n",
+      "(programming)\n",
+      "(and)\n",
+      "(operations)\n",
+      "(research)\n",
+      "(to)\n",
+      "(quantify)\n",
+      "(performance.)\n",
+      "()\n",
+      "(Organizations)\n",
+      "(may)\n",
+      "(apply)\n",
+      "(analytics)\n",
+      "(to)\n",
+      "(business)\n",
+      "(data)\n",
+      "(to)\n",
+      "(describe)\n",
+      "(predict)\n",
+      "(and)\n",
+      "(improve)\n",
+      "(business)\n",
+      "(performance.)\n",
+      "(Specifically)\n",
+      "(areas)\n",
+      "(within)\n",
+      "(analytics)\n",
+      "(include)\n",
+      "(predictive)\n",
+      "(analytics)\n",
+      "(prescriptive)\n",
+      "(analytics)\n",
+      "(enterprise)\n",
+      "(decision)\n",
+      "(management)\n",
+      "(descriptive)\n",
+      "(analytics)\n",
+      "(cognitive)\n",
+      "(analytics)\n",
+      "(Big)\n",
+      "(Data)\n",
+      "(Analytics)\n",
+      "(retail)\n",
+      "(analytics)\n",
+      "(store)\n",
+      "(assortment)\n",
+      "(and)\n",
+      "(stock-keeping)\n",
+      "(unit)\n",
+      "(optimization)\n",
+      "(marketing)\n",
+      "(optimization)\n",
+      "(and)\n",
+      "(marketing)\n",
+      "(mix)\n",
+      "(modeling)\n",
+      "(web)\n",
+      "(analytics)\n",
+      "(call)\n",
+      "(analytics)\n",
+      "(speech)\n",
+      "(analytics)\n",
+      "(sales)\n",
+      "(force)\n",
+      "(sizing)\n",
+      "(and)\n",
+      "(optimization)\n",
+      "(price)\n",
+      "(and)\n",
+      "(promotion)\n",
+      "(modeling)\n",
+      "(predictive)\n",
+      "(science)\n",
+      "(credit)\n",
+      "(risk)\n",
+      "(analysis)\n",
+      "(and)\n",
+      "(fraud)\n",
+      "(analytics.)\n",
+      "(Since)\n",
+      "(analytics)\n",
+      "(can)\n",
+      "(require)\n",
+      "(extensive)\n",
+      "(computation)\n",
+      "(see)\n",
+      "(big)\n",
+      "(data)\n",
+      "(the)\n",
+      "(algorithms)\n",
+      "(and)\n",
+      "(software)\n",
+      "(used)\n",
+      "(for)\n",
+      "(analytics)\n",
+      "(harness)\n",
+      "(the)\n",
+      "(most)\n",
+      "(current)\n",
+      "(methods)\n",
+      "(in)\n",
+      "(computer)\n",
+      "(science)\n",
+      "(statistics)\n",
+      "(and)\n",
+      "(mathematics.)\n",
+      "(Data)\n",
+      "(analytics)\n",
+      "(DA)\n",
+      "(is)\n",
+      "(the)\n",
+      "(process)\n",
+      "(of)\n",
+      "(examining)\n",
+      "(data)\n",
+      "(sets)\n",
+      "(in)\n",
+      "(order)\n",
+      "(to)\n",
+      "(draw)\n",
+      "(conclusions)\n",
+      "(about)\n",
+      "(the)\n",
+      "(information)\n",
+      "(they)\n",
+      "(contain)\n",
+      "(increasingly)\n",
+      "(with)\n",
+      "(the)\n",
+      "(aid)\n",
+      "(of)\n",
+      "(specialized)\n",
+      "(systems)\n",
+      "(and)\n",
+      "(software.)\n",
+      "(Data)\n",
+      "(analytics)\n",
+      "(technologies)\n",
+      "(and)\n",
+      "(techniques)\n",
+      "(are)\n",
+      "(widely)\n",
+      "(used)\n",
+      "(in)\n",
+      "(commercial)\n",
+      "(industries)\n",
+      "(to)\n",
+      "(enable)\n",
+      "(organizations)\n",
+      "(to)\n",
+      "(make)\n",
+      "(more-informed)\n",
+      "(business)\n",
+      "(decisions)\n",
+      "(and)\n",
+      "(by)\n",
+      "(scientists)\n",
+      "(and)\n",
+      "(researchers)\n",
+      "(to)\n",
+      "(verify)\n",
+      "(or)\n",
+      "(disprove)\n",
+      "(scientific)\n",
+      "(models)\n",
+      "(theories)\n",
+      "(and)\n",
+      "(hypotheses.)\n",
+      "(The)\n",
+      "(field)\n",
+      "(of)\n",
+      "(data)\n",
+      "(analysis.)\n",
+      "(Analytics)\n",
+      "(often)\n",
+      "(involves)\n",
+      "(studying)\n",
+      "(past)\n",
+      "(historical)\n",
+      "(data)\n",
+      "(to)\n",
+      "(research)\n",
+      "(potential)\n",
+      "(trends)\n",
+      "(to)\n",
+      "(analyze)\n",
+      "(the)\n",
+      "(effects)\n",
+      "(of)\n",
+      "(certain)\n",
+      "(decisions)\n",
+      "(or)\n",
+      "(events)\n",
+      "(or)\n",
+      "(to)\n",
+      "(evaluate)\n",
+      "(the)\n",
+      "(performance)\n",
+      "(of)\n",
+      "(a)\n",
+      "(given)\n",
+      "(tool)\n",
+      "(or)\n",
+      "(scenario.)\n",
+      "(The)\n",
+      "(goal)\n",
+      "(of)\n",
+      "(analytics)\n",
+      "(is)\n",
+      "(to)\n",
+      "(improve)\n",
+      "(the)\n",
+      "(business)\n",
+      "(by)\n",
+      "(gaining)\n",
+      "(knowledge)\n",
+      "(which)\n",
+      "(can)\n",
+      "(be)\n",
+      "(used)\n",
+      "(to)\n",
+      "(make)\n",
+      "(improvements)\n",
+      "(or)\n",
+      "(changes.)\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -rm output/*  \n",
-    "!hadoop fs -rmdir  output"
+    "%%pig\n",
+    "-- genera una tabla llamada words con una palabra por registro\n",
+    "words = FOREACH lines GENERATE FLATTEN(TOKENIZE(line)) AS word;\n",
+    "DUMP words;"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 9,
    "metadata": {},
-   "outputs": [],
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(a,{(a)})\n",
+      "(DA,{(DA)})\n",
+      "(be,{(be)})\n",
+      "(by,{(by),(by)})\n",
+      "(in,{(in),(in),(in),(in),(in)})\n",
+      "(is,{(is),(is),(is)})\n",
+      "(of,{(of),(of),(of),(of),(of),(of),(of),(of)})\n",
+      "(on,{(on)})\n",
+      "(or,{(or),(or),(or),(or),(or)})\n",
+      "(to,{(to),(to),(to),(to),(to),(to),(to),(to),(to),(to),(to),(to)})\n",
+      "(Big,{(Big)})\n",
+      "(The,{(The),(The)})\n",
+      "(aid,{(aid)})\n",
+      "(and,{(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and),(and)})\n",
+      "(are,{(are)})\n",
+      "(big,{(big)})\n",
+      "(can,{(can),(can)})\n",
+      "(for,{(for)})\n",
+      "(may,{(may)})\n",
+      "(mix,{(mix)})\n",
+      "(see,{(see)})\n",
+      "(the,{(the),(the),(the),(the),(the),(the),(the),(the),(the),(the)})\n",
+      "(web,{(web)})\n",
+      "(Data,{(Data),(Data),(Data)})\n",
+      "(call,{(call)})\n",
+      "(data,{(data),(data),(data),(data),(data)})\n",
+      "(draw,{(draw)})\n",
+      "(goal,{(goal)})\n",
+      "(make,{(make),(make)})\n",
+      "(most,{(most)})\n",
+      "(past,{(past)})\n",
+      "(rich,{(rich)})\n",
+      "(risk,{(risk)})\n",
+      "(sets,{(sets)})\n",
+      "(they,{(they)})\n",
+      "(tool,{(tool)})\n",
+      "(unit,{(unit)})\n",
+      "(used,{(used),(used),(used)})\n",
+      "(with,{(with),(with)})\n",
+      "(Since,{(Since)})\n",
+      "(about,{(about)})\n",
+      "(apply,{(apply)})\n",
+      "(areas,{(areas),(areas)})\n",
+      "(data.,{(data.)})\n",
+      "(field,{(field)})\n",
+      "(force,{(force)})\n",
+      "(fraud,{(fraud)})\n",
+      "(given,{(given)})\n",
+      "(often,{(often)})\n",
+      "(order,{(order)})\n",
+      "(price,{(price)})\n",
+      "(sales,{(sales)})\n",
+      "(store,{(store)})\n",
+      "(which,{(which)})\n",
+      "(credit,{(credit)})\n",
+      "(enable,{(enable)})\n",
+      "(events,{(events)})\n",
+      "(models,{(models)})\n",
+      "(relies,{(relies)})\n",
+      "(retail,{(retail)})\n",
+      "(sizing,{(sizing)})\n",
+      "(speech,{(speech)})\n",
+      "(trends,{(trends)})\n",
+      "(verify,{(verify)})\n",
+      "(widely,{(widely)})\n",
+      "(within,{(within)})\n",
+      "(analyze,{(analyze)})\n",
+      "(certain,{(certain)})\n",
+      "(contain,{(contain)})\n",
+      "(current,{(current)})\n",
+      "(effects,{(effects)})\n",
+      "(gaining,{(gaining)})\n",
+      "(harness,{(harness)})\n",
+      "(improve,{(improve),(improve)})\n",
+      "(include,{(include)})\n",
+      "(methods,{(methods)})\n",
+      "(predict,{(predict)})\n",
+      "(process,{(process)})\n",
+      "(require,{(require)})\n",
+      "(science,{(science),(science)})\n",
+      "(systems,{(systems)})\n",
+      "(analysis,{(analysis)})\n",
+      "(business,{(business),(business),(business),(business)})\n",
+      "(changes.,{(changes.)})\n",
+      "(computer,{(computer),(computer)})\n",
+      "(decision,{(decision)})\n",
+      "(describe,{(describe)})\n",
+      "(disprove,{(disprove)})\n",
+      "(evaluate,{(evaluate)})\n",
+      "(involves,{(involves)})\n",
+      "(modeling,{(modeling),(modeling)})\n",
+      "(patterns,{(patterns)})\n",
+      "(quantify,{(quantify)})\n",
+      "(recorded,{(recorded)})\n",
+      "(research,{(research),(research)})\n",
+      "(software,{(software)})\n",
+      "(studying,{(studying)})\n",
+      "(theories,{(theories)})\n",
+      "(valuable,{(valuable)})\n",
+      "(Analytics,{(Analytics),(Analytics),(Analytics)})\n",
+      "(analysis.,{(analysis.)})\n",
+      "(analytics,{(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics),(analytics)})\n",
+      "(cognitive,{(cognitive)})\n",
+      "(decisions,{(decisions),(decisions)})\n",
+      "(discovery,{(discovery)})\n",
+      "(examining,{(examining)})\n",
+      "(extensive,{(extensive)})\n",
+      "(knowledge,{(knowledge)})\n",
+      "(marketing,{(marketing),(marketing)})\n",
+      "(potential,{(potential)})\n",
+      "(promotion,{(promotion)})\n",
+      "(scenario.,{(scenario.)})\n",
+      "(software.,{(software.)})\n",
+      "(Especially,{(Especially)})\n",
+      "(algorithms,{(algorithms)})\n",
+      "(analytics.,{(analytics.)})\n",
+      "(assortment,{(assortment)})\n",
+      "(commercial,{(commercial)})\n",
+      "(enterprise,{(enterprise)})\n",
+      "(historical,{(historical)})\n",
+      "(industries,{(industries)})\n",
+      "(management,{(management)})\n",
+      "(meaningful,{(meaningful)})\n",
+      "(operations,{(operations)})\n",
+      "(predictive,{(predictive),(predictive)})\n",
+      "(scientific,{(scientific)})\n",
+      "(scientists,{(scientists)})\n",
+      "(statistics,{(statistics),(statistics)})\n",
+      "(techniques,{(techniques)})\n",
+      "(application,{(application)})\n",
+      "(computation,{(computation)})\n",
+      "(conclusions,{(conclusions)})\n",
+      "(descriptive,{(descriptive)})\n",
+      "(hypotheses.,{(hypotheses.)})\n",
+      "(information,{(information),(information)})\n",
+      "(performance,{(performance)})\n",
+      "(programming,{(programming)})\n",
+      "(researchers,{(researchers)})\n",
+      "(specialized,{(specialized)})\n",
+      "(Specifically,{(Specifically)})\n",
+      "(improvements,{(improvements)})\n",
+      "(increasingly,{(increasingly)})\n",
+      "(mathematics.,{(mathematics.)})\n",
+      "(optimization,{(optimization),(optimization),(optimization)})\n",
+      "(performance.,{(performance.),(performance.)})\n",
+      "(prescriptive,{(prescriptive)})\n",
+      "(simultaneous,{(simultaneous)})\n",
+      "(technologies,{(technologies)})\n",
+      "(Organizations,{(Organizations)})\n",
+      "(communication,{(communication)})\n",
+      "(more-informed,{(more-informed)})\n",
+      "(organizations,{(organizations)})\n",
+      "(stock-keeping,{(stock-keeping)})\n",
+      "(interpretation,{(interpretation)})\n",
+      "(,{()})\n"
+     ]
+    }
+   ],
    "source": [
     "%%pig\n",
-    "STORE u INTO 'output' USING PigStorage(';');"
+    "-- agrupa los registros que tienen la misma palabra\n",
+    "grouped = GROUP words BY word;\n",
+    "DUMP grouped;"
    ]
   },
   {
@@ -274,13 +704,169 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "-rw-r--r--   1 root supergroup          0 2022-05-17 02:09 output/_SUCCESS\n",
-      "-rw-r--r--   1 root supergroup        616 2022-05-17 02:09 output/part-m-00000\n"
+      "(a,1)\n",
+      "(DA,1)\n",
+      "(be,1)\n",
+      "(by,2)\n",
+      "(in,5)\n",
+      "(is,3)\n",
+      "(of,8)\n",
+      "(on,1)\n",
+      "(or,5)\n",
+      "(to,12)\n",
+      "(Big,1)\n",
+      "(The,2)\n",
+      "(aid,1)\n",
+      "(and,15)\n",
+      "(are,1)\n",
+      "(big,1)\n",
+      "(can,2)\n",
+      "(for,1)\n",
+      "(may,1)\n",
+      "(mix,1)\n",
+      "(see,1)\n",
+      "(the,10)\n",
+      "(web,1)\n",
+      "(Data,3)\n",
+      "(call,1)\n",
+      "(data,5)\n",
+      "(draw,1)\n",
+      "(goal,1)\n",
+      "(make,2)\n",
+      "(most,1)\n",
+      "(past,1)\n",
+      "(rich,1)\n",
+      "(risk,1)\n",
+      "(sets,1)\n",
+      "(they,1)\n",
+      "(tool,1)\n",
+      "(unit,1)\n",
+      "(used,3)\n",
+      "(with,2)\n",
+      "(Since,1)\n",
+      "(about,1)\n",
+      "(apply,1)\n",
+      "(areas,2)\n",
+      "(data.,1)\n",
+      "(field,1)\n",
+      "(force,1)\n",
+      "(fraud,1)\n",
+      "(given,1)\n",
+      "(often,1)\n",
+      "(order,1)\n",
+      "(price,1)\n",
+      "(sales,1)\n",
+      "(store,1)\n",
+      "(which,1)\n",
+      "(credit,1)\n",
+      "(enable,1)\n",
+      "(events,1)\n",
+      "(models,1)\n",
+      "(relies,1)\n",
+      "(retail,1)\n",
+      "(sizing,1)\n",
+      "(speech,1)\n",
+      "(trends,1)\n",
+      "(verify,1)\n",
+      "(widely,1)\n",
+      "(within,1)\n",
+      "(analyze,1)\n",
+      "(certain,1)\n",
+      "(contain,1)\n",
+      "(current,1)\n",
+      "(effects,1)\n",
+      "(gaining,1)\n",
+      "(harness,1)\n",
+      "(improve,2)\n",
+      "(include,1)\n",
+      "(methods,1)\n",
+      "(predict,1)\n",
+      "(process,1)\n",
+      "(require,1)\n",
+      "(science,2)\n",
+      "(systems,1)\n",
+      "(analysis,1)\n",
+      "(business,4)\n",
+      "(changes.,1)\n",
+      "(computer,2)\n",
+      "(decision,1)\n",
+      "(describe,1)\n",
+      "(disprove,1)\n",
+      "(evaluate,1)\n",
+      "(involves,1)\n",
+      "(modeling,2)\n",
+      "(patterns,1)\n",
+      "(quantify,1)\n",
+      "(recorded,1)\n",
+      "(research,2)\n",
+      "(software,1)\n",
+      "(studying,1)\n",
+      "(theories,1)\n",
+      "(valuable,1)\n",
+      "(Analytics,3)\n",
+      "(analysis.,1)\n",
+      "(analytics,16)\n",
+      "(cognitive,1)\n",
+      "(decisions,2)\n",
+      "(discovery,1)\n",
+      "(examining,1)\n",
+      "(extensive,1)\n",
+      "(knowledge,1)\n",
+      "(marketing,2)\n",
+      "(potential,1)\n",
+      "(promotion,1)\n",
+      "(scenario.,1)\n",
+      "(software.,1)\n",
+      "(Especially,1)\n",
+      "(algorithms,1)\n",
+      "(analytics.,1)\n",
+      "(assortment,1)\n",
+      "(commercial,1)\n",
+      "(enterprise,1)\n",
+      "(historical,1)\n",
+      "(industries,1)\n",
+      "(management,1)\n",
+      "(meaningful,1)\n",
+      "(operations,1)\n",
+      "(predictive,2)\n",
+      "(scientific,1)\n",
+      "(scientists,1)\n",
+      "(statistics,2)\n",
+      "(techniques,1)\n",
+      "(application,1)\n",
+      "(computation,1)\n",
+      "(conclusions,1)\n",
+      "(descriptive,1)\n",
+      "(hypotheses.,1)\n",
+      "(information,2)\n",
+      "(performance,1)\n",
+      "(programming,1)\n",
+      "(researchers,1)\n",
+      "(specialized,1)\n",
+      "(Specifically,1)\n",
+      "(improvements,1)\n",
+      "(increasingly,1)\n",
+      "(mathematics.,1)\n",
+      "(optimization,3)\n",
+      "(performance.,2)\n",
+      "(prescriptive,1)\n",
+      "(simultaneous,1)\n",
+      "(technologies,1)\n",
+      "(Organizations,1)\n",
+      "(communication,1)\n",
+      "(more-informed,1)\n",
+      "(organizations,1)\n",
+      "(stock-keeping,1)\n",
+      "(interpretation,1)\n",
+      "(,0)\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -ls output/*"
+    "%%pig\n",
+    "-- genera una variable que cuenta las ocurrencias por cada grupo\n",
+    "wordcount = FOREACH grouped GENERATE group, COUNT(words);\n",
+    "DUMP wordcount;"
    ]
   },
   {
@@ -292,640 +878,34 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "1;Vivian;Hamilton;1971-07-08;green;1\n",
-      "2;Karen;Holcomb;1974-05-23;green;4\n",
-      "3;Cody;Garrett;1973-04-22;orange;1\n",
-      "4;Roth;Fry;1975-01-29;black;1\n",
-      "5;Zoe;Conway;1974-07-03;blue;2\n",
-      "6;Gretchen;Kinney;1974-10-18;viole;1\n",
-      "7;Driscoll;Klein;1970-10-05;blue;5\n",
-      "8;Karyn;Diaz;1969-02-24;red;1\n",
-      "9;Merritt;Guy;1974-10-17;indigo;4\n",
-      "10;Kylan;Sexton;1975-02-28;black;4\n"
+      "(a,1)\n",
+      "(DA,1)\n",
+      "(be,1)\n",
+      "(by,2)\n",
+      "(in,5)\n",
+      "(is,3)\n",
+      "(of,8)\n",
+      "(on,1)\n",
+      "(or,5)\n",
+      "(to,12)\n",
+      "(Big,1)\n",
+      "(The,2)\n",
+      "(aid,1)\n",
+      "(and,15)\n",
+      "(are,1)\n"
      ]
     }
    ],
    "source": [
-    "!hadoop fs -cat output/part-m-00000 | head"
+    "%%pig\n",
+    "-- selecciona las primeras 15 palabras\n",
+    "s = LIMIT wordcount 15;\n",
+    "DUMP s;"
    ]
   },
   {
    "cell_type": "code",
    "execution_count": 12,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Deleted output/_SUCCESS\n",
-      "Deleted output/part-m-00000\n"
-     ]
-    }
-   ],
-   "source": [
-    "!hadoop fs -rm output/*  \n",
-    "!hadoop fs -rmdir  output"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### FOREACH"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 13,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(Vivian,Hamilton,1971-07-08,green,1)\n",
-      "(Karen,Holcomb,1974-05-23,green,4)\n",
-      "(Cody,Garrett,1973-04-22,orange,1)\n",
-      "(Roth,Fry,1975-01-29,black,1)\n",
-      "(Zoe,Conway,1974-07-03,blue,2)\n",
-      "(Gretchen,Kinney,1974-10-18,viole,1)\n",
-      "(Driscoll,Klein,1970-10-05,blue,5)\n",
-      "(Karyn,Diaz,1969-02-24,red,1)\n",
-      "(Merritt,Guy,1974-10-17,indigo,4)\n",
-      "(Kylan,Sexton,1975-02-28,black,4)\n",
-      "(Jordan,Estes,1969-12-07,indigo,4)\n",
-      "(Hope,Coffey,1973-12-24,green,5)\n",
-      "(Vivian,Crane,1970-08-27,gray,5)\n",
-      "(Clio,Noel,1972-12-12,red,5)\n",
-      "(Hope,Silva,1970-07-01,blue,5)\n",
-      "(Ayanna,Jarvis,1974-02-11,orange,5)\n",
-      "(Chanda,Boyer,1973-04-01,green,4)\n",
-      "(Chadwick,Knight,1973-04-29,yellow,1)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "--\n",
-    "-- Los campos del archivo puden ser indicados por nombre \n",
-    "-- o por posición iniciando en 0\n",
-    "--\n",
-    "v = FOREACH u GENERATE firstname, $2, $3..$5;\n",
-    "DUMP v;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 14,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(20)\n",
-      "(20)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n",
-      "(10)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "--\n",
-    "-- uso de condicionales \n",
-    "--\n",
-    "v = FOREACH u GENERATE ($0 > $5 ? 10 : 20) ;\n",
-    "DUMP v;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 15,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(Vivian,1971-07-08)\n",
-      "(Karen,1974-05-23)\n",
-      "(Cody,1973-04-22)\n",
-      "(Roth,1975-01-29)\n",
-      "(Zoe,1974-07-03)\n",
-      "(Gretchen,1974-10-18)\n",
-      "(Driscoll,1970-10-05)\n",
-      "(Karyn,1969-02-24)\n",
-      "(Merritt,1974-10-17)\n",
-      "(Kylan,1975-02-28)\n",
-      "(Jordan,1969-12-07)\n",
-      "(Hope,1973-12-24)\n",
-      "(Vivian,1970-08-27)\n",
-      "(Clio,1972-12-12)\n",
-      "(Hope,1970-07-01)\n",
-      "(Ayanna,1974-02-11)\n",
-      "(Chanda,1973-04-01)\n",
-      "(Chadwick,1973-04-29)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "y = FOREACH u GENERATE $1, $3;\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 16,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(VIVIAN)\n",
-      "(KAREN)\n",
-      "(CODY)\n",
-      "(ROTH)\n",
-      "(ZOE)\n",
-      "(GRETCHEN)\n",
-      "(DRISCOLL)\n",
-      "(KARYN)\n",
-      "(MERRITT)\n",
-      "(KYLAN)\n",
-      "(JORDAN)\n",
-      "(HOPE)\n",
-      "(VIVIAN)\n",
-      "(CLIO)\n",
-      "(HOPE)\n",
-      "(AYANNA)\n",
-      "(CHANDA)\n",
-      "(CHADWICK)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "y = FOREACH u GENERATE UPPER($1);\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 17,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "([Vivian#1971-07-08])\n",
-      "([Karen#1974-05-23])\n",
-      "([Cody#1973-04-22])\n",
-      "([Roth#1975-01-29])\n",
-      "([Zoe#1974-07-03])\n",
-      "([Gretchen#1974-10-18])\n",
-      "([Driscoll#1970-10-05])\n",
-      "([Karyn#1969-02-24])\n",
-      "([Merritt#1974-10-17])\n",
-      "([Kylan#1975-02-28])\n",
-      "([Jordan#1969-12-07])\n",
-      "([Hope#1973-12-24])\n",
-      "([Vivian#1970-08-27])\n",
-      "([Clio#1972-12-12])\n",
-      "([Hope#1970-07-01])\n",
-      "([Ayanna#1974-02-11])\n",
-      "([Chanda#1973-04-01])\n",
-      "([Chadwick#1973-04-29])\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "y = FOREACH u GENERATE [$1, $3];\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### FILTER"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 18,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(5,Zoe,Conway,1974-07-03,blue,2)\n",
-      "(7,Driscoll,Klein,1970-10-05,blue,5)\n",
-      "(15,Hope,Silva,1970-07-01,blue,5)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "y = FILTER u BY $4 MATCHES 'blue';\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### GROUP"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 19,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(red,{(8,Karyn,Diaz,1969-02-24,red,1),(14,Clio,Noel,1972-12-12,red,5)})\n",
-      "(blue,{(15,Hope,Silva,1970-07-01,blue,5),(7,Driscoll,Klein,1970-10-05,blue,5),(5,Zoe,Conway,1974-07-03,blue,2)})\n",
-      "(gray,{(13,Vivian,Crane,1970-08-27,gray,5)})\n",
-      "(black,{(10,Kylan,Sexton,1975-02-28,black,4),(4,Roth,Fry,1975-01-29,black,1)})\n",
-      "(green,{(12,Hope,Coffey,1973-12-24,green,5),(2,Karen,Holcomb,1974-05-23,green,4),(17,Chanda,Boyer,1973-04-01,green,4),(1,Vivian,Hamilton,1971-07-08,green,1)})\n",
-      "(viole,{(6,Gretchen,Kinney,1974-10-18,viole,1)})\n",
-      "(indigo,{(9,Merritt,Guy,1974-10-17,indigo,4),(11,Jordan,Estes,1969-12-07,indigo,4)})\n",
-      "(orange,{(3,Cody,Garrett,1973-04-22,orange,1),(16,Ayanna,Jarvis,1974-02-11,orange,5)})\n",
-      "(yellow,{(18,Chadwick,Knight,1973-04-29,yellow,1)})\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "y = GROUP u BY $4;\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 20,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "({(8,Karyn,Diaz,1969-02-24,red,1),(14,Clio,Noel,1972-12-12,red,5)},2)\n",
-      "({(15,Hope,Silva,1970-07-01,blue,5),(7,Driscoll,Klein,1970-10-05,blue,5),(5,Zoe,Conway,1974-07-03,blue,2)},3)\n",
-      "({(13,Vivian,Crane,1970-08-27,gray,5)},1)\n",
-      "({(10,Kylan,Sexton,1975-02-28,black,4),(4,Roth,Fry,1975-01-29,black,1)},2)\n",
-      "({(12,Hope,Coffey,1973-12-24,green,5),(2,Karen,Holcomb,1974-05-23,green,4),(17,Chanda,Boyer,1973-04-01,green,4),(1,Vivian,Hamilton,1971-07-08,green,1)},4)\n",
-      "({(6,Gretchen,Kinney,1974-10-18,viole,1)},1)\n",
-      "({(9,Merritt,Guy,1974-10-17,indigo,4),(11,Jordan,Estes,1969-12-07,indigo,4)},2)\n",
-      "({(3,Cody,Garrett,1973-04-22,orange,1),(16,Ayanna,Jarvis,1974-02-11,orange,5)},2)\n",
-      "({(18,Chadwick,Knight,1973-04-29,yellow,1)},1)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "z = FOREACH y GENERATE u, COUNT(u);\n",
-    "DUMP z;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### DESCRIBE\n"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 21,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "u: {\n",
-      "id: int,\n",
-      "firstname: chararray,\n",
-      "surname: chararray,\n",
-      "birtday: chararray,\n",
-      "color: chararray,\n",
-      "quantity: int\n",
-      "}\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "DESCRIBE u;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### ORDER .. BY .."
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 22,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(4,Roth,Fry,1975-01-29,black,1)\n",
-      "(10,Kylan,Sexton,1975-02-28,black,4)\n",
-      "(5,Zoe,Conway,1974-07-03,blue,2)\n",
-      "(7,Driscoll,Klein,1970-10-05,blue,5)\n",
-      "(15,Hope,Silva,1970-07-01,blue,5)\n",
-      "(13,Vivian,Crane,1970-08-27,gray,5)\n",
-      "(2,Karen,Holcomb,1974-05-23,green,4)\n",
-      "(12,Hope,Coffey,1973-12-24,green,5)\n",
-      "(17,Chanda,Boyer,1973-04-01,green,4)\n",
-      "(1,Vivian,Hamilton,1971-07-08,green,1)\n",
-      "(9,Merritt,Guy,1974-10-17,indigo,4)\n",
-      "(11,Jordan,Estes,1969-12-07,indigo,4)\n",
-      "(3,Cody,Garrett,1973-04-22,orange,1)\n",
-      "(16,Ayanna,Jarvis,1974-02-11,orange,5)\n",
-      "(8,Karyn,Diaz,1969-02-24,red,1)\n",
-      "(14,Clio,Noel,1972-12-12,red,5)\n",
-      "(6,Gretchen,Kinney,1974-10-18,viole,1)\n",
-      "(18,Chadwick,Knight,1973-04-29,yellow,1)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "y = ORDER u BY $4;\n",
-    "DUMP y;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### DISCTINCT"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 23,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "2022-05-17 02:12:01,202 [main] ERROR org.apache.pig.tools.grunt.Grunt - ERROR 1200: <line 20, column 0>  Syntax error, unexpected symbol at or near 'z'\n",
-      "Details at logfile: /workspace/pig/pig_1652753296015.log\n",
-      "({(8,Karyn,Diaz,1969-02-24,red,1),(14,Clio,Noel,1972-12-12,red,5)},2)\n",
-      "({(15,Hope,Silva,1970-07-01,blue,5),(7,Driscoll,Klein,1970-10-05,blue,5),(5,Zoe,Conway,1974-07-03,blue,2)},3)\n",
-      "({(13,Vivian,Crane,1970-08-27,gray,5)},1)\n",
-      "({(10,Kylan,Sexton,1975-02-28,black,4),(4,Roth,Fry,1975-01-29,black,1)},2)\n",
-      "({(12,Hope,Coffey,1973-12-24,green,5),(2,Karen,Holcomb,1974-05-23,green,4),(17,Chanda,Boyer,1973-04-01,green,4),(1,Vivian,Hamilton,1971-07-08,green,1)},4)\n",
-      "({(6,Gretchen,Kinney,1974-10-18,viole,1)},1)\n",
-      "({(9,Merritt,Guy,1974-10-17,indigo,4),(11,Jordan,Estes,1969-12-07,indigo,4)},2)\n",
-      "({(3,Cody,Garrett,1973-04-22,orange,1),(16,Ayanna,Jarvis,1974-02-11,orange,5)},2)\n",
-      "({(18,Chadwick,Knight,1973-04-29,yellow,1)},1)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "-- \n",
-    "-- opera únicamente sobre registros completos\n",
-    "--\n",
-    "y = FOREACH u GENERATE $4;\n",
-    "z = DISCTINCT y;\n",
-    "DUMP z;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### JOIN"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 24,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "Writing /tmp/jointable.csv\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%writefile /tmp/jointable.csv\n",
-    "1,A\n",
-    "2,B\n",
-    "3,C\n",
-    "24,X\n",
-    "25,Y\n",
-    "26,Z"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 25,
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "!hadoop fs -put /tmp/jointable.csv"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 26,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(1,A)\n",
-      "(2,B)\n",
-      "(3,C)\n",
-      "(24,X)\n",
-      "(25,Y)\n",
-      "(26,Z)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "w = LOAD 'jointable.csv' USING PigStorage(',') \n",
-    "    AS (id:INT, \n",
-    "        letter:CHARARRAY);\n",
-    "DUMP w;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 27,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(1,Vivian,Hamilton,1971-07-08,green,1,1,A)\n",
-      "(2,Karen,Holcomb,1974-05-23,green,4,2,B)\n",
-      "(3,Cody,Garrett,1973-04-22,orange,1,3,C)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "w = JOIN u BY id, w BY id;\n",
-    "DUMP w;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### LIMIT"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 28,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(1,Vivian,Hamilton,1971-07-08,green,1)\n",
-      "(2,Karen,Holcomb,1974-05-23,green,4)\n",
-      "(3,Cody,Garrett,1973-04-22,orange,1)\n",
-      "(4,Roth,Fry,1975-01-29,black,1)\n",
-      "(5,Zoe,Conway,1974-07-03,blue,2)\n",
-      "(6,Gretchen,Kinney,1974-10-18,viole,1)\n",
-      "(7,Driscoll,Klein,1970-10-05,blue,5)\n",
-      "(8,Karyn,Diaz,1969-02-24,red,1)\n",
-      "(9,Merritt,Guy,1974-10-17,indigo,4)\n",
-      "(10,Kylan,Sexton,1975-02-28,black,4)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "z = LIMIT u 10;\n",
-    "DUMP z;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### SAMPLE"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 29,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(2,Karen,Holcomb,1974-05-23,green,4)\n",
-      "(6,Gretchen,Kinney,1974-10-18,viole,1)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "w = SAMPLE u 0.2;\n",
-    "DUMP w;"
-   ]
-  },
-  {
-   "cell_type": "markdown",
-   "metadata": {},
-   "source": [
-    "### CASE"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 30,
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "(10)\n",
-      "(20)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n",
-      "(3)\n"
-     ]
-    }
-   ],
-   "source": [
-    "%%pig\n",
-    "r = FOREACH u GENERATE (\n",
-    "  CASE $0\n",
-    "    WHEN 1 THEN 10\n",
-    "    WHEN 2 THEN 20\n",
-    "    ELSE 3\n",
-    "  END\n",
-    ");\n",
-    "DUMP r;"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 31,
    "metadata": {},
    "outputs": [],
    "source": [

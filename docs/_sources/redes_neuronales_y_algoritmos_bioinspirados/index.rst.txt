@@ -401,6 +401,25 @@ Sesión 09 --- 2022-may-10
 
 Sesión 10 --- 2022-may-17
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+    **Charla: Etica en IA**
+
+
+.. ......................................................................................
+..
+..     ###    ###
+..       #      #
+..       #      #
+..       #      #    
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 11 --- 2022-may-24
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
     **2:06:30**
 
     **Introducción a Keras --- 35:36 min**
@@ -424,33 +443,6 @@ Sesión 10 --- 2022-may-17
 
 
 
-.. ......................................................................................
-..
-..     ###    ###
-..       #      #
-..       #      #
-..       #      #    
-..     #####  #####
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 11 --- 2022-may-24
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    **2:18:10**
-
-    
-
-    **Fundamentos de ML con Keras --- 2:18:10**
-
-        .. toctree::
-            :maxdepth: 1
-            :glob:
-
-            /notebooks/tensorflow_02_ml_basics_with_keras/2-*
-
-
 
 .. ......................................................................................
 ..
@@ -465,6 +457,87 @@ Sesión 11 --- 2022-may-24
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
 Sesión 12 --- 2022-may-31
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+      **Model Tracking**
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/mlflow/2-*
+
+
+      **Projects**
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/mlflow/3-*
+
+
+      **Models**
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/mlflow/4-*
+
+
+      **Registry**
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/mlflow/5-*
+
+
+
+.. ......................................................................................
+..
+..     ###    #####
+..       #        #
+..       #    #####
+..       #        #     
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 13 --- 2022-jun-07
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    **2:18:10**
+    
+
+    **Fundamentos de ML con Keras --- 2:18:10**
+
+        .. toctree::
+            :maxdepth: 1
+            :glob:
+
+            /notebooks/tensorflow_02_ml_basics_with_keras/2-*
+
+
+
+
+.. ......................................................................................
+..
+..     ###    #   #
+..       #    #   #
+..       #    #####
+..       #        #     
+..     #####      #
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 14 --- 2022-jun-14
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:00:09**
 
@@ -505,10 +578,12 @@ Sesión 12 --- 2022-may-31
 
 
 
+
+
 .. ......................................................................................
 ..
 ..     ###    #####
-..       #        #
+..       #    #   
 ..       #    #####
 ..       #        #     
 ..     #####  #####
@@ -517,8 +592,38 @@ Sesión 12 --- 2022-may-31
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 13 --- 2022-jun-07
+Sesión 15 --- 2022-jun-21
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+
+.. ......................................................................................
+..
+..     ###    #####
+..       #    #   
+..       #    #####
+..       #    #   #     
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 16 --- 2022-jun-28
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+* Cierre del Curso.
+
+.. note::
+
+    * El plazo para la carga de los trabajos a GitHub vence a las 24:00 hr del martes 28 de junio de 2022.
+    
+    * Reporte del 100% de calificaciones al SIA: miércoles, **7 de julio de 2022.**
+
+
+
 
 
 
@@ -540,20 +645,6 @@ Sesión 13 --- 2022-jun-07
             /notebooks/tensorflow_03_load_and_processing_data/6-*
 
 
-.. ......................................................................................
-..
-..     ###    #   #
-..       #    #   #
-..       #    #####
-..       #        #     
-..     #####      #
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 14 --- 2022-jun-14
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Personalización**
 
@@ -592,20 +683,6 @@ Sesión 14 --- 2022-jun-14
             /notebooks/tensorflow_09_structured_data/1-*
 
 
-.. ......................................................................................
-..
-..     ###    #####
-..       #    #   
-..       #    #####
-..       #        #     
-..     #####  #####
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 15 --- 2022-jun-21
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
     
@@ -614,31 +691,6 @@ Sesión 15 --- 2022-jun-21
 
 
 
-
-
-.. ......................................................................................
-..
-..     ###    #####
-..       #    #   
-..       #    #####
-..       #    #   #     
-..     #####  #####
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 16 --- 2022-jun-28
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-* Cierre del Curso.
-
-.. note::
-
-    * El plazo para la carga de los trabajos a GitHub vence a las 24:00 hr del martes 28 de junio de 2022.
-    
-    * Reporte del 100% de calificaciones al SIA: miércoles, **7 de julio de 2022.**
 
 
 
