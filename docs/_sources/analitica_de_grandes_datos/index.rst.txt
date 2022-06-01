@@ -107,7 +107,7 @@ Sesión 02 --- 2022-05-20
             /notebooks/bash/7-*
 
 
-
+    `LAB --- Limpieza de archivos con sed <https://classroom.github.com/a/2pSb_67S>`_.
 
 .. ......................................................................................
 ..
@@ -167,7 +167,7 @@ Sesión 03 --- 2022-05-27
             /notebooks/snakebite/1-*
 
 
-
+    `LAB --- Algoritmo MapReduce en Python <https://classroom.github.com/a/C1Ti2RTw>`_.
 
 .. ......................................................................................
 ..
