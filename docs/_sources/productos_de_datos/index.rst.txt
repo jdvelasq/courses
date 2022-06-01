@@ -80,7 +80,24 @@ Sesión 02 --- 2022-05-20
             /notebooks/dataops_pqrs/2-*
 
 
-   **MLOps: Manejo del ciclo de vida de ML con MLflow**
+
+
+.. ......................................................................................
+..
+..     #####  #####
+..     #   #      #
+..     #   #   ####
+..     #   #      #
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 03 --- 2022-05-27
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   **MLOps: Manejo del ciclo de vida de ML con MLflow --- Parte 1**
 
 
       * `Intrdoucción a MLOps --07-- <https://jdvelasq.github.io/mlops_01_intro//>`_ 
@@ -112,6 +129,23 @@ Sesión 02 --- 2022-05-20
                /notebooks/mlflow/3-*
 
 
+.. ......................................................................................
+..
+..     #####  #   #
+..     #   #  #   #
+..     #   #  #####
+..     #   #      #
+..     #####      #
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 04 --- 2022-06-03
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   **MLOps: Manejo del ciclo de vida de ML con MLflow --- Parte 2**
+
       **Models**
 
          .. toctree::
@@ -130,21 +164,6 @@ Sesión 02 --- 2022-05-20
                /notebooks/mlflow/5-*
 
 
-.. ......................................................................................
-..
-..     #####  #####
-..     #   #      #
-..     #   #   ####
-..     #   #      #
-..     #####  #####
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 03 --- 2022-05-27
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
    **MLOps: Despliegue de modelos de ML y dashboards en Python**
 
 
@@ -162,12 +181,30 @@ Sesión 03 --- 2022-05-27
 
 
 
+
    **DataOps: Introducción**
 
 
       * `El problema con Data Analytics --10-- <https://jdvelasq.github.io/dataops_01_problem//>`_ 
 
       * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
+
+
+
+.. ......................................................................................
+..
+..     #####  #####
+..     #   #  #   
+..     #   #  #####
+..     #   #      #
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 05 --- 2022-06-10
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
    **DataOps: Paso 0.--- Escriba código de nivel industrial**
@@ -232,22 +269,22 @@ Sesión 03 --- 2022-05-27
                /notebooks/clean_code/1-*
 
 
-
-
 .. ......................................................................................
 ..
-..     #####  #   #
-..     #   #  #   #
+..     #####  #####
+..     #   #  #   
 ..     #   #  #####
-..     #   #      #
-..     #####      #
+..     #   #  #   #
+..     #####  #####
 
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 04 --- 2022-06-03
+Sesión 06 --- 2022-06-17
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
 
    **DataOps: Paso 1.--- Adicione tests de lógica y datos**
 
@@ -292,17 +329,19 @@ Sesión 04 --- 2022-06-03
 .. ......................................................................................
 ..
 ..     #####  #####
-..     #   #  #   
-..     #   #  #####
+..     #   #      #   
 ..     #   #      #
-..     #####  #####
+..     #   #      #
+..     #####      #
 
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 05 --- 2022-06-10
+Sesión 07 --- 2022-06-24
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
 
    **DataOps: Paso 1.--- Adicione tests de lógica y datos (Continuación)**
 
@@ -365,20 +404,10 @@ Sesión 05 --- 2022-06-10
                   /notebooks/github/5-*
 
 
-.. ......................................................................................
-..
-..     #####  #####
-..     #   #  #   
-..     #   #  #####
-..     #   #  #   #
-..     #####  #####
 
-.. raw:: html
 
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 06 --- 2022-06-17
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 
 
    **DataOps: Paso 4.--- Use múltiples ambientes**
@@ -426,21 +455,6 @@ Sesión 06 --- 2022-06-17
             
 
 
-
-.. ......................................................................................
-..
-..     #####  #####
-..     #   #      #   
-..     #   #      #
-..     #   #      #
-..     #####      #
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 07 --- 2022-06-24
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
