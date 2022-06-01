@@ -459,41 +459,51 @@ Sesión 11 --- 2022-may-24
 Sesión 12 --- 2022-may-31
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+    **MLOps con MLflow**
 
-      **Model Tracking**
+        **Introducción a MLFlow**
 
-         .. toctree::
-               :maxdepth: 1
-               :glob:
+            .. toctree::
+                :maxdepth: 1
+                :glob:
 
-               /notebooks/mlflow/2-*
-
-
-      **Projects**
-
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
-               /notebooks/mlflow/3-*
+                /notebooks/mlflow/1-*
 
 
-      **Models**
+        **Model Tracking**
 
-         .. toctree::
-               :maxdepth: 1
-               :glob:
+            .. toctree::
+                :maxdepth: 1
+                :glob:
 
-               /notebooks/mlflow/4-*
+                /notebooks/mlflow/2-*
 
 
-      **Registry**
+        **Projects**
 
-         .. toctree::
-               :maxdepth: 1
-               :glob:
+            .. toctree::
+                :maxdepth: 1
+                :glob:
 
-               /notebooks/mlflow/5-*
+                /notebooks/mlflow/3-*
+
+
+        **Models**
+
+            .. toctree::
+                :maxdepth: 1
+                :glob:
+
+                /notebooks/mlflow/4-*
+
+
+        **Registry**
+
+            .. toctree::
+                :maxdepth: 1
+                :glob:
+
+                /notebooks/mlflow/5-*
 
 
 
@@ -596,6 +606,8 @@ Sesión 15 --- 2022-jun-21
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
+    * Cierre del Curso.
+
 
 
 .. ......................................................................................
@@ -614,7 +626,6 @@ Sesión 16 --- 2022-jun-28
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-* Cierre del Curso.
 
 .. note::
 
