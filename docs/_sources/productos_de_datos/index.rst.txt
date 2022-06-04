@@ -29,24 +29,12 @@ Sesión 01 --- 2022-05-13
 
    **Simulación de las etapas de evolución de un sistema de PQRS en una empresa** --- Parte 1
 
+      .. code:: bash
 
-      .. note::
-
-            * Windows / PowerShell: ::
-
-                docker run --rm -it -v "${PWD}":/workspace  --name sklearn -p 50070:50070 -p 8088:8088 -p 8888:8888 jdvelasq/sklearn:1.0.2
-            
-
-            * Windows / Símbolo del sistema: ::
-                
-                docker run --rm -it -v "%cd%":/workspace  --name sklearn -p 50070:50070 -p 8088:8088 -p 8888:8888 jdvelasq/sklearn:1.0.2
-
-
-            * Mac OS y Linux: ::
- 
-                docker run --rm -it -v "$PWD":/workspace  --name sklearn -p 50070:50070 -p 8088:8088 -p 8888:8888 jdvelasq/sklearn:1.0.2
-
-
+               docker run --rm -it \
+                  --name ubuntu \
+                  -v "$PWD":/workspace \
+                  jdvelasq/ubuntu:20.04
     
 
       .. toctree::
@@ -105,11 +93,23 @@ Sesión 03 --- 2022-05-27
 
       **Introducción a MLFlow**
 
+         .. code:: bash
+
+               docker run --rm -it \
+                  --name sklearn \
+                  -p 5001:5000 \
+                  -p 8082:8082 \
+                  -p 8888:8888 \
+                  -v "$PWD":/workspace \
+                  jdvelasq/sklearn:1.0.2
+
+
          .. toctree::
                :maxdepth: 1
                :glob:
 
                /notebooks/mlflow/1-*
+
 
       **Model Tracking**
 
@@ -117,7 +117,51 @@ Sesión 03 --- 2022-05-27
                :maxdepth: 1
                :glob:
 
-               /notebooks/mlflow/2-*
+               /notebooks/mlflow/2-01*
+         
+         
+         .. code:: bash
+
+               docker run --rm -it \
+                  -v "$PWD":/workspace \
+                  --name tensorflow \
+                  -p 5001:5000 \
+                  -p 6006:6006 \
+                  -p 8888:8888 \
+                  jdvelasq/tensorflow:2.9.1
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/mlflow/2-02*
+
+
+         .. code:: bash
+
+               docker run --rm -it \
+                  --name spark \
+                  -p 4040:4040 \
+                  -p 5001:5000 \    
+                  -p 50070:50070 \
+                  -p 8088:8088 \
+                  -p 8888:8888 \
+                  -v "$PWD":/workspace \
+                  jdvelasq/spark:3.1.3
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/mlflow/2-03*
+
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/mlflow/2-04*
+
 
 
       **Projects**

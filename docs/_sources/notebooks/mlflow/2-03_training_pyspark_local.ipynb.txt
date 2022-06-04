@@ -142,7 +142,7 @@
     "\n",
     "    if not os.path.exists(\"mlruns\"):\n",
     "        os.makedirs(\"mlruns\")\n",
-    "    mlflow.set_tracking_uri(\"file:///workspace/mlflow/mlruns\")\n",
+    "    mlflow.set_tracking_uri(\"file:///workspace/mlflow/corridas\")\n",
     "    print(\"Tracking directory:\", mlflow.get_tracking_uri())\n",
     "\n",
     "    #\n",
@@ -186,7 +186,6 @@
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "22/04/04 20:00:28 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable\n",
       "Setting default log level to \"WARN\".\n",
       "To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).\n"
      ]
@@ -195,16 +194,14 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Tracking directory: file:///workspace/mlflow/mlruns\n",
-      "Active run_id: 978824dfd58b4bcb97234cd990147d9d\n"
+      "Tracking directory: file:///workspace/mlflow/corridas\n",
+      "Active run_id: 2e5f343a65104d28866207a10a55334a\n"
      ]
     },
     {
      "name": "stderr",
      "output_type": "stream",
      "text": [
-      "22/04/04 20:00:37 WARN netlib.BLAS: Failed to load implementation from: com.github.fommil.netlib.NativeSystemBLAS\n",
-      "22/04/04 20:00:37 WARN netlib.BLAS: Failed to load implementation from: com.github.fommil.netlib.NativeRefBLAS\n",
       "                                                                                \r"
      ]
     },
@@ -212,10 +209,10 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "LinearRegressionModel: uid=LinearRegression_8bed1e8a38e6, numFeatures=11:\n",
-      "  MSE: 0.4552636018631555\n",
-      "  MAE: 0.529275357141276\n",
-      "  R2: -1.1144570750464537\n"
+      "LinearRegressionModel: uid=LinearRegression_7c8a85716278, numFeatures=11:\n",
+      "  MSE: 0.45526360186470766\n",
+      "  MAE: 0.5292753571424285\n",
+      "  R2: -1.114457075123866\n"
      ]
     }
    ],
@@ -241,9 +238,22 @@
      "name": "stdout",
      "output_type": "stream",
      "text": [
-      "Tracking directory: file:///workspace/mlflow/mlruns\n",
-      "Active run_id: 02298313752742d6ae411626d5aff18e\n",
-      "LinearRegressionModel: uid=LinearRegression_96cd1382eff1, numFeatures=11:\n",
+      "Tracking directory: file:///workspace/mlflow/corridas\n",
+      "Active run_id: 5b49f614696847119bcfac1e8390121a\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "                                                                                \r"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "LinearRegressionModel: uid=LinearRegression_c74fc1588d38, numFeatures=11:\n",
       "  MSE: 0.4552568409331781\n",
       "  MAE: 0.5292824166305712\n",
       "  R2: -1.116331285203061\n"
@@ -332,94 +342,71 @@
   },
   {
    "cell_type": "code",
-   "execution_count": 13,
+   "execution_count": 5,
    "id": "f524f13f-de2d-41f2-8030-c92fca1bdaa6",
    "metadata": {},
-   "outputs": [
-    {
-     "name": "stderr",
-     "output_type": "stream",
-     "text": [
-      "2022/04/04 20:20:00 INFO mlflow.spark: File '/workspace/mlflow/mlruns/0/02298313752742d6ae411626d5aff18e/artifacts/model/sparkml' not found on DFS. Will attempt to upload the file.\n",
-      "2022/04/04 20:20:02 INFO mlflow.spark: Copied SparkML model to /tmp/mlflow/408b0812-a05f-4b86-b58b-b5ac898bdd41\n"
-     ]
-    },
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "mlflow.pyfunc.loaded_model:\n",
-      "  artifact_path: model\n",
-      "  flavor: mlflow.spark\n",
-      "  run_id: 02298313752742d6ae411626d5aff18e\n",
-      ":\n",
-      "  MSE: 0.4552568409331781\n",
-      "  MAE: 0.5292824166305713\n",
-      "  R2: 0.3468103720604353\n"
-     ]
-    }
-   ],
+   "outputs": [],
    "source": [
-    "def check_estimator():\n",
-    "    \n",
-    "    def local_eval_metrics(y_true, y_pred):\n",
-    "        \n",
-    "        from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score\n",
-    "\n",
-    "        mse = mean_squared_error(y_true, y_pred)\n",
-    "        mae = mean_absolute_error(y_true, y_pred)\n",
-    "        r2 = r2_score(y_true, y_pred)\n",
-    "\n",
-    "        return mse, mae, r2\n",
-    "\n",
-    "    import pandas as pd\n",
-    "    from pyspark.ml.feature import VectorAssembler\n",
-    "    from pyspark.sql import SparkSession\n",
-    "\n",
-    "    import mlflow\n",
-    "\n",
-    "    x, y = load_data()\n",
-    "    x_train, x_test, y_train, y_test = make_train_test_split(x, y)\n",
-    "\n",
-    "    # -----------------------------------------------------------------------------------\n",
-    "    # Debe prepararse la data. Este es un buen ejemplo para mostrar las dificultades\n",
-    "    # asociadas a no tener un feature store.\n",
-    "    #\n",
-    "    pdf_test = pd.concat(\n",
-    "        [x_test, pd.to_numeric(y_test, downcast=\"float\")], axis=\"columns\"\n",
-    "    )\n",
-    "\n",
-    "    spark = SparkSession.builder.getOrCreate()\n",
-    "    df_test = spark.createDataFrame(pdf_test)\n",
-    "\n",
-    "    vectorAssembler = VectorAssembler(\n",
-    "        inputCols=list(pdf_test.columns[:-1]),\n",
-    "        outputCol=\"features\",\n",
-    "    )\n",
-    "    df_test = vectorAssembler.transform(df_test)\n",
-    "    x_test = df_test.toPandas()\n",
-    "    spark.stop()\n",
-    "    # -----------------------------------------------------------------------------------\n",
-    "\n",
-    "    # NOTA: este parámetro es copiado directamente de la interfase de MLflow\n",
-    "    estimator_path = \"runs:/02298313752742d6ae411626d5aff18e/model\"\n",
-    "    estimator = mlflow.pyfunc.load_model(estimator_path)\n",
-    "    \n",
-    "    y_pred = estimator.predict(pd.DataFrame(x_test))\n",
-    "    \n",
-    "    mse, mae, r2 = local_eval_metrics(y_test, y_pred)\n",
-    "    report(estimator, mse, mae, r2)\n",
-    "\n",
-    "\n",
-    "#\n",
-    "# Debe coincidir con el mejor modelo encontrado en la celdas anteriores\n",
-    "#\n",
-    "check_estimator()"
+    "# def check_estimator():\n",
+    "#     \n",
+    "#     def local_eval_metrics(y_true, y_pred):\n",
+    "#         \n",
+    "#         from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score\n",
+    "# \n",
+    "#         mse = mean_squared_error(y_true, y_pred)\n",
+    "#         mae = mean_absolute_error(y_true, y_pred)\n",
+    "#         r2 = r2_score(y_true, y_pred)\n",
+    "# \n",
+    "#         return mse, mae, r2\n",
+    "# \n",
+    "#     import pandas as pd\n",
+    "#     from pyspark.ml.feature import VectorAssembler\n",
+    "#     from pyspark.sql import SparkSession\n",
+    "# \n",
+    "#     import mlflow\n",
+    "# \n",
+    "#     x, y = load_data()\n",
+    "#     x_train, x_test, y_train, y_test = make_train_test_split(x, y)\n",
+    "# \n",
+    "#     # -----------------------------------------------------------------------------------\n",
+    "#     # Debe prepararse la data. Este es un buen ejemplo para mostrar las dificultades\n",
+    "#     # asociadas a no tener un feature store.\n",
+    "#     #\n",
+    "#     pdf_test = pd.concat(\n",
+    "#         [x_test, pd.to_numeric(y_test, downcast=\"float\")], axis=\"columns\"\n",
+    "#     )\n",
+    "# \n",
+    "#     spark = SparkSession.builder.getOrCreate()\n",
+    "#     df_test = spark.createDataFrame(pdf_test)\n",
+    "# \n",
+    "#     vectorAssembler = VectorAssembler(\n",
+    "#         inputCols=list(pdf_test.columns[:-1]),\n",
+    "#         outputCol=\"features\",\n",
+    "#     )\n",
+    "#     df_test = vectorAssembler.transform(df_test)\n",
+    "#     x_test = df_test.toPandas()\n",
+    "#     spark.stop()\n",
+    "#     # -----------------------------------------------------------------------------------\n",
+    "# \n",
+    "#     # NOTA: este parámetro es copiado directamente de la interfase de MLflow\n",
+    "#     estimator_path = \"runs:/02298313752742d6ae411626d5aff18e/model\"\n",
+    "#     estimator = mlflow.pyfunc.load_model(estimator_path)\n",
+    "#     \n",
+    "#     y_pred = estimator.predict(pd.DataFrame(x_test))\n",
+    "#     \n",
+    "#     mse, mae, r2 = local_eval_metrics(y_test, y_pred)\n",
+    "#     report(estimator, mse, mae, r2)\n",
+    "# \n",
+    "# \n",
+    "# #\n",
+    "# # Debe coincidir con el mejor modelo encontrado en la celdas anteriores\n",
+    "# #\n",
+    "# check_estimator()"
    ]
   },
   {
    "cell_type": "code",
-   "execution_count": null,
+   "execution_count": 6,
    "id": "09f93621-61f9-4821-aa51-eee958d2febf",
    "metadata": {},
    "outputs": [],
