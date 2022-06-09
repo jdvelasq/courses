@@ -9,6 +9,8 @@ Productos de Datos
 
 
 
+**Nota** Incluir https://github.com/evidentlyai/evidently
+
 .. .....................................................................................
 ..
 ..     #####  ###
@@ -224,21 +226,9 @@ Sesión 04 --- 2022-06-03
 
                /notebooks/html/1-*
 
-         .. toctree::
-               :maxdepth: 1
-               :glob:
-
-               /notebooks/flask/1-*
 
 
 
-
-   **DataOps: Introducción**
-
-
-      * `El problema con Data Analytics --10-- <https://jdvelasq.github.io/dataops_01_problem//>`_ 
-
-      * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
 
 
 
@@ -256,6 +246,24 @@ Sesión 04 --- 2022-06-03
 
 Sesión 05 --- 2022-06-10
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+   **MLOps: Despliegue de modelos de ML y dashboards en Python**
+
+         .. toctree::
+               :maxdepth: 1
+               :glob:
+
+               /notebooks/flask/1-*
+
+
+   **DataOps: Introducción**
+
+
+      * `El problema con Data Analytics --10-- <https://jdvelasq.github.io/dataops_01_problem//>`_ 
+
+      * `Qué es DataOps? --20-- <https://jdvelasq.github.io/dataops_02_what_is_dataops/>`_ 
+
+
 
 
    **DataOps: Paso 0.--- Escriba código de nivel industrial**
