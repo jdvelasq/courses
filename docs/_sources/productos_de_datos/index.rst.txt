@@ -7,6 +7,8 @@ Productos de Datos
 
    https://classroom.github.com/a/XQTxhfXE
 
+   El plazo de entrega vence el **lunes 4 de julio a las 11:59 pm**.
+
 
 
 **Nota** Incluir https://github.com/evidentlyai/evidently
@@ -256,6 +258,22 @@ Sesión 05 --- 2022-06-10
                /notebooks/flask/1-*
 
 
+.. ......................................................................................
+..
+..     #####  #####
+..     #   #  #   
+..     #   #  #####
+..     #   #  #   #
+..     #####  #####
+
+.. raw:: html
+
+   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
+
+Sesión 06 --- 2022-06-17
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
    **DataOps: Introducción**
 
 
@@ -328,20 +346,6 @@ Sesión 05 --- 2022-06-10
                /notebooks/clean_code/1-*
 
 
-.. ......................................................................................
-..
-..     #####  #####
-..     #   #  #   
-..     #   #  #####
-..     #   #  #   #
-..     #####  #####
-
-.. raw:: html
-
-   <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
-Sesión 06 --- 2022-06-17
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
 
