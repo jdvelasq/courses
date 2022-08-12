@@ -5,7 +5,7 @@ Ciencia de los Datos Aplicada
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 01 --- 2022-mar-11
+Sesión 01 --- Agosto 12, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Presentación del curso** (1:00 hr)
@@ -51,7 +51,7 @@ Sesión 01 --- 2022-mar-11
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 02 --- 2022-mar-18 
+Sesión 02 --- Agosto 19, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:51:39**
 
@@ -103,7 +103,7 @@ Sesión 02 --- 2022-mar-18
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 03 --- 2022-mar-25
+Sesión 03 --- Agosto 26, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:05:14**
 
@@ -156,7 +156,7 @@ Sesión 03 --- 2022-mar-25
                 /notebooks/python_for_data_analysis_examples/1-*
 
 
-        `LAB --- Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
+...        `LAB --- Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
 
 
 
@@ -166,7 +166,7 @@ Sesión 03 --- 2022-mar-25
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
 
-Sesión 04 --- 2022-abr-01
+Sesión 04 --- Septiembre 2, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:21:59**
 
@@ -192,13 +192,13 @@ Sesión 04 --- 2022-abr-01
                 /notebooks/data_manipulation_with_pandas/2-*
 
 
-    `LAB --- Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
+...    `LAB --- Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
 
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 05 --- 2022-abr-08
+Sesión 05 --- Septiembre 9, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:31:42**
 
@@ -216,7 +216,7 @@ Sesión 05 --- 2022-abr-08
                 /notebooks/data_manipulation_with_sqlite3/1-*
 
 
-    `LAB --- Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
+
 
 
         **Ingestión de Datos con Python** --- 57:13 min
@@ -237,12 +237,13 @@ Sesión 05 --- 2022-abr-08
                 /notebooks/data_cleaning_with_pandas/1-*
 
 
+... `LAB --- Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
 
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 06 --- 2022-abr-22
+Sesión 06 --- Septiembre 16, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **0:00:00**
 
@@ -293,7 +294,7 @@ Sesión 06 --- 2022-abr-22
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 07 --- 2022-abr-29
+Sesión 07 --- Septiembre 23, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:28:41**
 
@@ -349,7 +350,7 @@ Sesión 07 --- 2022-abr-29
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 08 --- 2022-may-06
+Sesión 08 --- Septiembre 30, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:49:29**
 
@@ -363,7 +364,7 @@ Sesión 08 --- 2022-may-06
                 
                 /notebooks/statistical_thinking/2-*
 
-    `LAB --- Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/VyVSQnhj>`_.
+
 
 
         **Modelos Lineales** --- 0:43:20
@@ -378,6 +379,7 @@ Sesión 08 --- 2022-may-06
                 /notebooks/sklearn_supervised_02_linear_models/1-11*
                 /notebooks/sklearn_supervised_02_linear_models/1-12*
 
+...    `LAB --- Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/VyVSQnhj>`_.
 
     `LAB --- Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Mruk_tlO>`_.
 

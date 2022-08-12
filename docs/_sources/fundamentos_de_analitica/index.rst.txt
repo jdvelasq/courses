@@ -7,7 +7,7 @@ Fundamentos de Analítica
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 01 --- Agosto 9, 2022
+Sesión 01 --- Agosto 8, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **3:00:00**
 
@@ -35,7 +35,7 @@ Sesión 01 --- Agosto 9, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesion 02 --- Agosto 16, 2022
+Sesion 02 --- Agosto 15, 2022 (Festivo, avanzar en los videos)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **3:08:54**
 
@@ -73,7 +73,7 @@ Sesion 02 --- Agosto 16, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 03 --- Agosto 23, 2022
+Sesión 03 --- Agosto 22, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **2:00:41**
 
@@ -89,7 +89,7 @@ Sesión 03 --- Agosto 23, 2022
             /notebooks/python_for_data_analysis/4-*
 
 
-`LAB: Programación en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
+... `LAB: Programación en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 
 
 
@@ -101,7 +101,7 @@ Sesión 03 --- Agosto 23, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 04 --- Agosto 30, 2022
+Sesión 04 --- Agosto 29, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **1:44:22**
 
@@ -138,7 +138,7 @@ Sesión 04 --- Agosto 30, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 05 --- Septiembre 6, 2022
+Sesión 05 --- Septiembre 5, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **2:21:04**
 
@@ -164,7 +164,7 @@ Sesión 05 --- Septiembre 6, 2022
             /notebooks/data_manipulation_with_pandas/2-*
 
 
-`LAB: Manipulación de Datos con Pandas <https://classroom.github.com/a/UEifK_xF>`_.
+... `LAB: Manipulación de Datos con Pandas <https://classroom.github.com/a/UEifK_xF>`_.
 
 
 
@@ -176,7 +176,7 @@ Sesión 05 --- Septiembre 6, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 06 --- Septiembre 13, 2022
+Sesión 06 --- Septiembre 12, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Manipulación de Datos con SQL**
@@ -195,7 +195,7 @@ Sesión 06 --- Septiembre 13, 2022
 
 
 
-`LAB: Manipulación de Datos con SQL <https://classroom.github.com/a/plVTEd2E>`_.
+... `LAB: Manipulación de Datos con SQL <https://classroom.github.com/a/plVTEd2E>`_.
 
 
 
@@ -205,7 +205,7 @@ Sesión 06 --- Septiembre 13, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 07 --- Septiembre 27, 2022
+Sesión 07 --- Septiembre 19, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Visualización de Datos (I)**
@@ -235,7 +235,7 @@ Sesión 07 --- Septiembre 27, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 08 --- Octubre 24, 2022
+Sesión 08 --- Septiembre 26, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Visualización de Datos (II)**
@@ -255,7 +255,7 @@ Sesión 08 --- Octubre 24, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 09 --- Octubre 11, 2022
+Sesión 09 --- Octubre 03, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **2:30:59**
 
@@ -289,7 +289,7 @@ Sesión 09 --- Octubre 11, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 10 --- Octubre 18, 2022
+Sesión 10 --- Octubre 10, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-transformacion_de_datos.ipynb>`_.
@@ -321,7 +321,7 @@ Sesión 10 --- Octubre 18, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 11 --- Ocutbre 25, 2022
+Sesión 11 --- Ocutbre 17, 2022 (Festivo, avanzar en los videos)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Preprocesamiento de datos** --- 48:56 min
@@ -346,10 +346,10 @@ Sesión 11 --- Ocutbre 25, 2022
             /notebooks/sklearn_supervised_02_linear_models/1-12*
     
 
-`LAB: Regresión Lineal Univariada <https://classroom.github.com/a/Y-t0TIbS>`_.
+... `LAB: Regresión Lineal Univariada <https://classroom.github.com/a/Y-t0TIbS>`_.
 
 
-`LAB: Regresión Logística mushrooms dataset <https://classroom.github.com/a/tsH01_zS>`_.
+... `LAB: Regresión Logística mushrooms dataset <https://classroom.github.com/a/tsH01_zS>`_.
 
 
 
@@ -360,7 +360,7 @@ Sesión 11 --- Ocutbre 25, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 12 --- Novimenre 1, 2022
+Sesión 12 --- Octubre 24, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 `TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
@@ -394,11 +394,11 @@ Sesión 12 --- Novimenre 1, 2022
 
 
 
-`LAB: SVM german dataset <https://classroom.github.com/a/y-fbFl5n>`_.
+... `LAB: SVM german dataset <https://classroom.github.com/a/y-fbFl5n>`_.
 
-`LAB: k-NN votes <https://classroom.github.com/a/wFsfwpdj>`_.
+... `LAB: k-NN votes <https://classroom.github.com/a/wFsfwpdj>`_.
 
-`LAB: k-NN digits dataset <https://classroom.github.com/a/RNIN72lm>`_.
+... `LAB: k-NN digits dataset <https://classroom.github.com/a/RNIN72lm>`_.
 
 
 
@@ -408,7 +408,7 @@ Sesión 12 --- Novimenre 1, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 13 --- Noviembre 8, 2022
+Sesión 13 --- Octubre 31, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
     **Descomposición de datos** --- 42:45  min
@@ -435,7 +435,7 @@ Sesión 13 --- Noviembre 8, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 14 --- Noviembre 15, 2022
+Sesión 14 --- Noviembre 7, 2022 (Festivo, avanzar en los videos)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
         .. toctree::
@@ -456,7 +456,7 @@ Sesión 14 --- Noviembre 15, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 15 --- Noviembre 22, 2022
+Sesión 15 --- Noviembre 14, 2022 (Festivo, avanzar en los videos)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
@@ -466,7 +466,7 @@ Sesión 15 --- Noviembre 22, 2022
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-Sesión 16 --- Noviembre 29, 2022
+Sesión 16 --- Noviembre 21, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 **Asesoria y Cierre del Curso**
