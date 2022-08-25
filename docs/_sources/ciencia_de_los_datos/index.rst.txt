@@ -107,7 +107,7 @@ Sesión 03 --- Agosto 26, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     **2:05:14**
 
-    `TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
+    `TALLER SINCRONICO <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
 
 
 
@@ -214,8 +214,6 @@ Sesión 05 --- Septiembre 9, 2022
                 :glob:
 
                 /notebooks/data_manipulation_with_sqlite3/1-*
-
-
 
 
 
