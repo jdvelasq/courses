@@ -32,7 +32,7 @@ Sesión 02 --- 2021-10-16
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **2:20:19**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
 
 **Fundamentos optimización para aprendizaje automático** --- 78:24 min
 
@@ -79,7 +79,7 @@ Sesión 03 --- 2021-10-23
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **2:13:22**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-gridsearchcv.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-gridsearchcv.ipynb>`_.
 
 
 **Selección y evaluación del modelo**
@@ -107,7 +107,7 @@ Sesión 04 --- 2021-10-30
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **2:28:02**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-transformacion_de_datos.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-transformacion_de_datos.ipynb>`_.
 
 
 **Transformaciones del conjunto de datos (I)**
@@ -157,7 +157,7 @@ Sesión 05 --- 2021-11-06
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **2:29:16**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-sgd.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-sgd.ipynb>`_.
 
 
 **Transformaciones del conjunto de datos (II)**
@@ -239,7 +239,7 @@ Sesión 06 --- 2021-11-13
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **3:01:37**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-tuberia_modelos.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-tuberia_modelos.ipynb>`_.
 
 
 **Aprendizaje supervizado (II)**
@@ -291,7 +291,7 @@ Sesión 07 --- 2021-11-20
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **3:16:30**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
 
 
     **Redes Neuronales** --- 1:10:33
@@ -371,7 +371,7 @@ Sesión 08 --- 2021-11-27
 **(2:06:34)**
 
 
-**TALLER PRESENCIAL**.--- Explique cual es el proceso para desarrollar un modelo de regresión/clasificación. 
+**TALLER SINCRONICO VIA GOOGLE MEET**.--- Explique cual es el proceso para desarrollar un modelo de regresión/clasificación. 
 Si alguien le presenta un modelo que desarrollo, usted que le pediria?
 
 **Aprendizaje No Supervizado II** 

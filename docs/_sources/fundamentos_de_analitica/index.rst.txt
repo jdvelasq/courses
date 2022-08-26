@@ -109,7 +109,7 @@ Sesión 03 --- Septiembre 5, 2022
 **2:05:14**
 
 
-    `TALLER SINCRONICO <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
+    `TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
 
     **Python para Análisis de Datos (IV)**  --- 2:00:41 hr
 
@@ -180,7 +180,7 @@ Sesión 04 --- Septiembre 12, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **1:44:22**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
 
 
 
@@ -217,7 +217,7 @@ Sesión 05 --- Septiembre 19, 2022
 **2:21:04**
 
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
 **Manipulación de Datos con Pandas**
 
@@ -478,7 +478,7 @@ Sesión 15 --- Noviembre 21, 2022
 
 **2:30:59**
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
 
 
 **Fundamentos de Machine Learning**
@@ -505,7 +505,7 @@ Sesión 15 --- Noviembre 21, 2022
 
 
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-transformacion_de_datos.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-transformacion_de_datos.ipynb>`_.
 
 
     **Selección y evaluación del modelo** --- 60:47 min
@@ -565,7 +565,7 @@ Sesión 15 --- Noviembre 21, 2022
 
 
 
-`TALLER PRESENCIAL <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
+`TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
 
     **Clustering** --- 45:09 min
 
