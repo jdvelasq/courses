@@ -1,6 +1,7 @@
 Ciencia de los Datos Aplicada
 =========================================================================================
 
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -47,6 +48,8 @@ Sesión 01 --- Agosto 12, 2022
     .. /notebooks/GitHub/1-*
 
 
+
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -99,13 +102,14 @@ Sesión 02 --- Agosto 19, 2022
                 /notebooks/the_python_tutorial_05_data_structures/1-*
 
 
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
 Sesión 03 --- Agosto 26, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    **2:05:14**
+**2:05:14**
 
     `TALLER SINCRONICO VIA GOOGLE MEET <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
 
@@ -160,11 +164,10 @@ Sesión 03 --- Agosto 26, 2022
 
 
 
-
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
-
 
 Sesión 04 --- Septiembre 2, 2022
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -194,6 +197,8 @@ Sesión 04 --- Septiembre 2, 2022
 
 ...    `LAB --- Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
 
+
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -237,6 +242,8 @@ Sesión 05 --- Septiembre 9, 2022
 
 ... `LAB --- Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
 
+
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -259,8 +266,6 @@ Sesión 06 --- Septiembre 16, 2022
                 :glob:
 
                 /notebooks/data_visualization_with_matplotlib/1-*
-
-
 
 
         **Análisis Exploratorio de Datos (I)**
@@ -287,7 +292,7 @@ Sesión 06 --- Septiembre 16, 2022
 
 
 
-
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -344,6 +349,7 @@ Sesión 07 --- Septiembre 23, 2022
                 /notebooks/statistical_thinking/1-*
         
 
+.. ......................................................................................
 .. raw:: html
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
@@ -377,7 +383,7 @@ Sesión 08 --- Septiembre 30, 2022
                 /notebooks/sklearn_supervised_02_linear_models/1-11*
                 /notebooks/sklearn_supervised_02_linear_models/1-12*
 
-...    `LAB --- Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/VyVSQnhj>`_.
+    `LAB --- Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/VyVSQnhj>`_.
 
     `LAB --- Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Mruk_tlO>`_.
 
