@@ -23,8 +23,10 @@ Material de apoyo para cursos
     :hidden:
     :maxdepth: 1
 
-    analitica_de_grandes_datos/index
+    
+    analitica_descriptiva/index
     analitica_predictiva/index
+    analitica_de_grandes_datos/index
     ciencia_de_los_datos/index    
     productos_de_datos/index
 

@@ -1,0 +1,920 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Introducción al procesamiento básico de texto usando TextBlob\n",
+    "\n",
+    "* *90 min* | Última modificación: Diciembre 2, 2020"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "A continuación se definen y ejemplifican las tareas básicas de procesamiento de texto en Python. Por simplicidad se usará el paquete `TextBlob`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "## Se crea el directorio de entrada\n",
+    "!rm -rf input output\n",
+    "!mkdir input"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Writing input/text0.txt\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile input/text0.txt\n",
+    "Analytics is the discovery, interpretation, and communication of meaningful patterns\n",
+    "in data. Especially valuable in areas rich with recorded information, analytics relies\n",
+    "on the simultaneous application of statistics, computer programming and operations research\n",
+    "to quantify performance.\n",
+    "\n",
+    "Organizations may apply analytics to business data to describe, predict, and improve business\n",
+    "performance. Specifically, areas within analytics include predictive analytics, prescriptive\n",
+    "analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big\n",
+    "Data Analytics, retail analytics, store assortment and stock-keeping unit optimization,\n",
+    "marketing optimization and marketing mix modeling, web analytics, call analytics, speech\n",
+    "analytics, sales force sizing and optimization, price and promotion modeling, predictive\n",
+    "science, credit risk analysis, and fraud analytics. Since analytics can require extensive\n",
+    "computation (see big data), the algorithms and software used for analytics harness the most\n",
+    "current methods in computer science, statistics, and mathematics."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Writing input/text1.txt\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile input/text1.txt\n",
+    "The field of data analysis. Analytics often involves studying past historical data to\n",
+    "research potential trends, to analyze the effects of certain decisions or events, or to\n",
+    "evaluate the performance of a given tool or scenario. The goal of analytics is to improve\n",
+    "the business by gaining knowledge which can be used to make improvements or changes."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Writing input/text2.txt\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile input/text2.txt\n",
+    "Data analytics (DA) is the process of examining data sets in order to draw conclusions\n",
+    "about the information they contain, increasingly with the aid of specialized systems\n",
+    "and software. Data analytics technologies and techniques are widely used in commercial\n",
+    "industries to enable organizations to make more-informed business decisions and by\n",
+    "scientists and researchers to verify or disprove scientific models, theories and\n",
+    "hypotheses."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Lectura de datos"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['Analytics is the discovery, interpretation, and communication of meaningful patterns\\n',\n",
+       " 'in data. Especially valuable in areas rich with recorded information, analytics relies\\n',\n",
+       " 'on the simultaneous application of statistics, computer programming and operations research\\n',\n",
+       " 'to quantify performance.\\n',\n",
+       " '\\n',\n",
+       " 'Organizations may apply analytics to business data to describe, predict, and improve business\\n',\n",
+       " 'performance. Specifically, areas within analytics include predictive analytics, prescriptive\\n',\n",
+       " 'analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big\\n',\n",
+       " 'Data Analytics, retail analytics, store assortment and stock-keeping unit optimization,\\n',\n",
+       " 'marketing optimization and marketing mix modeling, web analytics, call analytics, speech\\n',\n",
+       " 'analytics, sales force sizing and optimization, price and promotion modeling, predictive\\n',\n",
+       " 'science, credit risk analysis, and fraud analytics. Since analytics can require extensive\\n',\n",
+       " 'computation (see big data), the algorithms and software used for analytics harness the most\\n',\n",
+       " 'current methods in computer science, statistics, and mathematics.\\n',\n",
+       " 'The field of data analysis. Analytics often involves studying past historical data to\\n',\n",
+       " 'research potential trends, to analyze the effects of certain decisions or events, or to\\n',\n",
+       " 'evaluate the performance of a given tool or scenario. The goal of analytics is to improve\\n',\n",
+       " 'the business by gaining knowledge which can be used to make improvements or changes.\\n',\n",
+       " 'Data analytics (DA) is the process of examining data sets in order to draw conclusions\\n',\n",
+       " 'about the information they contain, increasingly with the aid of specialized systems\\n',\n",
+       " 'and software. Data analytics technologies and techniques are widely used in commercial\\n',\n",
+       " 'industries to enable organizations to make more-informed business decisions and by\\n',\n",
+       " 'scientists and researchers to verify or disprove scientific models, theories and\\n',\n",
+       " 'hypotheses.\\n']"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Itera sobre todos los archivos de la carpeta `input/`\n",
+    "## para realizar la lectura. Note que readlines retorna \n",
+    "## una lista de strings, donde cada string es una linea \n",
+    "## del archivo\n",
+    "##\n",
+    "import glob\n",
+    "\n",
+    "raw_text = []\n",
+    "for filename in glob.glob(\"input/*.txt\"):\n",
+    "    with open(filename, \"r\") as f:\n",
+    "        raw_text += f.readlines()\n",
+    "\n",
+    "raw_text"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'Analytics is the discovery, interpretation, and communication of meaningful patterns\\n in data. Especially valuable in areas rich with recorded information, analytics relies\\n on the simultaneous application of statistics, computer programming and operations research\\n to quantify performance.\\n \\n Organizations may apply analytics to business data to describe, predict, and improve business\\n performance. Specifically, areas within analytics include predictive analytics, prescriptive\\n analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big\\n Data Analytics, retail analytics, store assortment and stock-keeping unit optimization,\\n marketing optimization and marketing mix modeling, web analytics, call analytics, speech\\n analytics, sales force sizing and optimization, price and promotion modeling, predictive\\n science, credit risk analysis, and fraud analytics. Since analytics can require extensive\\n computation (see big data), the algorithms and software used for analytics harness the most\\n current methods in computer science, statistics, and mathematics.\\n The field of data analysis. Analytics often involves studying past historical data to\\n research potential trends, to analyze the effects of certain decisions or events, or to\\n evaluate the performance of a given tool or scenario. The goal of analytics is to improve\\n the business by gaining knowledge which can be used to make improvements or changes.\\n Data analytics (DA) is the process of examining data sets in order to draw conclusions\\n about the information they contain, increasingly with the aid of specialized systems\\n and software. Data analytics technologies and techniques are widely used in commercial\\n industries to enable organizations to make more-informed business decisions and by\\n scientists and researchers to verify or disprove scientific models, theories and\\n hypotheses.\\n'"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## Concatena las cadenas de texto en un solo string\n",
+    "raw_text = ' '.join(raw_text)\n",
+    "raw_text"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'Analytics is the discovery, interpretation, and communication of meaningful patterns in data. Especially valuable in areas rich with recorded information, analytics relies on the simultaneous application of statistics, computer programming and operations research to quantify performance.  Organizations may apply analytics to business data to describe, predict, and improve business performance. Specifically, areas within analytics include predictive analytics, prescriptive analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, marketing optimization and marketing mix modeling, web analytics, call analytics, speech analytics, sales force sizing and optimization, price and promotion modeling, predictive science, credit risk analysis, and fraud analytics. Since analytics can require extensive computation (see big data), the algorithms and software used for analytics harness the most current methods in computer science, statistics, and mathematics. The field of data analysis. Analytics often involves studying past historical data to research potential trends, to analyze the effects of certain decisions or events, or to evaluate the performance of a given tool or scenario. The goal of analytics is to improve the business by gaining knowledge which can be used to make improvements or changes. Data analytics (DA) is the process of examining data sets in order to draw conclusions about the information they contain, increasingly with the aid of specialized systems and software. Data analytics technologies and techniques are widely used in commercial industries to enable organizations to make more-informed business decisions and by scientists and researchers to verify or disprove scientific models, theories and hypotheses.'"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "## Remueve los retornos de carro. \n",
+    "raw_text = raw_text.replace('\\n', '')\n",
+    "raw_text"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Procesamiento básico de texto"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TextBlob(\"Analytics is the discovery, interpretation, and communication of meaningful patterns in data. Especially valuable in areas rich with recorded information, analytics relies on the simultaneous application of statistics, computer programming and operations research to quantify performance.  Organizations may apply analytics to business data to describe, predict, and improve business performance. Specifically, areas within analytics include predictive analytics, prescriptive analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, marketing optimization and marketing mix modeling, web analytics, call analytics, speech analytics, sales force sizing and optimization, price and promotion modeling, predictive science, credit risk analysis, and fraud analytics. Since analytics can require extensive computation (see big data), the algorithms and software used for analytics harness the most current methods in computer science, statistics, and mathematics. The field of data analysis. Analytics often involves studying past historical data to research potential trends, to analyze the effects of certain decisions or events, or to evaluate the performance of a given tool or scenario. The goal of analytics is to improve the business by gaining knowledge which can be used to make improvements or changes. Data analytics (DA) is the process of examining data sets in order to draw conclusions about the information they contain, increasingly with the aid of specialized systems and software. Data analytics technologies and techniques are widely used in commercial industries to enable organizations to make more-informed business decisions and by scientists and researchers to verify or disprove scientific models, theories and hypotheses.\")"
+      ]
+     },
+     "execution_count": 8,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Crea un objeto TextBlob a partir del cual se realiza\n",
+    "## el proceasmiento\n",
+    "##\n",
+    "from textblob import TextBlob\n",
+    "\n",
+    "text = TextBlob(raw_text)\n",
+    "text"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TextBlob(\"ANALYTICS IS THE DISCOVERY, INTERPRETATION, AND COMMUNICATION OF MEANINGFUL PATTERNS IN DATA. ESPECIALLY VALUABLE IN AREAS RICH WITH RECORDED INFORMATION, ANALYTICS RELIES ON THE SIMULTANEOUS APPLICATION OF STATISTICS, COMPUTER PROGRAMMING AND OPERATIONS RESEARCH TO QUANTIFY PERFORMANCE.  ORGANIZATIONS MAY APPLY ANALYTICS TO BUSINESS DATA TO DESCRIBE, PREDICT, AND IMPROVE BUSINESS PERFORMANCE. SPECIFICALLY, AREAS WITHIN ANALYTICS INCLUDE PREDICTIVE ANALYTICS, PRESCRIPTIVE ANALYTICS, ENTERPRISE DECISION MANAGEMENT, DESCRIPTIVE ANALYTICS, COGNITIVE ANALYTICS, BIG DATA ANALYTICS, RETAIL ANALYTICS, STORE ASSORTMENT AND STOCK-KEEPING UNIT OPTIMIZATION, MARKETING OPTIMIZATION AND MARKETING MIX MODELING, WEB ANALYTICS, CALL ANALYTICS, SPEECH ANALYTICS, SALES FORCE SIZING AND OPTIMIZATION, PRICE AND PROMOTION MODELING, PREDICTIVE SCIENCE, CREDIT RISK ANALYSIS, AND FRAUD ANALYTICS. SINCE ANALYTICS CAN REQUIRE EXTENSIVE COMPUTATION (SEE BIG DATA), THE ALGORITHMS AND SOFTWARE USED FOR ANALYTICS HARNESS THE MOST CURRENT METHODS IN COMPUTER SCIENCE, STATISTICS, AND MATHEMATICS. THE FIELD OF DATA ANALYSIS. ANALYTICS OFTEN INVOLVES STUDYING PAST HISTORICAL DATA TO RESEARCH POTENTIAL TRENDS, TO ANALYZE THE EFFECTS OF CERTAIN DECISIONS OR EVENTS, OR TO EVALUATE THE PERFORMANCE OF A GIVEN TOOL OR SCENARIO. THE GOAL OF ANALYTICS IS TO IMPROVE THE BUSINESS BY GAINING KNOWLEDGE WHICH CAN BE USED TO MAKE IMPROVEMENTS OR CHANGES. DATA ANALYTICS (DA) IS THE PROCESS OF EXAMINING DATA SETS IN ORDER TO DRAW CONCLUSIONS ABOUT THE INFORMATION THEY CONTAIN, INCREASINGLY WITH THE AID OF SPECIALIZED SYSTEMS AND SOFTWARE. DATA ANALYTICS TECHNOLOGIES AND TECHNIQUES ARE WIDELY USED IN COMMERCIAL INDUSTRIES TO ENABLE ORGANIZATIONS TO MAKE MORE-INFORMED BUSINESS DECISIONS AND BY SCIENTISTS AND RESEARCHERS TO VERIFY OR DISPROVE SCIENTIFIC MODELS, THEORIES AND HYPOTHESES.\")"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Transformaciones básicas usando las funciones propias de\n",
+    "## los strings de Python\n",
+    "## \n",
+    "text.upper()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TextBlob(\"is the discover\")"
+      ]
+     },
+     "execution_count": 10,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "text[10:25]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('Analytics', 'NNS'),\n",
+       " ('is', 'VBZ'),\n",
+       " ('the', 'DT'),\n",
+       " ('discovery', 'NN'),\n",
+       " ('interpretation', 'NN'),\n",
+       " ('and', 'CC'),\n",
+       " ('communication', 'NN'),\n",
+       " ('of', 'IN'),\n",
+       " ('meaningful', 'JJ'),\n",
+       " ('patterns', 'NNS'),\n",
+       " ('in', 'IN'),\n",
+       " ('data', 'NNS'),\n",
+       " ('Especially', 'RB'),\n",
+       " ('valuable', 'JJ'),\n",
+       " ('in', 'IN'),\n",
+       " ('areas', 'NNS'),\n",
+       " ('rich', 'VBP'),\n",
+       " ('with', 'IN'),\n",
+       " ('recorded', 'JJ'),\n",
+       " ('information', 'NN')]"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Part-of-speech Tagging (POS-tag)\n",
+    "##\n",
+    "##    TAG    Descripción                            Ejemplo\n",
+    "##    -------------------------------------------------------------------------\n",
+    "##    CC     Coordination conjuntion                and, or\n",
+    "##    CD     Cardinal number                        one, two, 3\n",
+    "##    DT     Determiner                             a, the\n",
+    "##    EX     Existential there                      there were two cars \n",
+    "##    FW     Foreign word                           hola mundo cruel \n",
+    "##    IN     Preposition/subordinating conjunction  of, in, on, that\n",
+    "##    JJ     Adjective                              quick, lazy\n",
+    "##    JJR    Adjective, comparative                 quicker, lazier\n",
+    "##    JJS    Adjective, superlative                 quickest, laziest\n",
+    "##    NN     Noun, singular or mass                 fox, dog\n",
+    "##    NNS    Noun, plural                           foxes, dogs\n",
+    "##    NN PS  Noun, proper singular                  John, Alice  \n",
+    "##    NNP    Noun, proper plural                    Vikings, Indians, Germans\n",
+    "##    ...\n",
+    "## \n",
+    "text.tags[:20]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "WordList(['analytics', 'meaningful patterns', 'especially', 'analytics relies', 'simultaneous application', 'operations research', 'quantify performance', 'organizations', 'business data', 'business performance', 'specifically', 'predictive analytics', 'prescriptive analytics', 'enterprise decision management', 'descriptive analytics', 'cognitive analytics', 'data analytics', 'retail analytics', 'store assortment', 'unit optimization', 'web analytics', 'speech analytics', 'sales force', 'predictive science', 'credit risk analysis', 'fraud analytics', 'extensive computation', 'big data', 'analytics harness', 'current methods', 'computer science', 'data analysis', 'analytics', 'historical data', 'research potential trends', 'certain decisions', 'data', 'da', 'data', 'analytics technologies', 'commercial industries', 'enable organizations', 'business decisions', 'scientific models'])"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Noun phrase extraction\n",
+    "##\n",
+    "text.noun_phrases"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Sentiment(polarity=0.0885204081632653, subjectivity=0.4217687074829932)"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Sentiment Analysis\n",
+    "##\n",
+    "text.sentiment"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "WordList(['Analytics', 'is', 'the', 'discovery', 'interpretation', 'and', 'communication', 'of', 'meaningful', 'patterns', 'in', 'data', 'Especially', 'valuable', 'in', 'areas', 'rich', 'with', 'recorded', 'information', 'analytics', 'relies', 'on', 'the', 'simultaneous', 'application', 'of', 'statistics', 'computer', 'programming', 'and', 'operations', 'research', 'to', 'quantify', 'performance', 'Organizations', 'may', 'apply', 'analytics', 'to', 'business', 'data', 'to', 'describe', 'predict', 'and', 'improve', 'business', 'performance', 'Specifically', 'areas', 'within', 'analytics', 'include', 'predictive', 'analytics', 'prescriptive', 'analytics', 'enterprise', 'decision', 'management', 'descriptive', 'analytics', 'cognitive', 'analytics', 'Big', 'Data', 'Analytics', 'retail', 'analytics', 'store', 'assortment', 'and', 'stock-keeping', 'unit', 'optimization', 'marketing', 'optimization', 'and', 'marketing', 'mix', 'modeling', 'web', 'analytics', 'call', 'analytics', 'speech', 'analytics', 'sales', 'force', 'sizing', 'and', 'optimization', 'price', 'and', 'promotion', 'modeling', 'predictive', 'science', 'credit', 'risk', 'analysis', 'and', 'fraud', 'analytics', 'Since', 'analytics', 'can', 'require', 'extensive', 'computation', 'see', 'big', 'data', 'the', 'algorithms', 'and', 'software', 'used', 'for', 'analytics', 'harness', 'the', 'most', 'current', 'methods', 'in', 'computer', 'science', 'statistics', 'and', 'mathematics', 'The', 'field', 'of', 'data', 'analysis', 'Analytics', 'often', 'involves', 'studying', 'past', 'historical', 'data', 'to', 'research', 'potential', 'trends', 'to', 'analyze', 'the', 'effects', 'of', 'certain', 'decisions', 'or', 'events', 'or', 'to', 'evaluate', 'the', 'performance', 'of', 'a', 'given', 'tool', 'or', 'scenario', 'The', 'goal', 'of', 'analytics', 'is', 'to', 'improve', 'the', 'business', 'by', 'gaining', 'knowledge', 'which', 'can', 'be', 'used', 'to', 'make', 'improvements', 'or', 'changes', 'Data', 'analytics', 'DA', 'is', 'the', 'process', 'of', 'examining', 'data', 'sets', 'in', 'order', 'to', 'draw', 'conclusions', 'about', 'the', 'information', 'they', 'contain', 'increasingly', 'with', 'the', 'aid', 'of', 'specialized', 'systems', 'and', 'software', 'Data', 'analytics', 'technologies', 'and', 'techniques', 'are', 'widely', 'used', 'in', 'commercial', 'industries', 'to', 'enable', 'organizations', 'to', 'make', 'more-informed', 'business', 'decisions', 'and', 'by', 'scientists', 'and', 'researchers', 'to', 'verify', 'or', 'disprove', 'scientific', 'models', 'theories', 'and', 'hypotheses'])"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Tokenization in words\n",
+    "##   Note que elimina los signos de puntuación\n",
+    "##\n",
+    "text.words"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[Sentence(\"Analytics is the discovery, interpretation, and communication of meaningful patterns in data.\"),\n",
+       " Sentence(\"Especially valuable in areas rich with recorded information, analytics relies on the simultaneous application of statistics, computer programming and operations research to quantify performance.\"),\n",
+       " Sentence(\"Organizations may apply analytics to business data to describe, predict, and improve business performance.\"),\n",
+       " Sentence(\"Specifically, areas within analytics include predictive analytics, prescriptive analytics, enterprise decision management, descriptive analytics, cognitive analytics, Big Data Analytics, retail analytics, store assortment and stock-keeping unit optimization, marketing optimization and marketing mix modeling, web analytics, call analytics, speech analytics, sales force sizing and optimization, price and promotion modeling, predictive science, credit risk analysis, and fraud analytics.\"),\n",
+       " Sentence(\"Since analytics can require extensive computation (see big data), the algorithms and software used for analytics harness the most current methods in computer science, statistics, and mathematics.\"),\n",
+       " Sentence(\"The field of data analysis.\"),\n",
+       " Sentence(\"Analytics often involves studying past historical data to research potential trends, to analyze the effects of certain decisions or events, or to evaluate the performance of a given tool or scenario.\"),\n",
+       " Sentence(\"The goal of analytics is to improve the business by gaining knowledge which can be used to make improvements or changes.\"),\n",
+       " Sentence(\"Data analytics (DA) is the process of examining data sets in order to draw conclusions about the information they contain, increasingly with the aid of specialized systems and software.\"),\n",
+       " Sentence(\"Data analytics technologies and techniques are widely used in commercial industries to enable organizations to make more-informed business decisions and by scientists and researchers to verify or disprove scientific models, theories and hypotheses.\")]"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Tokenization in sentences\n",
+    "##\n",
+    "text.sentences"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "('patterns', 'pattern')"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Singulares\n",
+    "##\n",
+    "text.words[9], text.words[9].singularize()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "('discovery', 'discoveries')"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Plurales\n",
+    "##\n",
+    "text.words[3], text.words[3].pluralize()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "WordList(['Analytics', 'is', 'the', 'discovery', 'interpretation', 'and', 'communication', 'of', 'meaningful', 'pattern', 'in', 'data', 'Especially', 'valuable', 'in', 'area', 'rich', 'with', 'recorded', 'information', 'analytics', 'relies', 'on', 'the', 'simultaneous', 'application', 'of', 'statistic', 'computer', 'programming', 'and', 'operation', 'research', 'to', 'quantify', 'performance', 'Organizations', 'may', 'apply', 'analytics', 'to', 'business', 'data', 'to', 'describe', 'predict', 'and', 'improve', 'business', 'performance', 'Specifically', 'area', 'within', 'analytics', 'include', 'predictive', 'analytics', 'prescriptive', 'analytics', 'enterprise', 'decision', 'management', 'descriptive', 'analytics', 'cognitive', 'analytics', 'Big', 'Data', 'Analytics', 'retail', 'analytics', 'store', 'assortment', 'and', 'stock-keeping', 'unit', 'optimization', 'marketing', 'optimization', 'and', 'marketing', 'mix', 'modeling', 'web', 'analytics', 'call', 'analytics', 'speech', 'analytics', 'sale', 'force', 'sizing', 'and', 'optimization', 'price', 'and', 'promotion', 'modeling', 'predictive', 'science', 'credit', 'risk', 'analysis', 'and', 'fraud', 'analytics', 'Since', 'analytics', 'can', 'require', 'extensive', 'computation', 'see', 'big', 'data', 'the', 'algorithm', 'and', 'software', 'used', 'for', 'analytics', 'harness', 'the', 'most', 'current', 'method', 'in', 'computer', 'science', 'statistic', 'and', 'mathematics', 'The', 'field', 'of', 'data', 'analysis', 'Analytics', 'often', 'involves', 'studying', 'past', 'historical', 'data', 'to', 'research', 'potential', 'trend', 'to', 'analyze', 'the', 'effect', 'of', 'certain', 'decision', 'or', 'event', 'or', 'to', 'evaluate', 'the', 'performance', 'of', 'a', 'given', 'tool', 'or', 'scenario', 'The', 'goal', 'of', 'analytics', 'is', 'to', 'improve', 'the', 'business', 'by', 'gaining', 'knowledge', 'which', 'can', 'be', 'used', 'to', 'make', 'improvement', 'or', 'change', 'Data', 'analytics', 'DA', 'is', 'the', 'process', 'of', 'examining', 'data', 'set', 'in', 'order', 'to', 'draw', 'conclusion', 'about', 'the', 'information', 'they', 'contain', 'increasingly', 'with', 'the', 'aid', 'of', 'specialized', 'system', 'and', 'software', 'Data', 'analytics', 'technology', 'and', 'technique', 'are', 'widely', 'used', 'in', 'commercial', 'industry', 'to', 'enable', 'organization', 'to', 'make', 'more-informed', 'business', 'decision', 'and', 'by', 'scientist', 'and', 'researcher', 'to', 'verify', 'or', 'disprove', 'scientific', 'model', 'theory', 'and', 'hypothesis'])"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Lemmatization\n",
+    "##\n",
+    "text.words.lemmatize()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[Synset('wind.n.01'),\n",
+       " Synset('wind.n.02'),\n",
+       " Synset('wind.n.03'),\n",
+       " Synset('wind.n.04'),\n",
+       " Synset('tip.n.03'),\n",
+       " Synset('wind_instrument.n.01'),\n",
+       " Synset('fart.n.01'),\n",
+       " Synset('wind.n.08'),\n",
+       " Synset('weave.v.04'),\n",
+       " Synset('wind.v.02'),\n",
+       " Synset('wind.v.03'),\n",
+       " Synset('scent.v.02'),\n",
+       " Synset('wind.v.05'),\n",
+       " Synset('wreathe.v.03'),\n",
+       " Synset('hoist.v.01')]"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Wordnet integration.\n",
+    "##   Wordnet es una base de datos léxica, donde los sustantivos, verbos,\n",
+    "##   adverbios y adjetivos están agrupados en conjuntos de sinónimos\n",
+    "##   cognitios (synsets)\n",
+    "##\n",
+    "##\n",
+    "from textblob import Word\n",
+    "\n",
+    "Word('wind').synsets"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'air moving (sometimes with considerable force) from an area of high pressure to an area of low pressure'"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Synsets\n",
+    "##\n",
+    "from textblob.wordnet import Synset\n",
+    "\n",
+    "Synset('wind.n.01').definition()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "air moving (sometimes with considerable force) from an area of high pressure to an area of low pressure\n",
+      "a tendency or force that influences events\n",
+      "breath\n",
+      "empty rhetoric or insincere or exaggerated talk\n",
+      "an indication of potential opportunity\n",
+      "a musical instrument in which the sound is produced by an enclosed column of air that is moved by the breath\n",
+      "a reflex that expels intestinal gas through the anus\n",
+      "the act of winding or twisting\n",
+      "to move or cause to move in a sinuous, spiral, or circular course\n",
+      "extend in curves and turns\n",
+      "arrange or or coil around\n",
+      "catch the scent of; get wind of\n",
+      "coil the spring of (some mechanical device) by turning a stem\n",
+      "form into a wreath\n",
+      "raise or haul up with or as if with mechanical help\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Iteración sobre los synsets usando definition()\n",
+    "##\n",
+    "for synset in Word('wind').synsets:\n",
+    "    print(synset.definition())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['air moving (sometimes with considerable force) from an area of high pressure to an area of low pressure',\n",
+       " 'a tendency or force that influences events',\n",
+       " 'breath',\n",
+       " 'empty rhetoric or insincere or exaggerated talk',\n",
+       " 'an indication of potential opportunity',\n",
+       " 'a musical instrument in which the sound is produced by an enclosed column of air that is moved by the breath',\n",
+       " 'a reflex that expels intestinal gas through the anus',\n",
+       " 'the act of winding or twisting',\n",
+       " 'to move or cause to move in a sinuous, spiral, or circular course',\n",
+       " 'extend in curves and turns',\n",
+       " 'arrange or or coil around',\n",
+       " 'catch the scent of; get wind of',\n",
+       " 'coil the spring of (some mechanical device) by turning a stem',\n",
+       " 'form into a wreath',\n",
+       " 'raise or haul up with or as if with mechanical help']"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Acceso directo a las definiciones\n",
+    "##\n",
+    "Word('wind').definitions"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "TextBlob(\"I have good spelling!\")"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Corrección de textos.\n",
+    "##   corrección de la frase\n",
+    "##\n",
+    "TextBlob(\"I havv goood speling!\").correct()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[('fallibility', 1.0)]"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Corrección de textos.\n",
+    "##   corrección de una palabra\n",
+    "##\n",
+    "Word(\"falibility\").spellcheck()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "20"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Frecuencia de la palabras con word_counts\n",
+    "##\n",
+    "text.word_counts['analytics']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "20"
+      ]
+     },
+     "execution_count": 26,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Frecuencia usando count\n",
+    "##\n",
+    "text.words.count('analytics')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "17"
+      ]
+     },
+     "execution_count": 27,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Conteo sensitivo al caso\n",
+    "##\n",
+    "text.words.count('analytics', case_sensitive=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "WordList(['analytics', 'meaningful patterns', 'especially', 'analytics relies', 'simultaneous application', 'operations research', 'quantify performance', 'organizations', 'business data', 'business performance', 'specifically', 'predictive analytics', 'prescriptive analytics', 'enterprise decision management', 'descriptive analytics', 'cognitive analytics', 'data analytics', 'retail analytics', 'store assortment', 'unit optimization', 'web analytics', 'speech analytics', 'sales force', 'predictive science', 'credit risk analysis', 'fraud analytics', 'extensive computation', 'big data', 'analytics harness', 'current methods', 'computer science', 'data analysis', 'analytics', 'historical data', 'research potential trends', 'certain decisions', 'data', 'da', 'data', 'analytics technologies', 'commercial industries', 'enable organizations', 'business decisions', 'scientific models'])"
+      ]
+     },
+     "execution_count": 28,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Noun phrases\n",
+    "##\n",
+    "text.noun_phrases"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2"
+      ]
+     },
+     "execution_count": 29,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "text.noun_phrases.count('analytics')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Analytics/NNP/B-NP/O\n",
+      "is/VBZ/B-VP/O\n",
+      "the/DT/B-NP/O\n",
+      "discovery/NN/I-NP/O\n",
+      ",/,/O/O\n",
+      "interpretation/NN/B-NP/O\n",
+      ",/,/O/O\n",
+      "and/CC/O/O\n",
+      "communication/NN/B-NP/O\n",
+      "of/IN/B-PP/B-PNP\n",
+      "meaningful/JJ/B-NP/I-PNP\n",
+      "patterns/NNS/I-NP/I-PNP\n",
+      "in/IN/B-PP/B-PNP\n",
+      "data/NNS/B-NP/I-PNP\n",
+      "././O/O\n",
+      "Especially/RB/B-ADJP/O\n"
+     ]
+    }
+   ],
+   "source": [
+    "##\n",
+    "## Parsing\n",
+    "##\n",
+    "for t in text.parse().split(' ')[0:15]:\n",
+    "    print(t)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[WordList(['Now', 'is', 'better']),\n",
+       " WordList(['is', 'better', 'than']),\n",
+       " WordList(['better', 'than', 'never'])]"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "##\n",
+    "## N-gramas\n",
+    "##\n",
+    "TextBlob(\"Now is better than never.\").ngrams(n=3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Ejercicio\n",
+    "\n",
+    "De las definiciones de analytics dadas al principio de este documento, construya una lista que contenga únicamente los sustantivos, adjetivos, verbos y adverbios presentes en el texto.\n",
+    "\n",
+    "AYUDA: puede obtener la lista de todos los tags disponibles con el siguiente código:\n",
+    "\n",
+    "```python\n",
+    "import nltk\n",
+    "\n",
+    "nltk.help.upenn_tagset()\n",
+    "```\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.6.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
