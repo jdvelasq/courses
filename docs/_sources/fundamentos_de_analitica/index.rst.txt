@@ -251,6 +251,8 @@ Sesión 07 --- Octubre 03, 2022
 
             /notebooks/data_ingestion_with_python/1-*
 
+        `LAB --- Ingestión de datos, clusters report <https://classroom.github.com/a/aHB1KeDD>`_.
+
 
     **Limpieza de Datos** --- 47:09 min
 
@@ -261,7 +263,7 @@ Sesión 07 --- Octubre 03, 2022
             /notebooks/data_cleaning_with_pandas/1-*
 
 
-    `LAB --- Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/x8BI2I6n>`_.
+        `LAB --- Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/x8BI2I6n>`_.
 
 
 .. ......................................................................................

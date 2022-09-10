@@ -232,6 +232,8 @@ Sesión 05 --- Septiembre 9, 2022
 
                 /notebooks/data_ingestion_with_python/1-*
 
+            `LAB --- Ingestión de datos, clusters report <https://classroom.github.com/a/ohpsTgJk>`_.
+
 
         **Limpieza de Datos** --- 47:09 min
 
