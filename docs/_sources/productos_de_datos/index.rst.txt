@@ -1,13 +1,7 @@
 Productos de Datos
 =========================================================================================
 
-.. note::
 
-   La evaluación se encuentra disponible en:
-
-   https://classroom.github.com/a/XQTxhfXE
-
-   El plazo de entrega vence el **lunes 4 de julio a las 11:59 pm**.
 
 
 

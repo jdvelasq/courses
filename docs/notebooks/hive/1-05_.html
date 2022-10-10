@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transacciones ACID (Insert/ Update / Delete) en Hive &mdash; documentación de Cursos de Analítica y Machine Learning - </title><link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script src="../../_static/clipboard.min.js"></script>
+        <script src="../../_static/copybutton.js"></script>
+        <script src="../../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> Cursos de Analítica y Machine Learning
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Asignaturas de Pregrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../redes_neuronales/index.html">Redes Neuronales Artificiales y Aprendizaje Profundo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../fundamentos_de_analitica/index.html">Fundamentos de Analítica</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Asignaturas de Posgrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ciencia_de_los_datos/index.html">Ciencia de los Datos Aplicada</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_predictiva/index.html">Analítica Predictiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../analitica_de_grandes_datos/index.html">Analítica de Grandes Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../productos_de_datos/index.html">Productos de Datos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Cursos de Analítica y Machine Learning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Transacciones ACID (Insert/ Update / Delete) en Hive</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/notebooks/hive/1-05_.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<div class="section" id="Transacciones-ACID-(Insert/-Update-/-Delete)-en-Hive">
+<h1>Transacciones ACID (Insert/ Update / Delete) en Hive<a class="headerlink" href="#Transacciones-ACID-(Insert/-Update-/-Delete)-en-Hive" title="Enlazar permanentemente con este título"></a></h1>
+<ul class="simple">
+<li><p>Última modificación: Mayo 17, 2022 | YouTube</p></li>
+</ul>
+<p>El lenguaje SQL estándar provee directivas para la insertar, actualizar y borrar registros en una tabla. En este tutorial se presentan ejemplos representativos de estas instrucciones en Hive.</p>
+<div class="section" id="Cell-magic-%%hive">
+<h2>Cell magic <code class="docutils literal notranslate"><span class="pre">%%hive</span></code><a class="headerlink" href="#Cell-magic-%%hive" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">IPython.core.magic</span> <span class="kn">import</span> <span class="n">Magics</span><span class="p">,</span> <span class="n">cell_magic</span><span class="p">,</span> <span class="n">line_magic</span><span class="p">,</span> <span class="n">magics_class</span>
+<span class="kn">from</span> <span class="nn">pexpect</span> <span class="kn">import</span> <span class="n">spawn</span>
+
+<span class="n">TIMEOUT</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="n">PROG</span> <span class="o">=</span> <span class="s2">&quot;hive&quot;</span>
+<span class="n">PROMPT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">    &gt; &quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">hive&gt; &quot;</span><span class="p">]</span>
+<span class="n">QUIT</span> <span class="o">=</span> <span class="s2">&quot;quit;&quot;</span>
+
+
+<span class="nd">@magics_class</span>
+<span class="k">class</span> <span class="nc">Magic</span><span class="p">(</span><span class="n">Magics</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">shell</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">spawn</span><span class="p">(</span><span class="n">PROG</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">PROMPT</span><span class="p">)</span>
+
+    <span class="nd">@cell_magic</span>
+    <span class="k">def</span> <span class="nf">hive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+        <span class="n">cell_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">cell_line</span> <span class="ow">in</span> <span class="n">cell</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)]</span>
+        <span class="n">cell_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_line</span> <span class="k">for</span> <span class="n">cell_line</span> <span class="ow">in</span> <span class="n">cell_lines</span> <span class="k">if</span> <span class="n">cell_line</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">cell_line</span> <span class="ow">in</span> <span class="n">cell_lines</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">cell_line</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">PROMPT</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">TIMEOUT</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">before</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">output_line</span> <span class="ow">in</span> <span class="n">output</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">output_line</span> <span class="ow">in</span> <span class="n">output</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">output_line</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cell_lines</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">output_line</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@line_magic</span>
+    <span class="k">def</span> <span class="nf">quit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">sendline</span><span class="p">(</span><span class="n">QUIT</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">load_ipython_extension</span><span class="p">(</span><span class="n">ip</span><span class="p">):</span>
+    <span class="n">ip</span><span class="o">.</span><span class="n">register_magics</span><span class="p">(</span><span class="n">Magic</span><span class="p">(</span><span class="n">ip</span><span class="p">))</span>
+
+
+<span class="n">load_ipython_extension</span><span class="p">(</span><span class="n">ip</span><span class="o">=</span><span class="n">get_ipython</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Creación-de-la-tabla">
+<h2>Creación de la tabla<a class="headerlink" href="#Creación-de-la-tabla" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+DROP DATABASE IF EXISTS demo CASCADE;
+CREATE DATABASE demo;
+USE demo;
+
+CREATE TABLE persons (
+    id        INT,
+    firstname STRING,
+    surname   STRING,
+    birthday  TIMESTAMP,
+    quantity  INT
+)
+PARTITIONED BY (color STRING)
+CLUSTERED BY(id) INTO 3 BUCKETS
+STORED AS ORC
+LOCATION &#39;/tmp/hive-partitioned&#39;
+TBLPROPERTIES (&#39;transactional&#39;=&#39;true&#39;);
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OK
+Time taken: 5.841 seconds
+OK
+Time taken: 0.334 seconds
+OK
+Time taken: 0.023 seconds
+OK
+Time taken: 0.25 seconds
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Preparación">
+<h2>Preparación<a class="headerlink" href="#Preparación" title="Enlazar permanentemente con este título"></a></h2>
+<p>Se deben habilitar las características de Hive para manejo de transacciones ACID.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+SET hive.txn.manager=org.apache.hadoop.hive.ql.lockmgr.DbTxnManager;
+SET hive.support.concurrency=true;
+SET hive.enforce.bucketing=true;
+SET hive.exec.dynamic.partition.mode=nonstrict;
+SET hive.compactor.initiator.on=true;
+SET hive.compactor.worker.threads=1;
+</pre></div>
+</div>
+</div>
+<hr class="docutils" />
+</div>
+<div class="section" id="INSERT">
+<h2>INSERT<a class="headerlink" href="#INSERT" title="Enlazar permanentemente con este título"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>INSERT INTO TABLE tablename VALUES PARTITION () values_row [, values_row ...]
+
+values_row:
+   (value [, value ...])
+</pre></div>
+</div>
+<p>Note que a diferencia de SQL, aca no es posible indicar para que columnas se van a insertar los valores, de tal manera que siempre se deben dar valores para todas las columnas.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+--
+-- Inserta el registro en la tabla.
+-- Los valores están en el mismo orden de los campos.
+--
+INSERT INTO persons PARTITION (color=&#39;green&#39;) VALUES
+    (1,&quot;Vivian&quot;,&quot;Hamilton&quot;,&quot;1971-07-08&quot;,1),
+    (2,&quot;Karen&quot;,&quot;Holcomb&quot;,&quot;1974-05-23&quot;,4),
+    (12,&quot;Hope&quot;,&quot;Coffey&quot;,&quot;1973-12-24&quot;,5),
+    (17,&quot;Chanda&quot;,&quot;Boyer&quot;,&quot;1973-04-01&quot;,4);
+
+INSERT INTO persons PARTITION (color=&#39;black&#39;) VALUES
+    (4,&quot;Roth&quot;,&quot;Fry&quot;,&quot;1975-01-29&quot;,1),
+    (10,&quot;Kylan&quot;,&quot;Sexton&quot;,&quot;1975-02-28&quot;,4);
+
+INSERT INTO persons PARTITION (color=&#39;blue&#39;) VALUES
+    (5,&quot;Zoe&quot;,&quot;Conway&quot;,&quot;1974-07-03&quot;,2),
+    (7,&quot;Driscoll&quot;,&quot;Klein&quot;,&quot;1970-10-05&quot;,5),
+    (15,&quot;Hope&quot;,&quot;Silva&quot;,&quot;1970-07-01&quot;,5);
+
+INSERT INTO persons PARTITION (color=&#39;orange&#39;) VALUES
+    (3,&quot;Cody&quot;,&quot;Garrett&quot;,&quot;1973-04-22&quot;,1),
+    (16,&quot;Ayanna&quot;,&quot;Jarvis&quot;,&quot;1974-02-11&quot;,5);
+
+INSERT INTO persons PARTITION (color=&#39;violet&#39;) VALUES
+    (6,&quot;Gretchen&quot;,&quot;Kinney&quot;,&quot;1974-10-18&quot;,1);
+
+INSERT INTO persons PARTITION (color=&#39;red&#39;) VALUES
+    (8,&quot;Karyn&quot;,&quot;Diaz&quot;,&quot;1969-02-24&quot;,1),
+    (14,&quot;Clio&quot;,&quot;Noel&quot;,&quot;1972-12-12&quot;,5);
+
+INSERT INTO persons PARTITION (color=&#39;indigo&#39;) VALUES
+    (9,&quot;Merritt&quot;,&quot;Guy&quot;,&quot;1974-10-17&quot;,4),
+    (11,&quot;Jordan&quot;,&quot;Estes&quot;,&quot;1969-12-07&quot;,4);
+
+INSERT INTO persons PARTITION (color=&#39;gray&#39;) VALUES
+    (13,&quot;Vivian&quot;,&quot;Crane&quot;,&quot;1970-08-27&quot;,5);
+
+INSERT INTO persons PARTITION (color=&#39;yellow&#39;) VALUES
+    (18,&quot;Chadwick&quot;,&quot;Knight&quot;,&quot;1973-04-29&quot;,1);
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144650_1350f9e4-7c80-4a1f-b79b-94852ac5f89f
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0014, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0014/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0014
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:46:58,056 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:47:01,178 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.77 sec
+2022-05-17 14:47:07,402 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.71 sec
+2022-05-17 14:47:08,427 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.99 sec
+2022-05-17 14:47:09,453 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 10.5 sec
+MapReduce Total cumulative CPU time: 10 seconds 500 msec
+Ended Job = job_1652793922537_0014
+Loading data to table demo.persons partition (color=green)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 10.5 sec   HDFS Read: 20555 HDFS Write: 2996 SUCCESS
+Total MapReduce CPU Time Spent: 10 seconds 500 msec
+OK
+Time taken: 20.393 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144711_74e414ca-7765-4970-9306-a584392f1c7e
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0015, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0015/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0015
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:47:19,919 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:47:24,026 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.92 sec
+2022-05-17 14:47:29,169 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.49 sec
+2022-05-17 14:47:30,192 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.17 sec
+2022-05-17 14:47:31,216 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.6 sec
+MapReduce Total cumulative CPU time: 9 seconds 600 msec
+Ended Job = job_1652793922537_0015
+Loading data to table demo.persons partition (color=black)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.6 sec   HDFS Read: 20491 HDFS Write: 1574 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 600 msec
+OK
+Time taken: 21.193 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144732_1995c38c-7790-49b6-8534-99d31b09d868
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0016, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0016/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0016
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:47:41,805 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:47:45,926 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.72 sec
+2022-05-17 14:47:51,043 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.53 sec
+2022-05-17 14:47:52,065 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.2 sec
+2022-05-17 14:47:53,089 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.7 sec
+MapReduce Total cumulative CPU time: 9 seconds 700 msec
+Ended Job = job_1652793922537_0016
+Loading data to table demo.persons partition (color=blue)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.7 sec   HDFS Read: 20581 HDFS Write: 2912 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 700 msec
+OK
+Time taken: 21.718 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144754_d4929f45-b1d3-4145-93f0-601b0d1fb2e7
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0017, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0017/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0017
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:48:04,101 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:48:08,213 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.85 sec
+2022-05-17 14:48:13,354 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.67 sec
+2022-05-17 14:48:14,377 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.5 sec
+2022-05-17 14:48:15,403 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.94 sec
+MapReduce Total cumulative CPU time: 9 seconds 940 msec
+Ended Job = job_1652793922537_0017
+Loading data to table demo.persons partition (color=orange)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.94 sec   HDFS Read: 20586 HDFS Write: 2220 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 940 msec
+OK
+Time taken: 21.955 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144816_75278cf6-d2e7-418a-89ff-c9903503ce09
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0018, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0018/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0018
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:48:25,381 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:48:29,492 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.73 sec
+2022-05-17 14:48:35,674 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.63 sec
+2022-05-17 14:48:36,699 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.36 sec
+2022-05-17 14:48:37,724 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.79 sec
+MapReduce Total cumulative CPU time: 9 seconds 790 msec
+Ended Job = job_1652793922537_0018
+Loading data to table demo.persons partition (color=violet)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.79 sec   HDFS Read: 20559 HDFS Write: 1538 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 790 msec
+OK
+Time taken: 22.258 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144839_295ad16e-eb7c-44cd-8a8c-17096df9c480
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0019, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0019/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0019
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:48:47,750 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:48:51,842 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.68 sec
+2022-05-17 14:48:56,975 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.5 sec
+2022-05-17 14:48:59,021 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.79 sec
+MapReduce Total cumulative CPU time: 9 seconds 790 msec
+Ended Job = job_1652793922537_0019
+Loading data to table demo.persons partition (color=red)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.79 sec   HDFS Read: 20526 HDFS Write: 1579 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 790 msec
+OK
+Time taken: 22.078 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144901_ebf6a1d4-e8cd-4d93-b1ab-63d762d4c433
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0020, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0020/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0020
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:49:09,651 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:49:13,773 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.8 sec
+2022-05-17 14:49:18,974 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.65 sec
+2022-05-17 14:49:21,022 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.39 sec
+2022-05-17 14:49:22,048 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.75 sec
+MapReduce Total cumulative CPU time: 9 seconds 750 msec
+Ended Job = job_1652793922537_0020
+Loading data to table demo.persons partition (color=indigo)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.75 sec   HDFS Read: 20584 HDFS Write: 2226 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 750 msec
+OK
+Time taken: 21.801 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144923_d95da8ef-8248-4d0a-8a41-8d78367a7e08
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0021, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0021/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0021
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:49:31,764 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:49:35,871 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.73 sec
+2022-05-17 14:49:41,019 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.37 sec
+2022-05-17 14:49:43,072 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.33 sec
+MapReduce Total cumulative CPU time: 9 seconds 330 msec
+Ended Job = job_1652793922537_0021
+Loading data to table demo.persons partition (color=gray)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.33 sec   HDFS Read: 20527 HDFS Write: 1531 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 330 msec
+OK
+Time taken: 20.871 seconds
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517144944_3244cc24-4ca7-4412-ade3-5b94faa22883
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0022, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0022/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0022
+Hadoop job information for Stage-1: number of mappers: 1; number of reducers: 3
+2022-05-17 14:49:53,950 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:49:58,052 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 1.8 sec
+2022-05-17 14:50:03,175 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 4.6 sec
+2022-05-17 14:50:04,200 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 7.29 sec
+2022-05-17 14:50:05,301 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 9.74 sec
+MapReduce Total cumulative CPU time: 9 seconds 740 msec
+Ended Job = job_1652793922537_0022
+Loading data to table demo.persons partition (color=yellow)
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 1  Reduce: 3   Cumulative CPU: 9.74 sec   HDFS Read: 20551 HDFS Write: 1546 SUCCESS
+Total MapReduce CPU Time Spent: 9 seconds 740 msec
+OK
+Time taken: 22.103 seconds
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+SELECT * FROM persons;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OK
+10      Kylan   Sexton  1975-02-28 00:00:00     4       black
+4       Roth    Fry     1975-01-29 00:00:00     1       black
+15      Hope    Silva   1970-07-01 00:00:00     5       blue
+7       Driscoll        Klein   1970-10-05 00:00:00     5       blue
+5       Zoe     Conway  1974-07-03 00:00:00     2       blue
+13      Vivian  Crane   1970-08-27 00:00:00     5       gray
+12      Hope    Coffey  1973-12-24 00:00:00     5       green
+1       Vivian  Hamilton        1971-07-08 00:00:00     1       green
+17      Chanda  Boyer   1973-04-01 00:00:00     4       green
+2       Karen   Holcomb 1974-05-23 00:00:00     4       green
+9       Merritt Guy     1974-10-17 00:00:00     4       indigo
+11      Jordan  Estes   1969-12-07 00:00:00     4       indigo
+3       Cody    Garrett 1973-04-22 00:00:00     1       orange
+16      Ayanna  Jarvis  1974-02-11 00:00:00     5       orange
+14      Clio    Noel    1972-12-12 00:00:00     5       red
+8       Karyn   Diaz    1969-02-24 00:00:00     1       red
+6       Gretchen        Kinney  1974-10-18 00:00:00     1       violet
+18      Chadwick        Knight  1973-04-29 00:00:00     1       yellow
+Time taken: 0.207 seconds, Fetched: 18 row(s)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>hdfs dfs -ls /tmp/hive-partitioned
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 9 items
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:47 /tmp/hive-partitioned/color=black
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:47 /tmp/hive-partitioned/color=blue
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:49 /tmp/hive-partitioned/color=gray
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:47 /tmp/hive-partitioned/color=green
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:49 /tmp/hive-partitioned/color=indigo
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:48 /tmp/hive-partitioned/color=orange
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:49 /tmp/hive-partitioned/color=red
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:48 /tmp/hive-partitioned/color=violet
+drwxrwxrwx   - root supergroup          0 2022-05-17 14:50 /tmp/hive-partitioned/color=yellow
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>hdfs dfs -ls /tmp/hive-partitioned/color<span class="o">=</span>black
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 1 items
+drwxr-xr-x   - root supergroup          0 2022-05-17 14:47 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>hdfs dfs -ls /tmp/hive-partitioned/color<span class="o">=</span>black/delta_0000002_0000002_0000
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 3 items
+-rw-r--r--   1 root supergroup        223 2022-05-17 14:47 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000/bucket_00000
+-rw-r--r--   1 root supergroup        936 2022-05-17 14:47 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000/bucket_00001
+-rw-r--r--   1 root supergroup        223 2022-05-17 14:47 /tmp/hive-partitioned/color=black/delta_0000002_0000002_0000/bucket_00002
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="UPDATE">
+<h2>UPDATE<a class="headerlink" href="#UPDATE" title="Enlazar permanentemente con este título"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>UPDATE tablename SET column = value [, column = value ...] [WHERE expression]
+</pre></div>
+</div>
+<p>Véase <a class="reference external" href="https://cwiki.apache.org/confluence/display/Hive/Hive+Transactions">https://cwiki.apache.org/confluence/display/Hive/Hive+Transactions</a></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+UPDATE persons SET quantity = 100 WHERE color = &#39;red&#39;;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517145011_7cabef7b-52ff-4671-a383-b636bd0cb2a6
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0023, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0023/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0023
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 3
+2022-05-17 14:50:15,598 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:50:19,686 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 1.61 sec
+2022-05-17 14:50:20,730 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 3.48 sec
+2022-05-17 14:50:22,782 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 5.85 sec
+2022-05-17 14:50:24,843 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 7.21 sec
+2022-05-17 14:50:25,877 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 8.7 sec
+2022-05-17 14:50:26,901 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 10.69 sec
+MapReduce Total cumulative CPU time: 10 seconds 690 msec
+Ended Job = job_1652793922537_0023
+Loading data to table demo.persons partition (color=null)
+
+
+Time taken to load dynamic partitions: 0.116 seconds
+Time taken for adding to write entity : 0.0 seconds
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 3  Reduce: 3   Cumulative CPU: 10.69 sec   HDFS Read: 33100 HDFS Write: 1067 SUCCESS
+Total MapReduce CPU Time Spent: 10 seconds 690 msec
+OK
+Time taken: 16.249 seconds
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+SELECT * FROM persons;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OK
+10      Kylan   Sexton  1975-02-28 00:00:00     4       black
+4       Roth    Fry     1975-01-29 00:00:00     1       black
+15      Hope    Silva   1970-07-01 00:00:00     5       blue
+7       Driscoll        Klein   1970-10-05 00:00:00     5       blue
+5       Zoe     Conway  1974-07-03 00:00:00     2       blue
+13      Vivian  Crane   1970-08-27 00:00:00     5       gray
+12      Hope    Coffey  1973-12-24 00:00:00     5       green
+1       Vivian  Hamilton        1971-07-08 00:00:00     1       green
+17      Chanda  Boyer   1973-04-01 00:00:00     4       green
+2       Karen   Holcomb 1974-05-23 00:00:00     4       green
+9       Merritt Guy     1974-10-17 00:00:00     4       indigo
+11      Jordan  Estes   1969-12-07 00:00:00     4       indigo
+3       Cody    Garrett 1973-04-22 00:00:00     1       orange
+16      Ayanna  Jarvis  1974-02-11 00:00:00     5       orange
+14      Clio    Noel    1972-12-12 00:00:00     100     red
+8       Karyn   Diaz    1969-02-24 00:00:00     100     red
+6       Gretchen        Kinney  1974-10-18 00:00:00     1       violet
+18      Chadwick        Knight  1973-04-29 00:00:00     1       yellow
+Time taken: 0.127 seconds, Fetched: 18 row(s)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="DELETE">
+<h2>DELETE<a class="headerlink" href="#DELETE" title="Enlazar permanentemente con este título"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>DELETE FROM tablename [WHERE expression]
+</pre></div>
+</div>
+<p>Véase <a class="reference external" href="https://cwiki.apache.org/confluence/display/Hive/Hive+Transactions">https://cwiki.apache.org/confluence/display/Hive/Hive+Transactions</a></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+DELETE FROM persons WHERE id = 10;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517145028_7b530327-329d-4010-a61a-86454a1a66be
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 3
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0024, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0024/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0024
+Hadoop job information for Stage-1: number of mappers: 27; number of reducers: 3
+2022-05-17 14:50:37,402 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:50:42,561 Stage-1 map = 4%,  reduce = 0%, Cumulative CPU 2.71 sec
+2022-05-17 14:50:43,607 Stage-1 map = 7%,  reduce = 0%, Cumulative CPU 5.56 sec
+2022-05-17 14:50:44,639 Stage-1 map = 11%,  reduce = 0%, Cumulative CPU 9.09 sec
+2022-05-17 14:50:47,999 Stage-1 map = 15%,  reduce = 0%, Cumulative CPU 15.2 sec
+2022-05-17 14:50:49,018 Stage-1 map = 22%,  reduce = 0%, Cumulative CPU 27.3 sec
+2022-05-17 14:50:50,093 Stage-1 map = 26%,  reduce = 0%, Cumulative CPU 31.3 sec
+2022-05-17 14:50:51,125 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 40.71 sec
+2022-05-17 14:50:53,204 Stage-1 map = 37%,  reduce = 0%, Cumulative CPU 44.28 sec
+2022-05-17 14:50:54,238 Stage-1 map = 41%,  reduce = 0%, Cumulative CPU 48.05 sec
+2022-05-17 14:50:55,280 Stage-1 map = 44%,  reduce = 0%, Cumulative CPU 51.66 sec
+2022-05-17 14:50:56,305 Stage-1 map = 52%,  reduce = 0%, Cumulative CPU 59.47 sec
+2022-05-17 14:50:58,362 Stage-1 map = 56%,  reduce = 0%, Cumulative CPU 62.34 sec
+2022-05-17 14:50:59,394 Stage-1 map = 59%,  reduce = 0%, Cumulative CPU 65.29 sec
+2022-05-17 14:51:01,470 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 73.18 sec
+2022-05-17 14:51:02,509 Stage-1 map = 70%,  reduce = 0%, Cumulative CPU 76.32 sec
+2022-05-17 14:51:04,590 Stage-1 map = 78%,  reduce = 0%, Cumulative CPU 83.16 sec
+2022-05-17 14:51:05,619 Stage-1 map = 81%,  reduce = 8%, Cumulative CPU 85.91 sec
+2022-05-17 14:51:07,690 Stage-1 map = 81%,  reduce = 17%, Cumulative CPU 86.2 sec
+2022-05-17 14:51:08,714 Stage-1 map = 89%,  reduce = 17%, Cumulative CPU 93.14 sec
+2022-05-17 14:51:09,747 Stage-1 map = 93%,  reduce = 17%, Cumulative CPU 95.85 sec
+2022-05-17 14:51:11,796 Stage-1 map = 93%,  reduce = 19%, Cumulative CPU 95.9 sec
+2022-05-17 14:51:12,816 Stage-1 map = 100%,  reduce = 42%, Cumulative CPU 103.73 sec
+2022-05-17 14:51:13,842 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 107.47 sec
+MapReduce Total cumulative CPU time: 1 minutes 47 seconds 470 msec
+Ended Job = job_1652793922537_0024
+Loading data to table demo.persons partition (color=null)
+
+
+Time taken to load dynamic partitions: 0.08 seconds
+Time taken for adding to write entity : 0.0 seconds
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 27  Reduce: 3   Cumulative CPU: 107.47 sec   HDFS Read: 215812 HDFS Write: 602 SUCCESS
+Total MapReduce CPU Time Spent: 1 minutes 47 seconds 470 msec
+OK
+Time taken: 46.458 seconds
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+SELECT * FROM persons ORDER BY id;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = root_20220517145115_135ba0fe-fdea-45fc-960f-cbe253040dd8
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks determined at compile time: 1
+In order to change the average load for a reducer (in bytes):
+set hive.exec.reducers.bytes.per.reducer=&lt;number&gt;
+In order to limit the maximum number of reducers:
+set hive.exec.reducers.max=&lt;number&gt;
+In order to set a constant number of reducers:
+set mapreduce.job.reduces=&lt;number&gt;
+Starting Job = job_1652793922537_0025, Tracking URL = http://4feb4ed7d52d:8088/proxy/application_1652793922537_0025/
+Kill Command = /opt/hadoop/bin/hadoop job  -kill job_1652793922537_0025
+Hadoop job information for Stage-1: number of mappers: 27; number of reducers: 1
+2022-05-17 14:51:24,736 Stage-1 map = 0%,  reduce = 0%
+2022-05-17 14:51:28,845 Stage-1 map = 4%,  reduce = 0%, Cumulative CPU 1.81 sec
+2022-05-17 14:51:29,883 Stage-1 map = 7%,  reduce = 0%, Cumulative CPU 4.03 sec
+2022-05-17 14:51:31,967 Stage-1 map = 11%,  reduce = 0%, Cumulative CPU 6.33 sec
+2022-05-17 14:51:32,997 Stage-1 map = 19%,  reduce = 0%, Cumulative CPU 11.12 sec
+2022-05-17 14:51:34,044 Stage-1 map = 22%,  reduce = 0%, Cumulative CPU 13.19 sec
+2022-05-17 14:51:35,100 Stage-1 map = 26%,  reduce = 0%, Cumulative CPU 15.72 sec
+2022-05-17 14:51:36,151 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 20.93 sec
+2022-05-17 14:51:37,194 Stage-1 map = 41%,  reduce = 0%, Cumulative CPU 25.54 sec
+2022-05-17 14:51:38,227 Stage-1 map = 44%,  reduce = 0%, Cumulative CPU 27.83 sec
+2022-05-17 14:51:40,326 Stage-1 map = 48%,  reduce = 0%, Cumulative CPU 30.42 sec
+2022-05-17 14:51:41,390 Stage-1 map = 52%,  reduce = 0%, Cumulative CPU 33.17 sec
+2022-05-17 14:51:42,432 Stage-1 map = 63%,  reduce = 0%, Cumulative CPU 40.69 sec
+2022-05-17 14:51:45,564 Stage-1 map = 70%,  reduce = 0%, Cumulative CPU 46.69 sec
+2022-05-17 14:51:46,592 Stage-1 map = 81%,  reduce = 0%, Cumulative CPU 54.02 sec
+2022-05-17 14:51:49,680 Stage-1 map = 81%,  reduce = 27%, Cumulative CPU 54.36 sec
+2022-05-17 14:51:50,711 Stage-1 map = 89%,  reduce = 27%, Cumulative CPU 60.48 sec
+2022-05-17 14:51:51,756 Stage-1 map = 100%,  reduce = 27%, Cumulative CPU 68.54 sec
+2022-05-17 14:51:52,783 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 70.51 sec
+MapReduce Total cumulative CPU time: 1 minutes 10 seconds 510 msec
+Ended Job = job_1652793922537_0025
+MapReduce Jobs Launched:
+Stage-Stage-1: Map: 27  Reduce: 1   Cumulative CPU: 70.51 sec   HDFS Read: 201369 HDFS Write: 1030 SUCCESS
+Total MapReduce CPU Time Spent: 1 minutes 10 seconds 510 msec
+OK
+1       Vivian  Hamilton        1971-07-08 00:00:00     1       green
+2       Karen   Holcomb 1974-05-23 00:00:00     4       green
+3       Cody    Garrett 1973-04-22 00:00:00     1       orange
+4       Roth    Fry     1975-01-29 00:00:00     1       black
+5       Zoe     Conway  1974-07-03 00:00:00     2       blue
+6       Gretchen        Kinney  1974-10-18 00:00:00     1       violet
+7       Driscoll        Klein   1970-10-05 00:00:00     5       blue
+8       Karyn   Diaz    1969-02-24 00:00:00     100     red
+9       Merritt Guy     1974-10-17 00:00:00     4       indigo
+11      Jordan  Estes   1969-12-07 00:00:00     4       indigo
+12      Hope    Coffey  1973-12-24 00:00:00     5       green
+13      Vivian  Crane   1970-08-27 00:00:00     5       gray
+14      Clio    Noel    1972-12-12 00:00:00     100     red
+15      Hope    Silva   1970-07-01 00:00:00     5       blue
+16      Ayanna  Jarvis  1974-02-11 00:00:00     5       orange
+17      Chanda  Boyer   1973-04-01 00:00:00     4       green
+18      Chadwick        Knight  1973-04-29 00:00:00     1       yellow
+Time taken: 38.642 seconds, Fetched: 17 row(s)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="MERGE">
+<h2>MERGE<a class="headerlink" href="#MERGE" title="Enlazar permanentemente con este título"></a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>MERGE INTO &lt;target table&gt; AS T USING &lt;source expression/table&gt; AS S
+ON &lt;boolean expression1&gt;
+WHEN MATCHED [AND &lt;boolean expression2&gt;] THEN UPDATE SET &lt;set clause list&gt;
+WHEN MATCHED [AND &lt;boolean expression3&gt;] THEN DELETE
+WHEN NOT MATCHED [AND &lt;boolean expression4&gt;] THEN INSERT VALUES&lt;value list&gt;
+</pre></div>
+</div>
+<p>Véase <a class="reference external" href="https://community.hortonworks.com/articles/97113/hive-acid-merge-by-example.html">https://community.hortonworks.com/articles/97113/hive-acid-merge-by-example.html</a></p>
+<hr class="docutils" />
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%%</span><span class="k">hive</span>
+-- limpia la base de datos
+DROP DATABASE IF EXISTS demo CASCADE;
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+OK
+Time taken: 0.55 seconds
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">%</span><span class="k">quit</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="o">!</span>rm *.log
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2019-2021, Juan D. Velasquez.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>
