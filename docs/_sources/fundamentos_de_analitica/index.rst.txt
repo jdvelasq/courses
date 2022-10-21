@@ -180,13 +180,13 @@ Programa Calendario
 
     * :ref:`sklearn_supervised_02_linear_models`
 
-    * `LAB --- Análisis de Sentimientos (Amazon) <>`_.
+    * `LAB --- Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/j6fYnT8O>`_.
 
-    * `LAB --- Regresión Lineal Simple (GapMinder) <>`_.
+    * `LAB --- Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Y-t0TIbS>`_.
 
-    * `LAB --- Regresión Lineal Multiple (insurance) <>`_.
+    * `LAB --- Regresión Lineal Multiple (insurance) <https://classroom.github.com/a/bvyWm9_z>`_.
 
-    * `LAB --- Regresión Logística (mushrooms) <>`_.
+    * `LAB --- Regresión Logística (mushrooms) <https://classroom.github.com/a/CvQCAqoF>`_.
 
 
 * Sesión 15 --- **Noviembre 28, 2022**

@@ -45,10 +45,7 @@ Programa Calendario
 
     * :ref:`fundamentos_de_optimizacion_para_ml`
 
-    * `LAB --- Optimización usando el gradiente descendente <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/02-001_optimizacion_usando_el_gradiente_descendente.ipynb>`_.
-
-
-    * `LAB --- Tasas óptimas <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/02-002_busqueda_de_la_tasa_de_aprendizaje_y_momentum_optimos.ipynb>`_.
+    * `LAB --- Estimación de coeficientes de una parábola usando gradiente descendente <https://classroom.github.com/a/a3xGd1Os>`_.
 
 
     * :ref:`sklearn_dataset_utilities_1`
@@ -117,12 +114,15 @@ Programa Calendario
 
     * :ref:`sklearn_supervised_05_neighbors`
 
+    * `LAB --- Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/E1fwjOsi>`_. 
 
+    * `LAB --- Regresión Lineal Multiple (insurance) <https://classroom.github.com/a/WRBFqcDN>`_.
+    
+    * `LAB --- Regresión Logística (mushrooms) <https://classroom.github.com/a/sDHcbGcf>`_.
 
-    * `LAB --- Hongos venenosos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/06-001_identificacion_de_hongos_venenosos_usando_regresion_logistica.ipynb>`_.
+    * `LAB --- Clasificación con kNN (digits) <https://classroom.github.com/a/rlQAS3qA>`_.
 
-
-    * `LAB --- Créditos riesgosos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/06-002_identificacion_de_creditos_riesgosos_usando_svm.ipynb>`_.
+    * `LAB --- Regresión con kNN <https://classroom.github.com/a/82ZX8tNX>`_.
 
 
 
@@ -145,9 +145,9 @@ Programa Calendario
     * :ref:`sklearn_unsupervised_03_clustering`
 
 
-    * `LAB --- Predicción diabetes <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/07-001_prediccion_de_la_evolucion_de_la_diabetes_usando_mlp.ipynb>`_.
+    * `LAB --- Predicción de la resistencia del concreto <https://classroom.github.com/a/55Ht4Ulw>`_.
 
-
+    * `LAB --- Detección de créditos riesgosos usando SVMs <https://classroom.github.com/a/aAy3dnhY>`_.
 
 * Sesión 08 --- **2022-12-02** 
 
@@ -164,13 +164,6 @@ Programa Calendario
 
     * :ref:`sklearn_unsupervised_09_rbm`
 
-    * `LAB --- ML <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/08-001-fundamentos_ml.ipynb>`_.
-
-
-    * `LAB --- Análisis de sentimientos <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/08-002_analisis_de_sentimientos_en_amazon_usando_bayes.ipynb>`_.
-
-
-    * `LAB --- Topic modeling <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/08-003-latent_dirichlet_allocation.ipynb>`_.
 
 
 
