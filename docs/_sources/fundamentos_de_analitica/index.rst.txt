@@ -28,9 +28,9 @@ Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-* **Agosto 8, 2022**.  No hay clase. A la espera de matriculas extemporaneas debido al alto volumen de solicitudes.
+* Agosto 8, 2022.  No hay clase. A la espera de matriculas extemporaneas debido al alto volumen de solicitudes.
 
-* **Agosto 15, 2022**. Festivo.
+* Agosto 15, 2022. Festivo.
 
 * Sesión 01 --- **Agosto 22, 2022**
 
@@ -142,15 +142,19 @@ Programa Calendario
 
 * Sesión 09 --- **Octubre 17, 2022** (Festivo, avanzar en los videos)
 
-    * :ref:`sklearn_dataset_transformations_2`
+    * :ref:`descriptive_statistics_pregrado`
 
-    * :ref:`sklearn_dataset_transformations_3`
 
-    * :ref:`sklearn_unsupervised_03_clustering`
 
-    * :ref:`sklearn_unsupervised_05_decomposition`
+..    * :ref:`sklearn_dataset_transformations_2`
 
-    * :ref:`descriptive_statistics`
+..    * :ref:`sklearn_dataset_transformations_3`
+
+..    * :ref:`sklearn_unsupervised_03_clustering`
+
+..    * :ref:`sklearn_unsupervised_05_decomposition`
+
+    
 
 * Sesión 10 --- **Octubre 24, 2022**
 

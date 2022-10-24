@@ -121,7 +121,7 @@ Programa Calendario
 
         * :ref:`data_visualization_with_matplotlib`
 
-        * :ref:`descriptive_statistics`
+        * :ref:`descriptive_statistics_postgrado`
 
         * :ref:`sklearn_unsupervised_03_clustering`
 
