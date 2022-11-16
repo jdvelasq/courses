@@ -17,6 +17,14 @@ desarrolla competencias fundamentales de programación usando el lenguaje Python
 la solución de problemas básicos de analítica descriptiva y predictiva.
 
 
+
+.. note::
+
+    Los talleres deben ser entregados en su totalidad el día **Lunes 28 de noviembre de 2022**.
+
+
+
+
 Véase:  :ref:`info_general_cursos`
 
 
