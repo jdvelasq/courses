@@ -1,0 +1,1826 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Trabajo con Datos con el Core: Selección de Filas\n",
+    "====\n",
+    "\n",
+    "* Última modificación: 12 de septiembre de 2022."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Preparación\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sqlalchemy import MetaData\n",
+    "\n",
+    "metadata_obj = MetaData()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sqlalchemy import Column, Integer, String, Table\n",
+    "\n",
+    "user_table = Table(\n",
+    "    \"user_account\",\n",
+    "    metadata_obj,\n",
+    "    Column(\"id\", Integer, primary_key=True),\n",
+    "    Column(\"name\", String(30)),\n",
+    "    Column(\"fullname\", String),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sqlalchemy import ForeignKey\n",
+    "\n",
+    "address_table = Table(\n",
+    "    \"address\",\n",
+    "    metadata_obj,\n",
+    "    Column(\"id\", Integer, primary_key=True),\n",
+    "    Column(\"user_id\", ForeignKey(\"user_account.id\"), nullable=False),  # Clave foranea\n",
+    "    Column(\"email_address\", String, nullable=False),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:33,919 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:33,919 INFO sqlalchemy.engine.Engine PRAGMA main.table_info(\"user_account\")\n",
+      "2022-09-13 22:00:33,920 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:00:33,921 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info(\"user_account\")\n",
+      "2022-09-13 22:00:33,921 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:00:33,922 INFO sqlalchemy.engine.Engine PRAGMA main.table_info(\"address\")\n",
+      "2022-09-13 22:00:33,922 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:00:33,923 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info(\"address\")\n",
+      "2022-09-13 22:00:33,924 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:00:33,925 INFO sqlalchemy.engine.Engine \n",
+      "CREATE TABLE user_account (\n",
+      "\tid INTEGER NOT NULL, \n",
+      "\tname VARCHAR(30), \n",
+      "\tfullname VARCHAR, \n",
+      "\tPRIMARY KEY (id)\n",
+      ")\n",
+      "\n",
+      "\n",
+      "2022-09-13 22:00:33,926 INFO sqlalchemy.engine.Engine [no key 0.00055s] ()\n",
+      "2022-09-13 22:00:33,927 INFO sqlalchemy.engine.Engine \n",
+      "CREATE TABLE address (\n",
+      "\tid INTEGER NOT NULL, \n",
+      "\tuser_id INTEGER NOT NULL, \n",
+      "\temail_address VARCHAR NOT NULL, \n",
+      "\tPRIMARY KEY (id), \n",
+      "\tFOREIGN KEY(user_id) REFERENCES user_account (id)\n",
+      ")\n",
+      "\n",
+      "\n",
+      "2022-09-13 22:00:33,927 INFO sqlalchemy.engine.Engine [no key 0.00051s] ()\n",
+      "2022-09-13 22:00:33,928 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import create_engine\n",
+    "\n",
+    "engine = create_engine(\n",
+    "    \"sqlite+pysqlite:///:memory:\",\n",
+    "    echo=True,\n",
+    "    future=True,\n",
+    ")\n",
+    "\n",
+    "metadata_obj.create_all(engine)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:34,008 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:34,009 INFO sqlalchemy.engine.Engine INSERT INTO user_account (name, fullname) VALUES (?, ?)\n",
+      "2022-09-13 22:00:34,010 INFO sqlalchemy.engine.Engine [generated in 0.00181s] (('spongebob', 'Spongebob Squarepants'), ('sandy', 'Sandy Cheeks'), ('patrick', 'Patrick Star'))\n",
+      "2022-09-13 22:00:34,011 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import insert\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(\n",
+    "        insert(user_table),\n",
+    "        [\n",
+    "            {\"name\": \"spongebob\", \"fullname\": \"Spongebob Squarepants\"},\n",
+    "            {\"name\": \"sandy\", \"fullname\": \"Sandy Cheeks\"},\n",
+    "            {\"name\": \"patrick\", \"fullname\": \"Patrick Star\"},\n",
+    "        ],\n",
+    "    )\n",
+    "    conn.commit()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "SELECT ...\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account \n",
+      "WHERE user_account.name = :name_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import select\n",
+    "\n",
+    "stmt = select(user_table).where(user_table.c.name == \"spongebob\")\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:34,145 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:34,146 INFO sqlalchemy.engine.Engine SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account \n",
+      "WHERE user_account.name = ?\n",
+      "2022-09-13 22:00:34,146 INFO sqlalchemy.engine.Engine [generated in 0.00188s] ('spongebob',)\n",
+      "(1, 'spongebob', 'Spongebob Squarepants')\n",
+      "2022-09-13 22:00:34,148 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "with engine.connect() as conn:\n",
+    "    for row in conn.execute(stmt):\n",
+    "        print(row)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "COLUMNS y FROM\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.name, user_account.fullname \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table.c.name, user_table.c.fullname))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Expresiones SQL etiquetadas\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:34,496 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:34,497 INFO sqlalchemy.engine.Engine SELECT ? || user_account.name AS username \n",
+      "FROM user_account ORDER BY user_account.name\n",
+      "2022-09-13 22:00:34,497 INFO sqlalchemy.engine.Engine [generated in 0.00161s] ('Username: ',)\n",
+      "Username: patrick\n",
+      "Username: sandy\n",
+      "Username: spongebob\n",
+      "2022-09-13 22:00:34,498 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import cast, func\n",
+    "\n",
+    "stmt = select(\n",
+    "    (\"Username: \" + user_table.c.name).label(\"username\"),\n",
+    ").order_by(user_table.c.name)\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    for row in conn.execute(stmt):\n",
+    "        print(f\"{row.username}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Expresiones con columnas textuales\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:34,603 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:34,605 INFO sqlalchemy.engine.Engine SELECT 'some phrase', user_account.name \n",
+      "FROM user_account ORDER BY user_account.name\n",
+      "2022-09-13 22:00:34,605 INFO sqlalchemy.engine.Engine [generated in 0.00172s] ()\n",
+      "[('some phrase', 'patrick'), ('some phrase', 'sandy'), ('some phrase', 'spongebob')]\n",
+      "2022-09-13 22:00:34,606 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import text\n",
+    "\n",
+    "stmt = select(text(\"'some phrase'\"), user_table.c.name).order_by(user_table.c.name)\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    print(conn.execute(stmt).all())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:34,716 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:34,717 INFO sqlalchemy.engine.Engine SELECT 'some phrase' AS p, user_account.name \n",
+      "FROM user_account ORDER BY user_account.name\n",
+      "2022-09-13 22:00:34,717 INFO sqlalchemy.engine.Engine [generated in 0.00155s] ()\n",
+      "some phrase, patrick\n",
+      "some phrase, sandy\n",
+      "some phrase, spongebob\n",
+      "2022-09-13 22:00:34,718 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import literal_column\n",
+    "\n",
+    "stmt = select(literal_column(\"'some phrase'\").label(\"p\"), user_table.c.name).order_by(\n",
+    "    user_table.c.name\n",
+    ")\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    for row in conn.execute(stmt):\n",
+    "        print(f\"{row.p}, {row.name}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "WHERE\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "user_account.name = :name_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(user_table.c.name == \"squidward\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "address.user_id > :user_id_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(address_table.c.user_id > 10)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account \n",
+      "WHERE user_account.name = :name_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table).where(user_table.c.name == \"squidward\"))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT address.email_address \n",
+      "FROM address, user_account \n",
+      "WHERE user_account.name = :name_1 AND address.user_id = user_account.id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\n",
+    "    select(address_table.c.email_address)\n",
+    "    .where(user_table.c.name == \"squidward\")\n",
+    "    .where(address_table.c.user_id == user_table.c.id)\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT address.email_address \n",
+      "FROM address, user_account \n",
+      "WHERE user_account.name = :name_1 AND address.user_id = user_account.id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\n",
+    "    select(address_table.c.email_address).where(\n",
+    "        user_table.c.name == \"squidward\", address_table.c.user_id == user_table.c.id\n",
+    "    )\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "FROM ... JOIN\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.name \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table.c.name))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.name, address.email_address \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\n",
+    "    select(user_table.c.name, address_table.c.email_address).join_from(\n",
+    "        user_table, address_table\n",
+    "    )\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.name, address.email_address \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table.c.name, address_table.c.email_address).join(address_table))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT address.email_address \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(address_table.c.email_address).select_from(user_table).join(address_table))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT count(:count_2) AS count_1 \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import func\n",
+    "\n",
+    "print(select(func.count(\"*\")).select_from(user_table))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "ON\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT address.email_address \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\n",
+    "    select(address_table.c.email_address)\n",
+    "    .select_from(user_table)\n",
+    "    .join(address_table, user_table.c.id == address_table.c.user_id)\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "OUTER y FULL joins"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account LEFT OUTER JOIN address ON user_account.id = address.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table).join(address_table, isouter=True))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account FULL OUTER JOIN address ON user_account.id = address.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table).join(address_table, full=True))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "ORDER BY\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account ORDER BY user_account.name\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(user_table).order_by(user_table.c.name))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "ALIAS\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 27,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account_1.name, user_account_2.name AS name_1 \n",
+      "FROM user_account AS user_account_1 JOIN user_account AS user_account_2 ON user_account_1.id > user_account_2.id\n"
+     ]
+    }
+   ],
+   "source": [
+    "user_alias_1 = user_table.alias()\n",
+    "user_alias_2 = user_table.alias()\n",
+    "print(\n",
+    "    select(user_alias_1.c.name, user_alias_2.c.name).join_from(\n",
+    "        user_alias_1, user_alias_2, user_alias_1.c.id > user_alias_2.c.id\n",
+    "    )\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Subconsultas\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT count(address.id) AS count, address.user_id \n",
+      "FROM address GROUP BY address.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "subq = (\n",
+    "    select(func.count(address_table.c.id).label(\"count\"), address_table.c.user_id)\n",
+    "    .group_by(address_table.c.user_id)\n",
+    "    .subquery()\n",
+    ")\n",
+    "\n",
+    "print(subq)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 29,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT anon_1.user_id, anon_1.count \n",
+      "FROM (SELECT count(address.id) AS count, address.user_id AS user_id \n",
+      "FROM address GROUP BY address.user_id) AS anon_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(subq.c.user_id, subq.c.count))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.name, user_account.fullname, anon_1.count \n",
+      "FROM user_account JOIN (SELECT count(address.id) AS count, address.user_id AS user_id \n",
+      "FROM address GROUP BY address.user_id) AS anon_1 ON user_account.id = anon_1.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "stmt = select(user_table.c.name, user_table.c.fullname, subq.c.count).join_from(\n",
+    "    user_table, subq\n",
+    ")\n",
+    "\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "WITH anon_1 AS \n",
+      "(SELECT count(address.id) AS count, address.user_id AS user_id \n",
+      "FROM address GROUP BY address.user_id)\n",
+      " SELECT user_account.name, user_account.fullname, anon_1.count \n",
+      "FROM user_account JOIN anon_1 ON user_account.id = anon_1.user_id\n"
+     ]
+    }
+   ],
+   "source": [
+    "subq = (\n",
+    "    select(func.count(address_table.c.id).label(\"count\"), address_table.c.user_id)\n",
+    "    .group_by(address_table.c.user_id)\n",
+    "    .cte()\n",
+    ")\n",
+    "\n",
+    "stmt = select(user_table.c.name, user_table.c.fullname, subq.c.count).join_from(\n",
+    "    user_table, subq\n",
+    ")\n",
+    "\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Escalares y subconsultas correlacionadas\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(SELECT count(address.id) AS count_1 \n",
+      "FROM address, user_account \n",
+      "WHERE user_account.id = address.user_id)\n"
+     ]
+    }
+   ],
+   "source": [
+    "subq = (\n",
+    "    select(func.count(address_table.c.id))\n",
+    "    .where(user_table.c.id == address_table.c.user_id)\n",
+    "    .scalar_subquery()\n",
+    ")\n",
+    "\n",
+    "print(subq)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "(SELECT count(address.id) AS count_1 \n",
+      "FROM address, user_account \n",
+      "WHERE user_account.id = address.user_id) = :param_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(subq == 5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.name, (SELECT count(address.id) AS count_1 \n",
+      "FROM address \n",
+      "WHERE user_account.id = address.user_id) AS address_count \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "stmt = select(user_table.c.name, subq.label(\"address_count\"))\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "subq = (\n",
+    "    select(func.count(address_table.c.id))\n",
+    "    .where(user_table.c.id == address_table.c.user_id)\n",
+    "    .scalar_subquery()\n",
+    "    .correlate(user_table)\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:39,797 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:39,798 INFO sqlalchemy.engine.Engine SELECT user_account.name, address.email_address, (SELECT count(address.id) AS count_1 \n",
+      "FROM address \n",
+      "WHERE user_account.id = address.user_id) AS address_count \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id ORDER BY user_account.id, address.id\n",
+      "2022-09-13 22:00:39,799 INFO sqlalchemy.engine.Engine [generated in 0.00184s] ()\n",
+      "[]\n",
+      "2022-09-13 22:00:39,800 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "with engine.connect() as conn:\n",
+    "\n",
+    "    result = conn.execute(\n",
+    "        select(\n",
+    "            user_table.c.name,\n",
+    "            address_table.c.email_address,\n",
+    "            subq.label(\"address_count\"),\n",
+    "        )\n",
+    "        .join_from(user_table, address_table)\n",
+    "        .order_by(user_table.c.id, address_table.c.id)\n",
+    "    )\n",
+    "\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "LATERAL\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT user_account.name, anon_1.address_count, anon_1.email_address \n",
+      "FROM user_account JOIN LATERAL (SELECT count(address.id) AS address_count, address.email_address AS email_address, address.user_id AS user_id \n",
+      "FROM address \n",
+      "WHERE user_account.id = address.user_id) AS anon_1 ON user_account.id = anon_1.user_id ORDER BY user_account.id, anon_1.email_address\n"
+     ]
+    }
+   ],
+   "source": [
+    "subq = (\n",
+    "    select(\n",
+    "        func.count(address_table.c.id).label(\"address_count\"),\n",
+    "        address_table.c.email_address,\n",
+    "        address_table.c.user_id,\n",
+    "    )\n",
+    "    .where(user_table.c.id == address_table.c.user_id)\n",
+    "    .lateral()\n",
+    ")\n",
+    "\n",
+    "stmt = (\n",
+    "    select(user_table.c.name, subq.c.address_count, subq.c.email_address)\n",
+    "    .join_from(user_table, subq)\n",
+    "    .order_by(user_table.c.id, subq.c.email_address)\n",
+    ")\n",
+    "\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "UNION, UNION ALL y otras operaciones sobre conjuntos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:40,086 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:40,087 INFO sqlalchemy.engine.Engine SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account \n",
+      "WHERE user_account.name = ? UNION ALL SELECT user_account.id, user_account.name, user_account.fullname \n",
+      "FROM user_account \n",
+      "WHERE user_account.name = ?\n",
+      "2022-09-13 22:00:40,088 INFO sqlalchemy.engine.Engine [generated in 0.00160s] ('sandy', 'spongebob')\n",
+      "[(2, 'sandy', 'Sandy Cheeks'), (1, 'spongebob', 'Spongebob Squarepants')]\n",
+      "2022-09-13 22:00:40,089 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import union_all\n",
+    "\n",
+    "stmt1 = select(user_table).where(user_table.c.name == \"sandy\")\n",
+    "stmt2 = select(user_table).where(user_table.c.name == \"spongebob\")\n",
+    "\n",
+    "u = union_all(stmt1, stmt2)\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(u)\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:40,159 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:40,160 INFO sqlalchemy.engine.Engine SELECT anon_1.name, address.email_address \n",
+      "FROM address JOIN (SELECT user_account.id AS id, user_account.name AS name, user_account.fullname AS fullname \n",
+      "FROM user_account \n",
+      "WHERE user_account.name = ? UNION ALL SELECT user_account.id AS id, user_account.name AS name, user_account.fullname AS fullname \n",
+      "FROM user_account \n",
+      "WHERE user_account.name = ?) AS anon_1 ON anon_1.id = address.user_id ORDER BY anon_1.name, address.email_address\n",
+      "2022-09-13 22:00:40,161 INFO sqlalchemy.engine.Engine [generated in 0.00170s] ('sandy', 'spongebob')\n",
+      "[]\n",
+      "2022-09-13 22:00:40,162 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "u_subq = u.subquery()\n",
+    "\n",
+    "stmt = (\n",
+    "    select(u_subq.c.name, address_table.c.email_address)\n",
+    "    .join_from(address_table, u_subq)\n",
+    "    .order_by(u_subq.c.name, address_table.c.email_address)\n",
+    ")\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "EXISTS\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:40,247 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:40,248 INFO sqlalchemy.engine.Engine SELECT user_account.name \n",
+      "FROM user_account \n",
+      "WHERE EXISTS (SELECT count(address.id) AS count_1 \n",
+      "FROM address \n",
+      "WHERE user_account.id = address.user_id GROUP BY address.user_id \n",
+      "HAVING count(address.id) > ?)\n",
+      "2022-09-13 22:00:40,249 INFO sqlalchemy.engine.Engine [generated in 0.00175s] (1,)\n",
+      "[]\n",
+      "2022-09-13 22:00:40,250 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "subq = (\n",
+    "    select(func.count(address_table.c.id))\n",
+    "    .where(user_table.c.id == address_table.c.user_id)\n",
+    "    .group_by(address_table.c.user_id)\n",
+    "    .having(func.count(address_table.c.id) > 1)\n",
+    ").exists()\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(select(user_table.c.name).where(subq))\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 41,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:40,309 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:40,311 INFO sqlalchemy.engine.Engine SELECT user_account.name \n",
+      "FROM user_account \n",
+      "WHERE NOT (EXISTS (SELECT address.id \n",
+      "FROM address \n",
+      "WHERE user_account.id = address.user_id))\n",
+      "2022-09-13 22:00:40,311 INFO sqlalchemy.engine.Engine [generated in 0.00175s] ()\n",
+      "[('spongebob',), ('sandy',), ('patrick',)]\n",
+      "2022-09-13 22:00:40,312 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "subq = (\n",
+    "    select(address_table.c.id).where(user_table.c.id == address_table.c.user_id)\n",
+    ").exists()\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(select(user_table.c.name).where(~subq))\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Funciones SQL\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT count(*) AS count_1 \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(func.count()).select_from(user_table))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT lower(:lower_2) AS lower_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(func.lower(\"A String With Much UPPERCASE\")))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:40,527 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:40,528 INFO sqlalchemy.engine.Engine SELECT CURRENT_TIMESTAMP AS now_1\n",
+      "2022-09-13 22:00:40,529 INFO sqlalchemy.engine.Engine [generated in 0.00178s] ()\n",
+      "[(datetime.datetime(2022, 9, 14, 3, 0, 40),)]\n",
+      "2022-09-13 22:00:40,530 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "stmt = select(func.now())\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT some_crazy_function(user_account.name, :some_crazy_function_2) AS some_crazy_function_1 \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(func.some_crazy_function(user_table.c.name, 17)))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT now() AS now_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy.dialects import postgresql\n",
+    "\n",
+    "print(select(func.now()).compile(dialect=postgresql.dialect()))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT CURRENT_TIMESTAMP AS now_1 FROM DUAL\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy.dialects import oracle\n",
+    "\n",
+    "print(select(func.now()).compile(dialect=oracle.dialect()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Retorno de tipos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 48,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "DateTime()"
+      ]
+     },
+     "execution_count": 48,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.now().type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sqlalchemy import JSON\n",
+    "\n",
+    "function_expr = func.json_object('{a, 1, b, \"def\", c, 3.5}', type_=JSON)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT json_object(:json_object_1)[:json_object_2] AS anon_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "stmt = select(function_expr[\"def\"])\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Funciones Built-in\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 51,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Integer()"
+      ]
+     },
+     "execution_count": 51,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "m1 = func.max(Column(\"some_int\", Integer))\n",
+    "m1.type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 52,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "String()"
+      ]
+     },
+     "execution_count": 52,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "m2 = func.max(Column(\"some_str\", String))\n",
+    "m2.type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 53,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "DateTime()"
+      ]
+     },
+     "execution_count": 53,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.now().type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 54,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Date()"
+      ]
+     },
+     "execution_count": 54,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.current_date().type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 55,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "DateTime()"
+      ]
+     },
+     "execution_count": 55,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.now().type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 56,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Date()"
+      ]
+     },
+     "execution_count": 56,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.current_date().type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 57,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "String()"
+      ]
+     },
+     "execution_count": 57,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.concat(\"x\", \"y\").type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 58,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "String()"
+      ]
+     },
+     "execution_count": 58,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.concat(\"x\", \"y\").type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "NullType()"
+      ]
+     },
+     "execution_count": 59,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "func.upper(\"lowercase\").type"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT upper(:upper_1) || :upper_2 AS anon_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(select(func.upper(\"lowercase\") + \" suffix\"))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:43,107 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:43,109 INFO sqlalchemy.engine.Engine SELECT row_number() OVER (PARTITION BY user_account.name) AS anon_1, user_account.name, address.email_address \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id\n",
+      "2022-09-13 22:00:43,109 INFO sqlalchemy.engine.Engine [generated in 0.00185s] ()\n",
+      "[]\n",
+      "2022-09-13 22:00:43,110 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "stmt = (\n",
+    "    select(\n",
+    "        func.row_number().over(partition_by=user_table.c.name),\n",
+    "        user_table.c.name,\n",
+    "        address_table.c.email_address,\n",
+    "    )\n",
+    "    .select_from(user_table)\n",
+    "    .join(address_table)\n",
+    ")\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:43,206 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:43,207 INFO sqlalchemy.engine.Engine SELECT count(*) OVER (ORDER BY user_account.name) AS anon_1, user_account.name, address.email_address \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id\n",
+      "2022-09-13 22:00:43,208 INFO sqlalchemy.engine.Engine [generated in 0.00187s] ()\n",
+      "[]\n",
+      "2022-09-13 22:00:43,209 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "stmt = (\n",
+    "    select(\n",
+    "        func.count().over(order_by=user_table.c.name),\n",
+    "        user_table.c.name,\n",
+    "        address_table.c.email_address,\n",
+    "    )\n",
+    "    .select_from(user_table)\n",
+    "    .join(address_table)\n",
+    ")\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "unnest(percentile_disc(:percentile_disc_1) WITHIN GROUP (ORDER BY user_account.name))\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\n",
+    "    func.unnest(\n",
+    "        func.percentile_disc([0.25, 0.5, 0.75, 1]).within_group(user_table.c.name)\n",
+    "    )\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:43,388 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:43,389 INFO sqlalchemy.engine.Engine SELECT count(address.email_address) FILTER (WHERE user_account.name = ?) AS anon_1, count(address.email_address) FILTER (WHERE user_account.name = ?) AS anon_2 \n",
+      "FROM user_account JOIN address ON user_account.id = address.user_id\n",
+      "2022-09-13 22:00:43,390 INFO sqlalchemy.engine.Engine [generated in 0.00178s] ('sandy', 'spongebob')\n",
+      "[(0, 0)]\n",
+      "2022-09-13 22:00:43,391 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "stmt = (\n",
+    "    select(\n",
+    "        func.count(address_table.c.email_address).filter(user_table.c.name == \"sandy\"),\n",
+    "        func.count(address_table.c.email_address).filter(\n",
+    "            user_table.c.name == \"spongebob\"\n",
+    "        ),\n",
+    "    )\n",
+    "    .select_from(user_table)\n",
+    "    .join(address_table)\n",
+    ")\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    print(result.all())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Table-Valued Functions\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:43,471 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:43,472 INFO sqlalchemy.engine.Engine SELECT anon_1.value \n",
+      "FROM json_each(?) AS anon_1 \n",
+      "WHERE anon_1.value IN (?, ?)\n",
+      "2022-09-13 22:00:43,472 INFO sqlalchemy.engine.Engine [generated in 0.00187s] ('[\"one\", \"two\", \"three\"]', 'two', 'three')\n",
+      "2022-09-13 22:00:43,474 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "onetwothree = func.json_each('[\"one\", \"two\", \"three\"]').table_valued(\"value\")\n",
+    "\n",
+    "stmt = select(onetwothree).where(onetwothree.c.value.in_([\"two\", \"three\"]))\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    result.all()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Column Valued Functions\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT x \n",
+      "FROM json_array_elements(:json_array_elements_1) AS x\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import func, select\n",
+    "\n",
+    "stmt = select(func.json_array_elements('[\"one\", \"two\"]').column_valued(\"x\"))\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT COLUMN_VALUE s \n",
+      "FROM TABLE (scalar_strings(:scalar_strings_1)) s\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy.dialects import oracle\n",
+    "\n",
+    "stmt = select(func.scalar_strings(5).column_valued(\"s\"))\n",
+    "print(stmt.compile(dialect=oracle.dialect()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Conversión de tipos\n",
+    "--"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:00:44,375 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:00:44,376 INFO sqlalchemy.engine.Engine SELECT CAST(user_account.id AS VARCHAR) AS id \n",
+      "FROM user_account\n",
+      "2022-09-13 22:00:44,377 INFO sqlalchemy.engine.Engine [generated in 0.00188s] ()\n",
+      "2022-09-13 22:00:44,378 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import cast\n",
+    "\n",
+    "stmt = select(cast(user_table.c.id, String))\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    result.all()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 69,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "CAST(:param_1 AS JSON)[:param_2]\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import JSON\n",
+    "\n",
+    "print(cast(\"{'a': 'b'}\", JSON)[\"a\"])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "SELECT JSON_EXTRACT(%s, %s) AS anon_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "import json\n",
+    "\n",
+    "from sqlalchemy import JSON, type_coerce\n",
+    "from sqlalchemy.dialects import mysql\n",
+    "\n",
+    "s = select(type_coerce({\"some_key\": {\"foo\": \"bar\"}}, JSON)[\"some_key\"])\n",
+    "print(s.compile(dialect=mysql.dialect()))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "2482a4565599eda3cd2db35331af39775c1f78a505a9deef48c721423040da5b"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

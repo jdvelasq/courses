@@ -1,0 +1,575 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Trabajo con Datos con el Core: Actualización y Borrado de Filas\n",
+    "=====\n",
+    "\n",
+    "* Última actualización: 12 de septiembre de 2022."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Preparación\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:01:33,693 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:01:33,693 INFO sqlalchemy.engine.Engine PRAGMA main.table_info(\"user_account\")\n",
+      "2022-09-13 22:01:33,694 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:33,694 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info(\"user_account\")\n",
+      "2022-09-13 22:01:33,695 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:33,696 INFO sqlalchemy.engine.Engine PRAGMA main.table_info(\"address\")\n",
+      "2022-09-13 22:01:33,696 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:33,697 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info(\"address\")\n",
+      "2022-09-13 22:01:33,698 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:33,699 INFO sqlalchemy.engine.Engine \n",
+      "CREATE TABLE user_account (\n",
+      "\tid INTEGER NOT NULL, \n",
+      "\tname VARCHAR(30), \n",
+      "\tfullname VARCHAR, \n",
+      "\tPRIMARY KEY (id)\n",
+      ")\n",
+      "\n",
+      "\n",
+      "2022-09-13 22:01:33,699 INFO sqlalchemy.engine.Engine [no key 0.00048s] ()\n",
+      "2022-09-13 22:01:33,700 INFO sqlalchemy.engine.Engine \n",
+      "CREATE TABLE address (\n",
+      "\tid INTEGER NOT NULL, \n",
+      "\tuser_id INTEGER NOT NULL, \n",
+      "\temail_address VARCHAR NOT NULL, \n",
+      "\tPRIMARY KEY (id), \n",
+      "\tFOREIGN KEY(user_id) REFERENCES user_account (id)\n",
+      ")\n",
+      "\n",
+      "\n",
+      "2022-09-13 22:01:33,701 INFO sqlalchemy.engine.Engine [no key 0.00043s] ()\n",
+      "2022-09-13 22:01:33,702 INFO sqlalchemy.engine.Engine COMMIT\n",
+      "2022-09-13 22:01:33,703 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:01:33,704 INFO sqlalchemy.engine.Engine INSERT INTO user_account (name, fullname) VALUES (?, ?)\n",
+      "2022-09-13 22:01:33,704 INFO sqlalchemy.engine.Engine [generated in 0.00133s] (('spongebob', 'Spongebob Squarepants'), ('sandy', 'Sandy Cheeks'), ('patrick', 'Patrick Star'))\n",
+      "2022-09-13 22:01:33,705 INFO sqlalchemy.engine.Engine COMMIT\n",
+      "2022-09-13 22:01:33,707 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:01:33,708 INFO sqlalchemy.engine.Engine INSERT INTO address (user_id, email_address) SELECT user_account.id, user_account.name || ? AS anon_1 \n",
+      "FROM user_account\n",
+      "2022-09-13 22:01:33,708 INFO sqlalchemy.engine.Engine [generated in 0.00119s] ('@aol.com',)\n",
+      "2022-09-13 22:01:33,709 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import (\n",
+    "    Column,\n",
+    "    ForeignKey,\n",
+    "    Integer,\n",
+    "    MetaData,\n",
+    "    String,\n",
+    "    Table,\n",
+    "    create_engine,\n",
+    "    insert,\n",
+    "    select,\n",
+    ")\n",
+    "\n",
+    "metadata_obj = MetaData()\n",
+    "\n",
+    "user_table = Table(\n",
+    "    \"user_account\",\n",
+    "    metadata_obj,\n",
+    "    Column(\"id\", Integer, primary_key=True),\n",
+    "    Column(\"name\", String(30)),\n",
+    "    Column(\"fullname\", String),\n",
+    ")\n",
+    "\n",
+    "\n",
+    "address_table = Table(\n",
+    "    \"address\",\n",
+    "    metadata_obj,\n",
+    "    Column(\"id\", Integer, primary_key=True),\n",
+    "    Column(\"user_id\", ForeignKey(\"user_account.id\"), nullable=False),  # Clave foranea\n",
+    "    Column(\"email_address\", String, nullable=False),\n",
+    ")\n",
+    "\n",
+    "engine = create_engine(\n",
+    "    \"sqlite+pysqlite:///:memory:\",\n",
+    "    echo=True,\n",
+    "    future=True,\n",
+    ")\n",
+    "\n",
+    "metadata_obj.create_all(engine)\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(\n",
+    "        insert(user_table),\n",
+    "        [\n",
+    "            {\"name\": \"spongebob\", \"fullname\": \"Spongebob Squarepants\"},\n",
+    "            {\"name\": \"sandy\", \"fullname\": \"Sandy Cheeks\"},\n",
+    "            {\"name\": \"patrick\", \"fullname\": \"Patrick Star\"},\n",
+    "        ],\n",
+    "    )\n",
+    "    conn.commit()\n",
+    "\n",
+    "\n",
+    "select_stmt = select(user_table.c.id, user_table.c.name + \"@aol.com\")\n",
+    "insert_stmt = insert(address_table).from_select(\n",
+    "    [\"user_id\", \"email_address\"], select_stmt\n",
+    ")\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(insert_stmt)\n",
+    "    conn.commit()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "UPDATE\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE user_account SET fullname=:fullname WHERE user_account.name = :name_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Uso básico\n",
+    "#\n",
+    "from sqlalchemy import update\n",
+    "\n",
+    "stmt = (\n",
+    "    update(user_table)\n",
+    "    .where(user_table.c.name == \"patrick\")\n",
+    "    .values(fullname=\"Patrick the Star\")\n",
+    ")\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE user_account SET fullname=(:name_1 || user_account.name)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Soporta la mayor parte de formas de UPDATE en SQL\n",
+    "#\n",
+    "stmt = update(user_table).values(fullname=\"Username: \" + user_table.c.name)\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:01:33,958 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:01:33,960 INFO sqlalchemy.engine.Engine UPDATE user_account SET name=? WHERE user_account.name = ?\n",
+      "2022-09-13 22:01:33,961 INFO sqlalchemy.engine.Engine [generated in 0.00094s] (('ed', 'jack'), ('mary', 'wendy'), ('jake', 'jim'))\n",
+      "2022-09-13 22:01:33,962 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Update con executemany()\n",
+    "#\n",
+    "from sqlalchemy import bindparam\n",
+    "\n",
+    "stmt = (\n",
+    "    update(user_table)\n",
+    "    .where(user_table.c.name == bindparam(\"oldname\"))\n",
+    "    .values(name=bindparam(\"newname\"))\n",
+    ")\n",
+    "with engine.begin() as conn:\n",
+    "    conn.execute(\n",
+    "        stmt,\n",
+    "        [\n",
+    "            {\"oldname\": \"jack\", \"newname\": \"ed\"},\n",
+    "            {\"oldname\": \"wendy\", \"newname\": \"mary\"},\n",
+    "            {\"oldname\": \"jim\", \"newname\": \"jake\"},\n",
+    "        ],\n",
+    "    )"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Updates correlacionados\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE user_account SET fullname=(SELECT address.email_address \n",
+      "FROM address \n",
+      "WHERE address.user_id = user_account.id ORDER BY address.id\n",
+      " LIMIT :param_1)\n"
+     ]
+    }
+   ],
+   "source": [
+    "scalar_subq = (\n",
+    "    select(address_table.c.email_address)\n",
+    "    .where(address_table.c.user_id == user_table.c.id)\n",
+    "    .order_by(address_table.c.id)\n",
+    "    .limit(1)\n",
+    "    .scalar_subquery()\n",
+    ")\n",
+    "update_stmt = update(user_table).values(fullname=scalar_subq)\n",
+    "print(update_stmt)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "UPDATE ... FROM\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE user_account SET fullname=:fullname FROM address WHERE user_account.id = address.user_id AND address.email_address = :email_address_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "update_stmt = (\n",
+    "    update(user_table)\n",
+    "    .where(user_table.c.id == address_table.c.user_id)\n",
+    "    .where(address_table.c.email_address == \"patrick@aol.com\")\n",
+    "    .values(fullname=\"Pat\")\n",
+    ")\n",
+    "\n",
+    "print(update_stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE user_account, address SET address.email_address=%s, user_account.fullname=%s WHERE user_account.id = address.user_id AND address.email_address = %s\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Actualización de varias tablas\n",
+    "#\n",
+    "update_stmt = (\n",
+    "    update(user_table)\n",
+    "    .where(user_table.c.id == address_table.c.user_id)\n",
+    "    .where(address_table.c.email_address == \"patrick@aol.com\")\n",
+    "    .values(\n",
+    "        {user_table.c.fullname: \"Pat\", address_table.c.email_address: \"pat@aol.com\"}\n",
+    "    )\n",
+    ")\n",
+    "from sqlalchemy.dialects import mysql\n",
+    "\n",
+    "print(update_stmt.compile(dialect=mysql.dialect()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Update con parámetros\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:01:34,421 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:01:34,422 INFO sqlalchemy.engine.Engine CREATE TABLE some_table (x int, y int)\n",
+      "2022-09-13 22:01:34,423 INFO sqlalchemy.engine.Engine [generated in 0.00192s] ()\n",
+      "2022-09-13 22:01:34,424 INFO sqlalchemy.engine.Engine INSERT INTO some_table (x, y) VALUES (?, ?)\n",
+      "2022-09-13 22:01:34,425 INFO sqlalchemy.engine.Engine [generated in 0.00062s] ((1, 1), (2, 4))\n",
+      "2022-09-13 22:01:34,426 INFO sqlalchemy.engine.Engine COMMIT\n",
+      "2022-09-13 22:01:34,427 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:01:34,427 INFO sqlalchemy.engine.Engine PRAGMA main.table_xinfo(\"some_table\")\n",
+      "2022-09-13 22:01:34,428 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:34,429 INFO sqlalchemy.engine.Engine SELECT sql FROM  (SELECT * FROM sqlite_master UNION ALL   SELECT * FROM sqlite_temp_master) WHERE name = ? AND type = 'table'\n",
+      "2022-09-13 22:01:34,430 INFO sqlalchemy.engine.Engine [raw sql] ('some_table',)\n",
+      "2022-09-13 22:01:34,432 INFO sqlalchemy.engine.Engine PRAGMA main.foreign_key_list(\"some_table\")\n",
+      "2022-09-13 22:01:34,432 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:34,433 INFO sqlalchemy.engine.Engine PRAGMA temp.foreign_key_list(\"some_table\")\n",
+      "2022-09-13 22:01:34,434 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:34,435 INFO sqlalchemy.engine.Engine SELECT sql FROM  (SELECT * FROM sqlite_master UNION ALL   SELECT * FROM sqlite_temp_master) WHERE name = ? AND type = 'table'\n",
+      "2022-09-13 22:01:34,435 INFO sqlalchemy.engine.Engine [raw sql] ('some_table',)\n",
+      "2022-09-13 22:01:34,437 INFO sqlalchemy.engine.Engine PRAGMA main.index_list(\"some_table\")\n",
+      "2022-09-13 22:01:34,438 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:34,439 INFO sqlalchemy.engine.Engine PRAGMA temp.index_list(\"some_table\")\n",
+      "2022-09-13 22:01:34,440 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:34,440 INFO sqlalchemy.engine.Engine PRAGMA main.index_list(\"some_table\")\n",
+      "2022-09-13 22:01:34,441 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:34,442 INFO sqlalchemy.engine.Engine PRAGMA temp.index_list(\"some_table\")\n",
+      "2022-09-13 22:01:34,443 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 22:01:34,443 INFO sqlalchemy.engine.Engine SELECT sql FROM  (SELECT * FROM sqlite_master UNION ALL   SELECT * FROM sqlite_temp_master) WHERE name = ? AND type = 'table'\n",
+      "2022-09-13 22:01:34,444 INFO sqlalchemy.engine.Engine [raw sql] ('some_table',)\n",
+      "2022-09-13 22:01:34,446 INFO sqlalchemy.engine.Engine ROLLBACK\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import text\n",
+    "\n",
+    "with engine.connect() as conn:\n",
+    "    conn.execute(text(\"CREATE TABLE some_table (x int, y int)\"))\n",
+    "    conn.execute(\n",
+    "        text(\"INSERT INTO some_table (x, y) VALUES (:x, :y)\"),\n",
+    "        [\n",
+    "            {\"x\": 1, \"y\": 1},\n",
+    "            {\"x\": 2, \"y\": 4},\n",
+    "        ],\n",
+    "    )\n",
+    "    conn.commit()\n",
+    "\n",
+    "some_table = Table(\n",
+    "    \"some_table\",\n",
+    "    metadata_obj,\n",
+    "    autoload_with=engine,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE some_table SET y=:y, x=(some_table.y + :y_1)\n"
+     ]
+    }
+   ],
+   "source": [
+    "update_stmt = update(some_table).ordered_values(\n",
+    "    (some_table.c.y, 20), (some_table.c.x, some_table.c.y + 10)\n",
+    ")\n",
+    "print(update_stmt)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Expresión DELETE\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "DELETE FROM user_account WHERE user_account.name = :name_1\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Borrado de una tabla\n",
+    "#\n",
+    "from sqlalchemy import delete\n",
+    "\n",
+    "stmt = delete(user_table).where(user_table.c.name == \"patrick\")\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "DELETE FROM user_account USING user_account, address WHERE user_account.id = address.user_id AND address.email_address = %s\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Borrado de varias tablas\n",
+    "#\n",
+    "delete_stmt = (\n",
+    "    delete(user_table)\n",
+    "    .where(user_table.c.id == address_table.c.user_id)\n",
+    "    .where(address_table.c.email_address == \"patrick@aol.com\")\n",
+    ")\n",
+    "\n",
+    "from sqlalchemy.dialects import mysql\n",
+    "\n",
+    "print(delete_stmt.compile(dialect=mysql.dialect()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Conteo de tablas afectadas con UPDATE y DELETE\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 22:01:34,735 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 22:01:34,737 INFO sqlalchemy.engine.Engine UPDATE user_account SET fullname=? WHERE user_account.name = ?\n",
+      "2022-09-13 22:01:34,738 INFO sqlalchemy.engine.Engine [generated in 0.00108s] ('Patrick McStar', 'patrick')\n",
+      "1\n",
+      "2022-09-13 22:01:34,739 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "with engine.begin() as conn:\n",
+    "    result = conn.execute(\n",
+    "        update(user_table)\n",
+    "        .values(fullname=\"Patrick McStar\")\n",
+    "        .where(user_table.c.name == \"patrick\")\n",
+    "    )\n",
+    "    print(result.rowcount)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Uso de RETURNING con UPDATE y DELETE\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "UPDATE user_account SET fullname=:fullname WHERE user_account.name = :name_1 RETURNING user_account.id, user_account.name\n",
+      "DELETE FROM user_account WHERE user_account.name = :name_1 RETURNING user_account.id, user_account.name\n"
+     ]
+    }
+   ],
+   "source": [
+    "update_stmt = (\n",
+    "    update(user_table)\n",
+    "    .where(user_table.c.name == \"patrick\")\n",
+    "    .values(fullname=\"Patrick the Star\")\n",
+    "    .returning(user_table.c.id, user_table.c.name)\n",
+    ")\n",
+    "print(update_stmt)\n",
+    "delete_stmt = (\n",
+    "    delete(user_table)\n",
+    "    .where(user_table.c.name == \"patrick\")\n",
+    "    .returning(user_table.c.id, user_table.c.name)\n",
+    ")\n",
+    "print(delete_stmt)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "2482a4565599eda3cd2db35331af39775c1f78a505a9deef48c721423040da5b"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

@@ -112,6 +112,7 @@ política de la Universidad Nacional de Colombia, y en particular el
     :hidden:
     :maxdepth: 1
 
+    analitica_descriptiva/index
     ciencia_de_los_datos/index    
     analitica_predictiva/index
     analitica_de_grandes_datos/index

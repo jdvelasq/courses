@@ -1,0 +1,407 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Trabajo con Datos con el Core: Inserción de Filas\n",
+    "====\n",
+    "\n",
+    "* Última modificación: 12 de septiembre de 2022."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Preparación\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sqlalchemy import MetaData\n",
+    "\n",
+    "metadata_obj = MetaData()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sqlalchemy import Column, Integer, String, Table\n",
+    "\n",
+    "user_table = Table(\n",
+    "    \"user_account\",\n",
+    "    metadata_obj,\n",
+    "    Column(\"id\", Integer, primary_key=True),\n",
+    "    Column(\"name\", String(30)),\n",
+    "    Column(\"fullname\", String),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sqlalchemy import ForeignKey\n",
+    "\n",
+    "address_table = Table(\n",
+    "    \"address\",\n",
+    "    metadata_obj,\n",
+    "    Column(\"id\", Integer, primary_key=True),\n",
+    "    Column(\"user_id\", ForeignKey(\"user_account.id\"), nullable=False),  # Clave foranea\n",
+    "    Column(\"email_address\", String, nullable=False),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 21:53:35,890 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 21:53:35,891 INFO sqlalchemy.engine.Engine PRAGMA main.table_info(\"user_account\")\n",
+      "2022-09-13 21:53:35,892 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 21:53:35,893 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info(\"user_account\")\n",
+      "2022-09-13 21:53:35,893 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 21:53:35,894 INFO sqlalchemy.engine.Engine PRAGMA main.table_info(\"address\")\n",
+      "2022-09-13 21:53:35,895 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 21:53:35,896 INFO sqlalchemy.engine.Engine PRAGMA temp.table_info(\"address\")\n",
+      "2022-09-13 21:53:35,896 INFO sqlalchemy.engine.Engine [raw sql] ()\n",
+      "2022-09-13 21:53:35,898 INFO sqlalchemy.engine.Engine \n",
+      "CREATE TABLE user_account (\n",
+      "\tid INTEGER NOT NULL, \n",
+      "\tname VARCHAR(30), \n",
+      "\tfullname VARCHAR, \n",
+      "\tPRIMARY KEY (id)\n",
+      ")\n",
+      "\n",
+      "\n",
+      "2022-09-13 21:53:35,898 INFO sqlalchemy.engine.Engine [no key 0.00063s] ()\n",
+      "2022-09-13 21:53:35,899 INFO sqlalchemy.engine.Engine \n",
+      "CREATE TABLE address (\n",
+      "\tid INTEGER NOT NULL, \n",
+      "\tuser_id INTEGER NOT NULL, \n",
+      "\temail_address VARCHAR NOT NULL, \n",
+      "\tPRIMARY KEY (id), \n",
+      "\tFOREIGN KEY(user_id) REFERENCES user_account (id)\n",
+      ")\n",
+      "\n",
+      "\n",
+      "2022-09-13 21:53:35,900 INFO sqlalchemy.engine.Engine [no key 0.00063s] ()\n",
+      "2022-09-13 21:53:35,901 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import create_engine\n",
+    "\n",
+    "engine = create_engine(\n",
+    "    \"sqlite+pysqlite:///:memory:\",\n",
+    "    echo=True,\n",
+    "    future=True,\n",
+    ")\n",
+    "\n",
+    "metadata_obj.create_all(engine)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Expresión INSERT INTO ...\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "<sqlalchemy.sql.dml.Insert object at 0x10cbf5bb0>"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sqlalchemy import insert\n",
+    "\n",
+    "stmt = insert(user_table).values(name=\"spongebob\", fullname=\"Spongebob Squarepants\")\n",
+    "\n",
+    "#\n",
+    "# Objeto en memoria\n",
+    "#\n",
+    "stmt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "INSERT INTO user_account (name, fullname) VALUES (:name, :fullname)\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Impresión como una cadena de caracteres. Note que insert()\n",
+    "# crea automaticamente la expresión SQL para insertar datos\n",
+    "#\n",
+    "print(stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'name': 'spongebob', 'fullname': 'Spongebob Squarepants'}"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Valores de los parámetros en el stmt\n",
+    "#\n",
+    "compiled = stmt.compile()\n",
+    "compiled.params"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Ejecución de la expresión INSERT INTO ...\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 21:53:36,215 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 21:53:36,216 INFO sqlalchemy.engine.Engine INSERT INTO user_account (name, fullname) VALUES (?, ?)\n",
+      "2022-09-13 21:53:36,216 INFO sqlalchemy.engine.Engine [generated in 0.00196s] ('spongebob', 'Spongebob Squarepants')\n",
+      "2022-09-13 21:53:36,218 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(stmt)\n",
+    "    conn.commit()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "(1,)"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "result.inserted_primary_key"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "INSERT INTO ... con varias filas\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2022-09-13 21:53:36,348 INFO sqlalchemy.engine.Engine BEGIN (implicit)\n",
+      "2022-09-13 21:53:36,350 INFO sqlalchemy.engine.Engine INSERT INTO user_account (name, fullname) VALUES (?, ?)\n",
+      "2022-09-13 21:53:36,350 INFO sqlalchemy.engine.Engine [generated in 0.00216s] (('sandy', 'Sandy Cheeks'), ('patrick', 'Patrick Star'))\n",
+      "2022-09-13 21:53:36,351 INFO sqlalchemy.engine.Engine COMMIT\n"
+     ]
+    }
+   ],
+   "source": [
+    "with engine.connect() as conn:\n",
+    "    result = conn.execute(\n",
+    "        insert(user_table),\n",
+    "        [\n",
+    "            {\"name\": \"sandy\", \"fullname\": \"Sandy Cheeks\"},\n",
+    "            {\"name\": \"patrick\", \"fullname\": \"Patrick Star\"},\n",
+    "        ],\n",
+    "    )\n",
+    "    conn.commit()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Expresión INSERT ... FROM SELECT\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "INSERT INTO address (user_id, email_address) SELECT user_account.id, user_account.name || :name_1 AS anon_1 \n",
+      "FROM user_account\n"
+     ]
+    }
+   ],
+   "source": [
+    "from sqlalchemy import select\n",
+    "\n",
+    "select_stmt = select(user_table.c.id, user_table.c.name + \"@aol.com\")\n",
+    "\n",
+    "insert_stmt = insert(address_table).from_select(\n",
+    "    [\"user_id\", \"email_address\"], select_stmt\n",
+    ")\n",
+    "\n",
+    "print(insert_stmt)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Expresión INSERT ... RETURNING\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "INSERT INTO address (id, user_id, email_address) VALUES (:id, :user_id, :email_address) RETURNING address.id, address.email_address\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Retorna la ultima clave primaria insertada y los valores por defecto del servidor\n",
+    "#\n",
+    "insert_stmt = insert(address_table).returning(\n",
+    "    address_table.c.id,\n",
+    "    address_table.c.email_address,\n",
+    ")\n",
+    "\n",
+    "print(insert_stmt)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "INSERT INTO address (user_id, email_address) SELECT user_account.id, user_account.name || :name_1 AS anon_1 \n",
+      "FROM user_account RETURNING address.id, address.email_address\n"
+     ]
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Se puede usar para crear un INSERT .... FROM SELECT\n",
+    "#\n",
+    "select_stmt = select(user_table.c.id, user_table.c.name + \"@aol.com\")\n",
+    "insert_stmt = insert(address_table).from_select(\n",
+    "    [\"user_id\", \"email_address\"], select_stmt\n",
+    ")\n",
+    "\n",
+    "print(insert_stmt.returning(address_table.c.id, address_table.c.email_address))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "2482a4565599eda3cd2db35331af39775c1f78a505a9deef48c721423040da5b"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
