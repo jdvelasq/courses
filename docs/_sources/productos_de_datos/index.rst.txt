@@ -19,7 +19,7 @@ Productos de Datos
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 01 --- 2022-05-13
+Sesión 01 --- **2023-02-11**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    **Presentación del curso**
@@ -61,7 +61,7 @@ Sesión 01 --- 2022-05-13
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 02 --- 2022-05-20
+Sesión 02 --- **2023-02-18**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    **Simulación de las etapas de evolución de un sistema de PQRS en una empresa** --- Parte 2.
@@ -87,7 +87,7 @@ Sesión 02 --- 2022-05-20
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 03 --- 2022-05-27
+Sesión 03 --- **2023-02-25**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    **MLOps: Manejo del ciclo de vida de ML con MLflow --- Parte 1**
@@ -190,7 +190,7 @@ Sesión 03 --- 2022-05-27
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 04 --- 2022-06-03
+Sesión 04 --- **2023-03-04**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    **MLOps: Manejo del ciclo de vida de ML con MLflow --- Parte 2**
@@ -240,7 +240,7 @@ Sesión 04 --- 2022-06-03
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 05 --- 2022-06-10
+Sesión 05 --- **2023-03-11**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    **MLOps: Despliegue de modelos de ML y dashboards en Python**
@@ -264,7 +264,7 @@ Sesión 05 --- 2022-06-10
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 06 --- 2022-06-17
+Sesión 06 --- **2023-03-18**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
@@ -289,7 +289,7 @@ Sesión 06 --- 2022-06-17
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
 
-Sesión 07 --- 2022-06-24
+Sesión 07 --- **2023-03-25**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
@@ -566,7 +566,7 @@ Sesión 07 --- 2022-06-24
 
    <hr style="height:6px;border-width:0;color:gray;background-color:gray">
 
-Sesión 08 --- 2022-07-01
+Sesión 08 --- **2023-04-01**
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
    **DataOps: Fundamentación filosófica**
