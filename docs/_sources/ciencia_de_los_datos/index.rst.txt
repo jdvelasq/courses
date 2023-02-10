@@ -22,7 +22,7 @@ Programa Calendario
 
 .. ......................................................................................
 
-* Sesión 01 --- **Agosto 12, 2022**
+* Sesión 01 --- **Febrero 10, 2023**
 
     * Presentación del curso
 
@@ -35,7 +35,25 @@ Programa Calendario
 
 .. ......................................................................................
 
-* Sesión 02 --- **Agosto 19, 2022**
+* Sesión 02 --- **Febrero 17, 2023**
+
+    * **Power BI ---- Parte I**
+
+
+.. ......................................................................................
+
+* Sesión 03 --- **Febrero 24, 2023**
+
+    * **Power BI ---- Parte II**
+
+    * **Google Open Refine**
+
+    * **Google Data Studio**
+
+
+.. ......................................................................................
+
+* Sesión 04 --- **Marzo 3, 2023**
 
     .. note::
 
@@ -59,7 +77,7 @@ Programa Calendario
 
 .. ......................................................................................
 
-* Sesión 03 --- **Agosto 26, 2022**
+* Sesión 05 --- **Marzo 10, 2023**
 
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
@@ -81,7 +99,7 @@ Programa Calendario
 
 .. ......................................................................................
 
-* Sesión 04 --- **Septiembre 2, 2022**
+* Sesión 06 --- **Marzo 17, 2023**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
@@ -94,7 +112,7 @@ Programa Calendario
 
 .. ......................................................................................
 
-* Sesión 05 --- **Septiembre 9, 2022**
+* Sesión 07 --- **Marzo 24, 2023**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
 
@@ -114,91 +132,57 @@ Programa Calendario
 
 .. ......................................................................................
 
-* Sesión 06 --- **Septiembre 16, 2022**
+* Sesión 08 --- **Marzo 31, 2023**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
 
+        * Charla Magistral: `Narrativa de datos <https://jdvelasq.github.io/data-storytelling/>`_
 
         * :ref:`data_visualization_with_matplotlib`
 
         * :ref:`descriptive_statistics_postgrado`
 
-        * :ref:`sklearn_unsupervised_03_clustering`
+..        * :ref:`sklearn_unsupervised_03_clustering`
 
 
 .. ......................................................................................
 
-* Sesión 07 --- **Septiembre 23, 2022**
+.. * Sesión 07 --- **Septiembre 23, 2022**
 
 
-    * :ref:`sklearn_unsupervised_05_decomposition`
+..    * :ref:`sklearn_unsupervised_05_decomposition`
 
-    * :ref:`sklearn_dataset_transformations_2`
+..    * :ref:`sklearn_dataset_transformations_2`
 
-    * :ref:`sklearn_dataset_transformations_3`
+..    * :ref:`sklearn_dataset_transformations_3`
 
-    * Charla Magistral: `Narrativa de datos <https://jdvelasq.github.io/data-storytelling/>`_
+    
 
     * :ref:`statistical_thinking_1`
 
 
 .. ......................................................................................
 
-* Sesión 08 --- **Septiembre 30, 2022**
+.. * Sesión 08 --- **Septiembre 30, 2022**
 
-    * :ref:`statistical_thinking_2`
+..    * :ref:`statistical_thinking_2`
 
-    * :ref:`sklearn_supervised_02_linear_models`
+..     * :ref:`sklearn_supervised_02_linear_models`
 
-    * `LAB --- Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/VyVSQnhj>`_.
+..     * `LAB --- Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/VyVSQnhj>`_.
 
-    * `LAB --- Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Mruk_tlO>`_.
+..    * `LAB --- Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Mruk_tlO>`_.
 
-    * `LAB --- Regresión Lineal Multiple (insurance) <https://classroom.github.com/a/pGZlu7hQ>`_.
+..    * `LAB --- Regresión Lineal Multiple (insurance) <https://classroom.github.com/a/pGZlu7hQ>`_.
 
-    * `LAB --- Regresión Logística (mushrooms) <https://classroom.github.com/a/g4XXg4D6>`_.
+..    * `LAB --- Regresión Logística (mushrooms) <https://classroom.github.com/a/g4XXg4D6>`_.
 
-    * Cierre y evaluación del curso.
+..    * Cierre y evaluación del curso.
 
 .. Learning Data Mining with Python, Second Edition.pdf
 
 
 
-        **Visualización estadística de datos con Seaborn**
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/statistical_data_visualization/1-*
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/statistical_data_visualization/2-*            
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/statistical_data_visualization/3-*
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/statistical_data_visualization/4-*
-
-
-            .. toctree::
-                :maxdepth: 1
-                :glob:
-
-                /notebooks/statistical_data_visualization/5-*
-
-
-.. **Ciencia de Datos --- Fundamentos de Text Analytics**
 
 ..        .. toctree::
 ..            :titlesonly:
