@@ -1,0 +1,511 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "264a3cc4-0c03-4920-a07f-9444fa59d146",
+   "metadata": {},
+   "source": [
+    "Precision, recall y F-measures en el caso binario\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a789973d-788b-4fb3-b71c-7b750d302aff",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Precision Score\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "271c0881-3273-4d77-93d6-0ae2d3c685ba",
+   "metadata": {},
+   "source": [
+    "* Es la habilidad que tiene el clasificador de no predecir como positiva una muestra que es negativa."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "62d3815a-42c3-421c-8fbe-16e6ea3b5fdc",
+   "metadata": {},
+   "source": [
+    "* Se define como:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "57858c6c-435a-400e-b085-3ab27904e725",
+   "metadata": {},
+   "source": [
+    "             | Pronóstico\n",
+    "             |  PP    PN\n",
+    "    ---------|------------\n",
+    "          P  |  TP    FN \n",
+    "    Real     |\n",
+    "          N  |  FP    TN "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9f77ecc9-c49e-440b-ac46-9b4e4ef1a182",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "\\text{precision_score}\n",
+    "=\\frac{\\text{TP}}{\\text{PP}}\n",
+    "=\\frac{\\text{TP}}{\\text{TP} +\\text{FP}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "1341dda2-587d-4a5f-aefa-333f6be7c4c4",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1.0"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import precision_score\n",
+    "\n",
+    "y_true = [0, 1, 0, 1]\n",
+    "y_pred = [0, 1, 0, 0]\n",
+    "\n",
+    "#          |  y_pred\n",
+    "#          |  1    0\n",
+    "# ----------------------\n",
+    "#        1 |  1    1\n",
+    "# y_true   |\n",
+    "#        0 |  0    2 \n",
+    "#\n",
+    "precision_score(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Ground truth (correct) labels.\n",
+    "    y_true=y_true,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Predicted labels, as returned by a classifier.\n",
+    "    y_pred=y_pred,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # The set of labels to include when average != 'binary', and their order\n",
+    "    # if average is None.\n",
+    "    labels=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # The class to report if average='binary' and the data is binary.\n",
+    "    pos_label=1,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # This parameter is required for multiclass/multilabel targets.\n",
+    "    #   None:  the scores for each class are returned.\n",
+    "    #   'binary': Only report results for the class specified by pos_label.\n",
+    "    #   'micro': Calculate metrics globally by counting the total true\n",
+    "    #     positives, false negatives and false positives.\n",
+    "    #   'macro': Calculate metrics for each label, and find their unweighted\n",
+    "    #     mean. This does not take label imbalance into account.\n",
+    "    #   'weighted': Calculate metrics for each label, and find their average\n",
+    "    #     weighted by support (the number of true instances for each label)\n",
+    "    #   'samples': Calculate metrics for each instance, and find their\n",
+    "    #     average (only meaningful for multilabel classification where this\n",
+    "    #     differs from accuracy_score)\n",
+    "    #\n",
+    "    average=\"binary\",\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Sample weights.\n",
+    "    sample_weight=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Sets the value to return when there is a zero division. If set to “warn”,\n",
+    "    # this acts as 0, but warnings are also raised.\n",
+    "    zero_division=\"warn\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2b96c7d-4414-401a-a2ed-505072b3a91a",
+   "metadata": {},
+   "source": [
+    "True Positive Rate / Recall Score\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fd574872-1e23-4358-b155-2b6bcff90c50",
+   "metadata": {},
+   "source": [
+    "Es el porcentaje de casos pronosticados como positivos del total de casos realmente positivos. También se interpreta como la habilidad del clasificador para encontrar todos los casos relevantes.\n",
+    "\n",
+    "\n",
+    "             | Pronóstico\n",
+    "             |  PP    PN\n",
+    "    ---------|------------\n",
+    "          P  |  TP    FN \n",
+    "    Real     |\n",
+    "          N  |  FP    TN "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ecb53bd0-4c60-4e71-8dfa-a9720ce1a6d6",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "\\text{recall_score} =\n",
+    "\\text{TPR}=\\frac{\\text{TP}}{\\text{P}}=\\frac{\\text{TP}}{\\text{TP}+\\text{FN}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "c4dcda50-41f0-4249-88cb-0a7f45908844",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.5"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import recall_score\n",
+    "\n",
+    "\n",
+    "y_true = [0, 1, 0, 1]\n",
+    "y_pred = [0, 1, 0, 0]\n",
+    "\n",
+    "#          |  y_pred\n",
+    "#          |  1    0\n",
+    "# ----------------------\n",
+    "#        1 |  1    1\n",
+    "# y_true   |\n",
+    "#        0 |  0    2 \n",
+    "#\n",
+    "\n",
+    "recall_score(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Recibe los mismos parámetros que la función anterior\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    y_true=y_true,\n",
+    "    y_pred=y_pred,\n",
+    "    labels=None,\n",
+    "    pos_label=1,\n",
+    "    average=\"binary\",\n",
+    "    sample_weight=None,\n",
+    "    zero_division=\"warn\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "db597b52-e366-410a-a43d-eab35e010de5",
+   "metadata": {},
+   "source": [
+    "## True Negative Rate"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "81e71ade-713a-4d57-be89-1fe368aceb46",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Es el porcentaje de casos pronósticados como negativos del total de casos realmente negativos.\n",
+    "\n",
+    "             | Pronóstico\n",
+    "             |  PP    PN\n",
+    "    ---------|------------\n",
+    "          P  |  TP    FN \n",
+    "    Real     |\n",
+    "          N  |  FP    TN "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5715f4a5-d4d8-4608-bedf-430f7e901f82",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "\\text{TNR}=\\frac{\\text{TN}}{\\text{N}}=\\frac{\\text{TN}}{\\text{TN}+\\text{FP}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bccc5e2d-7aa4-4ac8-8af9-aaf02997ba2b",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "F1 Score / Balanced F-Score / F-measure\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "36d10caf-1614-4ade-bb39-dd220bf24ce6",
+   "metadata": {},
+   "source": [
+    "Puede ser interpretado como la media armónica de la precisión (precision_score) y la sensibilidad (recall):"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eb42a072-b97c-4163-b793-498f7bf29e53",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "F_1 = 2 * \\frac{\\text{precision_score} \\times \\text{recall_score}}\n",
+    "{\\text{precision_score} + \\text{recall_score}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6aee2057-13c3-4480-8fc0-adc6de03f065",
+   "metadata": {},
+   "source": [
+    "             | Pronóstico\n",
+    "             |  PP    PN\n",
+    "    ---------|------------\n",
+    "          P  |  TP    FN \n",
+    "    Real     |\n",
+    "          N  |  FP    TN "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "11ff2c26-db77-45a3-9ec6-372e5fd224db",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "\\text{precision_score}\n",
+    "=\\frac{\\text{TP}}{\\text{PP}}\n",
+    "=\\frac{\\text{TP}}{\\text{TP} +\\text{FP}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "509cca5d-590a-429f-81a8-edf5beaeda67",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "\\text{recall_score} =\n",
+    "\\text{TPR}=\\frac{\\text{TP}}{\\text{P}}=\\frac{\\text{TP}}{\\text{TP}+\\text{FN}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "563765e5-3016-4292-830d-aff1f742d73e",
+   "metadata": {},
+   "source": [
+    "```\n",
+    "y_true = [0, 1, 0, 1]\n",
+    "y_pred = [0, 1, 0, 0]\n",
+    "\n",
+    "          |  y_pred\n",
+    "          |  1    0        \n",
+    " ----------------------\n",
+    "        1 |  1    1                       1                    1\n",
+    " y_true   |                precision = ------- ;   recall = -------\n",
+    "        0 |  0    2                     1 + 0                1 + 1\n",
+    "\n",
+    "\n",
+    "                     1.0 * 0.5         0.5     2  \n",
+    "     f1_score = 2 * ----------- = 2 * ----- = --- \n",
+    "                     1.0 + 0.5         1.5     3  \n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "6b92952e-4d83-4289-b9ca-3562fc672902",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.6666666666666666"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import f1_score\n",
+    "\n",
+    "y_true = [0, 1, 0, 1]\n",
+    "y_pred = [0, 1, 0, 0]\n",
+    "\n",
+    "f1_score(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Recibe los mismos parámetros que la función anterior\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    y_true=y_true,\n",
+    "    y_pred=y_pred,\n",
+    "    labels=None,\n",
+    "    pos_label=1,\n",
+    "    average=\"binary\",\n",
+    "    sample_weight=None,\n",
+    "    zero_division=\"warn\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "cff1823d-e407-4ebe-8d02-a96f042d439a",
+   "metadata": {},
+   "source": [
+    "F-beta Score\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8f7fcf18-d4ec-4a90-818f-32dcab4ad6dd",
+   "metadata": {},
+   "source": [
+    "Es la media armónica ponderada entre la precisión y la sensibilidad, la cual toma valores entre 0 (peor) y 1 (mejor). Para $\\beta$ < 1 favorece la precisión, mientras que para $\\beta$ > 1 favorece la sensibilidad.\n",
+    "\n",
+    "$$\n",
+    "F_\\beta = (1 + \\beta^2) \n",
+    "\\frac{\\text{precision} \\times \\text{recall}}\n",
+    "{\\beta^2 \\text{precision} + \\text{recall}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f2b557c6-5772-43c0-abc5-a29ea481609d",
+   "metadata": {},
+   "source": [
+    "             | Pronóstico\n",
+    "             |  PP    PN\n",
+    "    ---------|------------\n",
+    "          P  |  TP    FN \n",
+    "    Real     |\n",
+    "          N  |  FP    TN "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e8aabcf3-fb55-4f94-91f6-53b6e5287d8a",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "\\text{precision_score}\n",
+    "=\\frac{\\text{TP}}{\\text{PP}}\n",
+    "=\\frac{\\text{TP}}{\\text{TP} +\\text{FP}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "27c836b1-92e0-4145-904e-643fd6a035ad",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "\\text{recall_score} =\n",
+    "\\text{TPR}=\\frac{\\text{TP}}{\\text{P}}=\\frac{\\text{TP}}{\\text{TP}+\\text{FN}}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eaa1b8f0-7f07-4838-abd0-dcda54056ceb",
+   "metadata": {},
+   "source": [
+    "```\n",
+    "          |  y_pred\n",
+    "          |  1    0        \n",
+    " ----------------------\n",
+    "        1 |  1    1                       1                    1\n",
+    " y_true   |                precision = ------- ;   recall = -------\n",
+    "        0 |  0    2                     1 + 0                1 + 1\n",
+    "\n",
+    "      \n",
+    "                             1.0 * 0.5            (1+beta^2) * 0.5\n",
+    "      f_beta = (1+beta^2) -------------------- = ------------------\n",
+    "                           beta^2 * 1.0 + 0.5       beta^2 + 0.5\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "b6b5b24d-35c9-41f4-afda-4bbbad98f9cf",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.8333333333333334"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    },
+    {
+     "data": {
+      "text/plain": [
+       "0.6288659793814433"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import fbeta_score\n",
+    "\n",
+    "display(\n",
+    "    fbeta_score(y_true, y_pred, beta=0.5),\n",
+    "    fbeta_score(y_true, y_pred, beta=1.2),\n",
+    ")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

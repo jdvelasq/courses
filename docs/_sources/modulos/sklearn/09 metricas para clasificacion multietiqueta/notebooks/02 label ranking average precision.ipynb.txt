@@ -1,0 +1,121 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "070f58f4-81ce-4dfd-b192-e20175705cc4",
+   "metadata": {},
+   "source": [
+    "Label ranking average precision (LRAP)\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fd0391fd-f4b6-44b4-b29a-ad934dfbdf90",
+   "metadata": {},
+   "source": [
+    "* Promedia sobre las muestras la respuesta a la siguiente pregunta: ¿para cada etiqueta verdadera, que fracción de etiquetas mejor rankeadas son etiquetas verdaderas? "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b3a48d2d-d533-4b8e-b699-65630b0ccfa1",
+   "metadata": {},
+   "source": [
+    "* Se computa como:\n",
+    "$$\n",
+    "\\text{LRAP}(y, \\hat{y}) = \n",
+    "\\frac{1}{n_\\text{samples}}\n",
+    "\\sum_{i=0}^{n_\\text{samples}-1}\n",
+    "\\frac{1}{||y_i||_0}\n",
+    "\\sum_{j:y_{ij}=1}\n",
+    "\\frac{|L_{ij}|}{\\text{rank}_{ij}}\n",
+    "$$\n",
+    "con:\n",
+    "    * $L_{ij} = \\{ k: y_{ik}=1, \\hat{f}_{ik} \\ge \\hat{f}_{ij} \\}$\n",
+    "    \n",
+    "    * $\\text{rank}_{ij} = |\\{k: \\hat{f}_{ik} \\ge \\hat{f}_{ij}\\}|$\n",
+    "    \n",
+    "    * $|\\cdot|$ es la cantidad de elementos del conjunto.\n",
+    "    \n",
+    "    * $||\\cdot||_0$ es el número de elementos diferentes de cero en un vector."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "3a7f7515-ceda-429e-af89-b7a0b0b1b9a7",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.41666666666666663"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "from sklearn.metrics import label_ranking_average_precision_score\n",
+    "\n",
+    "y_true = np.array(\n",
+    "    [\n",
+    "        # A B  C\n",
+    "        [1, 0, 0],\n",
+    "        [0, 0, 1],\n",
+    "    ]\n",
+    ")\n",
+    "y_score = np.array(\n",
+    "    [\n",
+    "        #   A    B    C\n",
+    "        [0.75, 0.5, 1.0],\n",
+    "        [1.00, 0.2, 0.1],\n",
+    "    ]\n",
+    ")\n",
+    "\n",
+    "#          1      1      1      1      \n",
+    "# 0.5 * [ --- * (---) + --- * (---) ] = 0.4166\n",
+    "#          1      2      1      3\n",
+    "#\n",
+    "\n",
+    "label_ranking_average_precision_score(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # True binary labels in binary indicator format.\n",
+    "    y_true=y_true,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Target scores, can either be probability estimates of the positive class,\n",
+    "    # confidence values, or non-thresholded measure of decisions\n",
+    "    y_score=y_score,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Sample weights.\n",
+    "    sample_weight=None,\n",
+    ")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

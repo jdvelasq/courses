@@ -1,0 +1,220 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "87e8daba-4701-4037-b375-840812c628f6",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Orthogonal Matching Pursuit (OMP)\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "989f46ed-ec01-4021-b442-656f51cda61e",
+   "metadata": {},
+   "source": [
+    "* Ajusta un modelo de regresión lineal con restricciones sobre la cantidad de coeficientes diferentes de cero (norma $||w||_0$)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6af66ebd-1a04-4ea6-a850-e9c38681482c",
+   "metadata": {},
+   "source": [
+    "* Para la estimación de los parámetros se minimiza la función objetivo:\n",
+    "$$\n",
+    "\\min_w  ||Xw -y||_2^2 \n",
+    "$$\n",
+    "sujeto a:\n",
+    "$$\n",
+    "||w||_0 \\le n_\\text{nonzero_coefs}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d9ec7cbb-9999-4808-b44f-c332efa0df9b",
+   "metadata": {},
+   "source": [
+    "* Alternativamente, en el algorimto puede especificarse un error en vez de la cantidad de coeficientes diferentes de cero. En este caso la función objetivo es:\n",
+    "$$\n",
+    "\\min_w ||w||_0\n",
+    "$$\n",
+    "sujeto a:\n",
+    "$$\n",
+    "||Xw -y||_2^2 \\le \\text{tol} \n",
+    "$$\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "b6cf1683-1aa4-4085-801b-5146124e0c61",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.datasets import load_diabetes\n",
+    "\n",
+    "X, y = load_diabetes(return_X_y=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "02076cdf-6074-47d0-90ee-dcd8d051d419",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.3439237602253802"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.linear_model import OrthogonalMatchingPursuit\n",
+    "\n",
+    "omp = OrthogonalMatchingPursuit(\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Desired number of non-zero entries in the solution. If None (by default) \n",
+    "    # this value is set to 10% of n_features.\n",
+    "    n_nonzero_coefs=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Maximum norm of the residual. If not None, overrides n_nonzero_coefs.\n",
+    "    tol=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Whether to calculate the intercept for this model. If set to false, no \n",
+    "    # intercept will be used in calculations (i.e. data is expected to be \n",
+    "    # centered).\n",
+    "    fit_intercept=True,   \n",
+    ")\n",
+    "\n",
+    "omp.fit(X, y)\n",
+    "\n",
+    "omp.score(X, y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "c0164805-109a-4b70-a50d-4a2282d48604",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([210.71003806, 103.26219543, 194.33703347, 141.12476855,\n",
+       "       117.58857445, 113.4953233 , 107.35544658, 150.33458363,\n",
+       "       210.71003806, 189.22046954])"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "omp.predict(X)[0:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "88c5170d-c4f6-48c6-b199-811ef2064b7a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([  0.        ,   0.        , 949.43526038,   0.        ,\n",
+       "         0.        ,   0.        ,   0.        ,   0.        ,\n",
+       "         0.        ,   0.        ])"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "omp.coef_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "5ec6a1fd-d7ce-4cb8-81ce-93f8a70daef6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "152.13348416289617"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "omp.intercept_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "eadd221b-2fa4-423c-8c4d-e82b22d3193c",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "1"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "omp.n_nonzero_coefs_"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "2482a4565599eda3cd2db35331af39775c1f78a505a9deef48c721423040da5b"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

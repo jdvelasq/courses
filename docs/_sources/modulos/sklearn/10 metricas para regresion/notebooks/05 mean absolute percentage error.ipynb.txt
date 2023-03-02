@@ -1,0 +1,243 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "bf27c33b-1257-420b-b101-bc12b512f337",
+   "metadata": {},
+   "source": [
+    "Mean absolute percentage error\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1ee0832f-7b63-4447-8456-5916683a0a78",
+   "metadata": {},
+   "source": [
+    "* También es conocido como la desviación porcentual media absoluta."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0b50f92f-be82-43f4-b31f-bee246f4e052",
+   "metadata": {},
+   "source": [
+    "* Esta métrica es sensible a errores relativos."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eb280030-89ef-424c-afd0-3db63f0337b3",
+   "metadata": {},
+   "source": [
+    "* Se computa como:\n",
+    "$$\n",
+    "\\text{MAPE}(y, \\hat{y}) = \n",
+    "\\frac{1}{n_{\\text{samples}}}\n",
+    "\\sum_{i=0}^{n_{\\text{samples}} - 1} \n",
+    "\\frac\n",
+    "{|y_i - \\hat{y}_i|}\n",
+    "{\\max(\\epsilon, |y_i|)} =\n",
+    "\\frac{1}{n_{\\text{samples}}}\n",
+    "\\sum_{i=0}^{n_{\\text{samples}} - 1} \n",
+    "\\frac\n",
+    "{|\\hat{e}_i|}\n",
+    "{\\max(\\epsilon, |y_i|)}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "7c31feda-c272-4f89-80de-bfa6b1e7350e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.3273809523809524"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import mean_absolute_percentage_error\n",
+    "\n",
+    "y_true = [3.0, -0.5, 2, 7]\n",
+    "y_pred = [2.5, +0.0, 2, 8]\n",
+    "\n",
+    "#\n",
+    "#  1      0.5     0.5     0     1\n",
+    "# --- * (----- + ----- + --- + ---) = 0.327380\n",
+    "#  4      3.0     0.5     2     7\n",
+    "#\n",
+    "mean_absolute_percentage_error(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Ground truth (correct) target values.\n",
+    "    y_true=y_true,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Estimated target values.\n",
+    "    y_pred=y_pred,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Sample weights.\n",
+    "    sample_weight=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Defines aggregating of multiple output scores.\n",
+    "    # * 'raw_values': Returns a full set of scores in case of multioutput input.\n",
+    "    # * 'uniform_average': Scores of all outputs are averaged with uniform\n",
+    "    #      weight.\n",
+    "    multioutput=\"uniform_average\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "abaf9cff-610c-482e-8208-a8e357886f1f",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0.38095238, 0.72222222])"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y_true = [[0.5, 1], [-1, 1], [7, -6]]\n",
+    "y_pred = [[0.0, 2], [-1, 2], [8, -5]]\n",
+    "\n",
+    "# y_true = [0.5, -1, 7]\n",
+    "# y_pred = [0.0, -1, 8]\n",
+    "# mean_absolute_percentage_error(y_true, y_pred) = 0.380952\n",
+    "#\n",
+    "# y_true = [1, 1, -6]\n",
+    "# y_pred = [2, 2, -5]\n",
+    "# mean_absolute_percentage_error(y_true, y_pred) = 0.722222\n",
+    "#\n",
+    "mean_absolute_percentage_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    "    multioutput=\"raw_values\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "f98a700c-6143-4f86-aaa1-7731232eac34",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.5515873015873016"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# 0.5 * (0.380952 + 0.722222) = 0.5515873\n",
+    "#\n",
+    "mean_absolute_percentage_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "192802eb-3a33-473c-80d4-c53c9d5a0c44",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.6198412698412699"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# 0.3 * 0.380952 + 0.7 * 0.722222 = 0.619841\n",
+    "#\n",
+    "mean_absolute_percentage_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    "    multioutput=[0.3, 0.7],\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "f58fdc11-149f-4369-b45b-a545bfb1b930",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "112589990684262.48"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# the value when some element of the y_true is zero is arbitrarily high because\n",
+    "# of the division by epsilon\n",
+    "y_true = [1.0, 0.0, 2.4, 7.0]\n",
+    "y_pred = [1.2, 0.1, 2.4, 8.0]\n",
+    "\n",
+    "#\n",
+    "#  1      0.2      0.1       0      1\n",
+    "# --- * (----- + ------- + ----- + ---) = 112589990684262.48\n",
+    "#  4      1.0     1e-15     2.4     7\n",
+    "#\n",
+    "mean_absolute_percentage_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    ")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

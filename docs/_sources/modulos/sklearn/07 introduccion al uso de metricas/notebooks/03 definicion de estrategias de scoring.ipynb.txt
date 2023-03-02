@@ -1,0 +1,142 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "06d424e8-bf52-41b6-8ff6-4b8c63ec70c2",
+   "metadata": {},
+   "source": [
+    "Definición de estrategias de scoring\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "23d00e2e-fd01-439c-a66e-f1525e407002",
+   "metadata": {},
+   "source": [
+    "Notación básica\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "eb54349a-feb6-413a-8824-b4320b233a20",
+   "metadata": {},
+   "source": [
+    "* Funciones que terminan con un `_score` retornan un valor que se debe maximizar.\n",
+    "\n",
+    "* Funciones que terminan con un `_error` o `_loss` retornan un valor que se debe minimizar."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f9e98083-b883-45be-a323-02ccae45657c",
+   "metadata": {},
+   "source": [
+    "Transformación de métricas a funciones de scoring con make_scorer\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "b66743e8-6995-4e47-8b02-f74453d65951",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.metrics import fbeta_score, make_scorer\n",
+    "from sklearn.model_selection import GridSearchCV\n",
+    "from sklearn.svm import LinearSVC\n",
+    "\n",
+    "ftwo_scorer = make_scorer(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Score function (or loss function) with signature\n",
+    "    # score_func(y, y_pred, **kwargs).\n",
+    "    score_func=fbeta_score,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Whether score_func is a score function (default), meaning high is good,\n",
+    "    # or a loss function, meaning low is good. In the latter case, the scorer\n",
+    "    # object will sign-flip the outcome of the score_func.\n",
+    "    greater_is_better=True,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Additional parameters to be passed to score_func\n",
+    "    beta=2,\n",
+    ")\n",
+    "\n",
+    "\n",
+    "grid = GridSearchCV(\n",
+    "    LinearSVC(),\n",
+    "    param_grid={\"C\": [1, 10]},\n",
+    "    scoring=ftwo_scorer,\n",
+    "    cv=5,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "5ca42f22-6d1d-417a-9f96-6b26bccc4450",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "0.6931471805599453\n",
+      "-0.6931471805599453\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "from sklearn.dummy import DummyClassifier\n",
+    "\n",
+    "\n",
+    "def my_custom_loss_func(y_true, y_pred):\n",
+    "    diff = np.abs(y_true - y_pred).max()\n",
+    "    return np.log1p(diff)\n",
+    "\n",
+    "#\n",
+    "# score will negate the return value of my_custom_loss_func,\n",
+    "# which will be np.log(2), 0.693, given the values for X\n",
+    "# and y defined below.\n",
+    "#\n",
+    "score = make_scorer(my_custom_loss_func, greater_is_better=False)\n",
+    "\n",
+    "X = [[1], [1]]\n",
+    "y = [0, 1]\n",
+    "\n",
+    "clf = DummyClassifier(\n",
+    "    strategy=\"most_frequent\",\n",
+    "    random_state=0,\n",
+    ")\n",
+    "\n",
+    "clf = clf.fit(X, y)\n",
+    "\n",
+    "print(my_custom_loss_func(y, clf.predict(X)))\n",
+    "print(score(clf, X, y))"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

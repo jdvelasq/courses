@@ -1,0 +1,262 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "cdfa93e0-0e9a-40db-ba79-f168c72d8fd6",
+   "metadata": {},
+   "source": [
+    "Hinge loss\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "66d5a941-7104-4416-8cd0-042a80a42046",
+   "metadata": {},
+   "source": [
+    "* Computa la distancia promedio entre el modelo y los datos usando la función de pérdida de hinge."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "20dd079b-4f93-4408-9d55-6895d8bd03df",
+   "metadata": {},
+   "source": [
+    "Caso binario\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a53d1b87-f911-4e53-a35b-0217bc3de287",
+   "metadata": {},
+   "source": [
+    "* Si $y_i$ es la clase verdadera en un problema de clasificación binario codificada como $y_i=\\{-1, +1\\}$ para cada muestra $i$, y $w_i$ es la predicción de la decisión, esta función se define como:\n",
+    "\n",
+    "$$\n",
+    "L_\\text{Hinge}(y, w) = \n",
+    "\\frac{1}{n_\\text{samples}}\n",
+    "\\sum_{i=0}^{n_\\text{samples}-1}\n",
+    "\\text{max} \\{1-w_i y_i, 0 \\}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "6185bad3-7ea8-40ba-a242-da9e5e805a95",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style>#sk-container-id-1 {color: black;background-color: white;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: \"▸\";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: \"▾\";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: \"\";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id=\"sk-container-id-1\" class=\"sk-top-container\"><div class=\"sk-text-repr-fallback\"><pre>LinearSVC(random_state=0)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class=\"sk-container\" hidden><div class=\"sk-item\"><div class=\"sk-estimator sk-toggleable\"><input class=\"sk-toggleable__control sk-hidden--visually\" id=\"sk-estimator-id-1\" type=\"checkbox\" checked><label for=\"sk-estimator-id-1\" class=\"sk-toggleable__label sk-toggleable__label-arrow\">LinearSVC</label><div class=\"sk-toggleable__content\"><pre>LinearSVC(random_state=0)</pre></div></div></div></div></div>"
+      ],
+      "text/plain": [
+       "LinearSVC(random_state=0)"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn import svm\n",
+    "from sklearn.metrics import hinge_loss\n",
+    "\n",
+    "#   Train set         Test set\n",
+    "#  ------------    --------------\n",
+    "#   X     y         X      y_true\n",
+    "#   [0]   -1        [-2]   -1\n",
+    "#   [1]   +1        [3]    +1\n",
+    "#                   [0.5]  +1\n",
+    "X = [[0], [1]]\n",
+    "y = [-1, 1]\n",
+    "\n",
+    "est = svm.LinearSVC(random_state=0)\n",
+    "est.fit(X, y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "d0ed0f15-3d98-41aa-aacf-22f97ae64906",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([-2.18177944,  2.36355888,  0.09088972])"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "pred_decision = est.decision_function([[-2], [3], [0.5]])\n",
+    "pred_decision"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "75b4ebc0-6f7c-4225-91e8-ba0123b651f9",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.3030367603854425"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#               decision   y_true\n",
+    "#    max(1 - -2.18177944 *     -1, 0) = max(-1.181779, 0) = 0\n",
+    "#    max(1 - +2.36355888 *     +1, 0) = max(-1.363558, 0) = 0\n",
+    "#    max(1 - +0.09088972 *     +1, 0) = max(+0.909110, 0) = 0.909110\n",
+    "#\n",
+    "#   (0 + 0 + 0.909110) / 3 = 0.303036\n",
+    "#\n",
+    "hinge_loss([-1, 1, 1], pred_decision)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e0f6f435-5097-4f7e-a0ac-9359ce3f0e82",
+   "metadata": {},
+   "source": [
+    "Caso con múltiple clases\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "73a13f03-05f2-48f0-981a-3028221680f7",
+   "metadata": {},
+   "source": [
+    "* Si $w_{i,y_i}$ es la predicción para la etiqueta verdadera $y_i$ de la $i$-ésima muestra, y $\\hat{w}_{i,y_i}=\\text{max}\\{w_{i,y_i} | y_j \\ne y_i \\}$ es el máximo de las decisiones pronosticadas para todas las otras etiquetas, entonces esta función se define como:\n",
+    "$$\n",
+    "L_\\text{Hinge}(y, w) = \n",
+    "\\frac{1}{n_\\text{samples}}\n",
+    "\\sum_{i=0}^{n_\\text{samples}-1}\n",
+    "\\text{max}\\{1+\\hat{w}_{i,y_i} - w_{i,y_i}, 0\\}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "daf89908-9066-44f8-98b2-79c6242f3846",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style>#sk-container-id-2 {color: black;background-color: white;}#sk-container-id-2 pre{padding: 0;}#sk-container-id-2 div.sk-toggleable {background-color: white;}#sk-container-id-2 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-2 label.sk-toggleable__label-arrow:before {content: \"▸\";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-2 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-2 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-2 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: \"▾\";}#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-2 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-2 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-2 div.sk-parallel-item::after {content: \"\";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-serial::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-2 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-2 div.sk-item {position: relative;z-index: 1;}#sk-container-id-2 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-2 div.sk-item::before, #sk-container-id-2 div.sk-parallel-item::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-2 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-2 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-2 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-2 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-2 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-2 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-2 div.sk-label-container {text-align: center;}#sk-container-id-2 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-2 div.sk-text-repr-fallback {display: none;}</style><div id=\"sk-container-id-2\" class=\"sk-top-container\"><div class=\"sk-text-repr-fallback\"><pre>LinearSVC()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class=\"sk-container\" hidden><div class=\"sk-item\"><div class=\"sk-estimator sk-toggleable\"><input class=\"sk-toggleable__control sk-hidden--visually\" id=\"sk-estimator-id-2\" type=\"checkbox\" checked><label for=\"sk-estimator-id-2\" class=\"sk-toggleable__label sk-toggleable__label-arrow\">LinearSVC</label><div class=\"sk-toggleable__content\"><pre>LinearSVC()</pre></div></div></div></div></div>"
+      ],
+      "text/plain": [
+       "LinearSVC()"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "X = [[0], [1], [2], [3]]\n",
+    "Y = [0, 1, 2, 3]\n",
+    "labels = [0, 1, 2, 3]\n",
+    "est = svm.LinearSVC()\n",
+    "est.fit(X, Y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "2ea6a24d-b0a0-44fe-a361-df55041ad3de",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[ 1.2727043 ,  0.03421968, -0.68376828, -1.40169125],\n",
+       "       [-1.45454086, -0.58122799, -0.37609109, -0.17098113],\n",
+       "       [-2.36362258, -0.78637722, -0.27353203,  0.23925558]])"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#                              y_true = [0,   2,   3]\n",
+    "pred_decision = est.decision_function([[-1], [2], [3]])\n",
+    "pred_decision"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "bce25ac1-0a92-4579-8d9e-8b2442b66bfb",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.564107451353502"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# max(0, 1 - (+1.2727241) + max(+0.03420421, -0.68377149, -1.40167018)) \n",
+    "# max(0, 1 - (-0.3760998) + max(-1.45454482, -0.58120684, -0.17100248))\n",
+    "# max(0, 1 - (+0.2392200) + max(-2.36363446, -0.78634386, -0.27354264))\n",
+    "#\n",
+    "# max(0, 1 - 1.2727241 + 0.03420421) = 0\n",
+    "# max(0, 1 + 0.3760998 - 0.17100248) = 1.20509732\n",
+    "# max(0, 1 - 0.2392200 - 0.27354264) = 0.48723736\n",
+    "#\n",
+    "# (0 + 1.20509732 + 0.48723736) / 3 = 0.56411154\n",
+    "#\n",
+    "y_true = [0, 2, 3]\n",
+    "hinge_loss(y_true, pred_decision, labels=labels)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

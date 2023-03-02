@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Análisis básico de información con Apache Pig &mdash; documentación de Cursos de Analítica y Machine Learning - </title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../_static/copybutton.js"></script>
+        <script src="../../../../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Cursos de Analítica y Machine Learning
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Asignaturas de Pregrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/redes-neuronales.html">Redes Neuronales Artificiales y Aprendizaje Profundo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/fundamentos-de-analitica.html">Fundamentos de Analítica</a></li>
+</ul>
+<p><span class="caption-text">Asignaturas de Posgrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/ciencia-de-los-datos.html">Ciencia de los Datos Aplicada</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/analitica-descriptiva.html">Analítica descriptiva y visualización de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/analitica-predictiva.html">Analítica Predictiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/analitica-de-grandes-datos.html">Analítica de Grandes Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/productos-de-datos.html">Productos de Datos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Cursos de Analítica y Machine Learning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Análisis básico de información con Apache Pig</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/modulos/big data/07 pig/notebooks/1-02_.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars and line breaks on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+    white-space: pre;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="Análisis-básico-de-información-con-Apache-Pig">
+<h1>Análisis básico de información con Apache Pig<a class="headerlink" href="#Análisis-básico-de-información-con-Apache-Pig" title="Enlazar permanentemente con este título"></a></h1>
+<ul class="simple">
+<li><p>60 min | Última modificación: Noviembre 07, 2019</p></li>
+</ul>
+<section id="Descarga-de-datos">
+<h2>Descarga de datos<a class="headerlink" href="#Descarga-de-datos" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">filenames</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;drivers.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;timesheet.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;truck_event_text_partition.csv&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/drivers/&quot;</span>
+
+<span class="o">!</span>mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/drivers/
+<span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span><span class="p">:</span>
+    <span class="o">!</span>wget<span class="w"> </span>--quiet<span class="w"> </span><span class="o">{</span>url<span class="w"> </span>+<span class="w"> </span>filename<span class="o">}</span><span class="w"> </span>-P<span class="w"> </span>/tmp/drivers/
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Movimiento-de-datos-al-HDFS">
+<h2>Movimiento de datos al HDFS<a class="headerlink" href="#Movimiento-de-datos-al-HDFS" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-rm<span class="w"> </span>-r<span class="w"> </span>drivers/<span class="w"> </span>output/
+<span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-mkdir<span class="w"> </span>drivers/
+<span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-copyFromLocal<span class="w"> </span>/tmp/drivers/*.csv<span class="w">  </span>drivers/
+<span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-ls<span class="w"> </span>drivers/*
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Deleted drivers
+Deleted output
+-rw-r--r--   1 root supergroup       2043 2022-05-31 16:45 drivers/drivers.csv
+-rw-r--r--   1 root supergroup      26205 2022-05-31 16:45 drivers/timesheet.csv
+-rw-r--r--   1 root supergroup    2272077 2022-05-31 16:45 drivers/truck_event_text_partition.csv
+</pre></div></div>
+</div>
+</section>
+<section id="Selección-de-un-subconjunto-de-datos">
+<h2>Selección de un subconjunto de datos<a class="headerlink" href="#Selección-de-un-subconjunto-de-datos" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> truck-events.pig
+
+<span class="n">truck_events</span> <span class="o">=</span> <span class="n">LOAD</span> <span class="s1">&#39;drivers/truck_event_text_partition.csv&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">AS</span> <span class="p">(</span>
+            <span class="n">driverId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">truckId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">eventTime</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">eventType</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">longitude</span><span class="p">:</span><span class="n">double</span><span class="p">,</span>
+            <span class="n">latitude</span><span class="p">:</span><span class="n">double</span><span class="p">,</span>
+            <span class="n">eventKey</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">correlationId</span><span class="p">:</span><span class="n">long</span><span class="p">,</span>
+            <span class="n">driverName</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">routeId</span><span class="p">:</span><span class="n">long</span><span class="p">,</span>
+            <span class="n">routeName</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">eventDate</span><span class="p">:</span><span class="n">chararray</span>
+    <span class="p">);</span>
+
+<span class="n">truck_events_subset</span> <span class="o">=</span> <span class="n">LIMIT</span> <span class="n">truck_events</span> <span class="mi">10</span><span class="p">;</span>
+
+<span class="n">specific_columns</span> <span class="o">=</span> <span class="n">FOREACH</span> <span class="n">truck_events_subset</span> <span class="n">GENERATE</span> <span class="n">driverId</span><span class="p">,</span> <span class="n">eventTime</span><span class="p">,</span> <span class="n">eventType</span><span class="p">;</span>
+
+<span class="n">STORE</span> <span class="n">specific_columns</span> <span class="n">INTO</span> <span class="s1">&#39;output/specific_columns&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting truck-events.pig
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pig<span class="w"> </span>-f<span class="w"> </span>truck-events.pig
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2022-05-31 16:45:31,859 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:45:32,582 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:45:32,655 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-31 16:45:32,673 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:45:33,143 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-31 16:45:33,272 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1654012563278_0021
+2022-05-31 16:45:33,404 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-31 16:45:33,448 [JobControl] INFO  org.apache.hadoop.conf.Configuration - resource-types.xml not found
+2022-05-31 16:45:33,448 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Unable to find &#39;resource-types.xml&#39;.
+2022-05-31 16:45:33,452 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = memory-mb, units = Mi, type = COUNTABLE
+2022-05-31 16:45:33,452 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = vcores, units = , type = COUNTABLE
+2022-05-31 16:45:33,488 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1654012563278_0021
+2022-05-31 16:45:33,512 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://ca2b226216b1:8088/proxy/application_1654012563278_0021/
+2022-05-31 16:45:48,619 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:45:48,627 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:45:48,724 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:45:48,728 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:45:48,745 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:45:48,748 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:45:48,881 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:45:48,895 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-31 16:45:48,910 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:45:48,936 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-31 16:45:48,974 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1654012563278_0022
+2022-05-31 16:45:48,977 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-31 16:45:49,205 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1654012563278_0022
+2022-05-31 16:45:49,209 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://ca2b226216b1:8088/proxy/application_1654012563278_0022/
+2022-05-31 16:46:09,517 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,523 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,580 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,585 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,604 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,608 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,638 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,641 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,656 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,659 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,676 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,678 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,694 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,697 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,713 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,716 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:09,738 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:09,742 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-ls<span class="w"> </span>output/specific_columns/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2022-05-31 16:46 output/specific_columns/_SUCCESS
+-rw-r--r--   1 root supergroup        183 2022-05-31 16:46 output/specific_columns/part-r-00000
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-text<span class="w"> </span>output/specific_columns/part-r-00000<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+11,59:21.7,Normal
+11,59:22.5,Normal
+14,59:21.4,Normal
+18,59:21.7,Normal
+20,59:22.5,Normal
+22,59:21.7,Normal
+22,59:22.3,Normal
+23,59:22.4,Normal
+27,59:21.7,Normal
+,eventTime,eventType
+</pre></div></div>
+</div>
+</section>
+<section id="Ejecución-de-un-join">
+<h2>Ejecución de un join<a class="headerlink" href="#Ejecución-de-un-join" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> join.pig
+
+<span class="n">truck_events</span> <span class="o">=</span> <span class="n">LOAD</span> <span class="s1">&#39;drivers/truck_event_text_partition.csv&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">AS</span> <span class="p">(</span>
+            <span class="n">driverId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">truckId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">eventTime</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">eventType</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">longitude</span><span class="p">:</span><span class="n">double</span><span class="p">,</span>
+            <span class="n">latitude</span><span class="p">:</span><span class="n">double</span><span class="p">,</span>
+            <span class="n">eventKey</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">correlationId</span><span class="p">:</span><span class="n">long</span><span class="p">,</span>
+            <span class="n">driverName</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">routeId</span><span class="p">:</span><span class="n">long</span><span class="p">,</span>
+            <span class="n">routeName</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">eventDate</span><span class="p">:</span><span class="n">chararray</span>
+    <span class="p">);</span>
+
+<span class="n">drivers</span> <span class="o">=</span>  <span class="n">LOAD</span> <span class="s1">&#39;drivers/drivers.csv&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">AS</span> <span class="p">(</span>
+            <span class="n">driverId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">ssn</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">location</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">certified</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">wage_plan</span><span class="p">:</span><span class="n">chararray</span>
+    <span class="p">);</span>
+
+<span class="n">join_data</span> <span class="o">=</span> <span class="n">JOIN</span>  <span class="n">truck_events</span> <span class="n">BY</span> <span class="p">(</span><span class="n">driverId</span><span class="p">),</span> <span class="n">drivers</span> <span class="n">BY</span> <span class="p">(</span><span class="n">driverId</span><span class="p">);</span>
+
+<span class="n">STORE</span> <span class="n">join_data</span> <span class="n">INTO</span> <span class="s1">&#39;output/join_data&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting join.pig
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pig<span class="w"> </span>-f<span class="w"> </span>join.pig
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2022-05-31 16:46:16,018 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:16,369 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:16,443 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-31 16:46:16,469 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:46:16,488 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:46:16,521 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:2
+2022-05-31 16:46:16,659 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1654012563278_0023
+2022-05-31 16:46:16,794 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-31 16:46:16,837 [JobControl] INFO  org.apache.hadoop.conf.Configuration - resource-types.xml not found
+2022-05-31 16:46:16,837 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Unable to find &#39;resource-types.xml&#39;.
+2022-05-31 16:46:16,840 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = memory-mb, units = Mi, type = COUNTABLE
+2022-05-31 16:46:16,841 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = vcores, units = , type = COUNTABLE
+2022-05-31 16:46:16,876 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1654012563278_0023
+2022-05-31 16:46:16,899 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://ca2b226216b1:8088/proxy/application_1654012563278_0023/
+2022-05-31 16:46:32,017 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:32,024 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:32,121 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:32,125 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:32,143 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:32,146 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:32,177 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:32,180 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:32,195 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:32,198 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:32,215 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:32,219 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-ls<span class="w"> </span>output/join_data/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2022-05-31 16:46 output/join_data/_SUCCESS
+-rw-r--r--   1 root supergroup    3283088 2022-05-31 16:46 output/join_data/part-r-00000
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-cat<span class="w"> </span>output/join_data/part-r-00000<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+10,85,00:35.2,Normal,-92.99,37.34,10|85|9223370572464740606,3660000000000000000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-05-27-22,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,23,58:48.7,Normal,-90.69,38.5,10|23|9223370572126447149,1000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-06-02-20,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,23,59:04.1,Normal,-93.69,37.16,10|23|9223370572126431719,1000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-06-02-20,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,43,37:06.0,Normal,-90.69,38.5,10|43|9223370572419349763,1000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-05-28-11,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,39,08:56.0,Normal,-91.44,38.09,10|39|9223370571956639801,1000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-06-02-20,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,23,58:53.0,Normal,-91.44,38.09,10|23|9223370572126442820,1000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-06-02-20,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,39,12:15.4,Normal,-95.69,36.25,10|39|9223370571956440410,1000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-06-02-20,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,85,00:03.3,Normal,-92.89,37.51,10|85|9223370572464772515,3660000000000000000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-05-27-22,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,85,59:45.1,Normal,-95.14,36.66,10|85|9223370572464790666,3660000000000000000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-05-27-22,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+10,39,09:28.6,Normal,-93.69,37.16,10|39|9223370571956607201,1000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-06-02-20,10,George Vetticaden,621011971,244-4532 Nulla Rd.,N,miles
+cat: Unable to write to output stream.
+</pre></div></div>
+</div>
+</section>
+<section id="Ordenamiento-de-datos-usando-‘ORDER-BY’">
+<h2>Ordenamiento de datos usando ‘ORDER BY’<a class="headerlink" href="#Ordenamiento-de-datos-usando-‘ORDER-BY’" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> sort.pig
+
+<span class="n">drivers</span> <span class="o">=</span>  <span class="n">LOAD</span> <span class="s1">&#39;drivers/drivers.csv&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">AS</span> <span class="p">(</span>
+            <span class="n">driverId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">ssn</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">location</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">certified</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">wage_plan</span><span class="p">:</span><span class="n">chararray</span>
+    <span class="p">);</span>
+
+<span class="n">ordered_data</span> <span class="o">=</span> <span class="n">ORDER</span> <span class="n">drivers</span> <span class="n">BY</span> <span class="n">name</span> <span class="n">asc</span><span class="p">;</span>
+
+<span class="n">STORE</span> <span class="n">ordered_data</span> <span class="n">INTO</span> <span class="s1">&#39;output/ordered_data&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting sort.pig
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pig<span class="w"> </span>-f<span class="w"> </span>sort.pig
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2022-05-31 16:46:38,366 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:38,702 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:38,774 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-31 16:46:38,794 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:46:38,893 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-31 16:46:39,050 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1654012563278_0024
+2022-05-31 16:46:39,194 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-31 16:46:39,242 [JobControl] INFO  org.apache.hadoop.conf.Configuration - resource-types.xml not found
+2022-05-31 16:46:39,242 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Unable to find &#39;resource-types.xml&#39;.
+2022-05-31 16:46:39,246 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = memory-mb, units = Mi, type = COUNTABLE
+2022-05-31 16:46:39,246 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = vcores, units = , type = COUNTABLE
+2022-05-31 16:46:39,282 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1654012563278_0024
+2022-05-31 16:46:39,308 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://ca2b226216b1:8088/proxy/application_1654012563278_0024/
+2022-05-31 16:46:49,416 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:49,421 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:49,514 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:49,519 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:49,531 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:49,534 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:46:49,678 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:46:49,688 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-31 16:46:49,700 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:46:49,720 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-31 16:46:49,754 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1654012563278_0025
+2022-05-31 16:46:49,757 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-31 16:46:49,781 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1654012563278_0025
+2022-05-31 16:46:49,784 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://ca2b226216b1:8088/proxy/application_1654012563278_0025/
+2022-05-31 16:47:09,795 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:09,801 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:09,853 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:09,858 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:09,876 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:09,880 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:09,986 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:09,997 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-31 16:47:10,007 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:47:10,829 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-31 16:47:11,253 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1654012563278_0026
+2022-05-31 16:47:11,258 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-31 16:47:11,286 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1654012563278_0026
+2022-05-31 16:47:11,288 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://ca2b226216b1:8088/proxy/application_1654012563278_0026/
+2022-05-31 16:47:26,395 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,400 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,442 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,445 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,457 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,459 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,483 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,485 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,499 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,502 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,513 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,516 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,532 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,535 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,549 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,551 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,565 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,567 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,582 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,585 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,597 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,599 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:26,612 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:26,614 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-ls<span class="w"> </span>output/ordered_data/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2022-05-31 16:47 output/ordered_data/_SUCCESS
+-rw-r--r--   1 root supergroup       2002 2022-05-31 16:47 output/ordered_data/part-r-00000
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-cat<span class="w"> </span>output/ordered_data/part-r-00000<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+23,Adam Diaz,928312208,P.O. Box 260- 6127 Vitae Road,Y,hours
+14,Adis Cesir,820812209,Ap #810-1228 In St.,Y,hours
+19,Ajay Singh,160005158,592-9430 Nonummy Avenue,Y,hours
+36,Andrew Grande,245303216,Ap #685-9598 Egestas Rd.,Y,hours
+20,Chris Harris,921812303,883-2691 Proin Avenue,Y,hours
+30,Dan Rice,282307061,Ap #881-9267 Mollis Avenue,Y,hours
+43,Dave Patton,977706052,3028 A- St.,Y,hours
+39,David Kaiser,967706052,9185 At Street,Y,hours
+24,Don Hilborn,254412152,4361 Ac Road,Y,hours
+35,Emil Siemes,971401151,321-2976 Felis Rd.,Y,hours
+</pre></div></div>
+</div>
+</section>
+<section id="Filtrado-y-agrupamiento-usando-“GROUP-BY”">
+<h2>Filtrado y agrupamiento usando “GROUP BY”<a class="headerlink" href="#Filtrado-y-agrupamiento-usando-“GROUP-BY”" title="Enlazar permanentemente con este título"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> groupby.pig
+
+<span class="n">truck_events</span> <span class="o">=</span> <span class="n">LOAD</span> <span class="s1">&#39;drivers/truck_event_text_partition.csv&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+    <span class="n">AS</span> <span class="p">(</span>
+            <span class="n">driverId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">truckId</span><span class="p">:</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">eventTime</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">eventType</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">longitude</span><span class="p">:</span><span class="n">double</span><span class="p">,</span>
+            <span class="n">latitude</span><span class="p">:</span><span class="n">double</span><span class="p">,</span>
+            <span class="n">eventKey</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">correlationId</span><span class="p">:</span><span class="n">long</span><span class="p">,</span>
+            <span class="n">driverName</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">routeId</span><span class="p">:</span><span class="n">long</span><span class="p">,</span>
+            <span class="n">routeName</span><span class="p">:</span><span class="n">chararray</span><span class="p">,</span>
+            <span class="n">eventDate</span><span class="p">:</span><span class="n">chararray</span>
+    <span class="p">);</span>
+
+<span class="n">filtered_events</span> <span class="o">=</span> <span class="n">FILTER</span> <span class="n">truck_events</span> <span class="n">BY</span> <span class="n">NOT</span> <span class="p">(</span><span class="n">eventType</span> <span class="n">MATCHES</span> <span class="s1">&#39;Normal&#39;</span><span class="p">);</span>
+
+<span class="n">grouped_events</span> <span class="o">=</span> <span class="n">GROUP</span> <span class="n">filtered_events</span> <span class="n">BY</span> <span class="n">driverId</span><span class="p">;</span>
+
+<span class="n">STORE</span> <span class="n">grouped_events</span> <span class="n">INTO</span> <span class="s1">&#39;output/grouped_events&#39;</span> <span class="n">USING</span> <span class="n">PigStorage</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Overwriting groupby.pig
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pig<span class="w"> </span>-f<span class="w"> </span>groupby.pig
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+2022-05-31 16:47:32,676 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:33,054 [JobControl] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:33,125 [JobControl] WARN  org.apache.hadoop.mapreduce.JobResourceUploader - No job jar file set.  User classes may not be found. See Job or Job#setJar(String).
+2022-05-31 16:47:33,145 [JobControl] INFO  org.apache.hadoop.mapreduce.lib.input.FileInputFormat - Total input files to process : 1
+2022-05-31 16:47:33,195 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - number of splits:1
+2022-05-31 16:47:33,344 [JobControl] INFO  org.apache.hadoop.mapreduce.JobSubmitter - Submitting tokens for job: job_1654012563278_0027
+2022-05-31 16:47:33,487 [JobControl] INFO  org.apache.hadoop.mapred.YARNRunner - Job jar is not present. Not adding any jar to the list of resources.
+2022-05-31 16:47:33,530 [JobControl] INFO  org.apache.hadoop.conf.Configuration - resource-types.xml not found
+2022-05-31 16:47:33,530 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Unable to find &#39;resource-types.xml&#39;.
+2022-05-31 16:47:33,534 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = memory-mb, units = Mi, type = COUNTABLE
+2022-05-31 16:47:33,534 [JobControl] INFO  org.apache.hadoop.yarn.util.resource.ResourceUtils - Adding resource type - name = vcores, units = , type = COUNTABLE
+2022-05-31 16:47:33,571 [JobControl] INFO  org.apache.hadoop.yarn.client.api.impl.YarnClientImpl - Submitted application application_1654012563278_0027
+2022-05-31 16:47:33,597 [JobControl] INFO  org.apache.hadoop.mapreduce.Job - The url to track the job: http://ca2b226216b1:8088/proxy/application_1654012563278_0027/
+2022-05-31 16:47:48,714 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:48,721 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:48,813 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:48,817 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:48,835 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:48,838 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:48,869 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:48,872 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:48,888 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:48,891 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+2022-05-31 16:47:48,906 [main] INFO  org.apache.hadoop.yarn.client.RMProxy - Connecting to ResourceManager at /0.0.0.0:8032
+2022-05-31 16:47:48,910 [main] INFO  org.apache.hadoop.mapred.ClientServiceDelegate - Application state is completed. FinalApplicationStatus=SUCCEEDED. Redirecting to job history server
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-ls<span class="w"> </span>output/grouped_events/
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Found 2 items
+-rw-r--r--   1 root supergroup          0 2022-05-31 16:47 output/grouped_events/_SUCCESS
+-rw-r--r--   1 root supergroup       5613 2022-05-31 16:47 output/grouped_events/part-r-00000
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-cat<span class="w"> </span>output/grouped_events/part-r-00000<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+10,{(10,85,00:13.1,Unsafe tail distance,-91.18,38.22,10|85|9223370572464762694,3660000000000000000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-05-27-22),(10,85,00:39.7,Overspeed,-94.23,37.09,10|85|9223370572464736126,3660000000000000000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-05-27-22),(10,85,59:46.9,Overspeed,-95.5,36.37,10|85|9223370572464788896,3660000000000000000,George Vetticaden,1390372503,Saint Louis to Tulsa,2016-05-27-22)}
+11,{(11,74,00:14.1,Lane Departure,-88.77,40.76,11|74|9223370572464761716,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,00:49.6,Lane Departure,-89.71,37.47,11|74|9223370572464726246,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,00:05.4,Unsafe following distance,-89.74,39.1,11|74|9223370572464770396,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,00:41.0,Lane Departure,-90.07,35.68,11|74|9223370572464734786,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,59:56.4,Lane Departure,-87.67,41.87,11|74|9223370572464779456,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,59:38.0,Unsafe tail distance,-89.17,40.38,11|74|9223370572464797796,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,59:47.3,Unsafe tail distance,-89.63,39.84,11|74|9223370572464788546,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,59:29.1,Overspeed,-88.07,41.48,11|74|9223370572464806746,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,00:32.0,Unsafe tail distance,-90.2,38.65,11|74|9223370572464743846,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22),(11,74,00:23.1,Unsafe tail distance,-88.42,41.11,11|74|9223370572464752715,3660000000000000000,Jamie Engesser,1567254452,Saint Louis to Memphis Route2,2016-05-27-22)}
+12,{(12,104,00:47.6,Unsafe following distance,-90.0,37.72,12|104|9223370572464728186,3660000000000000000,Paul Codding,24929475,Peoria to Ceder Rapids,2016-05-27-22)}
+13,{(13,89,00:47.7,Lane Departure,-89.03,41.92,13|89|9223370572464728156,3660000000000000000,Joe Niemiec,927636994,Des Moines to Chicago.kml,2016-05-27-22)}
+14,{(14,25,00:48.4,Unsafe following distance,-91.63,41.72,14|25|9223370572464727394,3660000000000000000,Adis Cesir,160405074,Joplin to Kansas City Route 2,2016-05-27-22)}
+15,{(15,51,00:48.8,Lane Departure,-90.04,35.19,15|51|9223370572464727025,3660000000000000000,Rohit Bakshi,1384345811,Joplin to Kansas City,2016-05-27-22)}
+16,{(16,12,00:48.9,Lane Departure,-89.52,40.7,16|12|9223370572464726925,3660000000000000000,Tom McCuch,1961634315,Saint Louis to Memphis,2016-05-27-22)}
+17,{(17,15,00:48.4,Lane Departure,-90.79,38.83,17|15|9223370572464727374,3660000000000000000,Eric Mizell,1927624662,Springfield to KC Via Columbia,2016-05-27-22)}
+18,{(18,16,00:47.2,Overspeed,-94.28,39.53,18|16|9223370572464728575,3660000000000000000,Grant Liu,1565885487,Springfield to KC Via Hanibal,2016-05-27-22)}
+19,{(19,26,00:48.6,Unsafe following distance,-94.57,35.37,19|26|9223370572464727224,3660000000000000000,Ajay Singh,1962261785,Wichita to Little Rock.kml,2016-05-27-22)}
+</pre></div></div>
+</div>
+<hr class="docutils" />
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>rm<span class="w"> </span>*log<span class="w"> </span>*.pig<span class="w"> </span>*.csv
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2019-2021, Juan D. Velasquez.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

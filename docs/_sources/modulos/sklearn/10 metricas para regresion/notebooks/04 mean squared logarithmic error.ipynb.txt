@@ -1,0 +1,243 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "3024fd37-d7ae-4940-9df0-9be41274620e",
+   "metadata": {},
+   "source": [
+    "Mean squared logarithmic error\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5bd94855-e125-48c5-827d-703e06262288",
+   "metadata": {},
+   "source": [
+    "* Corresponde al valor esperado del error o pérdida logaritmica al cuadrado."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "731c6523-0b5b-4a37-b765-23934f82dbdd",
+   "metadata": {},
+   "source": [
+    "* Esta métrica se usa para variables que tienen un comportamiento exponencial como poblaciones."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ca2c9029-4334-4f14-89fb-9dbfed22bb81",
+   "metadata": {},
+   "source": [
+    "* La métrica penaliza más los estimados por debajo que por encima del valor real."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9aa8c463-ca01-4127-b43b-8a9ff6818045",
+   "metadata": {},
+   "source": [
+    "* Se computa como:\n",
+    "$$\n",
+    "\\text{MSLE}(y, \\hat{y}) = \n",
+    "\\frac{1}{n_{\\text{samples}}}\n",
+    "\\sum_{i=0}^{n_{\\text{samples}} - 1} \n",
+    "(\n",
+    "    \\log_e(1 +y_i) - \\log_e(1 + \\hat{y}_i)\n",
+    ")^2\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "1cd303d8-b9c6-4a36-bf26-ff5aa260683b",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.03973012298459379"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.metrics import mean_squared_log_error\n",
+    "\n",
+    "y_true = [3.0, 5.0, 2.5, 7.0]\n",
+    "y_pred = [2.5, 5.0, 4.0, 8.0]\n",
+    "\n",
+    "# 1/4 * ((log(1+3.0) - log(1+2.5))**2 +\n",
+    "#        (log(1+5.0) - log(1+5.0))**2 +\n",
+    "#        (log(1+2.5) - log(1+4.0))**2 +\n",
+    "#        (log(1+7.0) - log(1+8.0))**2 ) = 0.039730\n",
+    "#\n",
+    "mean_squared_log_error(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Ground truth (correct) target values.\n",
+    "    y_true=y_true,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Estimated target values.\n",
+    "    y_pred=y_pred,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Sample weights.\n",
+    "    sample_weight=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Defines aggregating of multiple output scores.\n",
+    "    # * 'raw_values': Returns a full set of scores in case of multioutput input.\n",
+    "    # * 'uniform_average': Scores of all outputs are averaged with uniform\n",
+    "    #      weight.\n",
+    "    multioutput=\"uniform_average\",\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # If True returns MSLE value, if False returns RMSLE value.\n",
+    "    squared=True,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "daf9aca3-20c2-4e21-ae2b-1725c0a5dc24",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.19932416558108"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# sqrt(0.039730) = 0.199324\n",
+    "#\n",
+    "mean_squared_log_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    "    squared=False,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "ff251b01-73d7-4fc0-8741-6ebb8e6fa6aa",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0.00462428, 0.08377444])"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "y_true = [[0.5, 1.0], [1.0, 2.0], [7.0, 6.0]]\n",
+    "y_pred = [[0.5, 2.0], [1.0, 2.5], [8.0, 8.0]]\n",
+    "\n",
+    "# y_true = [0.5, 1.0, 7.0]\n",
+    "# y_pred = [0.5, 1.0, 8.0]\n",
+    "# mean_squared_log_error(y_true, y_pred) = 0.004624\n",
+    "#\n",
+    "# y_true = [1.0, 2.0, 6.0]\n",
+    "# y_pred = [2.0, 2.5, 8.0]\n",
+    "# mean_squared_log_error(y_true, y_pred) = 0.083774\n",
+    "\n",
+    "mean_squared_log_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    "    multioutput=\"raw_values\",\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "81229853-bf46-4070-9239-b2c04c26e4f8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.044199361889160516"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# 0.5 * (0.004624 + 0.083774) = 0.044199\n",
+    "#\n",
+    "mean_squared_log_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "35e42a72-7921-4e42-b6d8-cc39a719dd69",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.06002939417970032"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# 0.3 * 0.004624 + 0.7 * 0.083774 = 0.060029\n",
+    "#\n",
+    "mean_squared_log_error(\n",
+    "    y_true,\n",
+    "    y_pred,\n",
+    "    multioutput=[0.3, 0.7],\n",
+    ")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

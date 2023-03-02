@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Predicción de gastos médicos en PySpark &mdash; documentación de Cursos de Analítica y Machine Learning - </title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/copybutton.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/clipboard.min.js"></script>
+        <script src="../../../../_static/copybutton.js"></script>
+        <script src="../../../../_static/translations.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            Cursos de Analítica y Machine Learning
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p><span class="caption-text">Asignaturas de Pregrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/redes-neuronales.html">Redes Neuronales Artificiales y Aprendizaje Profundo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/fundamentos-de-analitica.html">Fundamentos de Analítica</a></li>
+</ul>
+<p><span class="caption-text">Asignaturas de Posgrado</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/ciencia-de-los-datos.html">Ciencia de los Datos Aplicada</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/analitica-descriptiva.html">Analítica descriptiva y visualización de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/analitica-predictiva.html">Analítica Predictiva</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/analitica-de-grandes-datos.html">Analítica de Grandes Datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cursos/productos-de-datos.html">Productos de Datos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Cursos de Analítica y Machine Learning</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content style-external-links">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Predicción de gastos médicos en PySpark</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../../_sources/modulos/pyspark/04 MLlib main/notebooks/05 MLli main regression.ipynb.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars and line breaks on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+    white-space: pre;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt .copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+.jp-RenderedHTMLCommon table,
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.jp-RenderedHTMLCommon thead,
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+.jp-RenderedHTMLCommon tr,
+.jp-RenderedHTMLCommon th,
+.jp-RenderedHTMLCommon td,
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+.jp-RenderedHTMLCommon th,
+div.rendered_html th {
+  font-weight: bold;
+}
+.jp-RenderedHTMLCommon tbody tr:nth-child(odd),
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+.jp-RenderedHTMLCommon tbody tr:hover,
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="Predicción-de-gastos-médicos-en-PySpark">
+<h1>Predicción de gastos médicos en PySpark<a class="headerlink" href="#Predicción-de-gastos-médicos-en-PySpark" title="Enlazar permanentemente con este título"></a></h1>
+<ul class="simple">
+<li><p><em>30 min</em> | Última modificación: Junio 22, 2019</p></li>
+</ul>
+<p>En este tutorial se construyen modelos de regresión para la predicción de gastos médicos por parte de una aseguradora.</p>
+<p>Al finalizar este tutorial, usted estará en capacidad de:</p>
+<ul class="simple">
+<li><p>Realizar el análisis exploratorio de datos para aplicar técnicas de regresión.</p></li>
+<li><p>Estimar diferentes tipos de modelos de regresión usando PySpark.</p></li>
+</ul>
+<section id="Definición-del-problema">
+<h2>Definición del problema<a class="headerlink" href="#Definición-del-problema" title="Enlazar permanentemente con este título"></a></h2>
+<p>Una compañía de seguros desea pronósticar los gastos médicos de la población asegurada con el fin de recolectar un valor superior en ingresos, tal que le permita obtener utilidades. Los costos son difíciles de pronósticar ya que las condiciones más costosas son más raras y parecen aleatorias; y que ciertas condiciones son más probables para ciertos segmentos de la población (infarto en personas obesas y cáncer en fumadores).</p>
+<p>El objetivo es usar una base de datos con 1338 registros de gastos médicos hipotéticos para pacientes de EU con el fin de estimar los costos para determinados segmentos de la población. La información registrada es la siguiente:</p>
+<ul class="simple">
+<li><p>Age: entero hasta 64.</p></li>
+<li><p>Sex: male, female.</p></li>
+<li><p>bmi: Body mass index.</p></li>
+<li><p>children: entero indicando la cantidad de hijos/dependientes cubiertos por el plan de salud.</p></li>
+<li><p>smoker: yes, no.</p></li>
+<li><p>region: northest, southeast, southwest, northwest.</p></li>
+<li><p>charges: costos.</p></li>
+</ul>
+</section>
+<section id="Solución">
+<h2>Solución<a class="headerlink" href="#Solución" title="Enlazar permanentemente con este título"></a></h2>
+<section id="Preparación">
+<h3>Preparación<a class="headerlink" href="#Preparación" title="Enlazar permanentemente con este título"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">findspark</span>
+<span class="kn">from</span> <span class="nn">pyspark</span> <span class="kn">import</span> <span class="n">SparkConf</span><span class="p">,</span> <span class="n">SparkContext</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="n">findspark</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="n">APP_NAME</span> <span class="o">=</span> <span class="s2">&quot;spark-insurance-app&quot;</span>
+
+<span class="n">conf</span> <span class="o">=</span> <span class="n">SparkConf</span><span class="p">()</span><span class="o">.</span><span class="n">setAppName</span><span class="p">(</span><span class="n">APP_NAME</span><span class="p">)</span>
+<span class="n">sc</span> <span class="o">=</span> <span class="n">SparkContext</span><span class="p">(</span><span class="n">conf</span><span class="o">=</span><span class="n">conf</span><span class="p">)</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Carga-de-datos">
+<h3>Carga de datos<a class="headerlink" href="#Carga-de-datos" title="Enlazar permanentemente con este título"></a></h3>
+<p>El primer paso consiste en mover los datos del sistema local de archivos al sistema HDFS para que sean accesibles para Spark.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>wget<span class="w"> </span>https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/insurance.csv
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+--2019-11-15 01:01:08--  https://raw.githubusercontent.com/jdvelasq/datalabs/master/datasets/insurance.csv
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 199.232.48.133
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|199.232.48.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 54288 (53K) [text/plain]
+Saving to: &#39;insurance.csv.1&#39;
+
+insurance.csv.1     100%[===================&gt;]  53.02K  --.-KB/s    in 0.1s
+
+2019-11-15 01:01:09 (410 KB/s) - &#39;insurance.csv.1&#39; saved [54288/54288]
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Mueve el archivo de datos al hdfs</span>
+<span class="c1">##</span>
+<span class="o">!</span>hdfs<span class="w"> </span>dfs<span class="w"> </span>-copyFromLocal<span class="w"> </span>insurance.csv<span class="w"> </span>/tmp/insurance.csv
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+copyFromLocal: `/tmp/insurance.csv&#39;: File exists
+</pre></div></div>
+</div>
+<p>Los datos se encuentran almacenados en formato CSV, tal como se muestra a continuación.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>head<span class="w"> </span>insurance.csv
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+age,sex,bmi,children,smoker,region,charges
+19,female,27.9,0,yes,southwest,16884.924
+18,male,33.77,1,no,southeast,1725.5523
+28,male,33,3,no,southeast,4449.462
+33,male,22.705,0,no,northwest,21984.47061
+32,male,28.88,0,no,northwest,3866.8552
+31,female,25.74,0,no,southeast,3756.6216
+46,female,33.44,1,no,southeast,8240.5896
+37,female,27.74,3,no,northwest,7281.5056
+37,male,29.83,2,no,northeast,6406.4107
+</pre></div></div>
+</div>
+<p>Los datos son cargados como un DataFrame de Spark; el archivo <code class="docutils literal notranslate"><span class="pre">insurance.csv</span></code> se encuentra en la carpeta <code class="docutils literal notranslate"><span class="pre">tmp/</span></code> del HDFS.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">load</span><span class="p">(</span>
+    <span class="s2">&quot;/tmp/insurance.csv&quot;</span><span class="p">,</span>
+    <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span>
+    <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+    <span class="n">inferSchema</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="s2">&quot;true&quot;</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+------+------+--------+------+---------+-----------+
+|age|   sex|   bmi|children|smoker|   region|    charges|
++---+------+------+--------+------+---------+-----------+
+| 19|female|  27.9|       0|   yes|southwest|  16884.924|
+| 18|  male| 33.77|       1|    no|southeast|  1725.5523|
+| 28|  male|  33.0|       3|    no|southeast|   4449.462|
+| 33|  male|22.705|       0|    no|northwest|21984.47061|
+| 32|  male| 28.88|       0|    no|northwest|  3866.8552|
+| 31|female| 25.74|       0|    no|southeast|  3756.6216|
+| 46|female| 33.44|       1|    no|southeast|  8240.5896|
+| 37|female| 27.74|       3|    no|northwest|  7281.5056|
+| 37|  male| 29.83|       2|    no|northeast|  6406.4107|
+| 60|female| 25.84|       0|    no|northwest|28923.13692|
+| 25|  male| 26.22|       0|    no|northeast|  2721.3208|
+| 62|female| 26.29|       0|   yes|southeast| 27808.7251|
+| 23|  male|  34.4|       0|    no|southwest|   1826.843|
+| 56|female| 39.82|       0|    no|southeast| 11090.7178|
+| 27|  male| 42.13|       0|   yes|southeast| 39611.7577|
+| 19|  male|  24.6|       1|    no|southwest|   1837.237|
+| 52|female| 30.78|       1|    no|northeast| 10797.3362|
+| 23|  male|23.845|       0|    no|northeast| 2395.17155|
+| 56|  male|  40.3|       0|    no|southwest|  10602.385|
+| 30|  male|  35.3|       0|   yes|southwest|  36837.467|
++---+------+------+--------+------+---------+-----------+
+only showing top 20 rows
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Verificación del esquema de los datos</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+root
+ |-- age: integer (nullable = true)
+ |-- sex: string (nullable = true)
+ |-- bmi: double (nullable = true)
+ |-- children: integer (nullable = true)
+ |-- smoker: string (nullable = true)
+ |-- region: string (nullable = true)
+ |-- charges: double (nullable = true)
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Tipo de dato de cada columna</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">dtypes</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(&#39;age&#39;, &#39;int&#39;),
+ (&#39;sex&#39;, &#39;string&#39;),
+ (&#39;bmi&#39;, &#39;double&#39;),
+ (&#39;children&#39;, &#39;int&#39;),
+ (&#39;smoker&#39;, &#39;string&#39;),
+ (&#39;region&#39;, &#39;string&#39;),
+ (&#39;charges&#39;, &#39;double&#39;)]
+</pre></div></div>
+</div>
+<p>### Análisis exploratorio</p>
+<p>A continuación se presentan algunos estadísticos de interés en el modelado.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Se obtienen las columnas numéricas</span>
+<span class="c1">##</span>
+<span class="n">num_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span> <span class="k">if</span> <span class="n">b</span> <span class="o">!=</span> <span class="s1">&#39;string&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Estadísticos descriptivos de las variables.</span>
+<span class="c1">## Cuando no hay un gran volumen de datos es</span>
+<span class="c1">## posible importar el set a Pandas para usar</span>
+<span class="c1">## sus funciones nativas.</span>
+<span class="c1">##</span>
+<span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">num_columns</span><span class="p">)</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>summary</th>
+      <th>age</th>
+      <th>bmi</th>
+      <th>children</th>
+      <th>charges</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>count</td>
+      <td>1338</td>
+      <td>1338</td>
+      <td>1338</td>
+      <td>1338</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>mean</td>
+      <td>39.20702541106129</td>
+      <td>30.663396860986538</td>
+      <td>1.0949177877429</td>
+      <td>13270.422265141257</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>stddev</td>
+      <td>14.049960379216147</td>
+      <td>6.098186911679012</td>
+      <td>1.205492739781914</td>
+      <td>12110.011236693992</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>min</td>
+      <td>18</td>
+      <td>15.96</td>
+      <td>0</td>
+      <td>1121.8739</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>max</td>
+      <td>64</td>
+      <td>53.13</td>
+      <td>5</td>
+      <td>63770.42801</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Cómputo de estadísticos usando funciones</span>
+<span class="c1">## nativas de pyspark</span>
+<span class="c1">##</span>
+
+<span class="kn">from</span> <span class="nn">pyspark.mllib.stat</span> <span class="kn">import</span> <span class="n">Statistics</span>
+
+<span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">num_columns</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">Statistics</span><span class="o">.</span><span class="n">colStats</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">col_name</span><span class="p">)</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    Mean:     &#39;</span><span class="p">,</span> <span class="n">summary</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    Variance: &#39;</span><span class="p">,</span> <span class="n">summary</span><span class="o">.</span><span class="n">variance</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;    Nonzeros: &#39;</span><span class="p">,</span> <span class="n">summary</span><span class="o">.</span><span class="n">numNonzeros</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+age
+    Mean:      39.20702541106125
+    Variance:  197.40138665754355
+    Nonzeros:  1338.0
+
+bmi
+    Mean:      30.663396860986524
+    Variance:  37.18788360977321
+    Nonzeros:  1338.0
+
+children
+    Mean:      1.0949177877428995
+    Variance:  1.4532127456669042
+    Nonzeros:  764.0
+
+charges
+    Mean:      13270.422265141255
+    Variance:  146652372.15285477
+    Nonzeros:  1338.0
+
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Se obtienen las columnas no numéricas y</span>
+<span class="c1">## se computa la cantidad de registros por</span>
+<span class="c1">## valor. Aca se emula la función table del</span>
+<span class="c1">## lenguaje R.</span>
+<span class="c1">##</span>
+<span class="n">no_num_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">dtypes</span> <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">column_name</span> <span class="ow">in</span> <span class="n">no_num_columns</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="n">column_name</span><span class="p">)</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">toPandas</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+      sex  count
+0  female    662
+1    male    676
+
+  smoker  count
+0     no   1064
+1    yes    274
+
+      region  count
+0  northwest    325
+1  southeast    364
+2  northeast    324
+3  southwest    325
+
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## histograma.</span>
+<span class="c1">## Muestra que la mayor parte de la población tiene</span>
+<span class="c1">## gastos bajos, mientras que disminuye la frecuencia</span>
+<span class="c1">## de costos más altos es más baja.</span>
+<span class="c1">##</span>
+<span class="c1">## La función histogram de pyspark permite computar</span>
+<span class="c1">## los datos de graficación del histograma, pero</span>
+<span class="c1">## no grafica el histograma como tal.</span>
+<span class="c1">##</span>
+<span class="n">h</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;charges&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">flatMap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">h</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+([1121.8739,
+  6817.197000909091,
+  12512.520101818183,
+  18207.843202727272,
+  23903.166303636364,
+  29598.489404545457,
+  35293.812505454545,
+  40989.13560636364,
+  46684.45870727273,
+  52379.78180818182,
+  58075.104909090915,
+  63770.42801],
+ [492, 383, 152, 93, 56, 32, 61, 42, 21, 2, 4])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Debe recurrise a Pandas para realizar la</span>
+<span class="c1">## graficación</span>
+<span class="c1">##</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">h</span><span class="p">)),</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;bin&#39;</span><span class="p">,</span> <span class="s1">&#39;frequency&#39;</span><span class="p">]</span>
+<span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+    <span class="s1">&#39;bin&#39;</span>
+<span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bar&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../../_images/modulos_pyspark_04_MLlib_main_notebooks_05_MLli_main_regression_28_0.png" src="../../../../_images/modulos_pyspark_04_MLlib_main_notebooks_05_MLli_main_regression_28_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">##</span>
+<span class="c1">## Cómputo de la correlación entre</span>
+<span class="c1">## las variables numéricas del DataFrame</span>
+<span class="c1">##</span>
+<span class="n">Statistics</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span>
+    <span class="c1">##</span>
+    <span class="c1">## Se deben seleccionar únicamente las columnas</span>
+    <span class="c1">## numéricas y luego transformar el rdd</span>
+    <span class="c1">##</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">num_columns</span><span class="p">)</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">:]),</span>
+    <span class="n">method</span><span class="o">=</span><span class="s1">&#39;pearson&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+array([[1.        , 0.10927188, 0.042469  , 0.29900819],
+       [0.10927188, 1.        , 0.0127589 , 0.19834097],
+       [0.042469  , 0.0127589 , 1.        , 0.06799823],
+       [0.29900819, 0.19834097, 0.06799823, 1.        ]])
+</pre></div></div>
+</div>
+<p>Aunque Spark tiene funciones para el análisis de datos, no posee ninguna herramienta para la graficación de información, por lo que la mayor parte de los análisis deben realizarse de forma estándar en Python. Para ello, es necesario utilizar la función <code class="docutils literal notranslate"><span class="pre">toPandas()</span></code> que permite un DataFrame de Spark a un DataFrame de Pandas.</p>
+<p>En la siguiente celda se contruye una grafica tipo <code class="docutils literal notranslate"><span class="pre">pair</span></code> para analizar la información entre variables.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">!</span>pip3<span class="w"> </span>install<span class="w"> </span>seaborn
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Requirement already satisfied: seaborn in /usr/local/lib/python3.6/dist-packages
+Requirement already satisfied: pandas&gt;=0.15.2 in /usr/local/lib/python3.6/dist-packages (from seaborn)
+Requirement already satisfied: scipy&gt;=0.14.0 in /usr/local/lib/python3.6/dist-packages (from seaborn)
+Requirement already satisfied: numpy&gt;=1.9.3 in /usr/local/lib/python3.6/dist-packages (from seaborn)
+Requirement already satisfied: matplotlib&gt;=1.4.3 in /usr/local/lib/python3.6/dist-packages (from seaborn)
+Requirement already satisfied: python-dateutil&gt;=2.6.1 in /usr/local/lib/python3.6/dist-packages (from pandas&gt;=0.15.2-&gt;seaborn)
+Requirement already satisfied: pytz&gt;=2017.2 in /usr/local/lib/python3.6/dist-packages (from pandas&gt;=0.15.2-&gt;seaborn)
+Requirement already satisfied: kiwisolver&gt;=1.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib&gt;=1.4.3-&gt;seaborn)
+Requirement already satisfied: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,&gt;=2.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib&gt;=1.4.3-&gt;seaborn)
+Requirement already satisfied: cycler&gt;=0.10 in /usr/local/lib/python3.6/dist-packages (from matplotlib&gt;=1.4.3-&gt;seaborn)
+Requirement already satisfied: six&gt;=1.5 in /usr/local/lib/python3.6/dist-packages (from python-dateutil&gt;=2.6.1-&gt;pandas&gt;=0.15.2-&gt;seaborn)
+Requirement already satisfied: setuptools in /usr/local/lib/python3.6/dist-packages (from kiwisolver&gt;=1.0.1-&gt;matplotlib&gt;=1.4.3-&gt;seaborn)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">pairplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">toPandas</span><span class="p">());</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../../_images/modulos_pyspark_04_MLlib_main_notebooks_05_MLli_main_regression_33_0.png" src="../../../../_images/modulos_pyspark_04_MLlib_main_notebooks_05_MLli_main_regression_33_0.png" />
+</div>
+</div>
+</section>
+<section id="Transformación-de-variables">
+<h3>Transformación de variables<a class="headerlink" href="#Transformación-de-variables" title="Enlazar permanentemente con este título"></a></h3>
+<p>De acuerdo con la información obtenida en el esquema:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+root
+ |-- age: integer (nullable = true)
+ |-- sex: string (nullable = true)
+ |-- bmi: double (nullable = true)
+ |-- children: integer (nullable = true)
+ |-- smoker: string (nullable = true)
+ |-- region: string (nullable = true)
+ |-- charges: double (nullable = true)
+
+</pre></div></div>
+</div>
+<p>Las variables <code class="docutils literal notranslate"><span class="pre">sex</span></code>, <code class="docutils literal notranslate"><span class="pre">smoker</span></code> y <code class="docutils literal notranslate"><span class="pre">region</span></code> son categóricas por lo que deben ser codificadas como factores. Esta tarea es realizada usando la función <code class="docutils literal notranslate"><span class="pre">StringIndexer</span></code>. Los resultados de las transformaciones son visualizados al final, con la función <code class="docutils literal notranslate"><span class="pre">show()</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">StringIndexer</span>
+
+<span class="c1">##</span>
+<span class="c1">## outputCol es el nombre de la nueva columna que contiene</span>
+<span class="c1">## el resultado de la codificación como factor</span>
+<span class="c1">##</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span> <span class="o">=</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span>    <span class="n">outputCol</span> <span class="o">=</span> <span class="s1">&#39;sexIdx&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span> <span class="o">=</span> <span class="s1">&#39;smoker&#39;</span><span class="p">,</span> <span class="n">outputCol</span> <span class="o">=</span> <span class="s1">&#39;smokerIdx&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">StringIndexer</span><span class="p">(</span><span class="n">inputCol</span> <span class="o">=</span> <span class="s1">&#39;region&#39;</span><span class="p">,</span> <span class="n">outputCol</span> <span class="o">=</span> <span class="s1">&#39;regionIdx&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+------+------+--------+------+---------+-----------+------+---------+---------+
+|age|   sex|   bmi|children|smoker|   region|    charges|sexIdx|smokerIdx|regionIdx|
++---+------+------+--------+------+---------+-----------+------+---------+---------+
+| 19|female|  27.9|       0|   yes|southwest|  16884.924|   1.0|      1.0|      1.0|
+| 18|  male| 33.77|       1|    no|southeast|  1725.5523|   0.0|      0.0|      0.0|
+| 28|  male|  33.0|       3|    no|southeast|   4449.462|   0.0|      0.0|      0.0|
+| 33|  male|22.705|       0|    no|northwest|21984.47061|   0.0|      0.0|      2.0|
+| 32|  male| 28.88|       0|    no|northwest|  3866.8552|   0.0|      0.0|      2.0|
+| 31|female| 25.74|       0|    no|southeast|  3756.6216|   1.0|      0.0|      0.0|
+| 46|female| 33.44|       1|    no|southeast|  8240.5896|   1.0|      0.0|      0.0|
+| 37|female| 27.74|       3|    no|northwest|  7281.5056|   1.0|      0.0|      2.0|
+| 37|  male| 29.83|       2|    no|northeast|  6406.4107|   0.0|      0.0|      3.0|
+| 60|female| 25.84|       0|    no|northwest|28923.13692|   1.0|      0.0|      2.0|
+| 25|  male| 26.22|       0|    no|northeast|  2721.3208|   0.0|      0.0|      3.0|
+| 62|female| 26.29|       0|   yes|southeast| 27808.7251|   1.0|      1.0|      0.0|
+| 23|  male|  34.4|       0|    no|southwest|   1826.843|   0.0|      0.0|      1.0|
+| 56|female| 39.82|       0|    no|southeast| 11090.7178|   1.0|      0.0|      0.0|
+| 27|  male| 42.13|       0|   yes|southeast| 39611.7577|   0.0|      1.0|      0.0|
+| 19|  male|  24.6|       1|    no|southwest|   1837.237|   0.0|      0.0|      1.0|
+| 52|female| 30.78|       1|    no|northeast| 10797.3362|   1.0|      0.0|      3.0|
+| 23|  male|23.845|       0|    no|northeast| 2395.17155|   0.0|      0.0|      3.0|
+| 56|  male|  40.3|       0|    no|southwest|  10602.385|   0.0|      0.0|      1.0|
+| 30|  male|  35.3|       0|   yes|southwest|  36837.467|   0.0|      1.0|      1.0|
++---+------+------+--------+------+---------+-----------+------+---------+---------+
+only showing top 20 rows
+
+</pre></div></div>
+</div>
+</section>
+<section id="Estimación-de-los-modelos-de-regresión">
+<h3>Estimación de los modelos de regresión<a class="headerlink" href="#Estimación-de-los-modelos-de-regresión" title="Enlazar permanentemente con este título"></a></h3>
+<section id="Preparación-de-los-regresores">
+<h4>Preparación de los regresores<a class="headerlink" href="#Preparación-de-los-regresores" title="Enlazar permanentemente con este título"></a></h4>
+<p>A continuación se procede a la construcción de los modelos de regresión considerados. En primera instancia, se procede a realizar una transformación adicional del DataFrame con la función <code class="docutils literal notranslate"><span class="pre">VectorAssembler()</span></code>, con el fin de crear la nueva columna <code class="docutils literal notranslate"><span class="pre">features</span></code> que contiene una lista con los valores de las variables indicadas en el parámetro <code class="docutils literal notranslate"><span class="pre">inputCols</span></code>. Note que <code class="docutils literal notranslate"><span class="pre">outputCol</span></code> hace referencia al nombre de la nueva columna que se está creando en el DataFrame. El resultado de la transformación
+puede verse en la salida de la siguiente celda:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.feature</span> <span class="kn">import</span> <span class="n">VectorAssembler</span>
+
+<span class="n">vectorAssembler</span> <span class="o">=</span> <span class="n">VectorAssembler</span><span class="p">(</span>
+    <span class="n">inputCols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;bmi&#39;</span><span class="p">,</span> <span class="s1">&#39;children&#39;</span><span class="p">,</span> <span class="s1">&#39;sexIdx&#39;</span><span class="p">,</span> <span class="s1">&#39;smokerIdx&#39;</span><span class="p">,</span> <span class="s1">&#39;regionIdx&#39;</span><span class="p">],</span>
+    <span class="n">outputCol</span> <span class="o">=</span> <span class="s1">&#39;features&#39;</span><span class="p">)</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">vectorAssembler</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="n">df</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
++---+------+------+--------+------+---------+-----------+------+---------+---------+--------------------+
+|age|   sex|   bmi|children|smoker|   region|    charges|sexIdx|smokerIdx|regionIdx|            features|
++---+------+------+--------+------+---------+-----------+------+---------+---------+--------------------+
+| 19|female|  27.9|       0|   yes|southwest|  16884.924|   1.0|      1.0|      1.0|[19.0,27.9,0.0,1....|
+| 18|  male| 33.77|       1|    no|southeast|  1725.5523|   0.0|      0.0|      0.0|[18.0,33.77,1.0,0...|
+| 28|  male|  33.0|       3|    no|southeast|   4449.462|   0.0|      0.0|      0.0|[28.0,33.0,3.0,0....|
+| 33|  male|22.705|       0|    no|northwest|21984.47061|   0.0|      0.0|      2.0|[33.0,22.705,0.0,...|
+| 32|  male| 28.88|       0|    no|northwest|  3866.8552|   0.0|      0.0|      2.0|[32.0,28.88,0.0,0...|
+| 31|female| 25.74|       0|    no|southeast|  3756.6216|   1.0|      0.0|      0.0|[31.0,25.74,0.0,1...|
+| 46|female| 33.44|       1|    no|southeast|  8240.5896|   1.0|      0.0|      0.0|[46.0,33.44,1.0,1...|
+| 37|female| 27.74|       3|    no|northwest|  7281.5056|   1.0|      0.0|      2.0|[37.0,27.74,3.0,1...|
+| 37|  male| 29.83|       2|    no|northeast|  6406.4107|   0.0|      0.0|      3.0|[37.0,29.83,2.0,0...|
+| 60|female| 25.84|       0|    no|northwest|28923.13692|   1.0|      0.0|      2.0|[60.0,25.84,0.0,1...|
+| 25|  male| 26.22|       0|    no|northeast|  2721.3208|   0.0|      0.0|      3.0|[25.0,26.22,0.0,0...|
+| 62|female| 26.29|       0|   yes|southeast| 27808.7251|   1.0|      1.0|      0.0|[62.0,26.29,0.0,1...|
+| 23|  male|  34.4|       0|    no|southwest|   1826.843|   0.0|      0.0|      1.0|[23.0,34.4,0.0,0....|
+| 56|female| 39.82|       0|    no|southeast| 11090.7178|   1.0|      0.0|      0.0|[56.0,39.82,0.0,1...|
+| 27|  male| 42.13|       0|   yes|southeast| 39611.7577|   0.0|      1.0|      0.0|[27.0,42.13,0.0,0...|
+| 19|  male|  24.6|       1|    no|southwest|   1837.237|   0.0|      0.0|      1.0|[19.0,24.6,1.0,0....|
+| 52|female| 30.78|       1|    no|northeast| 10797.3362|   1.0|      0.0|      3.0|[52.0,30.78,1.0,1...|
+| 23|  male|23.845|       0|    no|northeast| 2395.17155|   0.0|      0.0|      3.0|[23.0,23.845,0.0,...|
+| 56|  male|  40.3|       0|    no|southwest|  10602.385|   0.0|      0.0|      1.0|[56.0,40.3,0.0,0....|
+| 30|  male|  35.3|       0|   yes|southwest|  36837.467|   0.0|      1.0|      1.0|[30.0,35.3,0.0,0....|
++---+------+------+--------+------+---------+-----------+------+---------+---------+--------------------+
+only showing top 20 rows
+
+</pre></div></div>
+</div>
+</section>
+<section id="Modelo-de-regresión-lineal">
+<h4>Modelo de regresión lineal<a class="headerlink" href="#Modelo-de-regresión-lineal" title="Enlazar permanentemente con este título"></a></h4>
+<p>Para realizar la construcción del modelo de regresión se usa la función <code class="docutils literal notranslate"><span class="pre">LinearRegression</span></code> de PySpark. Como ya es característico en otras librerías tal como en <code class="docutils literal notranslate"><span class="pre">Sklearn</span></code>, primero se crea el modelo dando valores a los parámetros, tales como el número máximo de iteraciones, para posteriormente, usar la función <code class="docutils literal notranslate"><span class="pre">fit</span></code> y realizar la estimación de sus parámetros óptimos.</p>
+<p>Para realizar el pronóstico se utiliza la función <code class="docutils literal notranslate"><span class="pre">transform()</span></code> la cual recibe como parámetro un DataFrame que contiene la misma columna en que se hizo la agregación con la función <code class="docutils literal notranslate"><span class="pre">VectorAssembler()</span></code>; <code class="docutils literal notranslate"><span class="pre">transform()</span></code> crea una nueva columna, cuyo nombre es especificado en el parámetro <code class="docutils literal notranslate"><span class="pre">predictionCol</span></code>, que contiene la predicción para cada punto del DataFrame.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.mllib.evaluation</span> <span class="kn">import</span> <span class="n">RegressionMetrics</span> <span class="k">as</span> <span class="n">rmtrcs</span>
+<span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se parametriza el modelo</span>
+<span class="c1">##</span>
+<span class="n">lr</span> <span class="o">=</span>  <span class="n">LinearRegression</span><span class="p">(</span>
+    <span class="n">featuresCol</span> <span class="o">=</span> <span class="s1">&#39;features&#39;</span><span class="p">,</span>
+    <span class="n">labelCol</span> <span class="o">=</span> <span class="s1">&#39;charges&#39;</span><span class="p">,</span>
+    <span class="n">predictionCol</span> <span class="o">=</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span>
+    <span class="n">maxIter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">regParam</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">elasticNetParam</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">fitIntercept</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">standardization</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1">## Se estiman los parámetros óptimos</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Se pronostica para los datos originales.</span>
+<span class="c1">## El pronóstico se agrega a la columna LR</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Se computan las métricas de ajuste</span>
+<span class="n">metrics_lr</span> <span class="o">=</span> <span class="n">rmtrcs</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">charges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">LR</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;r2  : &#39;</span><span class="p">,</span> <span class="n">metrics_lr</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE : &#39;</span><span class="p">,</span> <span class="n">metrics_lr</span><span class="o">.</span><span class="n">meanSquaredError</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAD : &#39;</span><span class="p">,</span> <span class="n">metrics_lr</span><span class="o">.</span><span class="n">meanAbsoluteError</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+r2  :  0.6681376677254415
+MSE :  36514302.63326162
+MAD :  4170.809292696869
+</pre></div></div>
+</div>
+</section>
+<section id="DecisionTreeRegressor">
+<h4>DecisionTreeRegressor<a class="headerlink" href="#DecisionTreeRegressor" title="Enlazar permanentemente con este título"></a></h4>
+<p>A continuación se construye un arbol de decisión para regresión.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="kn">import</span> <span class="n">DecisionTreeRegressor</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se parametriza el modelo</span>
+<span class="c1">##</span>
+<span class="n">dt</span> <span class="o">=</span> <span class="n">DecisionTreeRegressor</span><span class="p">(</span>
+    <span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">,</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span>
+    <span class="n">predictionCol</span> <span class="o">=</span> <span class="s1">&#39;DTR&#39;</span><span class="p">,</span>
+    <span class="n">maxDepth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">maxBins</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1">## Ajuste del modelo</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Pronostico</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Métricas de ajuste</span>
+<span class="n">metrics_dtr</span> <span class="o">=</span> <span class="n">rmtrcs</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">charges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">DTR</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;r2  : &#39;</span><span class="p">,</span> <span class="n">metrics_dtr</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE : &#39;</span><span class="p">,</span> <span class="n">metrics_dtr</span><span class="o">.</span><span class="n">meanSquaredError</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAD : &#39;</span><span class="p">,</span> <span class="n">metrics_dtr</span><span class="o">.</span><span class="n">meanAbsoluteError</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+r2  :  0.859483711017578
+MSE :  18054670.436371412
+MAD :  2412.504306482964
+</pre></div></div>
+</div>
+</section>
+<section id="Random-Forest-Regression">
+<h4>Random Forest Regression<a class="headerlink" href="#Random-Forest-Regression" title="Enlazar permanentemente con este título"></a></h4>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="kn">import</span> <span class="n">RandomForestRegressor</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se parametriza el modelo</span>
+<span class="c1">##</span>
+<span class="n">rfr</span> <span class="o">=</span> <span class="n">RandomForestRegressor</span><span class="p">(</span>
+    <span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">,</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span>
+    <span class="n">predictionCol</span> <span class="o">=</span> <span class="s1">&#39;RFR&#39;</span><span class="p">,</span>
+    <span class="n">maxDepth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">maxBins</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">numTrees</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="p">)</span>
+
+<span class="c1">## Ajuste del modelo</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">rfr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Pronóstico</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Métricas de ajuste</span>
+<span class="n">metrics_rfr</span> <span class="o">=</span> <span class="n">rmtrcs</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">charges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">RFR</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;r2  : &#39;</span><span class="p">,</span> <span class="n">metrics_rfr</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE : &#39;</span><span class="p">,</span> <span class="n">metrics_rfr</span><span class="o">.</span><span class="n">meanSquaredError</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAD : &#39;</span><span class="p">,</span> <span class="n">metrics_rfr</span><span class="o">.</span><span class="n">meanAbsoluteError</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+r2  :  0.7140255287048332
+MSE :  23952191.959351715
+MAD :  3357.8216560466344
+</pre></div></div>
+</div>
+</section>
+<section id="Gradient-boosted-tree-regression">
+<h4>Gradient-boosted tree regression<a class="headerlink" href="#Gradient-boosted-tree-regression" title="Enlazar permanentemente con este título"></a></h4>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.ml.regression</span> <span class="kn">import</span> <span class="n">GBTRegressor</span>
+
+<span class="c1">##</span>
+<span class="c1">## Se parametriza el modelo</span>
+<span class="c1">##</span>
+<span class="n">gbtr</span> <span class="o">=</span> <span class="n">GBTRegressor</span><span class="p">(</span>
+    <span class="n">featuresCol</span><span class="o">=</span><span class="s1">&#39;features&#39;</span><span class="p">,</span>
+    <span class="n">labelCol</span><span class="o">=</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span>
+    <span class="n">predictionCol</span> <span class="o">=</span> <span class="s1">&#39;GBTR&#39;</span><span class="p">,</span>
+    <span class="n">maxDepth</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">maxBins</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
+    <span class="n">maxIter</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1">## Ajuste del modelo</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">gbtr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Pronóstico</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+
+<span class="c1">## Métricas de ajuste</span>
+<span class="n">metrics_gbtr</span> <span class="o">=</span> <span class="n">rmtrcs</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">rdd</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">charges</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">GBTR</span><span class="p">)))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;r2  : &#39;</span><span class="p">,</span> <span class="n">metrics_gbtr</span><span class="o">.</span><span class="n">r2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MSE : &#39;</span><span class="p">,</span> <span class="n">metrics_gbtr</span><span class="o">.</span><span class="n">meanSquaredError</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MAD : &#39;</span><span class="p">,</span> <span class="n">metrics_gbtr</span><span class="o">.</span><span class="n">meanAbsoluteError</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+r2  :  0.9039753234577255
+MSE :  12676112.486827934
+MAD :  1998.1260184463802
+</pre></div></div>
+</div>
+<p>Finalmente, se extraen los tres pronósticos del modelo y se grafican los pronósticos versus el valor real de la variable explicada.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pdDF</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span> <span class="s1">&#39;DTR&#39;</span><span class="p">,</span> <span class="s1">&#39;RFR&#39;</span><span class="p">,</span> <span class="s1">&#39;GBTR&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">toPandas</span><span class="p">()</span>
+<span class="n">pdDF</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>charges</th>
+      <th>LR</th>
+      <th>DTR</th>
+      <th>RFR</th>
+      <th>GBTR</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>16884.92400</td>
+      <td>25496.991252</td>
+      <td>16624.369270</td>
+      <td>18145.012692</td>
+      <td>17437.411794</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1725.55230</td>
+      <td>3350.062141</td>
+      <td>4240.291099</td>
+      <td>6063.952809</td>
+      <td>4516.309085</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4449.46200</td>
+      <td>6601.363365</td>
+      <td>4240.291099</td>
+      <td>7529.105949</td>
+      <td>4899.246010</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>21984.47061</td>
+      <td>3698.003420</td>
+      <td>10647.618770</td>
+      <td>5768.849753</td>
+      <td>12785.938642</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3866.85520</td>
+      <td>5544.707716</td>
+      <td>4231.707560</td>
+      <td>5332.599745</td>
+      <td>2795.617415</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ax</span> <span class="o">=</span> <span class="n">pdDF</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span> <span class="s1">&#39;LR&#39;</span><span class="p">,</span>  <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+<span class="n">pdDF</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span> <span class="s1">&#39;DTR&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">pdDF</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span> <span class="s1">&#39;RFR&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span>  <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">pdDF</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;charges&#39;</span><span class="p">,</span> <span class="s1">&#39;RFR&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../../../../_images/modulos_pyspark_04_MLlib_main_notebooks_05_MLli_main_regression_56_0.png" src="../../../../_images/modulos_pyspark_04_MLlib_main_notebooks_05_MLli_main_regression_56_0.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2019-2021, Juan D. Velasquez.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
+</html>

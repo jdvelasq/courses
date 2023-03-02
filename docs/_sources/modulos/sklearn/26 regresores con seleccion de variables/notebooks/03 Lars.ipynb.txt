@@ -1,0 +1,226 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "87e8daba-4701-4037-b375-840812c628f6",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Lars (Least Angle Regression model)\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "989f46ed-ec01-4021-b442-656f51cda61e",
+   "metadata": {},
+   "source": [
+    "* Es numericamente eficiente cuando el número de características es significativamente mayor que el número de muestras."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c19ea5b0-24b8-49c9-8484-5e040e7a17f7",
+   "metadata": {},
+   "source": [
+    "* Opera de una forma similar a selección de variables hacia adelante."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d26d419f-5cdd-4432-9a80-03bcdc7eedab",
+   "metadata": {},
+   "source": [
+    "* En cada paso, encuentra la característica más correlacionada con `y`."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "101f0432-52fa-4b5f-9fb2-c4ce1776c4e0",
+   "metadata": {},
+   "source": [
+    "* Cuando hay varias características con la misma correlación, continua en una dirección equiángular entre características."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "794ba90f-3966-41d5-b2ef-fbcbc0d1d90a",
+   "metadata": {},
+   "source": [
+    "* Es computacionalmente tan rápido como la selección de variables hacia adelante y tiene el mismo orden de complejidad del método de mínimos cuadrados ordinarios."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "80dc49c4-b64b-4025-bc99-3d793cc39d56",
+   "metadata": {},
+   "source": [
+    "* Es facilmente modificable para producir soluciones para otros estimadores, i.e., Lasso."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2793d063-43d2-4011-9238-e2b364fffb91",
+   "metadata": {},
+   "source": [
+    "* Puede ser muy sensible a la presencia de outliers."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "b6cf1683-1aa4-4085-801b-5146124e0c61",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.datasets import load_diabetes\n",
+    "\n",
+    "X, y = load_diabetes(return_X_y=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "02076cdf-6074-47d0-90ee-dcd8d051d419",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.5177484222203498"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.linear_model import Lars\n",
+    "\n",
+    "lars = Lars(\n",
+    "    # ---------------------------------------------------------------------\n",
+    "    # Whether to fit the intercept for this model.\n",
+    "    fit_intercept=True,\n",
+    "    # ---------------------------------------------------------------------\n",
+    "    # Target number of non-zero coefficients. Use np.inf for no limit.\n",
+    "    n_nonzero_coefs=500,\n",
+    "    # ---------------------------------------------------------------------\n",
+    "    # If True the full path is stored in the coef_path_ attribute. If you \n",
+    "    # compute the solution for a large problem or many targets, setting \n",
+    "    # fit_path to False will lead to a speedup, especially with a small \n",
+    "    # alpha.\n",
+    "    fit_path=True,\n",
+    "    # ---------------------------------------------------------------------\n",
+    "    # Upper bound on a uniform noise parameter to be added to the y values,\n",
+    "    # to satisfy the model’s assumption of one-at-a-time computations. \n",
+    "    # Might help with stability.\n",
+    "    jitter=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Determines random number generation for jittering. Pass an int for \n",
+    "    # reproducible output across multiple function calls. Ignored if jitter \n",
+    "    # is None.\n",
+    "    random_state=None,\n",
+    ")\n",
+    "\n",
+    "lars.fit(X, y)\n",
+    "\n",
+    "lars.score(X, y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "c0164805-109a-4b70-a50d-4a2282d48604",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([206.11667725,  68.07103297, 176.88279035, 166.91445843,\n",
+       "       128.46225834, 106.35191443,  73.89134662, 118.85423042,\n",
+       "       158.80889721, 213.58462442])"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lars.predict(X)[0:10]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "88c5170d-c4f6-48c6-b199-811ef2064b7a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([ -10.0098663 , -239.81564367,  519.84592005,  324.3846455 ,\n",
+       "       -792.17563855,  476.73902101,  101.04326794,  177.06323767,\n",
+       "        751.27369956,   67.62669218])"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lars.coef_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "5ec6a1fd-d7ce-4cb8-81ce-93f8a70daef6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "152.13348416289597"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lars.intercept_"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "2482a4565599eda3cd2db35331af39775c1f78a505a9deef48c721423040da5b"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

@@ -1,0 +1,555 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "949a303b-7a6f-4f2b-94cb-e2d2a6bff35f",
+   "metadata": {},
+   "source": [
+    "Taller de programación en Python\n",
+    "===\n",
+    "\n",
+    "*Diplomado en Analítica para Mercados de Energía*"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a6effc32-8bad-4bc0-8057-b9669b09ec0d",
+   "metadata": {},
+   "source": [
+    "Resuelva cada punto en la celda asignada. No agregue celdas ni elimine celdas. Imprima exactamente la salida como se indica en la descripción de cada ejercicio. **Para este taller no puede usar Pandas**."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "df932974-f3fc-4235-8e60-8ac13ceacb84",
+   "metadata": {},
+   "source": [
+    "Dataset\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "fb659ccc-ac49-4dde-93fe-d7ff50ded3a7",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%%writefile /tmp/data.csv\n",
+    "E\t1\t1999-02-28\tb,g,f\tjjj:12,bbb:3,ddd:9,ggg:8,hhh:2\n",
+    "A\t2\t1999-10-28\ta,f,c\tccc:2,ddd:0,aaa:3,hhh:9\n",
+    "B\t5\t1998-05-02\tf,e,a,c\tddd:2,ggg:5,ccc:6,jjj:12\n",
+    "A\t3\t1999-08-28\ta,b\thhh:9,iii:5,eee:7,bbb:1\n",
+    "C\t6\t1999-12-01\tf,g,d,a\tiii:6,ddd:5,eee:4,jjj:12\n",
+    "A\t7\t1998-07-28\tc,d\tbbb:2,hhh:0,ccc:4,fff:1,aaa:7\n",
+    "A\t9\t1997-02-28\tg,d,a\taaa:5,fff:8,ddd:2,iii:0,jjj:7,ccc:1\n",
+    "B\t1\t1999-05-10\tb,a\tfff:3,hhh:1,ddd:2\n",
+    "E\t2\t1997-04-12\td,e,a,f\teee:4,ccc:5,iii:9,fff:7,ggg:6,bbb:2\n",
+    "B\t3\t1999-11-23\td,b,g,f\tbbb:7,jjj:9,fff:5,iii:4,ggg:3,eee:3\n",
+    "C\t7\t1998-01-17\td,c,f,b\thhh:6,eee:4,iii:0,fff:2,jjj:12\n",
+    "C\t5\t1998-12-28\td,e,a,c\tbbb:7,iii:6,ggg:9\n",
+    "D\t3\t1999-10-15\tg,e,f,b\tbbb:9,aaa:3,ccc:6,fff:4,eee:2\n",
+    "E\t8\t1998-11-01\tc,f\taaa:8,ddd:5,jjj:12\n",
+    "B\t9\t1999-08-12\td,b\tccc:7,jjj:6,fff:7,ddd:3,aaa:2\n",
+    "D\t8\t1997-12-01\tf,e\tccc:8,eee:6,bbb:9,ddd:3\n",
+    "E\t3\t1997-07-28\te,b,f\tbbb:6,iii:3,hhh:5,fff:4,ggg:9,ddd:2\n",
+    "D\t5\t1998-08-12\tg,a\thhh:4,jjj:5,ccc:9\n",
+    "E\t8\t1999-08-24\te,c,f,a\tccc:1,iii:6,fff:9\n",
+    "E\t9\t1998-01-23\te,a\tbbb:9,aaa:3,fff:1\n",
+    "E\t7\t1999-06-22\te,f\tddd:9,iii:2,aaa:4\n",
+    "E\t3\t1999-04-24\tc,b,g\tccc:5,fff:8,iii:7\n",
+    "D\t5\t1999-06-25\tc,f,a\teee:3,jjj:17,ddd:7\n",
+    "A\t9\t1999-08-25\tf,a,d\tjjj:12,ggg:7,ccc:7,ddd:9,bbb:3\n",
+    "E\t4\t1997-07-26\tc,d\tjjj:6,ccc:4,aaa:1,hhh:9,iii:7,ggg:8\n",
+    "E\t6\t1997-09-24\te,d,c\tfff:3,eee:6,iii:4,bbb:7,ddd:4,ccc:1\n",
+    "A\t8\t1997-09-28\ta,e,f\tfff:0,ddd:5,ccc:4\n",
+    "E\t5\t1999-06-22\tc,a,g\tggg:6,hhh:3,ddd:9,ccc:10,jjj:7\n",
+    "A\t6\t1999-07-29\tf,e\thhh:6,jjj:13,eee:5,iii:7,ccc:3\n",
+    "C\t0\t1999-08-22\tf,c,a,g\teee:1,fff:4,aaa:2,ccc:7,ggg:10,ddd:6\n",
+    "A\t9\t1998-04-26\tb,f\tccc:6,aaa:9,eee:5,ddd:0,bbb:3\n",
+    "D\t3\t1998-02-24\tb,f\tbbb:7,hhh:1,aaa:6,iii:4,fff:9,ddd:5\n",
+    "E\t5\t1999-03-24\ta,c\tfff:3,ccc:1,ggg:3,eee:5\n",
+    "B\t4\t1998-03-23\tb,f,c\tiii:7,ggg:3,ddd:0,jjj:8,hhh:5,ccc:1\n",
+    "B\t6\t1999-04-21\tf,a,e\thhh:6,ccc:3,jjj:9,bbb:8,ddd:7\n",
+    "D\t7\t1999-02-29\ta,f\taaa:1,fff:5,ddd:3\n",
+    "B\t8\t1997-05-21\tc,a\tddd:5,jjj:17,iii:7,ccc:10,bbb:4\n",
+    "C\t9\t1997-07-22\tc,a,e,f\teee:3,fff:2,hhh:6\n",
+    "E\t1\t1999-09-28\te,d\tfff:9,iii:2,eee:5\n",
+    "E\t5\t1998-01-26\tf,a,d\thhh:8,ggg:3,jjj:5"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "98e1060e-65b4-4a98-967b-ddbecd1bb74f",
+   "metadata": {},
+   "source": [
+    "Ejercicio 1\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "715b439e-c0e9-4bae-86f5-4180130374a3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima la suma de la segunda columna.\n",
+    "#\n",
+    "# Rta/\n",
+    "# 214\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a8abf9ac-cfc2-40d0-b93f-d499c50ea0a7",
+   "metadata": {},
+   "source": [
+    "Ejercicio 2\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "28bcda63-b812-4213-8cbd-047d0de45b5c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima la cantidad de registros por letra para la primera ordenados\n",
+    "# alfabéticamente por la letra de la columna 1.\n",
+    "#\n",
+    "# Rta/\n",
+    "# A,8\n",
+    "# B,7\n",
+    "# C,5\n",
+    "# D,6\n",
+    "# E,14\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3dac6c53-4146-48f5-b67e-9976b050e24f",
+   "metadata": {},
+   "source": [
+    "Ejercicio 3\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "61113e7e-7cc0-4535-b7f5-8e9033ed0b65",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima la suma de la columna 2 por cada letra de la primera columna,\n",
+    "# ordneados alfabeticamente.\n",
+    "#\n",
+    "# Rta/\n",
+    "# A,53\n",
+    "# B,36\n",
+    "# C,27\n",
+    "# D,31\n",
+    "# E,67\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3c77ba01-dcea-44a9-b5b3-3df9d0131428",
+   "metadata": {},
+   "source": [
+    "Ejercicio 4\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "e7abf9f2-55da-472a-9fa7-f7b14af5ce38",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# La columna 3 contiene una fecha en formato `YYYY-MM-DD`. Imprima la cantidad\n",
+    "# de registros por cada mes separados por comas, tal como se muestra a\n",
+    "# continuación.\n",
+    "#\n",
+    "# Rta/\n",
+    "# 01,3\n",
+    "# 02,4\n",
+    "# 03,2\n",
+    "# 04,4\n",
+    "# 05,3\n",
+    "# 06,3\n",
+    "# 07,5\n",
+    "# 08,6\n",
+    "# 09,3\n",
+    "# 10,2\n",
+    "# 11,2\n",
+    "# 12,3\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "74ba33fb-50d2-4aeb-8fd7-8f4aa8f75945",
+   "metadata": {},
+   "source": [
+    "Ejercicio 5\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "6d030aec-5c21-459b-bf69-fa4d150b24ef",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima el valor maximo y minimo de la columna 2 por cada letra de la\n",
+    "# columa 1.\n",
+    "#\n",
+    "# Rta/\n",
+    "# A,9,2\n",
+    "# B,9,1\n",
+    "# C,9,0\n",
+    "# D,8,3\n",
+    "# E,9,1\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0420874e-5202-4435-b826-ecc7beb7f54e",
+   "metadata": {},
+   "source": [
+    "Ejercicio 6\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3b42f97c-886b-4bd0-bfa1-09b011b3bfd1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# La columna 5 codifica un diccionario donde cada cadena de tres letras\n",
+    "# corresponde a una clave y el valor despues del caracter `:` corresponde al\n",
+    "# valor asociado a la clave. Por cada clave, obtenga el valor asociado mas\n",
+    "# pequeño y el valor asociado mas grande computados sobre todo el archivo.\n",
+    "#\n",
+    "# Rta/\n",
+    "# aaa,1,9\n",
+    "# bbb,1,9\n",
+    "# ccc,1,10\n",
+    "# ddd,0,9\n",
+    "# eee,1,7\n",
+    "# fff,0,9\n",
+    "# ggg,3,10\n",
+    "# hhh,0,9\n",
+    "# iii,0,9\n",
+    "# jjj,5,17\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "370031e2-6ba0-4061-b606-3e662942c71c",
+   "metadata": {},
+   "source": [
+    "Ejercicio 7\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "a852bdc3-d52f-4439-a4fa-76507f2e6fd6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Genera una lista de tuplas que asocien las columnas 0 y 1. Cada tupla\n",
+    "# contiene un valor posible de la columna 2 y una lista con todas las letras\n",
+    "# asociadas (columna 1) a dicho valor de la columna 2.\n",
+    "#\n",
+    "# Rta/\n",
+    "# ('0', ['C'])\n",
+    "# ('1', ['E', 'B', 'E'])\n",
+    "# ('2', ['A', 'E'])\n",
+    "# ('3', ['A', 'B', 'D', 'E', 'E', 'D'])\n",
+    "# ('4', ['E', 'B'])\n",
+    "# ('5', ['B', 'C', 'D', 'D', 'E', 'E', 'E'])\n",
+    "# ('6', ['C', 'E', 'A', 'B'])\n",
+    "# ('7', ['A', 'C', 'E', 'D'])\n",
+    "# ('8', ['E', 'D', 'E', 'A', 'B'])\n",
+    "# ('9', ['A', 'B', 'E', 'A', 'A', 'C'])\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "38a8057f-e6b2-4272-8a64-0ba87e6d15e5",
+   "metadata": {},
+   "source": [
+    "Ejercicio 8\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "2fd799a2-a9a5-4171-ba31-c05216eb77ea",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Genere una lista de tuplas, donde cada tupla contiene en la primera posicion,\n",
+    "# el valor de la segunda columna; la segunda parte de la tupla es una lista con\n",
+    "# las letras (ordenadas y sin repetir letra) de la primera  columna que\n",
+    "# aparecen asociadas a dicho valor de la segunda columna. Esto es:\n",
+    "#\n",
+    "# Rta/\n",
+    "# ('0', ['C'])\n",
+    "# ('1', ['E', 'B'])\n",
+    "# ('2', ['A', 'E'])\n",
+    "# ('3', ['E', 'A', 'D', 'B'])\n",
+    "# ('4', ['E', 'B'])\n",
+    "# ('5', ['E', 'D', 'C', 'B'])\n",
+    "# ('6', ['A', 'E', 'C', 'B'])\n",
+    "# ('7', ['A', 'E', 'C', 'D'])\n",
+    "# ('8', ['A', 'E', 'D', 'B'])\n",
+    "# ('9', ['A', 'E', 'C', 'B'])\n",
+    "# #\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "1e2a4754-4c35-4021-8fa6-616b12b5afae",
+   "metadata": {},
+   "source": [
+    "Ejercicio 9\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "b82f7ec6-b3c4-4ec3-a980-9dbcde4d4105",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima una tabla en formato CSV que contenga la cantidad de registros en que\n",
+    "# aparece cada clave de la columna 5.\n",
+    "#\n",
+    "# Rta/\n",
+    "# aaa,13\n",
+    "# bbb,16\n",
+    "# ccc,23\n",
+    "# ddd,23\n",
+    "# eee,15\n",
+    "# fff,20\n",
+    "# ggg,13\n",
+    "# hhh,16\n",
+    "# iii,18\n",
+    "# jjj,18\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e46fee72-edd4-4ed2-8072-2d65cf38fc25",
+   "metadata": {},
+   "source": [
+    "Ejercicio 10\n",
+    "----"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4518f614-ee05-438f-b6ed-5b01acfc82ec",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima una tabla en formato CSV que contenga por registro, la letra de la\n",
+    "# columna 1 y la cantidad de elementos de las columnas 4 y 5.\n",
+    "#\n",
+    "# Rta/\n",
+    "# E,3,5\n",
+    "# A,3,4\n",
+    "# B,4,4\n",
+    "# A,2,4\n",
+    "# C,4,4\n",
+    "# A,2,5\n",
+    "# A,3,6\n",
+    "# B,2,3\n",
+    "# E,4,6\n",
+    "# B,4,6\n",
+    "# C,4,5\n",
+    "# C,4,3\n",
+    "# D,4,5\n",
+    "# E,2,3\n",
+    "# B,2,5\n",
+    "# D,2,4\n",
+    "# E,3,6\n",
+    "# D,2,3\n",
+    "# E,4,3\n",
+    "# E,2,3\n",
+    "# E,2,3\n",
+    "# E,3,3\n",
+    "# D,3,3\n",
+    "# A,3,5\n",
+    "# E,2,6\n",
+    "# E,3,6\n",
+    "# A,3,3\n",
+    "# E,3,5\n",
+    "# A,2,5\n",
+    "# C,4,6\n",
+    "# A,2,5\n",
+    "# D,2,6\n",
+    "# E,2,4\n",
+    "# B,3,6\n",
+    "# B,3,5\n",
+    "# D,2,3\n",
+    "# B,2,5\n",
+    "# C,4,3\n",
+    "# E,2,3\n",
+    "# E,3,3\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8bcbc570-83f8-413e-863a-c589499b0cca",
+   "metadata": {},
+   "source": [
+    "Ejercicio 11\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3e114bfb-7f33-401a-a164-54cf437a9704",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima la suma de la columna 2 para cada letra de la columna 4, ordenados\n",
+    "# alfabeticamente.\n",
+    "#\n",
+    "# Rta/\n",
+    "# a,122\n",
+    "# b,49\n",
+    "# c,91\n",
+    "# d,73\n",
+    "# e,86\n",
+    "# f,134\n",
+    "# g,35\n",
+    "#\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "efa52bc5-8bdd-4760-8503-7b593ff526b0",
+   "metadata": {},
+   "source": [
+    "Ejercicio 12\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "358f5a26-342a-4afa-b2f0-54bdbb6addb2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#\n",
+    "# Imprima por cada fila, la columna 1 y la suma de los valores de la columna 5.\n",
+    "#\n",
+    "# Rta/\n",
+    "# E,34\n",
+    "# A,14\n",
+    "# B,25\n",
+    "# A,22\n",
+    "# C,27\n",
+    "# A,14\n",
+    "# A,23\n",
+    "# B,6\n",
+    "# E,33\n",
+    "# B,31\n",
+    "# C,24\n",
+    "# C,22\n",
+    "# D,24\n",
+    "# E,25\n",
+    "# B,25\n",
+    "# D,26\n",
+    "# E,29\n",
+    "# D,18\n",
+    "# E,16\n",
+    "# E,13\n",
+    "# E,15\n",
+    "# E,20\n",
+    "# D,27\n",
+    "# A,38\n",
+    "# E,35\n",
+    "# E,25\n",
+    "# A,9\n",
+    "# E,35\n",
+    "# A,34\n",
+    "# C,30\n",
+    "# A,23\n",
+    "# D,32\n",
+    "# E,12\n",
+    "# B,24\n",
+    "# B,33\n",
+    "# D,9\n",
+    "# B,43\n",
+    "# C,11\n",
+    "# E,16\n",
+    "# E,16\n",
+    "#\n"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3.8.9 64-bit",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.9"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "31f2aee4e71d21fbe5cf8b01ff0e069b9275f58929596ceb00d14d90e3e16cd6"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

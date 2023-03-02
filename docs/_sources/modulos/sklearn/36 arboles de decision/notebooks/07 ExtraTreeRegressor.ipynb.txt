@@ -1,0 +1,219 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "81090f0a-74c7-46fe-9850-343233609f36",
+   "metadata": {},
+   "source": [
+    "sklearn.tree.ExtraTreeRegressor\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0f7a6edc-5377-4cfb-a6c9-142804964dd3",
+   "metadata": {},
+   "source": [
+    "* Es un árbol de regresión extremadamente aleatorizado."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "00c05d57-85ad-4267-a0bc-0dd0be45ccaf",
+   "metadata": {},
+   "source": [
+    "* Difiere del arból clásico de decisión en la forma en que es construido."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e61b09e6-4681-4cc7-9fd0-4ad6ed2277b5",
+   "metadata": {},
+   "source": [
+    "* Cuando se van a separar los ejemplos de un nodo en dos grupos, se generan particiones aleatorias para cada una de las `max_features` características seleccionadas y se escoge la mejor partición."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c4b811cb-8c21-4cb7-9063-a4e1a8da03c2",
+   "metadata": {},
+   "source": [
+    "* Cuando `max_features` es igual a 1, se construye un árbol completamente aleatorio."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ee69713a-32bf-4486-9a3c-ee1f7f18a86c",
+   "metadata": {},
+   "source": [
+    "* Solamente deberían se usandos dentro de métodos de ensamble."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "23f5df4a-8da0-4918-92a2-bee879e568ac",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.datasets import load_diabetes\n",
+    "\n",
+    "X, y = load_diabetes(return_X_y=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "c885e249-78de-4ee6-973a-25ed8e0241ba",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.tree import ExtraTreeRegressor\n",
+    "\n",
+    "extraTreeRegressor = ExtraTreeRegressor(\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    #\n",
+    "    #    Recibe exactamente los mismos parámetros que DecisionTreeRegressor\n",
+    "    #\n",
+    "    # --------------------------------------------------------------------------    \n",
+    "    # The function to measure the quality of a split.\n",
+    "    # * 'squared_error': is equal to variance reduction as feature selection \n",
+    "    #    criterion and minimizes the L2 loss using the mean of each terminal \n",
+    "    #    node\n",
+    "    # * 'friedman_mse': which uses mean squared error with Friedman’s \n",
+    "    #   improvement score for potential splits\n",
+    "    # * 'absolute_error': for the mean absolute error, which minimizes the\n",
+    "    #   L1 loss using the median of each terminal node\n",
+    "    # * 'poisson': which uses reduction in Poisson deviance to find splits.\n",
+    "    criterion=\"squared_error\",\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The strategy used to choose the split at each node. Supported strategies \n",
+    "    # are “best” to choose the best split and “random” to choose the best \n",
+    "    # random split.\n",
+    "    splitter=\"best\",\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The maximum depth of the tree. If None, then nodes are expanded until all\n",
+    "    # leaves are pure or until all leaves contain less than min_samples_split \n",
+    "    # samples.\n",
+    "    max_depth=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The minimum number of samples required to split an internal node:\n",
+    "    # * If int, then consider min_samples_split as the minimum number.\n",
+    "    # * If float, then min_samples_split is a fraction and \n",
+    "    #   ceil(min_samples_split * n_samples) are the minimum number of samples\n",
+    "    #   for each split.\n",
+    "    min_samples_split=2,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The minimum number of samples required to be at a leaf node. A split \n",
+    "    # point at any depth will only be considered if it leaves at least \n",
+    "    # min_samples_leaf training samples in each of the left and right branches. \n",
+    "    # This may have the effect of smoothing the model, especially in \n",
+    "    # regression.\n",
+    "    # * If int, then consider min_samples_leaf as the minimum number.\n",
+    "    # * If float, then min_samples_leaf is a fraction and \n",
+    "    #   ceil(min_samples_leaf * n_samples) are the minimum number of samples\n",
+    "    #   for each node.\n",
+    "    min_samples_leaf=1,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The minimum weighted fraction of the sum total of weights (of all the\n",
+    "    # input samples) required to be at a leaf node. Samples have equal weight\n",
+    "    # when sample_weight is not provided.\n",
+    "    min_weight_fraction_leaf=0.0,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The number of features to consider when looking for the best split:\n",
+    "    # * If int, then consider max_features features at each split.\n",
+    "    # * If float, then max_features is a fraction and \n",
+    "    #   max(1, int(max_features * n_features_in_)) features are considered at \n",
+    "    #   each split.\n",
+    "    # * If “sqrt”, then max_features=sqrt(n_features).\n",
+    "    # * If “log2”, then max_features=log2(n_features).\n",
+    "    # * If None, then max_features=n_features.\n",
+    "    max_features=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Controls the randomness of the estimator. The features are always \n",
+    "    # randomly permuted at each split, even if splitter is set to \"best\". When\n",
+    "    # max_features < n_features, the algorithm will select max_features at \n",
+    "    # random at each split before finding the best split among them. But the \n",
+    "    # best found split may vary across different runs, even if \n",
+    "    # max_features=n_features. That is the case, if the improvement of the \n",
+    "    # criterion is identical for several splits and one split has to be \n",
+    "    # selected at random. To obtain a deterministic behaviour during fitting, \n",
+    "    # random_state has to be fixed to an integer.\n",
+    "    random_state=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Grow a tree with max_leaf_nodes in best-first fashion. Best nodes are \n",
+    "    # defined as relative reduction in impurity. If None then unlimited number\n",
+    "    # of leaf nodes.\n",
+    "    max_leaf_nodes=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # A node will be split if this split induces a decrease of the impurity\n",
+    "    # greater than or equal to this value.\n",
+    "    #\n",
+    "    # The weighted impurity decrease equation is the following:\n",
+    "    #\n",
+    "    #   N_t / N * (impurity - N_t_R / N_t * right_impurity\n",
+    "    #                       - N_t_L / N_t * left_impurity)\n",
+    "    #\n",
+    "    # where N is the total number of samples, N_t is the number of samples at\n",
+    "    # the current node, N_t_L is the number of samples in the left child, and \n",
+    "    # N_t_R is the number of samples in the right child.\n",
+    "    #\n",
+    "    # N, N_t, N_t_R and N_t_L all refer to the weighted sum, if sample_weight\n",
+    "    # is passed.\n",
+    "    min_impurity_decrease=0.0,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Complexity parameter used for Minimal Cost-Complexity Pruning. The \n",
+    "    # subtree with the largest cost complexity that is smaller than ccp_alpha \n",
+    "    # will be chosen. By default, no pruning is performed.\n",
+    "    ccp_alpha=0.0,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "80ee2c40-0245-4aaf-9d60-495a691defbf",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.8852196594069771"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.ensemble import BaggingRegressor\n",
+    "\n",
+    "baggingRegressor = BaggingRegressor(extraTreeRegressor, random_state=0)\n",
+    "baggingRegressor.fit(X, y)\n",
+    "baggingRegressor.score(X, y)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

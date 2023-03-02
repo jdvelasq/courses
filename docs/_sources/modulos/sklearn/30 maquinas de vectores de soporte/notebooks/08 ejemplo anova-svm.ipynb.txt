@@ -1,0 +1,233 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "8bc24aba-84c9-40ba-9241-3b4c9895ff41",
+   "metadata": {
+    "slideshow": {
+     "slide_type": "slide"
+    },
+    "tags": []
+   },
+   "source": [
+    "Creación de un pipeline ANOVA-SVM para clasificación\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c1d90027-f0a5-41d0-95d7-9b02ddac15f8",
+   "metadata": {},
+   "source": [
+    "https://scikit-learn.org/stable/auto_examples/feature_selection/plot_feature_selection_pipeline.html#sphx-glr-auto-examples-feature-selection-plot-feature-selection-pipeline-py"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bc5f22b3-4a04-4a24-b303-5c1964bc2903",
+   "metadata": {},
+   "source": [
+    "Construcción del pipeline\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "80eb9080-bed2-43de-804f-71b8c030eba8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.feature_selection import SelectKBest, f_classif\n",
+    "from sklearn.pipeline import make_pipeline\n",
+    "from sklearn.svm import LinearSVC\n",
+    "\n",
+    "anova_svm = make_pipeline(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Select features according to the k highest scores.\n",
+    "    SelectKBest(\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Function taking two arrays X and y, and returning a pair of arrays\n",
+    "        # (scores, pvalues) or a single array with scores. Default is f_classif\n",
+    "        # f_classif: ANOVA F-value between label/feature for classification\n",
+    "        # tasks.\n",
+    "        score_func=f_classif,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Number of top features to select.\n",
+    "        k=3,\n",
+    "    ),\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Linear Support Vector Classification\n",
+    "    LinearSVC(\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Specifies the norm used in the penalization.\n",
+    "        penalty=\"l2\",\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Specifies the loss function.\n",
+    "        loss=\"squared_hinge\",\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Select the algorithm to either solve the dual or primal optimization\n",
+    "        # problem.\n",
+    "        dual=True,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Regularization parameter.\n",
+    "        C=1.0,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # Whether to calculate the intercept for this model.\n",
+    "        fit_intercept=True,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        # The maximum number of iterations to be run.\n",
+    "        max_iter=1000,\n",
+    "        # ---------------------------------------------------------------------\n",
+    "        random_state=None,\n",
+    "    ),\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d490cc31-fbc2-4299-8326-cb668ab32d8d",
+   "metadata": {},
+   "source": [
+    "Preparación de los datos\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "8e0e7fce-427e-42ee-ba4e-1236c9f3b1d2",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.datasets import make_classification\n",
+    "from sklearn.model_selection import train_test_split\n",
+    "\n",
+    "X, y = make_classification(\n",
+    "    n_features=20,\n",
+    "    n_informative=3,\n",
+    "    n_redundant=0,\n",
+    "    n_classes=2,\n",
+    "    n_clusters_per_class=2,\n",
+    "    random_state=42,\n",
+    ")\n",
+    "\n",
+    "X_train, X_test, y_train, y_test = train_test_split(\n",
+    "    X,\n",
+    "    y,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # If float, should be between 0.0 and 1.0 and represent the proportion of\n",
+    "    # the dataset to include in the test split. If int, represents the absolute\n",
+    "    # number of test samples. If None, the value is set to the complement of\n",
+    "    # the train size. If train_size is also None, it will be set to 0.25.\n",
+    "    test_size=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # If float, should be between 0.0 and 1.0 and represent the proportion of\n",
+    "    # the dataset to include in the train split. If int, represents the\n",
+    "    # absolute number of train samples. If None, the value is automatically\n",
+    "    # set to the complement of the test size.\n",
+    "    train_size=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Whether or not to shuffle the data before splitting. If shuffle=False\n",
+    "    # then stratify must be None\n",
+    "    shuffle=True,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # If not None, data is split in a stratified fashion, using this as the\n",
+    "    # class labels.\n",
+    "    stratify=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    random_state=42,\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4e3a85da-88bb-47e7-8566-ec61b0aebc6b",
+   "metadata": {},
+   "source": [
+    "Entrenamiento del pipeline\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "eb2e2efd-090e-495d-82cd-7f524ad8dd6e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<style>#sk-container-id-1 {color: black;background-color: white;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: \"▸\";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: \"▾\";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: \"\";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: \"\";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id=\"sk-container-id-1\" class=\"sk-top-container\"><div class=\"sk-text-repr-fallback\"><pre>Pipeline(steps=[(&#x27;selectkbest&#x27;, SelectKBest(k=3)), (&#x27;linearsvc&#x27;, LinearSVC())])</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br />On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class=\"sk-container\" hidden><div class=\"sk-item sk-dashed-wrapped\"><div class=\"sk-label-container\"><div class=\"sk-label sk-toggleable\"><input class=\"sk-toggleable__control sk-hidden--visually\" id=\"sk-estimator-id-1\" type=\"checkbox\" ><label for=\"sk-estimator-id-1\" class=\"sk-toggleable__label sk-toggleable__label-arrow\">Pipeline</label><div class=\"sk-toggleable__content\"><pre>Pipeline(steps=[(&#x27;selectkbest&#x27;, SelectKBest(k=3)), (&#x27;linearsvc&#x27;, LinearSVC())])</pre></div></div></div><div class=\"sk-serial\"><div class=\"sk-item\"><div class=\"sk-estimator sk-toggleable\"><input class=\"sk-toggleable__control sk-hidden--visually\" id=\"sk-estimator-id-2\" type=\"checkbox\" ><label for=\"sk-estimator-id-2\" class=\"sk-toggleable__label sk-toggleable__label-arrow\">SelectKBest</label><div class=\"sk-toggleable__content\"><pre>SelectKBest(k=3)</pre></div></div></div><div class=\"sk-item\"><div class=\"sk-estimator sk-toggleable\"><input class=\"sk-toggleable__control sk-hidden--visually\" id=\"sk-estimator-id-3\" type=\"checkbox\" ><label for=\"sk-estimator-id-3\" class=\"sk-toggleable__label sk-toggleable__label-arrow\">LinearSVC</label><div class=\"sk-toggleable__content\"><pre>LinearSVC()</pre></div></div></div></div></div></div></div>"
+      ],
+      "text/plain": [
+       "Pipeline(steps=[('selectkbest', SelectKBest(k=3)), ('linearsvc', LinearSVC())])"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "anova_svm.fit(X_train, y_train)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "54d75077-79e9-4dcf-9c72-96f24d96540f",
+   "metadata": {},
+   "source": [
+    "Variables independientes seleccionadas\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "d6d95c3f-89cb-41b0-a03a-de1e6bd54640",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([False, False,  True, False, False, False, False, False, False,\n",
+       "        True, False, False, False, False, False, False, False, False,\n",
+       "       False,  True])"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Get a mask, or integer index, of the features selected.\n",
+    "#\n",
+    "anova_svm[0].get_support()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

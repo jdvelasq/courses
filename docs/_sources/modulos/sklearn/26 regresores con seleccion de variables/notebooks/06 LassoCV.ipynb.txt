@@ -1,0 +1,257 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "c6f334b0-554f-42bf-a03c-78bc185ba912",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "LassoCV\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "45977a62-9773-47ef-a3de-ae9544f38074",
+   "metadata": {},
+   "source": [
+    "* Implementa un modelo Lasso con ajuste iterativo a lo largo de una trayectoria de regularización."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "abe7c20f-8807-4671-bed5-49d4080ae5cc",
+   "metadata": {},
+   "source": [
+    "* Para la estimación de los parámetros se minimiza la función objetivo:\n",
+    "\n",
+    "$$\n",
+    "\\min_w \\frac{1}{2n} ||Xw -y||_2^2 \n",
+    "+ \\alpha *  ||w||_1\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "c92c94be-5ac5-4e68-af80-8f3780f3ad85",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.linear_model import LassoCV\n",
+    "\n",
+    "lassoCV = LassoCV(\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Length of the path. eps=1e-3 means that alpha_min / alpha_max = 1e-3.\n",
+    "    eps=1e-3,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Number of alphas along the regularization path, used for each l1_ratio.\n",
+    "    n_alphas=100,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # List of alphas where to compute the models. If None alphas are set \n",
+    "    # automatically.\n",
+    "    alphas=None,\n",
+    "    # ---------------------------------------------------------------------\n",
+    "    # Whether to fit the intercept for this model.\n",
+    "    fit_intercept=True,    \n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The maximum number of iterations.\n",
+    "    max_iter=1000,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The tolerance for the optimization: if the updates are smaller than tol, \n",
+    "    # the optimization code checks the dual gap for optimality and continues \n",
+    "    # until it is smaller than tol.\n",
+    "    tol=1e-4,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Determines the cross-validation splitting strategy. Possible inputs for \n",
+    "    # cv are:\n",
+    "    # * None, to use the default 5-fold cross-validation,\n",
+    "    # * int, to specify the number of folds.\n",
+    "    # * CV splitter,\n",
+    "    # * An iterable yielding (train, test) splits as arrays of indices.\n",
+    "    cv=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # When set to True, forces the coefficients to be positive.\n",
+    "    positive=False,    \n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The seed of the pseudo random number generator that selects a random \n",
+    "    # feature to update. Used when selection == ‘random’. Pass an int for \n",
+    "    # reproducible output across multiple function calls. \n",
+    "    random_state=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # If set to ‘random’, a random coefficient is updated every iteration rather\n",
+    "    # than looping over features sequentially by default. This (setting to \n",
+    "    # ‘random’) often leads to significantly faster convergence especially when\n",
+    "    # tol is higher than 1e-4.\n",
+    "    selection='cyclic',    \n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "eaf15a57-60b1-44a9-90b4-392bc35d8607",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.datasets import load_diabetes\n",
+    "\n",
+    "X, y = load_diabetes(return_X_y=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "c1cb76d0-a0d8-44e4-9b71-7f225c511ac0",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.5174210668198782"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lassoCV.fit(X, y)\n",
+    "lassoCV.score(X, y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "b5ff62ee-e48d-489c-b4be-2432b5a9fa8c",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.00375376715269185"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lassoCV.alpha_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "7743958f-534b-4089-93cf-8c6e2de63e05",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([  -6.49469328, -235.99308032,  521.7443693 ,  321.0607768 ,\n",
+       "       -569.43813385,  302.45319289,   -0.        ,  143.69851474,\n",
+       "        669.92267515,   66.83551067])"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lassoCV.coef_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "b2fc064e-157f-4ed9-bdc3-a17b77ac5451",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "152.133484162896"
+      ]
+     },
+     "execution_count": 6,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lassoCV.intercept_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "415585bd-6a0e-4cc8-9db9-52b526739fbd",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([2.14804358e+00, 2.00327263e+00, 1.86825876e+00, 1.74234437e+00,\n",
+       "       1.62491619e+00, 1.51540228e+00, 1.41326924e+00, 1.31801962e+00,\n",
+       "       1.22918951e+00, 1.14634625e+00, 1.06908635e+00, 9.97033507e-01,\n",
+       "       9.29836786e-01, 8.67168899e-01, 8.08724617e-01, 7.54219285e-01,\n",
+       "       7.03387429e-01, 6.55981471e-01, 6.11770515e-01, 5.70539230e-01,\n",
+       "       5.32086795e-01, 4.96225926e-01, 4.62781959e-01, 4.31592004e-01,\n",
+       "       4.02504148e-01, 3.75376715e-01, 3.50077581e-01, 3.26483524e-01,\n",
+       "       3.04479627e-01, 2.83958719e-01, 2.64820852e-01, 2.46972813e-01,\n",
+       "       2.30327672e-01, 2.14804358e-01, 2.00327263e-01, 1.86825876e-01,\n",
+       "       1.74234437e-01, 1.62491619e-01, 1.51540228e-01, 1.41326924e-01,\n",
+       "       1.31801962e-01, 1.22918951e-01, 1.14634625e-01, 1.06908635e-01,\n",
+       "       9.97033507e-02, 9.29836786e-02, 8.67168899e-02, 8.08724617e-02,\n",
+       "       7.54219285e-02, 7.03387429e-02, 6.55981471e-02, 6.11770515e-02,\n",
+       "       5.70539230e-02, 5.32086795e-02, 4.96225926e-02, 4.62781959e-02,\n",
+       "       4.31592004e-02, 4.02504148e-02, 3.75376715e-02, 3.50077581e-02,\n",
+       "       3.26483524e-02, 3.04479627e-02, 2.83958719e-02, 2.64820852e-02,\n",
+       "       2.46972813e-02, 2.30327672e-02, 2.14804358e-02, 2.00327263e-02,\n",
+       "       1.86825876e-02, 1.74234437e-02, 1.62491619e-02, 1.51540228e-02,\n",
+       "       1.41326924e-02, 1.31801962e-02, 1.22918951e-02, 1.14634625e-02,\n",
+       "       1.06908635e-02, 9.97033507e-03, 9.29836786e-03, 8.67168899e-03,\n",
+       "       8.08724617e-03, 7.54219285e-03, 7.03387429e-03, 6.55981471e-03,\n",
+       "       6.11770515e-03, 5.70539230e-03, 5.32086795e-03, 4.96225926e-03,\n",
+       "       4.62781959e-03, 4.31592004e-03, 4.02504148e-03, 3.75376715e-03,\n",
+       "       3.50077581e-03, 3.26483524e-03, 3.04479627e-03, 2.83958719e-03,\n",
+       "       2.64820852e-03, 2.46972813e-03, 2.30327672e-03, 2.14804358e-03])"
+      ]
+     },
+     "execution_count": 7,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "lassoCV.alphas_"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

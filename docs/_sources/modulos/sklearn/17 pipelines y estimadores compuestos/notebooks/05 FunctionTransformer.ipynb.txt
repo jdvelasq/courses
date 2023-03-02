@@ -1,0 +1,265 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "b755e9c8-a6d0-4f75-958c-58e3bbb3bcee",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Creación de transformadores personalizados con FunctionTransformer\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "2e7cb9dd-11f2-48da-bc20-739e4e4ca496",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Uso básico\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "5d224f9a-4588-4ee4-9c98-19ab7558c414",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[0.        , 0.69314718],\n",
+       "       [1.09861229, 1.38629436],\n",
+       "       [1.60943791, 1.79175947]])"
+      ]
+     },
+     "execution_count": 1,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "from sklearn.preprocessing import FunctionTransformer\n",
+    "\n",
+    "transformer = FunctionTransformer(\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # The callable to use for the transformation.\n",
+    "    func=np.log1p, # log_e(1+x)\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # The callable to use for the inverse transformation\n",
+    "    inverse_func=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Dictionary of additional keyword arguments to pass to func.\n",
+    "    kw_args=None,\n",
+    "    # -------------------------------------------------------------------------\n",
+    "    # Dictionary of additional keyword arguments to pass to inverse_func.\n",
+    "    inv_kw_args=None,\n",
+    ")\n",
+    "X = np.array([[0, 1], [2, 3], [4, 5]])\n",
+    "transformer.transform(X)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7cc839f8-b970-4bc3-bf0e-3536648163c4",
+   "metadata": {},
+   "source": [
+    "Funciones comunes usadas para la transformación de datos en modelos de regresión\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8d24abde-c6d3-406d-a3c2-90d2ba7c44db",
+   "metadata": {},
+   "source": [
+    "* Logaritmo (natural):"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "24246e56-5269-4475-a7ba-0ab400410376",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "w = \\log (z)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b1a4a59c-14c4-4e7a-9643-c5b2c085b378",
+   "metadata": {},
+   "source": [
+    "* Logaritmo base 10:"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e64a8a5d-9bc4-41a3-b373-c372198f52cf",
+   "metadata": {},
+   "source": [
+    "$$\n",
+    "w = \\log_{10} (z)\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d54c7d25-5b6a-4b81-aa33-78d0db806b7a",
+   "metadata": {},
+   "source": [
+    "* Logística:\n",
+    "$$\n",
+    "w = \\log \n",
+    "\\left[\n",
+    "\\frac{c \\cdot z}{1 - c \\cdot z}\n",
+    "\\right]\n",
+    "$$\n",
+    "con:\n",
+    "$$\n",
+    "c = (1 - 10^{-6}) \\cdot 10 ^{-\\text{ceil} (\\log_{10} (\\max (z)))}\n",
+    "$$\n",
+    "donde la función ceil() retorna el entero más pequeño que es igual o mayor que $z$."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7708565f-99ec-4309-af1b-bd6b0fe0e247",
+   "metadata": {},
+   "source": [
+    "* Raíz cuadrada:\n",
+    "$$\n",
+    "w = z^{1/2}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "16fc8cf8-ec94-4c2c-a9e7-2b4f9ea5f75e",
+   "metadata": {},
+   "source": [
+    "* Raíz cúbica:\n",
+    "$$\n",
+    "w = z^{1/3}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4e26fdc9-eb9b-490d-9175-ffb2694a6945",
+   "metadata": {},
+   "source": [
+    "* Box-Cox:\n",
+    "$$\n",
+    "w = \n",
+    "\\begin{cases}\n",
+    "\\frac{z^\\lambda - 1}{\\lambda}, & \\lambda \\ne 0 \\\\\n",
+    "\\\\\n",
+    "\\log{z}, & \\lambda = 0\n",
+    "\\end{cases}\n",
+    "$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ddfd9248-8ea5-4211-a061-0e293f3e73ac",
+   "metadata": {},
+   "source": [
+    "Implementación de la transformación de Box-Cox\n",
+    "---"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "72971a5c-b0ed-4164-a60f-2d9f39e603a8",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[0., 1.],\n",
+       "       [2., 3.],\n",
+       "       [4., 5.]])"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "def box_cox(x, lambda_=0):\n",
+    "    if lambda_ == 0:\n",
+    "        return np.log(x)\n",
+    "    return (np.power(x, lambda_) - 1) / lambda_\n",
+    "\n",
+    "\n",
+    "def inverse_box_cox(x, lambda_=0):\n",
+    "    if lambda_ == 0:\n",
+    "        return np.exp(x)\n",
+    "    return np.power(lambda_ * x + 1, 1 / lambda_)\n",
+    "\n",
+    "\n",
+    "transformer = FunctionTransformer(\n",
+    "    func=box_cox,\n",
+    "    inverse_func=inverse_box_cox,\n",
+    "    kw_args=dict(lambda_=1.),\n",
+    "    inv_kw_args=dict(lambda_=1),\n",
+    ")\n",
+    "X = np.array([[1, 2], [3, 4], [5, 6]])\n",
+    "X_transf = transformer.transform(X)\n",
+    "X_transf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "265b038d-34dc-42c3-bea7-2dd74330395e",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[1., 2.],\n",
+       "       [3., 4.],\n",
+       "       [5., 6.]])"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "transformer.inverse_transform(X_transf)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

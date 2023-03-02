@@ -1,0 +1,337 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Perceptrón simple\n",
+    "==="
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* El problema de clasificación binaria (con clases $C_1$ y $C_2$ dicotómicas) se define de la siguiente manera:\n",
+    "\n",
+    "\n",
+    "    * Cada patrón de entrada tiene la forma $\\mathbf{x}=[+1,x_1,x_2,…,x_n ]$.\n",
+    "\n",
+    "    * Las clases $C_1$ y $C_2$ se representan como $\\{-1, +1\\}$ respectivamente.\n",
+    "\n",
+    "    * Los parámetros del perceptrón binario son $\\mathbf{w}=[w_0,w_1,…,w_n]$ tal que $y=\\varphi(\\mathbf{w}^T \\mathbf{x})$, donde $\\varphi(.)$ es un conmutador bipolar."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "![assets/PerceptronBipolar.jpg](assets/PerceptronBipolar.jpg)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Note que $\\mathbf{w}^T \\mathbf{x}$ es un modelo lineal."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Se desea encontrar el vector $\\mathbf{w}$ tal que el perceptrón clasifique correctamente todos los patrones de entrenamiento."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* La función de pérdida del perceptrón se basa en el cálculo del error $e_k$ definido como:\n",
+    "\n",
+    "$$\n",
+    "e_k= \n",
+    "d_k-y_k = \n",
+    "d_k - \\varphi(\\mathbf{w}^T_k \\mathbf{x}_k) =\n",
+    "\\begin{cases}      \n",
+    "       0,  & \\text{Si $d_k = y_k$}\\\\\n",
+    "      +2, & \\text{Si $d_k = +1$ y $y_k = -1$}\\\\\n",
+    "      -2, & \\text{Si $d_k = -1$ y $y_k = +1$}\\\\\n",
+    "\\end{cases}\n",
+    "$$\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* Los parámetros del modelo son estimados numéricamente usando el método del gradiente descendente:\n",
+    "\n",
+    "\n",
+    "$$\\mathbf{w}_{k+1} = \\mathbf{w}_k+e_k  \\mathbf{x}_k$$"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "* El perceptrón es equivalente a: `SGDClassifier(loss=\"perceptron\", eta0=1, learning_rate=\"constant\", penalty=None)`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from sklearn.datasets import load_breast_cancer\n",
+    "\n",
+    "X, y = load_breast_cancer(return_X_y=True)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1,\n",
+       "       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0,\n",
+       "       1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0,\n",
+       "       1, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0,\n",
+       "       1, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0,\n",
+       "       0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\n",
+       "       1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1,\n",
+       "       1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0,\n",
+       "       0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0,\n",
+       "       1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1,\n",
+       "       1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n",
+       "       0, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 0, 1, 1,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1,\n",
+       "       0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1,\n",
+       "       0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1,\n",
+       "       1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 0,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1,\n",
+       "       1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0,\n",
+       "       1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1,\n",
+       "       1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1,\n",
+       "       1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1,\n",
+       "       1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,\n",
+       "       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1])"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.linear_model import Perceptron\n",
+    "\n",
+    "perceptron = Perceptron(\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Specify the norm of the penalty:\n",
+    "    # * None: no penalty is added.\n",
+    "    # * 'l2': add a L2 penalty term and it is the default choice.\n",
+    "    # * 'l1': add a L1 penalty term.\n",
+    "    # * 'elasticnet': both L1 and L2 penalty terms are added.\n",
+    "    penalty=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Constant that multiplies the regularization term if regularization is \n",
+    "    # used.\n",
+    "    alpha=0.0001,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The Elastic Net mixing parameter, with 0 <= l1_ratio <= 1. l1_ratio=0 \n",
+    "    # corresponds to L2 penalty, l1_ratio=1 to L1. Only used if \n",
+    "    # penalty='elasticnet'.\n",
+    "    l1_ratio=0.15,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Whether the intercept should be estimated or not. If False, the data is \n",
+    "    # assumed to be already centered.\n",
+    "    fit_intercept=True,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The maximum number of passes over the training data (aka epochs). It only\n",
+    "    # impacts the behavior in the fit method, and not the partial_fit method.\n",
+    "    max_iter=1000,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The stopping criterion. If it is not None, the iterations will stop when \n",
+    "    # (loss > previous_loss - tol).\n",
+    "    tol=1e-3,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Whether or not the training data should be shuffled after each epoch.\n",
+    "    shuffle=True,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Constant by which the updates are multiplied.\n",
+    "    eta0=1,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Used to shuffle the training data, when shuffle is set to True. Pass an \n",
+    "    # int for reproducible output across multiple function calls.\n",
+    "    random_state=0,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Whether to use early stopping to terminate training when validation. score \n",
+    "    # is not improving. If set to True, it will automatically set aside a \n",
+    "    # stratified fraction of training data as validation and terminate training\n",
+    "    # when validation score is not improving by at least tol for \n",
+    "    # n_iter_no_change consecutive epochs.\n",
+    "    early_stopping=False,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # The proportion of training data to set aside as validation set for early \n",
+    "    # stopping. Must be between 0 and 1. Only used if early_stopping is True.\n",
+    "    validation_fraction=0.1,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Number of iterations with no improvement to wait before early stopping.\n",
+    "    n_iter_no_change=5,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # Weights associated with classes. If not given, all classes are supposed to \n",
+    "    # have weight one. The “balanced” mode uses the values of y to automatically \n",
+    "    # adjust weights inversely proportional to class frequencies in the input \n",
+    "    # data as n_samples / (n_classes * np.bincount(y)).\n",
+    "    class_weight=None,\n",
+    "    # --------------------------------------------------------------------------\n",
+    "    # When set to True, reuse the solution of the previous call to fit as \n",
+    "    # initialization, otherwise, just erase the previous solution.\n",
+    "    warm_start=False,\n",
+    ")\n",
+    "\n",
+    "perceptron.fit(X, y)\n",
+    "\n",
+    "perceptron.predict(X)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.9261862917398945"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "perceptron.score(X, y)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([301.])"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "perceptron.intercept_"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([[ 2.30434100e+03,  2.97808000e+03,  1.32373800e+04,\n",
+       "         4.55750000e+03,  1.99728200e+01, -1.39147700e+01,\n",
+       "        -4.75552493e+01, -1.99746190e+01,  3.85718000e+01,\n",
+       "         1.62372600e+01,  6.11430000e+00,  2.13245700e+02,\n",
+       "        -1.26940700e+02, -6.19829200e+03,  9.33463000e-01,\n",
+       "        -3.70119900e+00, -6.05731830e+00, -8.79828000e-01,\n",
+       "         3.13196800e+00,  1.54238900e-01,  2.42195700e+03,\n",
+       "         3.69363000e+03,  1.31086400e+04, -6.70030000e+03,\n",
+       "         2.39875500e+01, -5.68726600e+01, -1.05821866e+02,\n",
+       "        -2.51252590e+01,  4.93057000e+01,  1.36139600e+01]])"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "perceptron.coef_"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernel_info": {
+   "name": "python3"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  },
+  "nteract": {
+   "version": "0.7.1"
+  },
+  "varInspector": {
+   "cols": {
+    "lenName": 16,
+    "lenType": 16,
+    "lenVar": 40
+   },
+   "kernels_config": {
+    "python": {
+     "delete_cmd_postfix": "",
+     "delete_cmd_prefix": "del ",
+     "library": "var_list.py",
+     "varRefreshCmd": "print(var_dic_list())"
+    },
+    "r": {
+     "delete_cmd_postfix": ") ",
+     "delete_cmd_prefix": "rm(",
+     "library": "var_list.r",
+     "varRefreshCmd": "cat(var_dic_list()) "
+    }
+   },
+   "types_to_exclude": [
+    "module",
+    "function",
+    "builtin_function_or_method",
+    "instance",
+    "_Feature"
+   ],
+   "window_display": false
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "2482a4565599eda3cd2db35331af39775c1f78a505a9deef48c721423040da5b"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
