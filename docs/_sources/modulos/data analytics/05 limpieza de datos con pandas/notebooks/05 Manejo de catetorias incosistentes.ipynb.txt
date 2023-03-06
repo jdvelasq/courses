@@ -1,0 +1,284 @@
+{
+ "cells": [
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "3d9777c7-9c14-4e91-802c-973783763d74",
+   "metadata": {
+    "tags": []
+   },
+   "source": [
+    "Categorías inconsistentes\n",
+    "===\n",
+    "\n",
+    "* Ultima actualización: Marzo 6, 2023 | [YouTube](https://www.youtube.com/watch?v=4DzusT3Nl-Q&list=PLEFpZ3YehTnDX6z1fx4rT0wkt80ythBhc&index=5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "a728bf92-a9da-46ca-b0d4-e37ceddd0c2c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1.23.5\n",
+      "1.5.2\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd\n",
+    "\n",
+    "print(np.__version__)\n",
+    "print(pd.__version__)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "ac70e9a7-81a5-4d4e-a282-a6f07040bb68",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Overwriting /tmp/data.csv\n"
+     ]
+    }
+   ],
+   "source": [
+    "%%writefile /tmp/data.csv\n",
+    "personId,eventType\n",
+    "1,AA\n",
+    "2,A\n",
+    "3,AZ\n",
+    "4,AB\n",
+    "5,ZB\n",
+    "6,ZZ\n",
+    "7,BA\n",
+    "8,BB"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "b1698893-9527-4835-830f-7b2800534dae",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "{'A', 'AZ', 'ZB', 'ZZ'}"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "valid_eventType = {'AA', 'AB', 'BA', 'BB'}\n",
+    "\n",
+    "df = pd.read_csv('/tmp/data.csv')\n",
+    "\n",
+    "#\n",
+    "# Categorias inconsistentes\n",
+    "#\n",
+    "set(df.eventType).difference(valid_eventType)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "2233d0a4-24be-4aac-a813-a7fa5afe9451",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>personId</th>\n",
+       "      <th>eventType</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>2</td>\n",
+       "      <td>A</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>3</td>\n",
+       "      <td>AZ</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>5</td>\n",
+       "      <td>ZB</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>6</td>\n",
+       "      <td>ZZ</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   personId eventType\n",
+       "1         2         A\n",
+       "2         3        AZ\n",
+       "4         5        ZB\n",
+       "5         6        ZZ"
+      ]
+     },
+     "execution_count": 4,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Registros con categorias inconsistentes\n",
+    "#\n",
+    "df[~df.eventType.isin(valid_eventType)]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e9f4032b-a4cf-48a4-8212-49b12bf0d084",
+   "metadata": {},
+   "source": [
+    "Posibles soluciones:\n",
+    "\n",
+    "* Borrado del registro.\n",
+    "\n",
+    "* Reemplazo de las categorias inconsistentes\n",
+    "\n",
+    "* Inferencia la categoria a partir de otros campos."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "76dd37ef-03ab-4058-8a13-ef623a35bd83",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>personId</th>\n",
+       "      <th>eventType</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>1</td>\n",
+       "      <td>AA</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>4</td>\n",
+       "      <td>AB</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>7</td>\n",
+       "      <td>BA</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>8</td>\n",
+       "      <td>BB</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   personId eventType\n",
+       "0         1        AA\n",
+       "3         4        AB\n",
+       "6         7        BA\n",
+       "7         8        BB"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#\n",
+    "# Borrado de registros inconsistentes\n",
+    "#\n",
+    "df = df[df.eventType.isin(valid_eventType)]\n",
+    "df"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.10"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
