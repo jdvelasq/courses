@@ -58,7 +58,7 @@ source_suffix = [".rst", ".md"]
 master_doc = "index"
 
 # General information about the project.
-project = "Data Analytics con Pandas"
+project = "Cursos UNAL"
 copyright = "2024, Juan D. Velasquez"
 author = "Juan D. Velasquez"
 
@@ -146,7 +146,7 @@ html_theme = "furo"
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = """Data Analytics con Pandas<br>
+html_title = """Cursos UNAL<br>
 <div style="font-size: 14px;">
     <p>Feb 5, 2024</p>
 </div>
@@ -250,7 +250,7 @@ latex_elements: Dict[str, str] = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "biblio.tex", "Data Analytics con Pandas", "Author", "manual"),
+    (master_doc, "biblio.tex", "Cursos UNAL", "Author", "manual"),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -300,11 +300,11 @@ man_pages = [
 texinfo_documents = [
     (
         master_doc,
-        "Data Analytics con Pandas",
-        "Data Analytics con Pandas",
+        "Cursos UNAL",
+        "Cursos UNAL",
         author,
-        "Data Analytics con Pandas",
-        "Data Analytics con Pandas",
+        "Cursos UNAL",
+        "Cursos UNAL",
         "Miscellaneous",
     ),
 ]
