@@ -19,8 +19,6 @@ Cursos
 
     fundamentos_de_analitica
 
-
-
 Todos los cursos se rigen bajo los aspectos generales descritos a continuación.
 
 .. raw:: html
