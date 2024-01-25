@@ -43,6 +43,30 @@ Programa Calendario
 .. ......................................................................................
 * Sesión 02 --- **Feb 16, 2024**
 
+    **Programación en Python para Data Analytics**
+
+        .. note::
+
+            Los siguientes son cursos complementarios sobre programación en Python que pueden
+            complementar y profundizar los temas vistos en el curso.
+
+
+            * `Google IT Automation with Python <https://www.coursera.org/professional-certificates/google-it-automation?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE>`_ 
+
+
+            * `Python for Everybody <https://www.coursera.org/specializations/python?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo=&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE/>`_ 
+
+
+        **Bloque 1**
+
+            * `Una introducción informal a Python (60:02 min) <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
+
+            * `Herramientas de control de flujo (62:26 min) <https://jdvelasq.github.io/curso_python_tutorial/02_herramientas_de_control_de_flujo/__index__.html>`_ 
+
+            * `Estructuras de datos. Parte 1 (21:34) <https://jdvelasq.github.io/curso_python_tutorial/03_estructuras_de_datos_parte_1/__index__.html>`_ 
+
+
+        **Bloque 2**
 
 
 .. ......................................................................................
