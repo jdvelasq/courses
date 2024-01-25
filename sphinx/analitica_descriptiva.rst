@@ -32,7 +32,6 @@ Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ......................................................................................
-
 * Sesión 01 --- **Feb 9, 2024**
 
     **Presentación del curso e introducción**
@@ -42,17 +41,42 @@ Programa Calendario
         * Charla Magistral: `Introducción a la analitica <https://jdvelasq.github.io/intro-analitca/>`_ 
 
 .. ......................................................................................
-
 * Sesión 02 --- **Feb 16, 2024**
+
+
+
+.. ......................................................................................
+* Sesión 03 --- **Feb 23, 2024**
+
+
+.. ......................................................................................
+* Sesión 04 --- **Mar 1, 2024**
+
+
+.. ......................................................................................
+* Sesión 05 --- **Mar 8, 2024**
+
+
+.. ......................................................................................
+* Sesión 06 --- **Mar 15, 2024**
+
+
+.. ......................................................................................
+* Sesión 07 --- **Mar 22, 2024**
+
+
+.. ......................................................................................
+* Sesión 08 --- **Abr 5, 2024**
+
+
+.. ......................................................................................
+
 
     **Programación en SQL**
 
         * :ref:`mysql`
 
 
-.. ......................................................................................
-
-* Sesión 03 --- **Feb 23, 2024**
 
     **Inteligencia de Negocios con Power BI**
 
@@ -66,9 +90,6 @@ Programa Calendario
 
         * `Dashboards <https://jdvelasq.github.io/programa_powerbi/c05.html>`_ 
 
-.. ......................................................................................
-
-* Sesión 04 --- **Mar 1, 2024**
 
     **Programación Profesional en Python / Nivel Básico**
 
@@ -106,9 +127,6 @@ Programa Calendario
 
 
 
-.. ......................................................................................
-
-* Sesión 05 --- **Mar 8, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
 
@@ -119,10 +137,6 @@ Programa Calendario
 
 
     **Programación Profesional en Python / Nivel intermedio**
-
-        Este módulo extiende el contenido del módulo **Data Science and Machine Learning** del **MIT** y cubre el
-        contenido requerido por la certificación **PCAP --- Certified Associate in Python Programming** que es un 
-        requisito para la certificación **PCAD --- Certified Associate in Data Analytics with Python**. 
 
         * :ref:`python_pcap_Ep_01_modulos`
 
@@ -141,9 +155,6 @@ Programa Calendario
 
 
 
-.. ......................................................................................
-
-* Sesión 06 --- **Mar 15, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
@@ -157,9 +168,6 @@ Programa Calendario
         * **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
 
 
-.. ......................................................................................
-
-* Sesión 07 --- **Mar 22, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
 
@@ -174,9 +182,6 @@ Programa Calendario
 
         * :ref:`da_con_python_Ep_03_sqlalchemy`
 
-.. ......................................................................................
-
-* Sesión 08 --- **Abr 5, 2024**
 
     **Charla Magistral**: `Narrativa de datos <https://jdvelasq.github.io/data-storytelling/>`_
 
@@ -184,7 +189,6 @@ Programa Calendario
 
     **Ingestión, Limpieza y Visualización de Datos**
 
-        Este módulo cubre parte del contenido requerido para la certificación **PCAD --- Certified Associate in Data Analytics with Python**. 
 
         * :ref:`da_con_python_Ep_04_data_ingestion`
 

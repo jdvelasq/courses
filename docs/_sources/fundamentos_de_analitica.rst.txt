@@ -34,7 +34,6 @@ Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ......................................................................................
-
 * Sesión 01 --- **Feb 5, 2024**
 
     **Presentación del Curso e Introducción**
@@ -45,10 +44,9 @@ Programa Calendario
 
 
 .. ......................................................................................
-
 * Sesión 02 --- **Feb 12, 2024**
 
-    **Programación en Python**
+    **Programación en Python para Data Analytics**
 
         .. note::
 
@@ -62,27 +60,21 @@ Programa Calendario
             * `Python for Everybody <https://www.coursera.org/specializations/python?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo=&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE/>`_ 
 
 
-    
 
-        * `Jupyter Lab <https://jdvelasq.github.io/programa_programacion_en_python/12_jupyterlab/index.html>`_ 
+        * `Una introducción informal a Python (60:02 min) <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
 
-        * NBviewer https://nbviewer.jupyter.org
+        * `Herramientas de control de flujo (62:26 min) <https://jdvelasq.github.io/curso_python_tutorial/02_herramientas_de_control_de_flujo/__index__.html>`_ 
 
-        * `Una introducción informal a Python <https://jdvelasq.github.io/programa_programacion_en_python/01_una_introduccion_informal/index.html>`_ 
-
-        * `Herramientas de control de flujo <https://jdvelasq.github.io/programa_programacion_en_python/02_herramientas_de_control_de_flujo/index.html>`_ 
-
-        * `Estructuras de datos (Parte I) <https://jdvelasq.github.io/programa_programacion_en_python/03_estructuras_de_datos_i/index.html>`_ 
+        * `Estructuras de datos. Parte 1 (21:34) <https://jdvelasq.github.io/curso_python_tutorial/03_estructuras_de_datos_parte_1/__index__.html>`_ 
 
 
 .. ......................................................................................
-
 * Sesión 03 --- **Feb 19, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
 
 
-    **Programación en Python**
+    **Programación en Python para Data Analytics**
 
         * `Estructuras de datos (Parte II) <https://jdvelasq.github.io/programa_programacion_en_python/04_estructuras_de_datos_ii/index.html>`_ 
 
@@ -95,6 +87,12 @@ Programa Calendario
         * `Librería Estandar <https://jdvelasq.github.io/programa_programacion_en_python/09_libreria_estandar/index.html>`_ 
 
         * `Manipulación de Datos <https://jdvelasq.github.io/programa_programacion_en_python/11_manipulacion_de_datos/index.html>`_       
+
+
+        * `Jupyter Lab <https://jdvelasq.github.io/programa_programacion_en_python/12_jupyterlab/index.html>`_ 
+
+        * NBviewer https://nbviewer.jupyter.org
+
 
         * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 
