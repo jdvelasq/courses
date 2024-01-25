@@ -76,25 +76,29 @@ Programa Calendario
 
     **Programación en Python para Data Analytics**
 
-        * `Estructuras de datos (Parte II) <https://jdvelasq.github.io/programa_programacion_en_python/04_estructuras_de_datos_ii/index.html>`_ 
+        * `Estructuras de datos. Parte 2 https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html`_ 
 
-        * `Modulos <https://jdvelasq.github.io/programa_programacion_en_python/05_modulos/index.html>`_ 
+        * `Entrada y salida <https://jdvelasq.github.io/curso_python_tutorial/06_entrada_y_salida/__index__.html>`_ 
 
-        * `Entrada y salida <https://jdvelasq.github.io/programa_programacion_en_python/06_entrada_y_salida/index.html>`_ 
+        * `Errores y Excepciones <https://jdvelasq.github.io/curso_python_tutorial/07_errores_y_excepciones/__index__.html>`_ 
 
-        * `Errores y Excepciones <https://jdvelasq.github.io/programa_programacion_en_python/07_errores_y_excepciones/index.html>`_ 
+        * `Librería Estandar. Parte 1 <https://jdvelasq.github.io/curso_python_tutorial/09_libreria_estandar_parte_1/__index__.html>`_ 
 
-        * `Librería Estandar <https://jdvelasq.github.io/programa_programacion_en_python/09_libreria_estandar/index.html>`_ 
-
-        * `Manipulación de Datos <https://jdvelasq.github.io/programa_programacion_en_python/11_manipulacion_de_datos/index.html>`_       
+        * `Librería Estandar. Parte 2 <https://jdvelasq.github.io/curso_python_tutorial/10_libreria_estandar_parte_2/__index__.html>`_ 
 
 
-        * `Jupyter Lab <https://jdvelasq.github.io/programa_programacion_en_python/12_jupyterlab/index.html>`_ 
+
+    **Ejemplos y Casos de Aplicación**
+
+        * `Manipulación de Datos <>`_       
+
+
+        * `Jupyter Lab <>`_ 
 
         * NBviewer https://nbviewer.jupyter.org
 
 
-        * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
+    * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 
         
 .. ......................................................................................
