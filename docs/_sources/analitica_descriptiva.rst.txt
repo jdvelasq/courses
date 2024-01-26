@@ -50,20 +50,17 @@ Programa Calendario
             Los siguientes son cursos complementarios sobre programación en Python que pueden
             complementar y profundizar los temas vistos en el curso.
 
-
             * `Google IT Automation with Python <https://www.coursera.org/professional-certificates/google-it-automation?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE>`_ 
 
 
             * `Python for Everybody <https://www.coursera.org/specializations/python?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo=&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE/>`_ 
 
+        
+        * `Una introducción informal a Python (60:02 min) <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
 
-        **Bloque 1**
+        * `Herramientas de control de flujo (62:26 min) <https://jdvelasq.github.io/curso_python_tutorial/02_herramientas_de_control_de_flujo/__index__.html>`_ 
 
-            * `Una introducción informal a Python (60:02 min) <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
-
-            * `Herramientas de control de flujo (62:26 min) <https://jdvelasq.github.io/curso_python_tutorial/02_herramientas_de_control_de_flujo/__index__.html>`_ 
-
-            * `Estructuras de datos. Parte 1 (21:34) <https://jdvelasq.github.io/curso_python_tutorial/03_estructuras_de_datos_parte_1/__index__.html>`_ 
+        * `Estructuras de datos. Parte 1 (21:34) <https://jdvelasq.github.io/curso_python_tutorial/03_estructuras_de_datos_parte_1/__index__.html>`_ 
 
 
         **Bloque 2**
@@ -72,34 +69,96 @@ Programa Calendario
 .. ......................................................................................
 * Sesión 03 --- **Feb 23, 2024**
 
+    `Taller Presencial <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
+
+
+    **Programación en Python para Data Analytics**
+
+        * `Estructuras de datos. Parte 2 https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html`_ 
+
+        * `Entrada y salida <https://jdvelasq.github.io/curso_python_tutorial/06_entrada_y_salida/__index__.html>`_ 
+
+        * `Errores y Excepciones <https://jdvelasq.github.io/curso_python_tutorial/07_errores_y_excepciones/__index__.html>`_ 
+
+        * `Librería Estandar. Parte 1 <https://jdvelasq.github.io/curso_python_tutorial/09_libreria_estandar_parte_1/__index__.html>`_ 
+
+        * `Librería Estandar. Parte 2 <https://jdvelasq.github.io/curso_python_tutorial/10_libreria_estandar_parte_2/__index__.html>`_ 
+
+
+
+    **Ejemplos y Casos de Aplicación**
+
+        * `Manipulación de Datos <https://jdvelasq.github.io/curso_python_HOWTOs/03_manipulacion_de_datos/__index__.html>`_       
+
+        * `Jupyter Lab <https://jdvelasq.github.io/curso_python_HOWTOs/02_uso_de_jupyterlab/__index__.html>`_ 
+
+        * NBviewer https://nbviewer.jupyter.org
+
+
+    * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
 
 .. ......................................................................................
 * Sesión 04 --- **Mar 1, 2024**
 
+    `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
+
+
+    **Manipulación y Análisis de Datos con Pandas**
+
+        * `Manipulación de Datos con Pandas <https://jdvelasq.github.io/curso_pandas_tutorial/>`_
+
+        * **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
 
 .. ......................................................................................
 * Sesión 05 --- **Mar 8, 2024**
 
+    `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
 
+
+
+    **Ingestión, Limpieza y Visualización de Datos**
+
+        * `Ingestión de datos <https://jdvelasq.github.io/curso_python_HOWTOs/01_ingestion_de_datos/__index__.html>`_
+
+        * **LAB** --- `Ingestión de datos, clusters report <https://classroom.github.com/a/ohpsTgJk>`_.
+
+        * `Limpieza de datos con pandas <https://jdvelasq.github.io/curso_python_HOWTOs/04_limpieza_de_datos/__index__.html>`_
+
+        * **LAB** --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/6FTrLjGQ>`_.
+
+    **Análisis Exploratorio de Datos**
+
+        * `Estadística Descriptiva <jdvelasq.github.io/curso_fundametos_estadistica/02_estadistica_descriptiva/__index__.html>`_
+
+        
 .. ......................................................................................
 * Sesión 06 --- **Mar 15, 2024**
 
+    **Data Storytelling**
+
+        * `Fundamentos de Narrativa de Datos <https://jdvelasq.github.io/data-storytelling/>`_
+
+
+    **Bases de Datos en Python**
+
+        * `SQLite3 <https://jdvelasq.github.io/curso_databases_en_python/01_sqlite3/__index__.html>`_
+
+        * `SQLAlchemy <https://jdvelasq.github.io/curso_databases_en_python/02_sqlalchemy/__index__.html>`_
+
+        * **LAB** --- `Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
 
 .. ......................................................................................
 * Sesión 07 --- **Mar 22, 2024**
 
+    **Visualización de Datos**
+
+        * `Visualización de datos en Matplotlib <https://jdvelasq.github.io/curso_visualizacion_de_datos/01_matplotlib/__index__.html>`_
+
+        * `Visualización de datos en Seaborn <https://jdvelasq.github.io/curso_visualizacion_de_datos/02_seaborn/__index__.html#>`_
+
 
 .. ......................................................................................
 * Sesión 08 --- **Abr 5, 2024**
-
-
-.. ......................................................................................
-
-
-    **Programación en SQL**
-
-        * :ref:`mysql`
-
 
 
     **Inteligencia de Negocios con Power BI**
@@ -114,117 +173,8 @@ Programa Calendario
 
         * `Dashboards <https://jdvelasq.github.io/programa_powerbi/c05.html>`_ 
 
-
-    **Programación Profesional en Python / Nivel Básico**
-
-        Este módulo extiende el contenido del modulo **Data Science and Machine Learning** del **MIT** y cubre el
-        contenido requerido por la certificación **PCEP --- Certified Entry-Level Python Programmer** que es un 
-        requisito para la certificación **PCAD --- Certified Associate in Data Analytics with Python**. 
-
-        .. note::
-
-            Los siguientes son cursos complementarios sobre programación en Python que pueden
-            complementar y profundizar los temas vistos en el curso.
-
-
-            * `Google IT Automation with Python <https://www.coursera.org/professional-certificates/google-it-automation?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE>`_ 
-
-
-            * `Python for Everybody <https://www.coursera.org/specializations/python?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo=&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE/>`_ 
-
-
     
-
-        * :ref:`python_pcep_Ep_01_introduccion`
-
-        * :ref:`python_pcep_Ep_02_interprete`
-
-        * :ref:`jupyterlab`
-
-        * NBviewer https://nbviewer.jupyter.org
-
-        * :ref:`python_pcep_Ep_03_una_introduccion_informal`
-
-        * :ref:`python_pcep_Ep_04_herramientas_de_control_de_flujo`
-
-        * :ref:`python_pcep_Ep_05_estructuras_de_datos_1`
-
-
-
-
-    `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
-
-
-    **Programación Profesional en Python / Nivel Básico**
-
-        * :ref:`python_pcep_Ep_06_estructuras_de_datos_2`
-
-
-    **Programación Profesional en Python / Nivel intermedio**
-
-        * :ref:`python_pcap_Ep_01_modulos`
-
-        * :ref:`python_pcap_Ep_02_entrada_y_salida`
-
-        * :ref:`python_pcap_Ep_03_errores_y_excepciones`
-
-        * :ref:`python_pcap_Ep_04_libreria_estandar`
-
-
-    **Programación Profesional en Python / Nivel intermedio**
-        
-        * :ref:`python_pcad_Ep_01_examples`
-
-        * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
-
-
-
-
-    `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
-
-
-    **Manipulación y Análisis de Datos con Pandas**
-
-        Este módulo cubre parte del contenido requerido para la certificación **PCAD --- Certified Associate in Data Analytics with Python**. 
-
-        * :ref:`pandas`
-
-        * **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
-
-
-
-    `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
-
-
-    **Bases de Datos en Python**
-
-        Este módulo cubre parte del contenido requerido para la certificación **PCPP1 --- Certified Professional in Python Programming 1**. 
-
-        * :ref:`sqlite3`
-
-        * **LAB** --- `Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
-
-        * :ref:`da_con_python_Ep_03_sqlalchemy`
-
-
-    **Charla Magistral**: `Narrativa de datos <https://jdvelasq.github.io/data-storytelling/>`_
-
-    `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
-
-    **Ingestión, Limpieza y Visualización de Datos**
-
-
-        * :ref:`da_con_python_Ep_04_data_ingestion`
-
-        * **LAB** --- `Ingestión de datos, clusters report <https://classroom.github.com/a/ohpsTgJk>`_.
-
-        * :ref:`da_con_python_Ep_05_data_cleaning`
-
-        * **LAB** --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/6FTrLjGQ>`_.
-
-        * :ref:`matplotlib`
-
-
-
     **Cierre y evaluación del curso**.
+
+.. ......................................................................................
 
