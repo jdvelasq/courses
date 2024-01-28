@@ -40,7 +40,7 @@ Programa Calendario
 
         * Presentación del curso
 
-        * `Presentación Magistral: Introducción a la Analitica <https://jdvelasq.github.io/intro-analitca/>`_ 
+        * `Conferencia: Introducción a la Analitica <https://jdvelasq.github.io/conferencia_introduccion_a_la_analitica/>`_ 
 
 
 .. ......................................................................................

@@ -1,6 +1,9 @@
 Analítica Descriptiva y Visualización de Datos
 #########################################################################################
 
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Sobre este curso
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -38,7 +41,7 @@ Programa Calendario
 
         * Presentación del curso
 
-        * Charla Magistral: `Introducción a la analitica <https://jdvelasq.github.io/intro-analitca/>`_ 
+        * Conferencia `Introducción a la analitica <https://jdvelasq.github.io/conferencia_introduccion_a_la_analitica/>`_ 
 
 .. ......................................................................................
 * Sesión 02 --- **Feb 16, 2024**
@@ -136,7 +139,7 @@ Programa Calendario
 
     **Data Storytelling**
 
-        * `Fundamentos de Narrativa de Datos <https://jdvelasq.github.io/data-storytelling/>`_
+        * `Fundamentos de Narrativa de Datos <https://github.com/jdvelasq/conferencia_data_storytelling>`_
 
 
     **Bases de Datos en Python**
