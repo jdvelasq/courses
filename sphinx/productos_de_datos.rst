@@ -6,17 +6,15 @@ Productos de Datos
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 
-Véase:  :ref:`info_general_cursos`
+   .. note:: 
 
-    .. note:: 
+      * Inicio de clases: **Febrero 5, 2024**
 
-        * Inicio de clases: **Febrero 5, 2024**
+      * Finalización de clases: **Abril 4, 2024** (Mayo 6, 2024).
 
-        * Finalización de clases: **Abril 4, 2024** (Mayo 6, 2024).
+      * Entrega de talleres: **Abril 15, 2024**.
 
-        * Entrega de talleres: **Abril 15, 2024**.
-
-        * Reporte de notas al SIA: **Junio 7, 2024**.
+      * Reporte de notas al SIA: **Junio 7, 2024**.
 
 
 **Nota** Incluir https://github.com/evidentlyai/evidently
@@ -67,35 +65,69 @@ Programa Calendario
 
    **Paso 0 --- Escriba código de nivel industrial**
 
+      * `Módulos <https://jdvelasq.github.io/curso_python_tutorial/05_modulos/__index__.html>`_ 
+
+      * `Clases <https://jdvelasq.github.io/curso_python_tutorial/08_clases/__index__.html>`_ 
+
+      * `Ambientes virtuales y paquetes <https://jdvelasq.github.io/curso_python_tutorial/11_ambientes_virtuales_y_paquetes/__index__.html>`_ 
+
+      * `Escritura de código limpio <https://jdvelasq.github.io/curso_python_HOWTOs/05_codigo_limpio/__index__.html>`_ 
+
+      * `Orquestación de tareas con Luigi <https://jdvelasq.github.io/curso_python_HOWTOs/10_luigi/__index__.html>`_ 
+
+      * `Jinja2 <https://jdvelasq.github.io/curso_python_HOWTOs/11_jinja2/__index__.html>`_ 
+
+      * `Flask <https://jdvelasq.github.io/curso_python_HOWTOs/12_flask/__index__.html>`_ 
+
+      * Desarrollo de paquetes:  https://github.com/jdvelasq/package_demo
+
+      * Contenedores de desarrollo en VS Code:  https://code.visualstudio.com/docs/remote/containers
+
 
 .. ......................................................................................
 * Sesión 04 --- **Mar 02, 2024**
 
    **Paso 1 --- Adicione pruebas de lógica y datos**
    
+      * `Generación de datos de prueba con faker <https://jdvelasq.github.io/curso_python_HOWTOs/08_faker/__index__.html>`_ 
 
+      * `Tests de documentacion con doctest <jdvelasq.github.io/curso_python_library_reference/21_development_tools/04_doctest.html>`_ 
 
-   **Paso 2 --- Use un sistema de control de versiones**
+      * `Tests de código con unittest <https://jdvelasq.github.io/curso_python_library_reference/21_development_tools/05_unittests.html>`_ 
 
+      * `Tests de código con pytest <https://jdvelasq.github.io/curso_python_HOWTOs/09_pytest/__index__.html>`_ 
 
+      * `Tests de datos con datatest <https://jdvelasq.github.io/curso_python_HOWTOs/07_datatest/__index__.html>`_ 
+
+   
 .. ......................................................................................
 * Sesión 05 --- **Mar 09, 2024**      
 
+   **Paso 2 --- Use un sistema de control de versiones**
 
    **Paso 3 --- Bifurque y fusione**
 
+      * `Fundamentos de Git <https://jdvelasq.github.io/curso_git_y_github/01_git/__index__.html>`_ 
 
-   **Paso 4 --- Use multiples ambientes**
+      * `Fundamentos de GitHub <https://jdvelasq.github.io/curso_git_y_github/02_github/__index__.html>`_ 
 
+      * `Versionado de datos con DVC <https://jdvelasq.github.io/curso_git_y_github/03_dvc/__index__.html>`_ 
 
 .. ......................................................................................
 * Sesión 06 --- **Mar 16, 2024**
 
+   **Paso 4 --- Use multiples ambientes**
+
    **Paso 5 --- Reuse y contenerize**
+
+      * `Vagrant <https://jdvelasq.github.io/curso_vagrant/>`_ 
+
+      * `Docker <https://jdvelasq.github.io/curso_docker/>`_
 
 
    **Paso 6 --- Parametrice el proceso**
 
+      * `Manejo de archivos de configuración <https://jdvelasq.github.io/curso_python_HOWTOs/06_archivos_de_configuracion/__index__.html>`_ 
 
 .. ......................................................................................
 * Sesión 07 --- **Mar 23, 2024**
@@ -106,6 +138,8 @@ Programa Calendario
 .. ......................................................................................
 * Sesión 08 --- **Abr 06, 2024**
 
+
+   **Charlas**
 
       * `DataOps para el Chief Data Officer --12-- <https://jdvelasq.github.io/conferencia_dataops_03_for_the_chief_data_officer/>`_    
 
@@ -123,93 +157,10 @@ Programa Calendario
 
       * `Measurement and Feedback --15-- <https://jdvelasq.github.io/conferencia_dataops_10_measurement_and_feedback/>`_ 
 
-
-
-.. ......................................................................................
-
-   * :ref:`dataops_pqrs_Ep_01`
-
-   * :ref:`dataops_pqrs_Ep_02`
-
-
-   **Programación Avanzada en Python --- Parte 1**
-
-
-      * :ref:`prog_en_python_Ep_06_modulos`
-
-      * :ref:`prog_en_python_Ep_08_errores_y_excepciones`
-
-      * :ref:`prog_en_python_Ep_09_clases`
-
-      * :ref:`prog_en_python_Ep_12_ambientes_virtuales_y_paquetes`
-
-      * :ref:`prog_en_python_Ep_11_libraria_estandar_parte_2`
-
-      * :ref:`prog_en_python_Ep_15_codigo_limpio`
-
-      * :ref:`python_library_reference_productos`
+   **Finalización del curso**
 
 
 
-
-   **Programación Avanzada en Python --- Parte 2**
-
-      * :ref:`prog_en_python_Ep_16_config_files`
-
-      * :ref:`prog_en_python_Ep_17_doctest`
-
-      * :ref:`prog_en_python_Ep_18_unittest`
-
-      * :ref:`pytest`
-
-      * :ref:`datatest`
-
-      * :ref:`faker`   
-
-      * :ref:`prog_en_python_Ep_22_great_expectations`
-      
-      * :ref:`prog_en_python_Ep_23_luigi`
-
-      * :ref:`prog_en_python_Ep_24_html_y_jinja2`
-
-      * :ref:`prog_en_python_Ep_25_flask`
-
-   **Apache Airflow**
-
-      * :ref:`airflow_Ep_01_conceptos_basicos`
-
-
-
-
-   **Git y GitHub**
-
-      * :ref:`git_Ep_01_operaciones_basicas`
-
-      * :ref:`git_Ep_02_ramas`
-
-      * :ref:`github_Ep_01_operaciones_basicas`
-
-      * :ref:`github_Ep_02_actions`
-
-      * :ref:`dvc_Ep_01`
-
-   **Git y GitHub**
-
-      * :ref:`vagrant_Ep_01_conceptos_basicos`
-
-      * :ref:`docker_Ep_01_conceptos_basicos`
-
-   **Desarrollo de apps**
-
-      * Desarrollo de paquetes:  https://github.com/jdvelasq/package_demo
-
-      * Contenedores de desarrollo en VS Code:  https://code.visualstudio.com/docs/remote/containers
-
-
-
-      
-
-   **DataOps --- Parte 1**
    
 
 

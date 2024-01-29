@@ -8,12 +8,6 @@ Fundamentos de Analitica
 Sobre este curso
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-El diseño de este curso esta basado en el programa **Data Science and Machine Learning** 
-del **MIT** adicionando elementos del curriculum exigido para algunas de las 
-certificaciones de **Programación Profesional en Python** emitididas por el 
-**Python Institute**. 
-
-
 .. note:: 
 
     * Inicio de clases: **Febrero 5, 2024**
@@ -245,6 +239,11 @@ Programa Calendario
 .. 14 Deep Learning
 * Sesión 13 --- **May 6, 2024**
 
+    **Procesamiento de Texto**
+
+        * `TextBlob <https://jdvelasq.github.io/curso_procesamiento_de_texto/01_textblob/__index__.html>`_ 
+
+        * `PyParsing <https://jdvelasq.github.io/curso_procesamiento_de_texto/02_pyparsing/__index__.html>`_ 
 
 
 .. ......................................................................................

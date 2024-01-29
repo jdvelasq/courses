@@ -8,22 +8,15 @@ Analítica Descriptiva y Visualización de Datos
 Sobre este curso
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:ref:`info_general_cursos`
+.. note:: 
 
-Este curso es equivalente a un programa de **Inteligencia de Negocios y Análisis de Datos**.
-Cubre parte del contenido de las certificaciones de **Programación Profesional en Python** 
-emitididas por el **Python Institute**. 
+    * Inicio de clases: **Febrero 5, 2024**
 
+    * Finalización de clases: **Abril 4, 2024** (Mayo 6, 2024).
 
-    .. note:: 
+    * Entrega de talleres: **Abril 15, 2024**.
 
-        * Inicio de clases: **Febrero 5, 2024**
-
-        * Finalización de clases: **Abril 4, 2024** (Mayo 6, 2024).
-
-        * Entrega de talleres: **Abril 15, 2024**.
-
-        * Reporte de notas al SIA: **Junio 7, 2024**.
+    * Reporte de notas al SIA: **Junio 7, 2024**.
 
 
 
