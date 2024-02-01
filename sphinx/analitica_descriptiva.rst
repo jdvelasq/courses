@@ -99,9 +99,9 @@ Programa Calendario
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
 
-    **Manipulación y Análisis de Datos con Pandas**
+    **Data Analytics con Pandas**
 
-        * `Manipulación de Datos con Pandas <https://jdvelasq.github.io/curso_pandas_tutorial/>`_
+        * `Data Analytics con Pandas <https://jdvelasq.github.io/curso_data_analytics_con_pandas/>`_ --- 2:44:57 hr
 
         * **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
 
