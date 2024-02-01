@@ -54,9 +54,11 @@ Programa Calendario
 
     **Fundamentación**
 
-        * `Introducción a sklearn <https://jdvelasq.github.io/curso_ml_con_sklearn/01_introduccion/__index__.html>`_ 
+        * `Introducción a sklearn <https://youtu.be/ewMM7VNyGz8>`_ --- 21:49 min
 
-        * `Trabajo con datos textuales <https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/06_trabajo_con_datos_textuales.html>`_ 
+        * `Introducción al ML con sklearn <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=7s>`_ --- 17:06 min
+
+        * `Trabajo con datos textuales <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=4556s>`_ --- 21:40 min
 
         * `Fundamentos de ML <https://jdvelasq.github.io/programa_fundamentos_ml/>`_ 
 
