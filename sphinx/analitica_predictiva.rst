@@ -47,42 +47,44 @@ Programa Calendario
 
 
 .. ......................................................................................
-* Sesión 02 --- **2024-08-17** 
+* Sesión 02 --- **Ago 17, 2024** --- 3:00:22 min 
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
 
+    
+    **Fundamentación. Parte 1.**
 
-    **Fundamentación**
-
-        * `Introducción a sklearn <https://youtu.be/ewMM7VNyGz8>`_ --- 21:49 min
-
-        * `Introducción al ML con sklearn <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=7s>`_ --- 17:06 min
-
-        * `Trabajo con datos textuales <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=4556s>`_ --- 21:40 min
-
-        * `Fundamentos de ML <https://jdvelasq.github.io/programa_fundamentos_ml/>`_ 
-
-        * `Fundamentos de Estadística Inferencial <https://jdvelasq.github.io/curso_fundametos_estadistica/01_estadistica_inferencial/__index__.html>`_ 
+        * `Fundamentos de Optimización para ML <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_ --- 1:59:47
 
         * **LAB** --- `Estimación de coeficientes de una parábola usando gradiente descendente <https://classroom.github.com/a/a3xGd1Os>`_.
 
-    
-    **Datasets disponibles en scikit-learn**
-    
+
+    **Fundamentación. Parte 2.**
+
+        * `Introducción a sklearn <https://youtu.be/ewMM7VNyGz8>`_ --- 21:49 min
+
+        * `Introducción al ML con sklearn <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=7s>`_ --- 0:17:06
+
+        * `Trabajo con datos textuales <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=4556s>`_ --- 0:21:40
+
         * `Datasets <https://jdvelasq.github.io/curso_ml_con_sklearn/c08_datasets.html>`_ 
 
-
-  
 .. ......................................................................................
 * Sesión 03 --- **Ago 17, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-gridsearchcv.ipynb>`_.
 
-    **Selección y Evaluación de Modelos I** 
+    **Fundamentación. Parte 3.**
 
-        * `Conceptos básicos de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/03_conceptos_basicos_de_validacion_cruzada/__index__.html>`_ 
 
-        * `Cálculo de métricas <https://jdvelasq.github.io/curso_ml_con_sklearn/04_calculo_de_metricas/__index__.html>`_ 
+        * `Fundamentos de Estadística Inferencial <https://jdvelasq.github.io/curso_fundametos_estadistica/01_estadistica_inferencial/__index__.html>`_ 
+  
+
+    **Selección y Evaluación de Modelos. Parte 1.** 
+
+        * `Conceptos básicos de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/03_conceptos_basicos_de_validacion_cruzada/__index__.html>`_ --- 1:33:51
+
+        * `Cálculo de métricas de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/04_calculo_de_metricas/__index__.html>`_ --- 0:31:44
 
         * `Iteradores de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/05_iteradores/__index__.html>`_ 
 

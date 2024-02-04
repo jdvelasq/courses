@@ -152,52 +152,60 @@ Programa Calendario
         * `Análisis Exploratorio <https://jdvelasq.github.io/curso_fundametos_estadistica/index.html>`_
 
 .. ......................................................................................
-* Sesión 08 --- **Abr 1, 2024**
+* Sesión 08 --- **Abr 1, 2024** --- 1:59:47
 
-    **Fundamentos de ML**
+    **Fundamentos de ML. Parte 1.**
+
+        * `Fundamentos de ML <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_ --- 1:59:47
+
+
+.. ......................................................................................
+* Sesión 09 --- **Abr 8, 2024** --- 2:17:20
+
+    **Fundamentos de ML. Parte 2.**
 
         * `Introducción a sklearn <https://youtu.be/ewMM7VNyGz8>`_ --- 21:49 min
 
-        * `Introducción al ML con sklearn <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=7s>`_ --- 17:06 min
-
         * `Trabajo con datos textuales <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=4556s>`_ --- 21:40 min
 
-        * `Fundamentos de ML <https://jdvelasq.github.io/programa_fundamentos_ml/>`_ 
+    **Selección y Evaluación de Modelos. Parte 1.** 
+
+        * `Conceptos básicos de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/03_conceptos_basicos_de_validacion_cruzada/__index__.html>`_ --- 1:33:51
 
 .. ......................................................................................
-* Sesión 09 --- **Abr 8, 2024**
+* Sesión 10 --- **Abr 15, 2024** --- 1:54:15
 
-    **Selección y Evaluación de Modelos I** 
+    **Selección y Evaluación de Modelos. Parte 2.** 
 
-        * `Conceptos básicos de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/03_conceptos_basicos_de_validacion_cruzada/__index__.html>`_ 
+        * `Cálculo de métricas de validacion cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/04_calculo_de_metricas/__index__.html>`_ --- 0:31:44
 
-        * `Cálculo de métricas <https://jdvelasq.github.io/curso_ml_con_sklearn/04_calculo_de_metricas/__index__.html>`_ 
+        * `Iteradores de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/05_iteradores/__index__.html>`_ --- 0:37:44
 
-        * `Iteradores de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/05_iteradores/__index__.html>`_ 
+        * `Ajuste de hiperparámetros <https://jdvelasq.github.io/curso_ml_con_sklearn/06_ajuste_de_hiperparametros/__index__.html>`_ --- 00:25:08
 
-        * `Ajuste de hiperparámetros <https://jdvelasq.github.io/curso_ml_con_sklearn/06_ajuste_de_hiperparametros/__index__.html>`_ 
+        * `Introducción al uso de métricas <https://jdvelasq.github.io/curso_ml_con_sklearn/07_introduccion_al_uso_de_metricas/__index__.html>`_ --- 00:19:39
 
 .. ......................................................................................
-* Sesión 10 --- **Abr 15, 2024**
+* Sesión 11 --- **Abr 22, 2024** --- 2:06:18
 
-    **Selección y Evaluación de Modelos II**
+    **Selección y Evaluación de Modelos. Parte 3.** 
 
-        * `Introducción al uso de métricas <https://jdvelasq.github.io/curso_ml_con_sklearn/07_introduccion_al_uso_de_metricas/__index__.html>`_ 
+        * `Métricas para clasificación <https://jdvelasq.github.io/curso_ml_con_sklearn/08_metricas_para_clasificacion/__index__.html>`_ --- 1:27:40
 
-        * `Métricas para clasificación <https://jdvelasq.github.io/curso_ml_con_sklearn/08_metricas_para_clasificacion/__index__.html>`_ 
+        * `Métricas para regresión <https://jdvelasq.github.io/curso_ml_con_sklearn/10_metricas_para_regresion/__index__.html>`_ --- 00:38:38
 
-        * `Métricas para regresión <https://jdvelasq.github.io/curso_ml_con_sklearn/10_metricas_para_regresion/__index__.html>`_ 
+
+.. ......................................................................................
+* Sesión 12 --- **Abr 29, 2024**
 
     **Transformaciones del Dataset**
 
-        * `Pipelines y estimadores compuestos <https://jdvelasq.github.io/curso_ml_con_sklearn/c05_transformaciones.html>`_ 
+        * `Pipelines y estimadores compuestos <https://jdvelasq.github.io/curso_ml_con_sklearn/c05_transformaciones.html>`_  --- 0:38:49
 
         * `Preprocesamiento de datos <https://jdvelasq.github.io/curso_ml_con_sklearn/19_preprocesamiento_de_datos/__index__.html>`_ 
 
         * `Transformación de la variable de salida <https://jdvelasq.github.io/curso_ml_con_sklearn/23_transformacion_de_la_variable_de_salida/__index__.html>`_ 
 
-.. ......................................................................................
-* Sesión 11 --- **Abr 22, 2024**
 
     **Aprendizaje Supervisado**
 
@@ -221,9 +229,6 @@ Programa Calendario
     * **LAB** --- `Regresión Logística (mushrooms) <https://classroom.github.com/a/CvQCAqoF>`_.
 
 
-.. ......................................................................................
-
-* Sesión 12 --- **Abr 29, 2024**
 
     **Aprendizaje No Supervisado**
 
