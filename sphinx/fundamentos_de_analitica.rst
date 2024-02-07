@@ -64,7 +64,7 @@ Programa Calendario
 
         * `Estructuras de datos 1 <https://jdvelasq.github.io/curso_python_tutorial/03_estructuras_de_datos_parte_1/__index__.html>`_ 
 
-        * `Estructuras de datos 2 https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html`_ 
+        * `Estructuras de datos 2 <https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html>`_ 
 
         * `Entrada y salida <https://jdvelasq.github.io/curso_python_tutorial/06_entrada_y_salida/__index__.html>`_ 
 
