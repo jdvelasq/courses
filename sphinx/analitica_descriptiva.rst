@@ -24,6 +24,19 @@ Sobre este curso
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
+
+.. note::
+
+    Los siguientes son cursos complementarios sobre programación en Python que pueden
+    complementar y profundizar los temas vistos en el curso.
+
+    * `Google IT Automation with Python <https://www.coursera.org/professional-certificates/google-it-automation?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE>`_ 
+
+
+    * `Python for Everybody <https://www.coursera.org/specializations/python?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo=&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE/>`_ 
+
+
+
 Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -40,26 +53,12 @@ Programa Calendario
 * Sesión 02 --- **Feb 16, 2024**
 
     **Programación en Python para Data Analytics**
-
-        .. note::
-
-            Los siguientes son cursos complementarios sobre programación en Python que pueden
-            complementar y profundizar los temas vistos en el curso.
-
-            * `Google IT Automation with Python <https://www.coursera.org/professional-certificates/google-it-automation?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE>`_ 
-
-
-            * `Python for Everybody <https://www.coursera.org/specializations/python?utm_source=gg&utm_medium=sem&utm_campaign=11-GoogleITwithPython-LATAM&utm_content=B2C&campaignid=13865562900&adgroupid=125091310775&device=c&keyword=google%20it%20automation%20with%20python%20professional%20certificate&matchtype=b&network=g&devicemodel=&adpostion=&creativeid=533041859510&hide_mobile_promo=&gclid=EAIaIQobChMI4d-GjtHP9gIVkQiICR0DMQcREAAYASAAEgLBlfD_BwE/>`_ 
-
         
-        * `Una introducción informal a Python (60:02 min) <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
+        * `Una introducción informal a Python (60:02) <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
 
-        * `Herramientas de control de flujo (62:26 min) <https://jdvelasq.github.io/curso_python_tutorial/02_herramientas_de_control_de_flujo/__index__.html>`_ 
+        * `Herramientas de control de flujo (62:26) <https://jdvelasq.github.io/curso_python_tutorial/02_herramientas_de_control_de_flujo/__index__.html>`_ 
 
-        * `Estructuras de datos. Parte 1 (21:34) <https://jdvelasq.github.io/curso_python_tutorial/03_estructuras_de_datos_parte_1/__index__.html>`_ 
-
-
-        **Bloque 2**
+        * `Estructuras de datos 1 (21:34) <https://jdvelasq.github.io/curso_python_tutorial/03_estructuras_de_datos_parte_1/__index__.html>`_ 
 
 
 .. ......................................................................................
@@ -70,15 +69,15 @@ Programa Calendario
 
     **Programación en Python para Data Analytics**
 
-        * `Estructuras de datos. Parte 2 https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html`_ 
+        * `Estructuras de datos 2 https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html`_ 
 
         * `Entrada y salida <https://jdvelasq.github.io/curso_python_tutorial/06_entrada_y_salida/__index__.html>`_ 
 
         * `Errores y Excepciones <https://jdvelasq.github.io/curso_python_tutorial/07_errores_y_excepciones/__index__.html>`_ 
 
-        * `Librería Estandar. Parte 1 <https://jdvelasq.github.io/curso_python_tutorial/09_libreria_estandar_parte_1/__index__.html>`_ 
+        * `Librería Estandar 1 <https://jdvelasq.github.io/curso_python_tutorial/09_libreria_estandar_parte_1/__index__.html>`_ 
 
-        * `Librería Estandar. Parte 2 <https://jdvelasq.github.io/curso_python_tutorial/10_libreria_estandar_parte_2/__index__.html>`_ 
+        * `Librería Estandar 2 <https://jdvelasq.github.io/curso_python_tutorial/10_libreria_estandar_parte_2/__index__.html>`_ 
 
 
 
@@ -94,31 +93,30 @@ Programa Calendario
     * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
 
 .. ......................................................................................
-* Sesión 04 --- **Mar 1, 2024**
+* Sesión 04 (2:54:57) --- **Mar 1, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
 
     **Data Analytics con Pandas**
 
-        * `Data Analytics con Pandas <https://jdvelasq.github.io/curso_data_analytics_con_pandas/>`_ --- 2:44:57 hr
+        * `Data Analytics con Pandas (2:44:57) <https://jdvelasq.github.io/curso_data_analytics_con_pandas/>`_
 
         * **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
 
 .. ......................................................................................
-* Sesión 05 --- **Mar 8, 2024**
+* Sesión 05 (2:15:28) --- **Mar 8, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
 
 
-
     **Ingestión, Limpieza y Visualización de Datos**
 
-        * `Ingestión de datos <https://jdvelasq.github.io/curso_python_HOWTOs/01_ingestion_de_datos/__index__.html>`_
+        * `Ingestión de datos (58:11) <https://jdvelasq.github.io/curso_python_HOWTOs/01_ingestion_de_datos/__index__.html>`_
 
         * **LAB** --- `Ingestión de datos, clusters report <https://classroom.github.com/a/ohpsTgJk>`_.
 
-        * `Limpieza de datos con pandas <https://jdvelasq.github.io/curso_python_HOWTOs/04_limpieza_de_datos/__index__.html>`_
+        * `Limpieza de datos con pandas (1:17:17) <https://jdvelasq.github.io/curso_python_HOWTOs/04_limpieza_de_datos/__index__.html>`_
 
         * **LAB** --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/6FTrLjGQ>`_.
 
