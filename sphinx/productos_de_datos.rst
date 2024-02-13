@@ -29,6 +29,7 @@ Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ......................................................................................
+
 * Sesión 01 --- **Feb 10, 2024**
 
    * Presentación del curso.
@@ -43,6 +44,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 02 --- **Feb 17, 2024**
 
    **MLOps -- Parte 2**
@@ -55,6 +57,7 @@ Programa Calendario
    
 
 .. ......................................................................................
+
 * Sesión 03 --- **Feb 24, 2024**
 
    **Intrdoucción a DataOps**
@@ -85,6 +88,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 04 --- **Mar 02, 2024**
 
    **Paso 1 --- Adicione pruebas de lógica y datos**
@@ -101,6 +105,7 @@ Programa Calendario
 
    
 .. ......................................................................................
+
 * Sesión 05 --- **Mar 09, 2024**      
 
    **Paso 2 --- Use un sistema de control de versiones**
@@ -114,6 +119,7 @@ Programa Calendario
       * `Versionado de datos con DVC <https://jdvelasq.github.io/curso_git_y_github/03_dvc/__index__.html>`_ 
 
 .. ......................................................................................
+
 * Sesión 06 --- **Mar 16, 2024**
 
    **Paso 4 --- Use multiples ambientes**
@@ -130,12 +136,14 @@ Programa Calendario
       * `Manejo de archivos de configuración <https://jdvelasq.github.io/curso_python_HOWTOs/06_archivos_de_configuracion/__index__.html>`_ 
 
 .. ......................................................................................
+
 * Sesión 07 --- **Mar 23, 2024**
 
    **Paso 7 --- Trabaje sin miedo o heroismo**
 
 
 .. ......................................................................................
+
 * Sesión 08 --- **Abr 06, 2024**
 
 
