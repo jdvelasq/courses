@@ -41,6 +41,7 @@ Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ......................................................................................
+
 * Sesión 01 --- **Feb 5, 2024**
 
     **Presentación del Curso e Introducción**
@@ -51,12 +52,13 @@ Programa Calendario
 
 
 .. ......................................................................................
-* Sesión 02 --- **Feb 12, 2024**
 
-    `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
+* Sesión 02 --- **Feb 12, 2024**
 
 
     **Programación en Python para Data Analytics (Repaso)**
+
+        TALLER PRESENCIAL EVALUABLE: `Programación en Python MapReduce <https://classroom.github.com/a/LF7tlCYz>`_ 
 
         * `Una introducción informal a Python <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
 
@@ -83,11 +85,15 @@ Programa Calendario
     * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 
 .. ......................................................................................
+
 * Sesión 03 (2:54:57) --- **Feb 19, 2024**
 
     **Data Analytics con Pandas**
 
-        `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
+        TALLER PRESENCIAL EVALUABLE: `Word count con Pandas <https://classroom.github.com/a/b8bYnsMe>`_
+
+
+        .. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
         * `Data Analytics con Pandas (2:44:57) <https://jdvelasq.github.io/curso_data_analytics_con_pandas/>`_
 
@@ -95,6 +101,7 @@ Programa Calendario
 
         
 .. ......................................................................................
+
 * Sesión 04 (2:15:28) --- **Feb 26, 2024**
 
     **Ingestion y Limpieza de Datos**
@@ -108,6 +115,7 @@ Programa Calendario
         * **LAB** --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/x8BI2I6n>`_.
 
 .. ......................................................................................
+
 * Sesión 05 --- **Mar 4, 2024**
 
     **Visualización de Datos**
@@ -132,6 +140,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 06 --- **Mar 11, 2024**
 
     **Fundamentos de Estadistica para Data Science**
@@ -139,6 +148,7 @@ Programa Calendario
         * `Análisis Exploratorio <https://jdvelasq.github.io/curso_fundametos_estadistica/index.html>`_
 
 .. ......................................................................................
+
 * Sesión 07 (1:59:47) --- **Mar 18, 2024**
 
     **Fundamentos de ML. Parte 1.**
@@ -147,6 +157,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 08 (2:17:20) --- **Abr 1, 2024**
 
     **Fundamentos de ML. Parte 2.**
@@ -160,6 +171,7 @@ Programa Calendario
         * `Conceptos básicos de validación cruzada (1:33:51) <https://jdvelasq.github.io/curso_ml_con_sklearn/03_conceptos_basicos_de_validacion_cruzada/__index__.html>`_
 
 .. ......................................................................................
+
 * Sesión 09 (1:54:15) --- **Abr 8, 2024**
 
     **Selección y Evaluación de Modelos. Parte 2.** 
@@ -173,6 +185,7 @@ Programa Calendario
         * `Introducción al uso de métricas (19:39) <https://jdvelasq.github.io/curso_ml_con_sklearn/07_introduccion_al_uso_de_metricas/__index__.html>`_
 
 .. ......................................................................................
+
 * Sesión 10 (2:06:18) --- **Abr 15, 2024** --- 
 
     **Selección y Evaluación de Modelos. Parte 3.** 
@@ -183,6 +196,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 11 (2:10:14) --- **Abr 22, 2024** --- 
 
     **Transformaciones del Dataset**
@@ -197,6 +211,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 12 (1:59:20) --- **Abr 29, 2024** --- 
 
     **Aprendizaje supervisado parte 1**
@@ -207,6 +222,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 13 (3:15:39) --- **May 6, 2024** 
 
     **Aprendizaje supervisado parte 2**
@@ -232,6 +248,7 @@ Programa Calendario
     * **LAB** --- `Regresión Logística (mushrooms) <https://classroom.github.com/a/CvQCAqoF>`_.
 
 .. ......................................................................................
+
 * Sesión 14 --- **May 20, 2024**
 
     **Break para finaliación de actividades evaluativas**
@@ -242,6 +259,7 @@ Programa Calendario
 .. 12 Networking & graphics models
 .. 13 ChatGPT
 .. 14 Deep Learning
+
 * Sesión 15 --- **May 27, 2024**
 
     **Finalización del Curso**

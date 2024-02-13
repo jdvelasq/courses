@@ -38,7 +38,7 @@ Ofrecidos por el MIT.
 Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. ......................................................................................
+
 * Sesión 01 --- **Ago 10, 2024**
 
     * Presentación del curso.
@@ -46,7 +46,6 @@ Programa Calendario
     * Presentación Magistral: `Introducción a la Analítica Predictiva <https://jdvelasq.github.io/intro-analitica-predictiva/>`_ 
 
 
-.. ......................................................................................
 * Sesión 02 --- **Ago 17, 2024** --- 3:00:22 min 
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
@@ -69,7 +68,6 @@ Programa Calendario
 
         * `Datasets <https://jdvelasq.github.io/curso_ml_con_sklearn/c08_datasets.html>`_ 
 
-.. ......................................................................................
 * Sesión 03 --- **Ago 17, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-gridsearchcv.ipynb>`_.
