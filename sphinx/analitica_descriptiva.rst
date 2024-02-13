@@ -19,12 +19,6 @@ Sobre este curso
     * Reporte de notas al SIA: **Junio 7, 2024**.
 
 
-
-.. raw:: html
-
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-
-
 .. note::
 
     Los siguientes son cursos complementarios sobre programación en Python que pueden
@@ -37,10 +31,18 @@ Sobre este curso
 
 
 
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
+
+
+
 Programa Calendario
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. ......................................................................................
+
 * Sesión 01 --- **Feb 9, 2024**
 
     **Presentación del curso e introducción**
@@ -50,10 +52,14 @@ Programa Calendario
         * Conferencia `Introducción a la analitica <https://jdvelasq.github.io/conferencia_introduccion_a_la_analitica/>`_ 
 
 .. ......................................................................................
+
 * Sesión 02 --- **Feb 16, 2024**
 
-    **Programación en Python para Data Analytics**
-        
+
+    **Programación en Python para Data Analytics 1**
+
+        TALLER PRESENCIAL EVALUABLE: `Programación en Python MapReduce <https://classroom.github.com/a/DntfOFdu>`_ 
+
         * `Una introducción informal a Python (60:02) <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
 
         * `Herramientas de control de flujo (62:26) <https://jdvelasq.github.io/curso_python_tutorial/02_herramientas_de_control_de_flujo/__index__.html>`_ 
@@ -62,14 +68,15 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 03 --- **Feb 23, 2024**
 
     `Taller Presencial <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
 
 
-    **Programación en Python para Data Analytics**
+    **Programación en Python para Data Analytics 2**
 
-        * `Estructuras de datos 2 https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html`_ 
+        * `Estructuras de datos 2 <https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html>`_ 
 
         * `Entrada y salida <https://jdvelasq.github.io/curso_python_tutorial/06_entrada_y_salida/__index__.html>`_ 
 
@@ -93,6 +100,7 @@ Programa Calendario
     * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
 
 .. ......................................................................................
+
 * Sesión 04 (2:54:57) --- **Mar 1, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
@@ -105,6 +113,7 @@ Programa Calendario
         * **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
 
 .. ......................................................................................
+
 * Sesión 05 (2:15:28) --- **Mar 8, 2024**
 
     `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
@@ -126,6 +135,7 @@ Programa Calendario
 
         
 .. ......................................................................................
+
 * Sesión 06 --- **Mar 15, 2024**
 
     **Data Storytelling**
@@ -142,6 +152,7 @@ Programa Calendario
         * **LAB** --- `Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
 
 .. ......................................................................................
+
 * Sesión 07 --- **Mar 22, 2024**
 
     **Visualización de Datos**
@@ -152,6 +163,7 @@ Programa Calendario
 
 
 .. ......................................................................................
+
 * Sesión 08 --- **Abr 5, 2024**
 
 
