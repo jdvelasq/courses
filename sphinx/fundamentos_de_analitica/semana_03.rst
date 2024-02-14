@@ -5,8 +5,9 @@ Sesión 03 --- Feb 19
 
 **Data Analytics con Pandas**
 
-* TALLER PRESENCIAL EVALUABLE: `Word count con Pandas <https://classroom.github.com/a/b8bYnsMe>`_
+* TALLER PRESENCIAL EVALUABLE: `Wordcount con Pandas <https://classroom.github.com/a/b8bYnsMe>`_
 
+* TALLER PRESENCIAL EVALUABLE: 
 
 .. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
