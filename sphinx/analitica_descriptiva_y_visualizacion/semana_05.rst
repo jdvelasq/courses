@@ -16,5 +16,5 @@ Sesión 05 (2:15:28) --- Mar 8
 
 **Análisis Exploratorio de Datos**
 
-* `Estadística Descriptiva <jdvelasq.github.io/curso_fundametos_estadistica/02_estadistica_descriptiva/__index__.html>`_
+.. * `Estadística Descriptiva <jdvelasq.github.io/curso_fundametos_estadistica/02_estadistica_descriptiva/__index__.html>`_
 
