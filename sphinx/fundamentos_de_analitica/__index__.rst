@@ -37,9 +37,6 @@ Sobre este curso
 
 
 
-Programa Calendario
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. toctree::
     :titlesonly:
     :hidden:
