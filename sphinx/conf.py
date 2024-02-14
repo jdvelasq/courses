@@ -45,7 +45,7 @@ templates_path = ["_templates"]
 
 autosectionlabel_maxdepth = 10
 html_theme_options = {
-    "navigation_depth": 10,
+    # "navigation_depth": 10,
 }
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:

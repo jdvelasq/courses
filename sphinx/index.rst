@@ -7,9 +7,9 @@ Cursos
     :hidden:
     :glob:
 
-    analitica_descriptiva
-    analitica_predictiva
-    productos_de_datos
+    analitica_descriptiva_y_visualizacion/__index__
+    analitica_predictiva/__index__
+    productos_de_datos/__index__
     
 .. toctree::
     :caption: Pregrado
@@ -17,7 +17,7 @@ Cursos
     :titlesonly:
     :glob:
 
-    fundamentos_de_analitica
+    fundamentos_de_analitica/__index__
 
 Todos los cursos se rigen bajo los aspectos generales descritos a continuación.
 
