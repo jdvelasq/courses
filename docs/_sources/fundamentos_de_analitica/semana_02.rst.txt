@@ -27,5 +27,5 @@ Sesión 02 --- Feb 12
 
 * NBviewer https://nbviewer.jupyter.org
 
-* **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
+.. * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 

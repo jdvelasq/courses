@@ -12,4 +12,4 @@ Sesión 06 --- Mar 15
 
 * `SQLAlchemy <https://jdvelasq.github.io/curso_databases_en_python/02_sqlalchemy/__index__.html>`_
 
-* **LAB** --- `Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
+.. * **LAB** --- `Programacion en SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.

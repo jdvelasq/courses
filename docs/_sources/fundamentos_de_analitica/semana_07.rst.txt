@@ -5,6 +5,6 @@ Sesión 07 --- Mar 18
 
 **Fundamentos de ML. Parte 1.**
 
-    * `Fundamentos de ML (1:59:47) <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_
+* `Fundamentos de ML (1:59:47) <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_
 
 

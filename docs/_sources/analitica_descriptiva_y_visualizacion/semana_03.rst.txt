@@ -26,5 +26,5 @@ Ejemplos y Casos de Aplicación
 
 * NBviewer https://nbviewer.jupyter.org
 
-* **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
+.. * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
 

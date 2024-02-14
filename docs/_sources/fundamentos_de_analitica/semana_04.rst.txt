@@ -11,5 +11,5 @@ Sesión 04 --- Feb 26
 
 * `Limpieza de datos con pandas (1:17:17) <https://jdvelasq.github.io/curso_python_HOWTOs/04_limpieza_de_datos/__index__.html>`_
 
-* **LAB** --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/x8BI2I6n>`_.
+.. * **LAB** --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/x8BI2I6n>`_.
 
