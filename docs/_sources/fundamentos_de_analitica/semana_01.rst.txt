@@ -5,6 +5,6 @@ Sesión 01 --- Feb 5
 
 * Presentación del curso
 
-* Conferencia: `Introducción a la Analitica <https://jdvelasq.github.io/conferencia_introduccion_a_la_analitica/>`_ 
+* Conferencia: `Introducción a la Analitica <https://jdvelasq.github.io/conferencia_intro_a_la_analitica/>`_ 
 
 
