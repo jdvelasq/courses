@@ -5,6 +5,8 @@ Sesión 04 --- Feb 26
 
 **Ingestion y Limpieza de Datos**
 
+* TALLER PRESENCIAL EVALUABLE: `Limpieza de datos fingerprint <https://classroom.github.com/a/2seH9FCL>`_
+
 * `Ingestión de datos (58:11) <https://jdvelasq.github.io/curso_python_HOWTOs/01_ingestion_de_datos/__index__.html>`_
 
 * **LAB** --- `Ingestión de datos, clusters report <https://classroom.github.com/a/aHB1KeDD>`_.

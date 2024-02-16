@@ -6,13 +6,15 @@ Sesión 05 (2:15:28) --- Mar 8
 
 **Ingestión, Limpieza y Visualización de Datos**
 
+* TALLER PRESENCIAL EVALUABLE (link pendiente): `Limpieza de datos fingerprint <>`_
+
 * `Ingestión de datos (58:11) <https://jdvelasq.github.io/curso_python_HOWTOs/01_ingestion_de_datos/__index__.html>`_
 
-* **LAB** --- `Ingestión de datos, clusters report <https://classroom.github.com/a/ohpsTgJk>`_.
+.. * **LAB** --- `Ingestión de datos, clusters report (link pendiente) <>`_.
 
 * `Limpieza de datos con pandas (1:17:17) <https://jdvelasq.github.io/curso_python_HOWTOs/04_limpieza_de_datos/__index__.html>`_
 
-* **LAB** --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/6FTrLjGQ>`_.
+.. * **LAB** --- `Limpieza de datos, solicitudes de credito (link pendiente) <>`_.
 
 **Análisis Exploratorio de Datos**
 
