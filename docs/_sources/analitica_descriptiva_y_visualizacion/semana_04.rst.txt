@@ -13,4 +13,4 @@ Videos: 2:54:57
 
 * `Data Analytics con Pandas (2:44:57) <https://jdvelasq.github.io/curso_data_analytics_con_pandas/>`_
 
-.. * **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/9NRsHgGJ>`_.
+* **LAB** --- `Programacion usando Pandas <https://classroom.github.com/a/2PQ2iGM4>`_.
