@@ -1,10 +1,19 @@
 Sesión 13 --- May 6
 -------------------------------------------------------------------------------
 
-
 3:15:39
 
 **Aprendizaje supervisado parte 2**
+
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
+* Taller Presencial 0
+
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 * `Clasificadores clásicos (54:29) <https://jdvelasq.github.io/curso_ml_con_sklearn/25_clasificadores_clasicos/__index__.html>`_ 
 
@@ -16,6 +25,10 @@ Sesión 13 --- May 6
 **Aprendizaje No Supervisado**
 
 * `Clustering (1:03:03) <https://jdvelasq.github.io/curso_ml_con_sklearn/46_clustering/__index__.html>`_ 
+
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 
 .. * **LAB** --- `Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Y-t0TIbS>`_.

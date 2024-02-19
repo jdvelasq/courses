@@ -3,7 +3,15 @@ Sesión 02 --- Feb 12
 
 **Programación en Python para Data Analytics (Repaso)**
 
-* TALLER PRESENCIAL EVALUABLE: `Programación en Python MapReduce <https://classroom.github.com/a/LF7tlCYz>`_ 
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
+* Taller Presencial 01 `Programación en Python MapReduce <https://classroom.github.com/a/LF7tlCYz>`_ 
+
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 * `Una introducción informal a Python <https://jdvelasq.github.io/curso_python_tutorial/01_una_introduccion_informal/__index__.html>`_ 
 
@@ -27,5 +35,9 @@ Sesión 02 --- Feb 12
 
 * NBviewer https://nbviewer.jupyter.org
 
-.. * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
+* Lab 01 `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 
