@@ -10,7 +10,7 @@ Fundamentos de Analitica
 
 * Finalización de clases: **Junio 1, 2024** (Mayo 6, 2024).
 
-* Entrega de talleres: **Mayo 14, 2024**.
+* Entrega de talleres: **Mayo 20, 2024**.
 
 * Reporte de notas al SIA: **Junio 7, 2024**.
 
