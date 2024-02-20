@@ -11,6 +11,8 @@ Sesión 04 --- Feb 26
 
 * Taller Presencial 03 `Limpieza de datos fingerprint <https://classroom.github.com/a/2seH9FCL>`_
 
+* Taller Presencial 04 `Limpieza de datos n-gram <https://classroom.github.com/a/JitDSyV_>`_
+
 .. raw:: html
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
