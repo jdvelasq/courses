@@ -3,8 +3,6 @@ Sesión 03 --- Feb 19
 
 2:54:57
 
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
-
 **Data Analytics con Pandas**
 
 .. raw:: html

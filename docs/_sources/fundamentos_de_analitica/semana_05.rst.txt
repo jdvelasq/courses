@@ -7,7 +7,9 @@ Sesión 05 --- Mar 4
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 05 
+* Taller Presencial 05 `Folium world map <https://classroom.github.com/a/bI84ZdVD>`_
+
+* Taller Presencial 06 `Matplotlib networkx <https://classroom.github.com/a/gHzcnh2t>`_
 
 .. raw:: html
 
