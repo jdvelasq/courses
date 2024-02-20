@@ -19,4 +19,4 @@ Sesión 06 --- Mar 15
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-.. * Lab 05 `SQLite3 <https://classroom.github.com/a/oR8qVkVP>`_.
+* Lab 05 `SQLite3 <https://classroom.github.com/a/pKu2vCmR>`_.
