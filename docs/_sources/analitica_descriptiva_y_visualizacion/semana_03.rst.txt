@@ -1,10 +1,12 @@
 Sesión 03 --- Feb 23
 -------------------------------------------------------------------------------
 
-`Taller Presencial <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-programacion_en_python.ipynb>`_.
-
 
 Programación en Python para Data Analytics 2
+
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 * `Estructuras de datos 2 <https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html>`_ 
 
@@ -16,7 +18,9 @@ Programación en Python para Data Analytics 2
 
 * `Librería Estandar 2 <https://jdvelasq.github.io/curso_python_tutorial/10_libreria_estandar_parte_2/__index__.html>`_ 
 
+.. raw:: html
 
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
 Ejemplos y Casos de Aplicación
 
@@ -26,5 +30,9 @@ Ejemplos y Casos de Aplicación
 
 * NBviewer https://nbviewer.jupyter.org
 
-.. * **LAB** --- `Programacion básica en Python <https://classroom.github.com/a/TeLjqxHO>`_.
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
+* Lab 01 `Programacion básica en Python <https://classroom.github.com/a/AtJtJ5ml>`_.
 
