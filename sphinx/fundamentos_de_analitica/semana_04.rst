@@ -29,3 +29,4 @@ Sesión 04 --- Feb 26
 
 * Lab 04 `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/x8BI2I6n>`_.
 
+* Lab 05 `Ingestión de datos textuales <https://classroom.github.com/a/C0Cdw1Al>`_.
