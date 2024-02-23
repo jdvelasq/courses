@@ -7,8 +7,5 @@ Sesión 02 --- Feb 17
 
 * `Projects <https://jdvelasq.github.io/curso_mlops_con_mlflow/c03.html>`_
 
-* `Models <https://jdvelasq.github.io/curso_mlops_con_mlflow/c04.html>`_
-
-* `Registry <https://jdvelasq.github.io/curso_mlops_con_mlflow/c05.html>`_
 
 
