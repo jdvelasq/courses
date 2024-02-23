@@ -15,9 +15,9 @@ Sesión 08 --- Abr 1
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* `Introducción a sklearn (21:49) <https://youtu.be/ewMM7VNyGz8>`_
+* `Introducción a sklearn (21:49) <https://jdvelasq.github.io/curso_ml_con_sklearn/01_introduccion/01_introduccion.html>`_
 
-* `Trabajo con datos textuales (21:40) <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=4556s>`_
+* `Trabajo con datos textuales (21:40) <https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/06_trabajo_con_datos_textuales.html>`_
 
 .. raw:: html
 
