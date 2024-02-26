@@ -9,7 +9,7 @@ Sesión 10 --- Abr 15
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 0
+* Taller Presencial 12: `Ajuste de hipperparámetros <https://classroom.github.com/a/IkAVAZtD>`_
 
 .. raw:: html
 
