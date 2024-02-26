@@ -7,7 +7,7 @@ Sesión 06 --- Mar 11
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 0
+* Taller Presencial 07:
 
 .. raw:: html
 

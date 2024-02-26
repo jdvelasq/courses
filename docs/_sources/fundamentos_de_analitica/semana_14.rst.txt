@@ -6,7 +6,7 @@ Break para finaliación de actividades evaluativas
 .. note::
 
     El plazo máximo para subida de todas las actividades evaluativase
-    es el 20 de mayo a las 23:59.
+    es el 27 de mayo a las 23:59.
 
 
 

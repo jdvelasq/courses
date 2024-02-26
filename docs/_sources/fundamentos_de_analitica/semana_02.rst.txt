@@ -7,7 +7,7 @@ Sesión 02 --- Feb 12
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 01 `Programación en Python MapReduce <https://classroom.github.com/a/LF7tlCYz>`_ 
+* Taller Presencial 01: `Programación en Python MapReduce <https://classroom.github.com/a/LF7tlCYz>`_ 
 
 .. raw:: html
 
