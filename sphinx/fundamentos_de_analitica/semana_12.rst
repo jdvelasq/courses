@@ -9,7 +9,7 @@ Sesión 12 --- Abr 29
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 0
+* Taller Presencial 14: `Regresión con selección de regresores <https://classroom.github.com/a/fD3sCQBq>`_
 
 .. raw:: html
 
