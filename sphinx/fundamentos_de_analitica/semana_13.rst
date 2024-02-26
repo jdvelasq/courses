@@ -9,7 +9,8 @@ Sesión 13 --- May 6
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 0
+* Taller Presencial 15: `Clasificación con selección de regresores <https://classroom.github.com/a/wBApwA7U>`_
+
 
 .. raw:: html
 
