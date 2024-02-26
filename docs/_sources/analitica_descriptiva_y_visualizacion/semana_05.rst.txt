@@ -12,6 +12,19 @@ Sesión 05 --- Mar 8
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
+.. note::
+
+   `OpenRefine <https://openrefine.org/>`_ es una herramienta frecuentemente utilizada para 
+   la limpieza de datos. El vinculo lleva a la página de descarga. Los videos tutoriales de 
+   Google son los siguientes:
+
+   * `Google Refine 2.0 - Introduction (1 of 3) <https://youtu.be/B70J_H_zAWM?si=o6BcOAyXGmL6k604>`_    
+
+   * `Google Refine 2.0 - Data Transformation (2 of 3) <https://youtu.be/cO8NVCs_Ba0?si=X1isaZ5vFOozml-E>`_    
+   
+   * `Google Refine 2.0 - Data Augmentation (3 of 3) <https://youtu.be/5tsyz3ibYzk?si=itWi4hcTmg8kh0SH>`_    
+
+
 * Taller Presencial 03 `Limpieza de datos fingerprint <https://classroom.github.com/a/4wGGliI0>`_
 
 * Taller Presencial 04 `Limpieza de datos ngram <https://classroom.github.com/a/J1uxyqcC>`_
