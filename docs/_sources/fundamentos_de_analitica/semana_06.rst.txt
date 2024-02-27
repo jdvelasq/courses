@@ -7,7 +7,7 @@ Sesión 06 --- Mar 11
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 07:
+* Taller Presencial 07: `Bootstrap <https://classroom.github.com/a/fT716F9t>`_
 
 .. raw:: html
 
