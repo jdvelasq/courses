@@ -42,7 +42,7 @@ componente de aprendizaje de máquinas en el curso:
 
 * Lab 07 `Dataset Mushrooms <https://classroom.github.com/a/-QB4F5oi>`_.
 
-
+* Lab 08 `Dataset German <https://classroom.github.com/a/wm0W15RP>`_.
 
 .. raw:: html
 
