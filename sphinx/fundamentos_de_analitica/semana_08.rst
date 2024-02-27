@@ -33,3 +33,17 @@ Sesión 08 --- Abr 1
 .. raw:: html
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
+A continuación se listan los laboratorios con que se evaluará la 
+componente de aprendizaje de máquinas en el curso:
+
+
+* Lab 06 `Dataset Diabetes <https://classroom.github.com/a/f9pFTCWw>`_.
+
+
+
+
+.. raw:: html
+
+   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+
