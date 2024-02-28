@@ -7,9 +7,9 @@ Sesión 07 --- Mar 22
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller presencial 06 `Folium World Map <https://classroom.github.com/a/Fz_IL-JZ>`_
+* Taller presencial 06: `Folium World Map <https://classroom.github.com/a/Fz_IL-JZ>`_
 
-* Taller presencial 07 `Matplotlib Networkx <https://classroom.github.com/a/n4HqyJOj>`_
+* Taller presencial 07: `Matplotlib Networkx <https://classroom.github.com/a/n4HqyJOj>`_
 
 .. raw:: html
 
