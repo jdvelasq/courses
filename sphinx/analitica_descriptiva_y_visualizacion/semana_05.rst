@@ -25,9 +25,9 @@ Sesión 05 --- Mar 8
    * `Google Refine 2.0 - Data Augmentation (3 of 3) <https://youtu.be/5tsyz3ibYzk?si=itWi4hcTmg8kh0SH>`_    
 
 
-* Taller Presencial 03 `Limpieza de datos fingerprint <https://classroom.github.com/a/4wGGliI0>`_
+* Taller Presencial 03: `Limpieza de datos fingerprint <https://classroom.github.com/a/4wGGliI0>`_
 
-* Taller Presencial 04 `Limpieza de datos ngram <https://classroom.github.com/a/J1uxyqcC>`_
+* Taller Presencial 04: `Limpieza de datos ngram <https://classroom.github.com/a/J1uxyqcC>`_
 
 .. raw:: html
 
