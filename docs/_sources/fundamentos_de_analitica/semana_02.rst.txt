@@ -13,7 +13,7 @@ Sesión 02 --- Feb 12
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* `Una introducción informal a Python https://jdvelasq.github.io/curso_python_para_data_analytics/01_una_introduccion_informal/__index__.html>`_ 
+* `Una introducción informal a Python <https://jdvelasq.github.io/curso_python_para_data_analytics/01_una_introduccion_informal/__index__.html>`_ 
 
 * `Herramientas de control de flujo <https://jdvelasq.github.io/curso_python_para_data_analytics/02_herramientas_de_control_de_flujo/__index__.html>`_ 
 
