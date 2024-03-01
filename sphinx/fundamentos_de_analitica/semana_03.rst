@@ -5,6 +5,21 @@ Sesión 03 --- Feb 19
 
 **Data Analytics con Pandas**
 
+.. note:: Alternativas a Pandas
+
+   * Pandas: https://pandas.pydata.org/
+
+   * Polars: https://pola.rs/
+
+   * PyTables: https://www.pytables.org/
+
+   * Dask: https://dask.org/
+
+   * Modin: https://modin.readthedocs.io/en/latest/
+   
+   * Vaex: https://vaex.io/
+
+
 .. raw:: html
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
