@@ -8,15 +8,15 @@ Programación en Python para Data Analytics 2
 
    <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* `Estructuras de datos 2 <https://jdvelasq.github.io/curso_python_tutorial/04_estructuras_de_datos_parte_2/__index__.html>`_ 
+* `Estructuras de datos 2 <https://jdvelasq.github.io/curso_python_para_data_analytics/04_estructuras_de_datos_parte_2/__index__.html>`_ 
 
-* `Entrada y salida <https://jdvelasq.github.io/curso_python_tutorial/06_entrada_y_salida/__index__.html>`_ 
+* `Entrada y salida <https://jdvelasq.github.io/curso_python_para_data_analytics/06_entrada_y_salida/__index__.html>`_ 
 
-* `Errores y Excepciones <https://jdvelasq.github.io/curso_python_tutorial/07_errores_y_excepciones/__index__.html>`_ 
+* `Errores y Excepciones <https://jdvelasq.github.io/curso_python_para_data_analytics/07_errores_y_excepciones/__index__.html>`_ 
 
-* `Librería Estandar 1 <https://jdvelasq.github.io/curso_python_tutorial/09_libreria_estandar_parte_1/__index__.html>`_ 
+* `Librería Estandar 1 <https://jdvelasq.github.io/curso_python_para_data_analytics/09_libreria_estandar_parte_1/__index__.html>`_ 
 
-* `Librería Estandar 2 <https://jdvelasq.github.io/curso_python_tutorial/10_libreria_estandar_parte_2/__index__.html>`_ 
+* `Librería Estandar 2 <https://jdvelasq.github.io/curso_python_para_data_analytics/10_libreria_estandar_parte_2/__index__.html>`_ 
 
 .. raw:: html
 
