@@ -36,11 +36,11 @@ A continuación se listan los laboratorios con que se evaluará la
 componente de aprendizaje de máquinas en el curso:
 
 
-* Lab 07 --- `Dataset Diabetes <https://classroom.github.com/a/f9pFTCWw>`_.
+* Lab 07 --- `Dataset Diabetes <https://classroom.github.com/a/f9pFTCWw>`_
 
-* Lab 08 --- `Dataset Mushrooms <https://classroom.github.com/a/-QB4F5oi>`_.
+* Lab 08 --- `Dataset Mushrooms <https://classroom.github.com/a/-QB4F5oi>`_
 
-* Lab 09 --- `Dataset German <https://classroom.github.com/a/wm0W15RP>`_.
+* Lab 09 --- `Dataset German <https://classroom.github.com/a/wm0W15RP>`_
 
 .. raw:: html
 
