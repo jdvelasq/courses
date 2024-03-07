@@ -39,5 +39,5 @@ Sesión 02 --- Feb 12
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 01 --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
+* Lab 01 --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_
 
