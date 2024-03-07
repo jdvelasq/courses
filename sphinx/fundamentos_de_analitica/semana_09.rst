@@ -3,7 +3,7 @@ Sesión 09 --- Abr 8
 
 1:54:15 
 
-**Selección y Evaluación de Modelos. Parte 2.** 
+**Métricas** 
 
 .. raw:: html
 
