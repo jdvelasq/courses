@@ -5,7 +5,7 @@ Sesión 01 --- Feb 5
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * Presentación del curso
 

@@ -3,7 +3,7 @@ Analítica Predictiva
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
 * Inicio de clases: **Agosto 10, 2024**
@@ -17,7 +17,7 @@ Analítica Predictiva
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
 .. toctree::

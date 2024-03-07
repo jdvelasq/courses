@@ -3,7 +3,7 @@ Fundamentos de Analitica
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
 * Inicio de clases: **Febrero 5, 2024**
@@ -47,5 +47,3 @@ Fundamentos de Analitica
     semana_11
     semana_12
     semana_13
-    semana_14
-    semana_15

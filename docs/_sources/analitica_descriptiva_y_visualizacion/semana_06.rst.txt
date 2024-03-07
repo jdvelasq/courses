@@ -3,7 +3,7 @@ Sesión 06 --- Mar 15
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 **Data Storytelling**
 
@@ -11,7 +11,7 @@ Sesión 06 --- Mar 15
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 **Bases de Datos en Python**
 
@@ -21,6 +21,6 @@ Sesión 06 --- Mar 15
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 05: `SQL <https://classroom.github.com/a/pKu2vCmR>`_.
+* Lab 05 --- `SQL <https://classroom.github.com/a/pKu2vCmR>`_.

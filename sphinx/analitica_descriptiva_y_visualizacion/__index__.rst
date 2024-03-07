@@ -3,7 +3,7 @@ Analítica Descriptiva y Visualización de Datos
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
 * Inicio de clases: **Febrero 5, 2024**
@@ -29,7 +29,7 @@ Analítica Descriptiva y Visualización de Datos
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 .. toctree::
     :titlesonly:

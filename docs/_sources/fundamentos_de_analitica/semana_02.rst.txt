@@ -5,13 +5,13 @@ Sesión 02 --- Feb 12
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 01: `Programación en Python MapReduce <https://classroom.github.com/a/LF7tlCYz>`_ 
+* Taller Presencial 01 --- `Programación en Python MapReduce <https://classroom.github.com/a/LF7tlCYz>`_ 
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * `Una introducción informal a Python <https://jdvelasq.github.io/curso_python_para_data_analytics/01_una_introduccion_informal/__index__.html>`_ 
 
@@ -37,7 +37,7 @@ Sesión 02 --- Feb 12
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 01 `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
+* Lab 01 --- `Programacion básica en Python <https://classroom.github.com/a/LJ-6NQ-L>`_.
 

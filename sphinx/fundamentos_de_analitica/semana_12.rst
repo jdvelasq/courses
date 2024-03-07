@@ -7,20 +7,24 @@ Sesión 12 --- Abr 29
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 14: `Regresión con selección de regresores <https://classroom.github.com/a/fD3sCQBq>`_
+* Taller Presencial 14 --- `Regresión con selección de variables <https://classroom.github.com/a/fD3sCQBq>`_
 
-.. raw:: html
-
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-
-* `Selección de características (1:03:05) <https://jdvelasq.github.io/curso_ml_con_sklearn/39_seleccion_de_caracterisiticas/__index__.html>`_
-
-* `Regresores clásicos (56:14) <https://jdvelasq.github.io/curso_ml_con_sklearn/24_regresores_clasicos/__index__.html>`_ 
+* Taller Presencial 15 --- `Clasificación con selección de variables <https://classroom.github.com/a/wBApwA7U>`_
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+* `Máquinas de vectores de soporte (43:12) <https://jdvelasq.github.io/curso_ml_con_sklearn/30_maquinas_de_vectores_de_soporte/__index__.html>`_         
+
+* `Arboles de decisión (34:55) <https://jdvelasq.github.io/curso_ml_con_sklearn/36_arboles_de_decision/__index__.html>`_ 
+
+* `Redes neuronales artificiales (40:13) <https://jdvelasq.github.io/curso_ml_con_sklearn/43_modelos_de_redes_neuronales/__index__.html>`_
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 

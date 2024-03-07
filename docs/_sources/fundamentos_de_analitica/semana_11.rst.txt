@@ -7,25 +7,28 @@ Sesión 11 --- Abr 22
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 13: `Pipelines <https://classroom.github.com/a/sU6o4Pk4>`_
-
-
-.. raw:: html
-
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-
-* `Pipelines y estimadores compuestos (38:49) <https://jdvelasq.github.io/curso_ml_con_sklearn/c05_transformaciones.html>`_
-
-* `Extracción de características (38:29) <https://jdvelasq.github.io/curso_ml_con_sklearn/18_extraccion_de_caracteristicas/__index__.html>`_
-
-* `Preprocesamiento de datos (45:48) <https://jdvelasq.github.io/curso_ml_con_sklearn/19_preprocesamiento_de_datos/__index__.html>`_
-
-* `Transformación de la variable de salida (7:08) <https://jdvelasq.github.io/curso_ml_con_sklearn/23_transformacion_de_la_variable_de_salida/__index__.html>`_
+* Taller Presencial 13 --- `Pipelines <https://classroom.github.com/a/sU6o4Pk4>`_
 
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+* `Selección de características (1:03:05) <https://jdvelasq.github.io/curso_ml_con_sklearn/39_seleccion_de_caracterisiticas/__index__.html>`_
+
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+* `Regresores clásicos (56:14) <https://jdvelasq.github.io/curso_ml_con_sklearn/24_regresores_clasicos/__index__.html>`_ 
+
+* `Clasificadores clásicos (54:29) <https://jdvelasq.github.io/curso_ml_con_sklearn/25_clasificadores_clasicos/__index__.html>`_ 
+
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

@@ -1,20 +1,26 @@
 Sesión 07 --- Mar 18
 -------------------------------------------------------------------------------
 
-1:59:47
-
-**Fundamentos de ML. Parte 1.**
+**Introducción al Machine Learning para Analytics con scikit-learn**
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 08:
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+* Taller Presencial 08 --- 
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+* `Introducción a sklearn (21:49) <https://jdvelasq.github.io/curso_ml_con_sklearn/01_introduccion/01_introduccion.html>`_
+
+* `Trabajo con datos textuales (21:40) <https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/06_trabajo_con_datos_textuales.html>`_
 
 * `Fundamentos de ML (1:59:47) <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
-
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

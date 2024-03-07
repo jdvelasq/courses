@@ -6,7 +6,7 @@ Programación en Python para Data Analytics 2
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * `Estructuras de datos 2 <https://jdvelasq.github.io/curso_python_para_data_analytics/04_estructuras_de_datos_parte_2/__index__.html>`_ 
 
@@ -20,7 +20,7 @@ Programación en Python para Data Analytics 2
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 Ejemplos y Casos de Aplicación
 
@@ -32,7 +32,7 @@ Ejemplos y Casos de Aplicación
 
 .. raw:: html
 
-   <hr style="height:2px;border-width:0;color:gray;background-color:gray">
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * Lab 01: `Programacion básica en Python <https://classroom.github.com/a/AtJtJ5ml>`_.
 
