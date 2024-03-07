@@ -1,9 +1,7 @@
 Sesión 12 --- Abr 29
 -------------------------------------------------------------------------------
 
-1:59:20
-
-**Aprendizaje supervisado parte 1**
+**Aprendizaje supervisado con modelos no lineales**
 
 .. raw:: html
 
