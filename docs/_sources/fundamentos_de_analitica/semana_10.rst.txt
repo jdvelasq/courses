@@ -1,9 +1,7 @@
 Sesión 10 --- Abr 15
 -------------------------------------------------------------------------------
 
-2:06:18
-
-**Selección y Evaluación de Modelos. Parte 3.** 
+**Empaquetado de modelos** 
 
 .. raw:: html
 

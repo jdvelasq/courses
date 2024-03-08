@@ -38,6 +38,6 @@ Sesión 03 --- Feb 19
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 02 --- `Pandas <https://classroom.github.com/a/UEifK_xF>`_.
+* Lab 02 --- `Pandas <https://classroom.github.com/a/UEifK_xF>`_
 
 

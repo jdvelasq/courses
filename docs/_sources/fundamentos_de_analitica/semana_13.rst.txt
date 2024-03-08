@@ -1,24 +1,12 @@
 Sesión 13 --- May 6
 -------------------------------------------------------------------------------
 
-3:15:39
-
-**Aprendizaje supervisado parte 2**
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-
-
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-
-
 **Aprendizaje No Supervisado**
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
 
 * `Clustering (1:03:03) <https://jdvelasq.github.io/curso_ml_con_sklearn/46_clustering/__index__.html>`_ 
 

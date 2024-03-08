@@ -1,8 +1,6 @@
 Sesión 04 --- Mar 1
 -------------------------------------------------------------------------------
 
-Videos: 2:54:57
-
 **Data Analytics con Pandas**
 
 .. note:: Alternativas a Pandas
@@ -20,12 +18,12 @@ Videos: 2:54:57
    * Vaex: https://vaex.io/
 
 
-
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * Taller Presencial 02 --- `WordCount con Pandas <https://classroom.github.com/a/_wRablVi>`_ 
+
 
 .. raw:: html
 

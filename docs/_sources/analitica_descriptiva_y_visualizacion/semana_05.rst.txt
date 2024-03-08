@@ -1,8 +1,6 @@
 Sesión 05 --- Mar 8
 -------------------------------------------------------------------------------
 
-2:15:28
-
 .. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
 
 
@@ -38,14 +36,6 @@ Sesión 05 --- Mar 8
 
 * `Limpieza de datos con pandas (1:17:17) <https://jdvelasq.github.io/curso_HOWTOs/04_limpieza_de_datos/__index__.html>`_
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-
-**Análisis Exploratorio de Datos**
-
-* `Estadística Descriptiva <jdvelasq.github.io/curso_fundametos_estadistica/02_estadistica_descriptiva/__index__.html>`_
 
 .. raw:: html
 

@@ -3,7 +3,7 @@ Sesión 11 --- Abr 22
 
 2:10:14
 
-**Transformaciones del Dataset**
+**Modelos clásicos y selección de variables**
 
 .. raw:: html
 

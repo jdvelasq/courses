@@ -35,7 +35,7 @@ Sesión 05 --- Mar 4
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-* Lab 06 --- `Diseño de un gráfico en Matplotlib <https://classroom.github.com/a/popwA3w7>`_.
+* Lab 06 --- `Diseño de un gráfico en Matplotlib <https://classroom.github.com/a/popwA3w7>`_
 
 .. raw:: html
 
