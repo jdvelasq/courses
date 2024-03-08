@@ -1,26 +1,32 @@
 Sesión 06 --- Mar 15
 -------------------------------------------------------------------------------
 
-.. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Data Storytelling**
-
-* `Fundamentos de Narrativa de Datos <https://github.com/jdvelasq/conferencia_data_storytelling>`_
+**Visualización de Datos**
 
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Bases de Datos en Python**
+* Taller presencial 06 --- `Folium World Map <https://classroom.github.com/a/Fz_IL-JZ>`_
 
-* `SQLite3 <https://jdvelasq.github.io/curso_databases_en_python/01_sqlite3/__index__.html>`_
-
-* `SQLAlchemy <https://jdvelasq.github.io/curso_databases_en_python/02_sqlalchemy/__index__.html>`_
+* Taller presencial 07 --- `Matplotlib Networkx <https://classroom.github.com/a/n4HqyJOj>`_
 
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 05 --- `SQL <https://classroom.github.com/a/pKu2vCmR>`_.
+* `Visualización de datos en Matplotlib <https://jdvelasq.github.io/curso_visualizacion_de_datos/01_matplotlib/__index__.html>`_
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+* Lab 05 --- `Matplotlib news <https://classroom.github.com/a/_IgTyCnm>`_.
+
+* Lab 06 --- `Matplotlib dashboard <https://classroom.github.com/a/ELnwPq7a>`_.
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
