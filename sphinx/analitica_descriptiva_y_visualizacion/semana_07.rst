@@ -13,10 +13,6 @@ Sesión 07 --- Mar 22
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
 
 **Análisis Exploratorio de Datos**
 
