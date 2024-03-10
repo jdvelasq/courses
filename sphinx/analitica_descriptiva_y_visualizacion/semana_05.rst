@@ -45,4 +45,4 @@ Sesión 05 --- Mar 8
 
 * Lab 04 --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/oR24dbQN>`_
 
-* Lab 05 --- `Ingestión de datos textuales <https://classroom.github.com/a/u4ZLUCfd>`_
+* Lab 05 --- `Ingestión de datos textuales <https://classroom.github.com/a/h1gLQyit>`_
