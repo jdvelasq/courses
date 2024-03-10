@@ -24,7 +24,7 @@ Sesión 06 --- Mar 15
 
 * Lab 06 --- `Matplotlib news <https://classroom.github.com/a/_IgTyCnm>`_
 
-* Lab 07 --- `Matplotlib dashboard <https://classroom.github.com/a/Uctp6VfK>`_
+* Lab 07 --- `Matplotlib dashboard <https://classroom.github.com/a/rEWHviJ0>`_
 
 .. raw:: html
 
