@@ -41,7 +41,8 @@ Sesión 05 --- Mar 8
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 03 --- `Ingestión de datos, clusters report <https://classroom.github.com/a/xuwqNNwL>`_.
+* Lab 03 --- `Ingestión de datos, clusters report <https://classroom.github.com/a/xuwqNNwL>`_
 
-* Lab 04 --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/oR24dbQN>`_.
+* Lab 04 --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/oR24dbQN>`_
 
+* Lab 05 --- `Ingestión de datos textuales <https://classroom.github.com/a/u4ZLUCfd>`_

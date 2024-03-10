@@ -33,4 +33,4 @@ Sesión 07 --- Mar 22
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 07 --- `SQL <https://classroom.github.com/a/pKu2vCmR>`_.
+* Lab 08 --- `SQL <https://classroom.github.com/a/pKu2vCmR>`_
