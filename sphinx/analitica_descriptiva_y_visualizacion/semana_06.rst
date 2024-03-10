@@ -22,9 +22,9 @@ Sesión 06 --- Mar 15
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 05 --- `Matplotlib news <https://classroom.github.com/a/_IgTyCnm>`_.
+* Lab 06 --- `Matplotlib news <https://classroom.github.com/a/_IgTyCnm>`_
 
-* Lab 06 --- `Matplotlib dashboard <https://classroom.github.com/a/Uctp6VfK>`_.
+* Lab 07 --- `Matplotlib dashboard <https://classroom.github.com/a/Uctp6VfK>`_
 
 .. raw:: html
 
