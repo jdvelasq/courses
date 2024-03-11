@@ -16,7 +16,7 @@ Sesión 07 --- Mar 22
 
 **Análisis Exploratorio de Datos**
 
-* `Estadística Descriptiva <jdvelasq.github.io/curso_fundametos_estadistica/02_estadistica_descriptiva/__index__.html>`_
+* `Estadística Descriptiva <https://jdvelasq.github.io/curso_estadistica_para_analytics/02_estadistica_descriptiva/__index__.html>`_
 
 
 **Bases de Datos en Python**
