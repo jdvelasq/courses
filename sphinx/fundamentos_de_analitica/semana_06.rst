@@ -13,7 +13,10 @@ Sesión 06 --- Mar 11
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* `Análisis Exploratorio <https://jdvelasq.github.io/curso_fundametos_estadistica/index.html>`_
+
+* `Estadñstica Inferencial <https://jdvelasq.github.io/curso_estadistica_para_analytics/01_estadistica_inferencial/__index__.html#>`_
+
+* `Estadística Descriptiva <https://jdvelasq.github.io/curso_estadistica_para_analytics/02_estadistica_descriptiva/__index__.html>`_
 
 .. raw:: html
 
