@@ -8,9 +8,9 @@ Sesión 06 --- Mar 15
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller presencial 06 --- `Folium World Map <https://classroom.github.com/a/Fz_IL-JZ>`_
+* Taller Presencial 06 --- `Folium World Map <https://classroom.github.com/a/Fz_IL-JZ>`_
 
-* Taller presencial 07 --- `Matplotlib Networkx <https://classroom.github.com/a/n4HqyJOj>`_
+* Taller Presencial 07 --- `Matplotlib Networkx <https://classroom.github.com/a/n4HqyJOj>`_
 
 .. raw:: html
 
@@ -25,8 +25,4 @@ Sesión 06 --- Mar 15
 * Lab 06 --- `Matplotlib news <https://classroom.github.com/a/_IgTyCnm>`_
 
 * Lab 07 --- `Matplotlib dashboard <https://classroom.github.com/a/rEWHviJ0>`_
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

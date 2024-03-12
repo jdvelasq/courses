@@ -38,4 +38,4 @@ Sesión 04 --- Mar 1
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-* Lab 02 --- `Pandas <https://classroom.github.com/a/2PQ2iGM4>`_.
+* Lab 02 --- `Pandas <https://classroom.github.com/a/2PQ2iGM4>`_

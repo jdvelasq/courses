@@ -34,5 +34,5 @@ Ejemplos y Casos de Aplicación
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 01: `Programacion básica en Python <https://classroom.github.com/a/AtJtJ5ml>`_.
+* Lab 01: `Programacion básica en Python <https://classroom.github.com/a/AtJtJ5ml>`_
 

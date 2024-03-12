@@ -1,6 +1,19 @@
 Sesión 08 --- Abr 5
 -------------------------------------------------------------------------------
 
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Data Storytelling**
+
+* `Fundamentos de Narrativa de Datos <https://github.com/jdvelasq/conferencia_data_storytelling>`_
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
 Inteligencia de Negocios con Power BI.
 
 .. raw:: html
