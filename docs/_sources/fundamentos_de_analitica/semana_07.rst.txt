@@ -8,7 +8,7 @@ Sesión 07 --- Mar 18
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 08 --- 
+* Taller Presencial 08 --- `Construcción y despliegue de modelos de ML <https://classroom.github.com/a/l5qfyMyQ>`_
 
 .. raw:: html
 
