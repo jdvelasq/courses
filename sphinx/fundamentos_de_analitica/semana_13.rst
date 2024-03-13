@@ -7,6 +7,12 @@ Sesión 13 --- May 6
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
+* Taller Presencial 16 --- `Técnicas de reducción de dimensiones <https://classroom.github.com/a/0Xr8S4i6>`_
+
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
 
 * `Clustering (1:03:03) <https://jdvelasq.github.io/curso_ml_con_sklearn/46_clustering/__index__.html>`_ 
 
