@@ -8,5 +8,3 @@ Sesión 04 --- Mar 02
 
 * `Lean thinking <https://jdvelasq.github.io/conferencia_dataops_03_lean_thinking/>`_ 
 
-* `Agile Collaboration <https://jdvelasq.github.io/conferencia_dataops_04_agile_collaboration/>`_ 
-
