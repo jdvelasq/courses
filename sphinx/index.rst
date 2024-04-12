@@ -10,6 +10,7 @@ Cursos
     analitica_descriptiva_y_visualizacion/__index__
     analitica_predictiva/__index__
     productos_de_datos/__index__
+    analitica_y_big_data/__index__
     
 .. toctree::
     :caption: Pregrado
