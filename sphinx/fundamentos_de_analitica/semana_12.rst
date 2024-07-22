@@ -1,4 +1,4 @@
-Sesión 12 --- Abr 29
+Sesión 12 --- Ago 26
 -------------------------------------------------------------------------------
 
 **Aprendizaje supervisado con modelos no lineales**
