@@ -1,4 +1,4 @@
-Sesión 02 --- Feb 16
+Sesión 02 --- Nov 8
 -------------------------------------------------------------------------------
 
 Programación en Python para Data Analytics 1

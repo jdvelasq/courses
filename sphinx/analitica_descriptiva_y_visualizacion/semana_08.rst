@@ -1,4 +1,4 @@
-Sesión 08 --- Abr 5
+Sesión 08 --- Dic 20 (trabajo autonomo por periodo de vacaciones)
 -------------------------------------------------------------------------------
 
 .. raw:: html

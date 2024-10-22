@@ -1,4 +1,4 @@
-Sesión 05 --- Mar 8
+Sesión 05 --- Nov 29
 -------------------------------------------------------------------------------
 
 .. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.

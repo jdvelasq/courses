@@ -1,4 +1,4 @@
-Sesión 04 --- Ago 24
+Sesión 04 --- Nov 23
 -------------------------------------------------------------------------------
 
 `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-transformacion_de_datos.ipynb>`_.

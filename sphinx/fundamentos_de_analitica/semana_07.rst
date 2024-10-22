@@ -1,4 +1,4 @@
-Sesión 07 --- Mar 18
+Sesión 07 --- Dic 11
 -------------------------------------------------------------------------------
 
 **Introducción al Machine Learning para Analytics con scikit-learn**

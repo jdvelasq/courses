@@ -1,4 +1,4 @@
-Sesión 06 --- Sep 7
+Sesión 06 --- Dic 7
 -------------------------------------------------------------------------------
 
 `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-tuberia_modelos.ipynb>`_.

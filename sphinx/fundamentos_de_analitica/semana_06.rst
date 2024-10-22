@@ -1,4 +1,4 @@
-Sesión 06 --- Mar 11
+Sesión 06 --- Dic 4
 -------------------------------------------------------------------------------
 
 **Fundamentos de Estadistica para Data Science**

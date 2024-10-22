@@ -1,4 +1,4 @@
-Sesión 02 --- Feb 12
+Sesión 02 --- Nov 6
 -------------------------------------------------------------------------------
 
 **Programación en Python para Data Analytics (Repaso)**

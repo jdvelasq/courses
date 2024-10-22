@@ -1,4 +1,4 @@
-Sesión 07 --- Sep 14
+Sesión 07 --- Dic 14
 -------------------------------------------------------------------------------
 
 `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
