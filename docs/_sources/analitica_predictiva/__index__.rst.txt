@@ -6,13 +6,13 @@ Analítica Predictiva
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-* Inicio de clases: **Agosto 10, 2024**
+* Inicio de clases: **Octubre 28, 2024**
 
-* Finalización de clases: **Octubre 5, 2024**.
+* Finalización de clases: **Diciembre 19, 2024**.
 
-* Entrega de talleres: **Octubre 15, 2024**.
+* Entrega de talleres: **Enero 26, 2025 (23:59 pm)**.
 
-* Reporte de notas al SIA: **Diciembre 6, 2024**.
+* Reporte de notas al SIA: **Marzo 8, 2025**.
 
 
 .. raw:: html
