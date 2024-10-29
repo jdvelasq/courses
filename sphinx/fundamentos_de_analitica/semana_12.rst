@@ -7,9 +7,9 @@ Sesión 12 --- Feb 5
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 14 --- `Regresión con selección de variables <https://classroom.github.com/a/fD3sCQBq>`_
+* Taller Presencial 14 --- `Regresión con selección de variables <>`_
 
-* Taller Presencial 15 --- `Clasificación con selección de variables <https://classroom.github.com/a/wBApwA7U>`_
+* Taller Presencial 15 --- `Clasificación con selección de variables <>`_
 
 .. raw:: html
 

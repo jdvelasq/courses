@@ -7,7 +7,7 @@ Sesión 10 --- Ene 22
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 12 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/IkAVAZtD>`_
+* Taller Presencial 12 --- `Ajuste de hiperparámetros <>`_
 
 .. raw:: html
 

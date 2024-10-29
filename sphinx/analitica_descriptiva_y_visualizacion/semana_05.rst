@@ -23,9 +23,9 @@ Sesión 05 --- Nov 29
    * `Google Refine 2.0 - Data Augmentation (3 of 3) <https://youtu.be/5tsyz3ibYzk?si=itWi4hcTmg8kh0SH>`_    
 
 
-* Taller Presencial 03 --- `Limpieza de datos fingerprint <https://classroom.github.com/a/4wGGliI0>`_
+* Taller Presencial 03 --- `Limpieza de texto fingerprint <>`_
 
-* Taller Presencial 04 --- `Limpieza de datos ngram <https://classroom.github.com/a/J1uxyqcC>`_
+* Taller Presencial 04 --- `Limpieza de texto ngram <>`_
 
 .. raw:: html
 
@@ -41,8 +41,8 @@ Sesión 05 --- Nov 29
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 03 --- `Ingestión de datos, clusters report <https://classroom.github.com/a/xuwqNNwL>`_
+* Lab 03 --- `Ingestión de texto, clusters report <>`_
 
-* Lab 04 --- `Limpieza de datos, solicitudes de credito <https://classroom.github.com/a/oR24dbQN>`_
+* Lab 04 --- `Limpieza de datos de solicitudes de credito <>`_
 
-* Lab 05 --- `Ingestión de datos textuales <https://classroom.github.com/a/h1gLQyit>`_
+* Lab 05 --- `Ingestión de datos textuales <>`_

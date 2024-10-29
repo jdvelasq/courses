@@ -4,14 +4,14 @@ Sesión 02 --- Nov 9
 3:00:22 min 
 
 
-`Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
+.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
 
 
 **Fundamentación. Parte 1.**
 
 * `Fundamentos de Optimización para ML <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_ --- 1:59:47
 
-* **LAB** --- `Estimación de coeficientes de una parábola usando gradiente descendente <https://classroom.github.com/a/a3xGd1Os>`_.
+* **LAB** --- `Estimación de coeficientes de una parábola usando gradiente descendente <>`_.
 
 
 **Fundamentación. Parte 2.**

@@ -9,9 +9,9 @@ Sesión 08 --- Dic 18
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 09 --- `Clasificación básica de imágenes <https://classroom.github.com/a/J5JIXsOU>`_
+* Taller Presencial 09 --- `Clasificación básica de imágenes <>`_
 
-* Taller Presencial 10 --- `Clasificación básica de texto <https://classroom.github.com/a/Q9NncGTX>`_
+* Taller Presencial 10 --- `Clasificación básica de texto <>`_
 
 .. raw:: html
 

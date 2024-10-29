@@ -1,7 +1,7 @@
 Sesión 05 --- Nov 30
 -------------------------------------------------------------------------------
 
-`Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-sgd.ipynb>`_.
+.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-sgd.ipynb>`_.
 
 **Transformaciones del Dataset**
 

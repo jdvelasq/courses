@@ -9,7 +9,7 @@ Sesión 09 --- Ene 15
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 11 --- `Regresión Básica <https://classroom.github.com/a/ZLuTET-I>`_
+* Taller Presencial 11 --- `Regresión Básica <>`_
 
 .. raw:: html
 

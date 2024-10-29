@@ -9,7 +9,7 @@ Sesión 11 --- Ene 29
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 13 --- `Pipelines <https://classroom.github.com/a/sU6o4Pk4>`_
+* Taller Presencial 13 --- `Pipelines <>`_
 
 
 .. raw:: html

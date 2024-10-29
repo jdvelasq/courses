@@ -9,7 +9,7 @@ Programación en Python para Data Analytics 1
 
 * Conferencia `Introducción a Python <https://jdvelasq.github.io/conferencia_intro_a_python/>`_
 
-* Taller Presencial 01 --- `Programación en Python MapReduce <https://classroom.github.com/a/DntfOFdu>`_ 
+* Taller Presencial 01 --- `Programación en Python MapReduce <>`_ 
 
 .. raw:: html
 

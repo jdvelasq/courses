@@ -7,7 +7,7 @@ Sesión 13 --- Feb 12
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 16 --- `Técnicas de reducción de dimensiones <https://classroom.github.com/a/0Xr8S4i6>`_
+* Taller Presencial 16 --- `Técnicas de reducción de dimensiones <>`_
 
 .. raw:: html
 

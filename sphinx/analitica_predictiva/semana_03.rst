@@ -1,7 +1,7 @@
 Sesión 03 --- Nov 16
 -------------------------------------------------------------------------------
 
-`Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-gridsearchcv.ipynb>`_.
+.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-gridsearchcv.ipynb>`_.
 
 **Fundamentación. Parte 3.**
 

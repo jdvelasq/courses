@@ -1,7 +1,7 @@
 Sesión 07 --- Dic 14
 -------------------------------------------------------------------------------
 
-`Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
+.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
 
 **Aprendizaje Supervisado III**
 
@@ -13,9 +13,9 @@ Sesión 07 --- Dic 14
 
     * `Regresión isotonica <https://jdvelasq.github.io/curso_ml_con_sklearn/41_regresion_isotonica/__index__.html>`_ 
 
-    * **LAB** --- `Predicción de la resistencia del concreto <https://classroom.github.com/a/55Ht4Ulw>`_.
+    * **LAB** --- `Predicción de la resistencia del concreto <>`_.
 
-    * **LAB** --- `Detección de créditos riesgosos usando SVMs <https://classroom.github.com/a/aAy3dnhY>`_.
+    * **LAB** --- `Detección de créditos riesgosos usando SVMs <>`_.
 
 **Aprendizaje No Supervisado I**
 

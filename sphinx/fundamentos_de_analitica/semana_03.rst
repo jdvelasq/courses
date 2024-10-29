@@ -24,7 +24,7 @@ Sesión 03 --- Nov 13
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Taller Presencial 02 --- `Wordcount con Pandas <https://classroom.github.com/a/b8bYnsMe>`_
+* Taller Presencial 02 --- `Wordcount con Pandas <>`_
 
 .. * TALLER PRESENCIAL EVALUABLE: `Cálculo de una matriz de co-occurrencias en Pandas <https://classroom.github.com/a/qvxICOGB>`_
 
@@ -38,6 +38,6 @@ Sesión 03 --- Nov 13
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-* Lab 02 --- `Pandas <https://classroom.github.com/a/UEifK_xF>`_
+* Lab 02 --- `Pandas <>`_
 
 

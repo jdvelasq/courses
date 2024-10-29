@@ -2,7 +2,7 @@ Sesión 08 --- Dic 21 (Trabajo autonomo debido a vacaciones)
 -------------------------------------------------------------------------------
 
 
-Taller Sincrónico via Google Meet.--- Explique cual es el proceso para desarrollar un modelo de regresión/clasificación.  Si alguien le presenta un modelo que desarrollo, usted que le pediria?
+.. Taller Sincrónico via Google Meet.--- Explique cual es el proceso para desarrollar un modelo de regresión/clasificación.  Si alguien le presenta un modelo que desarrollo, usted que le pediria?
 
 **Aprendizaje No Supervisado II**
 

@@ -1,7 +1,7 @@
 Sesión 06 --- Dic 7
 -------------------------------------------------------------------------------
 
-`Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-tuberia_modelos.ipynb>`_.
+.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-tuberia_modelos.ipynb>`_.
 
 
 **Aprendizaje Supervisado II**
@@ -18,14 +18,14 @@ Sesión 06 --- Dic 7
 
     * `Vecinos más cercanos <https://jdvelasq.github.io/curso_ml_con_sklearn/32_vecinos_mas_cercanos/__index__.html>`_ 
 
-    * **LAB** --- `Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/E1fwjOsi>`_. 
+    * **LAB** --- `Regresión Lineal Simple (GapMinder) <>`_. 
 
-    * **LAB** --- `Regresión Lineal Multiple (insurance) <https://classroom.github.com/a/WRBFqcDN>`_.
+    * **LAB** --- `Regresión Lineal Multiple (insurance) <>`_.
     
-    * **LAB** --- `Regresión Logística (mushrooms) <https://classroom.github.com/a/sDHcbGcf>`_.
+    * **LAB** --- `Regresión Logística (mushrooms) <>`_.
 
-    * **LAB** --- `Clasificación con kNN (digits) <https://classroom.github.com/a/rlQAS3qA>`_.
+    * **LAB** --- `Clasificación con kNN (digits) <>`_.
 
-    * **LAB** --- `Regresión con kNN <https://classroom.github.com/a/82ZX8tNX>`_.
+    * **LAB** --- `Regresión con kNN <>`_.
 
 
