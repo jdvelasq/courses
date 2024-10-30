@@ -9,6 +9,8 @@ Sesión 02 --- Nov 9
 
 **Fundamentación. Parte 1.**
 
+* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/81d-STPO>`_ 
+
 * `Fundamentos de Optimización para ML <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_ --- 1:59:47
 
 * **LAB** --- `Estimación de coeficientes de una parábola usando gradiente descendente <>`_.
