@@ -7,18 +7,17 @@ Sesión 08 --- Dic 20 (trabajo autonomo por periodo de vacaciones)
 
 **Data Storytelling**
 
+
+
 * `Fundamentos de Narrativa de Datos <https://github.com/jdvelasq/conferencia_data_storytelling>`_
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-
-Inteligencia de Negocios con Power BI.
 
 .. raw:: html
-
+   
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Inteligencia de Negocios con Power BI**
 
 * `Introducción <https://jdvelasq.github.io/curso_business_intelligence_con_power_bi/c01.html>`_ 
 
@@ -32,9 +31,12 @@ Inteligencia de Negocios con Power BI.
 
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+   
 
-Cierre y evaluación del curso.
+
+**Cierre y evaluación del curso.**
 
 
 

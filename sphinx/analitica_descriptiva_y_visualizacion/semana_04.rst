@@ -1,7 +1,22 @@
 Sesión 04 --- Nov 22
 -------------------------------------------------------------------------------
 
-**Data Analytics con Pandas**
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 04 --- `WordCount con Pandas <>`_ 
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
+**Procesamiento de Datos con Pandas**
 
 .. note:: Alternativas a Pandas
 
@@ -18,24 +33,14 @@ Sesión 04 --- Nov 22
    * Vaex: https://vaex.io/
 
 
-.. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Taller Presencial 02 --- `WordCount con Pandas <>`_ 
-
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-pandas.ipynb>`_.
 
 * `Data Analytics con Pandas (2:44:57) <https://jdvelasq.github.io/curso_data_analytics_con_pandas/>`_
 
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
+   
 
 * Lab 02 --- `Pandas <>`_

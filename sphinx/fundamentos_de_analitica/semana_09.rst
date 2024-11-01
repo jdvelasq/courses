@@ -1,19 +1,21 @@
 Sesión 09 --- Ene 15
 -------------------------------------------------------------------------------
 
-1:54:15 
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 12 --- `Regresión básica <>`_
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 **Métricas** 
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Taller Presencial 11 --- `Regresión Básica <>`_
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * `Introducción al uso de métricas (19:39) <https://jdvelasq.github.io/curso_ml_con_sklearn/07_introduccion_al_uso_de_metricas/__index__.html>`_
 
@@ -22,6 +24,3 @@ Sesión 09 --- Ene 15
 * `Métricas para regresión (38:38) <https://jdvelasq.github.io/curso_ml_con_sklearn/10_metricas_para_regresion/__index__.html>`_
 
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">

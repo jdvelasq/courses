@@ -1,20 +1,26 @@
 Sesión 02 --- Nov 6
 -------------------------------------------------------------------------------
 
-**Programación en Python para Data Analytics (Repaso)**
 
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
+**Casos Prácticos**
 
 * Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/2ysCp6CM>`_ 
 
-* Taller Presencial 02 --- `Programación en Python MapReduce <>`_ 
+* Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/l0S4_nUG>`_ 
+
 
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
+
+**Programación en Python para Data Analytics (Repaso)**
 
 * `Una introducción informal a Python <https://jdvelasq.github.io/curso_python_para_data_analytics/01_una_introduccion_informal/__index__.html>`_ 
 
@@ -38,9 +44,12 @@ Sesión 02 --- Nov 6
 
 * NBviewer https://nbviewer.jupyter.org
 
+
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+   
 
 * Lab 01 --- `Programacion básica en Python <>`_
 

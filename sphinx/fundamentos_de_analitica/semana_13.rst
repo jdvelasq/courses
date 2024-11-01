@@ -1,24 +1,25 @@
 Sesión 13 --- Feb 12
 -------------------------------------------------------------------------------
 
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 17 --- `Reducción de la dimensionalidad digits <>`_
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
 **Aprendizaje No Supervisado**
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Taller Presencial 16 --- `Técnicas de reducción de dimensiones <>`_
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
 
 * `Clustering (1:03:03) <https://jdvelasq.github.io/curso_ml_con_sklearn/46_clustering/__index__.html>`_ 
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
 .. * **LAB** --- `Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Y-t0TIbS>`_.

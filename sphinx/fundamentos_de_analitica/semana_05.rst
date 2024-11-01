@@ -1,19 +1,28 @@
 Sesión 05 --- Nov 27
 -------------------------------------------------------------------------------
 
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 06 --- `Worldmap en folium<>`_
+
+* Taller Presencial 07 --- `Matplotlib networkx <>`_
+
+
+
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+   
+
 **Visualización de Datos**
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Taller Presencial 05 --- `Folium world map <>`_
-
-* Taller Presencial 06 --- `Matplotlib networkx <>`_
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 .. note:: Principales librerías de visualización de datos
 
@@ -32,8 +41,9 @@ Sesión 05 --- Nov 27
 
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
+  
 
 * Lab 06 --- `Matplotlib news plot <>`_
 

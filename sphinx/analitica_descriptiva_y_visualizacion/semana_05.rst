@@ -1,14 +1,23 @@
 Sesión 05 --- Nov 29
 -------------------------------------------------------------------------------
 
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-ingestion_de_datos.ipynb>`_.
-
-
-**Ingestión, Limpieza y Visualización de Datos**
-
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 05 --- `Limpieza de texto fingerprint <>`_
+
+* Taller Presencial 06 --- `Limpieza de texto ngram <>`_
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Ingestión y Limpieza de Datos**
 
 .. note::
 
@@ -23,15 +32,6 @@ Sesión 05 --- Nov 29
    * `Google Refine 2.0 - Data Augmentation (3 of 3) <https://youtu.be/5tsyz3ibYzk?si=itWi4hcTmg8kh0SH>`_    
 
 
-* Taller Presencial 03 --- `Limpieza de texto fingerprint <>`_
-
-* Taller Presencial 04 --- `Limpieza de texto ngram <>`_
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-
 * `Ingestión de datos (58:11) <https://jdvelasq.github.io/curso_HOWTOs/01_ingestion_de_datos/__index__.html>`_
 
 * `Limpieza de datos con pandas (1:17:17) <https://jdvelasq.github.io/curso_HOWTOs/04_limpieza_de_datos/__index__.html>`_
@@ -39,6 +39,7 @@ Sesión 05 --- Nov 29
 
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * Lab 03 --- `Ingestión de texto, clusters report <>`_

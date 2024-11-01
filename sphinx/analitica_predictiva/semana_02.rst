@@ -1,15 +1,27 @@
 Sesión 02 --- Nov 9
 -------------------------------------------------------------------------------
 
-3:00:22 min 
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/81d-STPO>`_ 
+
+* Taller Presencial 02 --- `Despliegue de modelos de ML <>`_ 
 
 
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-modelo_lineal_multivariado.ipynb>`_.
+.. raw:: html
+   
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
 
 
 **Fundamentación. Parte 1.**
 
-* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/81d-STPO>`_ 
+
 
 * `Fundamentos de Optimización para ML <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_ --- 1:59:47
 

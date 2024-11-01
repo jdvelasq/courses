@@ -1,12 +1,22 @@
 Sesión 03 --- Nov 15
 -------------------------------------------------------------------------------
 
-
-Programación en Python para Data Analytics 2
-
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 03 --- `Programación en Python Multiprocessing <https://classroom.github.com/a/TBhw2jAn>`_ 
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
+**Programación en Python para Data Analytics II**
+
 
 * `Estructuras de datos 2 <https://jdvelasq.github.io/curso_python_para_data_analytics/04_estructuras_de_datos_parte_2/__index__.html>`_ 
 
@@ -20,9 +30,11 @@ Programación en Python para Data Analytics 2
 
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-Ejemplos y Casos de Aplicación
+
+**Ejemplos y Casos de Aplicación**
 
 * `Manipulación de Datos <https://jdvelasq.github.io/curso_python_HOWTOs/03_manipulacion_de_datos/__index__.html>`_       
 
@@ -30,8 +42,10 @@ Ejemplos y Casos de Aplicación
 
 * NBviewer https://nbviewer.jupyter.org
 
+
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * Lab 01: `Programacion básica en Python <>`_
