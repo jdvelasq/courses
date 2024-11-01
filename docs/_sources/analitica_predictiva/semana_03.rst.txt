@@ -1,7 +1,23 @@
 Sesión 03 --- Nov 16
 -------------------------------------------------------------------------------
 
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-gridsearchcv.ipynb>`_.
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+
+* Taller Presencial 03 --- `Clasificación básica de imágenes <>`_ 
+
+* Taller Presencial 04 --- `Clasificación básica de texto <>`_ 
+
+
+.. raw:: html
+   
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
 
 **Fundamentación. Parte 3.**
 

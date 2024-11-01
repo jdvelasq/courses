@@ -1,7 +1,26 @@
 Sesión 07 --- Dic 14
 -------------------------------------------------------------------------------
 
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/ciencia_de_los_datos/taller_presencial-clustering.ipynb>`_.
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 08 --- `SelectKBest para regresión <>`_ 
+
+* Taller Presencial 09 --- `SelectKBest para clasificación <>`_ 
+
+* Taller Presencial 10 --- `Reduccion de la dimensionalidad digits <>`_ 
+
+
+.. raw:: html
+   
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
+
 
 **Aprendizaje Supervisado III**
 

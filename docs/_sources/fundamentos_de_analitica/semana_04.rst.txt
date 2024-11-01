@@ -1,13 +1,26 @@
 Sesión 04 --- Nov 20
 -------------------------------------------------------------------------------
 
-2:15:28
-
-**Ingestion y Limpieza de Datos**
-
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 04 --- `Limpieza de texto fingerprint <>`_
+
+* Taller Presencial 05 --- `Limpieza de texto ngrams <>`_
+
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
+
+**Ingestion y Limpieza de Datos**
 
 
 .. note::
@@ -24,16 +37,6 @@ Sesión 04 --- Nov 20
    * `Google Refine 2.0 - Data Augmentation (3 of 3) <https://youtu.be/5tsyz3ibYzk?si=itWi4hcTmg8kh0SH>`_    
 
 
-* Taller Presencial 03 --- `Limpieza de datos fingerprint <>`_
-
-* Taller Presencial 04 --- `Limpieza de datos ngrams <>`_
-
-
-
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * `Ingestión de datos (58:11) <https://jdvelasq.github.io/curso_HOWTOs/01_ingestion_de_datos/__index__.html>`_
 
@@ -41,7 +44,9 @@ Sesión 04 --- Nov 20
 
 .. raw:: html
 
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+   
 
 * Lab 03 --- `Ingestión de text, clusters report <>`_
 

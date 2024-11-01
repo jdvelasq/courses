@@ -1,17 +1,21 @@
 Sesión 10 --- Ene 22
 -------------------------------------------------------------------------------
 
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 13 --- `Ajuste de hiperparámetros <>`_
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
 **Empaquetado de modelos** 
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Taller Presencial 12 --- `Ajuste de hiperparámetros <>`_
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * `Pipelines y estimadores compuestos (38:49) <https://jdvelasq.github.io/curso_ml_con_sklearn/c05_transformaciones.html>`_
 
@@ -21,9 +25,4 @@ Sesión 10 --- Ene 22
 
 * `Transformación de la variable de salida (7:08) <https://jdvelasq.github.io/curso_ml_con_sklearn/23_transformacion_de_la_variable_de_salida/__index__.html>`_
 
-
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

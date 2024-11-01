@@ -1,7 +1,22 @@
 Sesión 05 --- Nov 30
 -------------------------------------------------------------------------------
 
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-sgd.ipynb>`_.
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 06 --- `Ajuste de Hiperparámetros <>`_ 
+
+
+.. raw:: html
+   
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
+
 
 **Transformaciones del Dataset**
 

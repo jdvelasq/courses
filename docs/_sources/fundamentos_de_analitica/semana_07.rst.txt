@@ -1,18 +1,24 @@
 Sesión 07 --- Dic 11
 -------------------------------------------------------------------------------
 
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 09 --- `Despliegue de modelos de ML <>`_
+
+
+
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
 **Introducción al Machine Learning para Analytics con scikit-learn**
-
-.. raw:: html
-
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Taller Presencial 08 --- `Construcción y despliegue de modelos de ML <>`_
-
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 * `Introducción a sklearn (21:49) <https://jdvelasq.github.io/curso_ml_con_sklearn/01_introduccion/01_introduccion.html>`_
 
@@ -20,7 +26,4 @@ Sesión 07 --- Dic 11
 
 * `Fundamentos de ML (1:59:47) <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

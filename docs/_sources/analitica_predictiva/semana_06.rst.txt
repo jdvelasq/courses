@@ -1,7 +1,21 @@
 Sesión 06 --- Dic 7
 -------------------------------------------------------------------------------
 
-.. `Taller Sincrónico via Google Meet <https://colab.research.google.com/github/jdvelasq/datalabs/blob/master/notebooks/analitica_predictiva/taller_presencial-tuberia_modelos.ipynb>`_.
+.. raw:: html
+
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 07 --- `Pipelines <>`_ 
+
+
+.. raw:: html
+   
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+
 
 
 **Aprendizaje Supervisado II**

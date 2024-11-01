@@ -1,13 +1,21 @@
 Sesión 07 --- Dic 13
 -------------------------------------------------------------------------------
 
-**Bases de Datos en Python**
-
-* Taller Presencial 08 --- `SQLite app de inventario <>`_ 
-
 .. raw:: html
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Casos Prácticos**
+
+* Taller Presencial 09 --- `SQLite web app <>`_ 
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Bases de Datos en Python**
 
 * `SQLite3 <https://jdvelasq.github.io/curso_databases_en_python/01_sqlite3/__index__.html>`_
 
@@ -15,15 +23,18 @@ Sesión 07 --- Dic 13
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Lab 08 --- `SQL con SQlite <>`_
-
-.. raw:: html
-
+   <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
 **Análisis Exploratorio de Datos**
 
 * `Estadística Descriptiva <https://jdvelasq.github.io/curso_estadistica_para_analytics/02_estadistica_descriptiva/__index__.html>`_
+
+
+.. raw:: html
+
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+* Lab 08 --- `SQL con SQlite <>`_

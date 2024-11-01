@@ -2,8 +2,6 @@ Sesión 08 --- Dic 21 (Trabajo autonomo debido a vacaciones)
 -------------------------------------------------------------------------------
 
 
-.. Taller Sincrónico via Google Meet.--- Explique cual es el proceso para desarrollar un modelo de regresión/clasificación.  Si alguien le presenta un modelo que desarrollo, usted que le pediria?
-
 **Aprendizaje No Supervisado II**
 
     * `Algoritmos de descomposición <https://jdvelasq.github.io/curso_ml_con_sklearn/48_algoritmos_de_descomposicion/__index__.html>`_ 
