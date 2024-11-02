@@ -17,7 +17,7 @@ Sesión 04 --- Nov 23
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-**Selección y Evaluación de Modelos II**    
+**Selección y Evaluación de Modelos**    
 
 * `Ajuste de hiperparámetros <https://jdvelasq.github.io/curso_ml_con_sklearn/06_ajuste_de_hiperparametros/__index__.html>`_ 
 

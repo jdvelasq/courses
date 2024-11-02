@@ -18,17 +18,9 @@ Sesión 02 --- Nov 9
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-
-**Fundamentación. Parte 1.**
-
-
+**Fundamentación**
 
 * `Fundamentos de Optimización para ML <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_ --- 1:59:47
-
-* **LAB** --- `Estimación de coeficientes de una parábola usando gradiente descendente <>`_.
-
-
-**Fundamentación. Parte 2.**
 
 * `Introducción a sklearn <https://youtu.be/ewMM7VNyGz8>`_ --- 21:49 min
 

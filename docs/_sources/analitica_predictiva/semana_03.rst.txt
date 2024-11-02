@@ -19,13 +19,17 @@ Sesión 03 --- Nov 16
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-**Fundamentación. Parte 3.**
-
+**Fundamentación**
 
 * `Fundamentos de Estadística Inferencial <https://jdvelasq.github.io/curso_fundametos_estadistica/01_estadistica_inferencial/__index__.html>`_ 
 
 
-**Selección y Evaluación de Modelos. Parte 1.** 
+.. raw:: html
+   
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Selección y Evaluación de Modelos** 
 
 * `Conceptos básicos de validación cruzada <https://jdvelasq.github.io/curso_ml_con_sklearn/03_conceptos_basicos_de_validacion_cruzada/__index__.html>`_ --- 1:33:51
 

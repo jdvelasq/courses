@@ -15,9 +15,6 @@ Sesión 05 --- Nov 30
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-
-
-
 **Transformaciones del Dataset**
 
 * `Pipelines y estimadores compuestos <https://jdvelasq.github.io/curso_ml_con_sklearn/c05_transformaciones.html>`_ 
@@ -34,7 +31,13 @@ Sesión 05 --- Nov 30
 
 * `Transformación de la variable de salida <https://jdvelasq.github.io/curso_ml_con_sklearn/23_transformacion_de_la_variable_de_salida/__index__.html>`_ 
 
-**Aprendizaje Supervisado I**
+
+.. raw:: html
+   
+   <br>
+   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
+
+**Aprendizaje Supervisado**
 
 * `Selección de características <https://jdvelasq.github.io/curso_ml_con_sklearn/39_seleccion_de_caracterisiticas/__index__.html>`_ 
 
