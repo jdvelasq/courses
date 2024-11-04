@@ -11,7 +11,7 @@ Sesión 06 --- Dic 6
 
 * Taller Presencial 14 --- `Matplotlib Networkx <>`_
 
-
+* Taller Presencial 15 --- `Graficos de bala en matplotlib <>`_
 
 
 

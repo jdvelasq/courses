@@ -11,7 +11,7 @@ Sesión 05 --- Nov 29
 
 * Taller Presencial 11 --- `Limpieza de texto ngram <>`_
 
-* Taller Presencial 12 --- `Preprocesamiento de texto <>`_
+* Taller Presencial 12 --- `Tokenización de texto <>`_
 
 .. raw:: html
 
