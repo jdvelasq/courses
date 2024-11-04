@@ -7,10 +7,11 @@ Sesión 05 --- Nov 29
 
 **Casos Prácticos**
 
-* Taller Presencial 05 --- `Limpieza de texto fingerprint <>`_
+* Taller Presencial 10 --- `Limpieza de texto fingerprint <>`_
 
-* Taller Presencial 06 --- `Limpieza de texto ngram <>`_
+* Taller Presencial 11 --- `Limpieza de texto ngram <>`_
 
+* Taller Presencial 12 --- `Preprocesamiento de texto <>`_
 
 .. raw:: html
 

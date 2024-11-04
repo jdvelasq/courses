@@ -7,7 +7,9 @@ Sesión 07 --- Dic 13
 
 **Casos Prácticos**
 
-* Taller Presencial 09 --- `SQLite web app <>`_ 
+* Taller Presencial 15 --- `Análisis de datos con Pandas <>`_ 
+
+* Taller Presencial 16 --- `SQLite web app <>`_ 
 
 
 .. raw:: html

@@ -7,9 +7,9 @@ Sesión 06 --- Dic 6
 
 **Casos Prácticos**
 
-* Taller Presencial 07 --- `Worldmap en Folium<>`_
+* Taller Presencial 13 --- `Worldmap en Folium<>`_
 
-* Taller Presencial 08 --- `Matplotlib Networkx <>`_
+* Taller Presencial 14 --- `Matplotlib Networkx <>`_
 
 
 
