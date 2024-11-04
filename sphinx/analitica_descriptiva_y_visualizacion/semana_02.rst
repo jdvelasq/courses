@@ -10,9 +10,11 @@ Sesión 02 --- Nov 8
 
 * Conferencia `Introducción a Python <https://jdvelasq.github.io/conferencia_intro_a_python/>`_
 
-* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/4mssxSXY>`_ 
+* Taller Presencial 01 --- `Hola mundo <>`_ 
 
-* Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/zV9H6lS9>`_ 
+* Taller Presencial 02 --- `Programación en Python MapReduce <>`_ 
+
+* Taller Presencial 03 --- `Consultas SQL en MapReduce <>`_ 
 
 
 .. raw:: html
