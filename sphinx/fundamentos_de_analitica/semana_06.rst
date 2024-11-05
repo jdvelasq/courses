@@ -8,9 +8,9 @@ Sesión 06 --- Dic 4
 
 **Casos Prácticos**
 
-* Taller Presencial 08 --- `Bootstrapping <>`_
+* Taller Presencial 12 --- `Bootstrapping <https://classroom.github.com/a/BGGRjdM9>`_
 
-
+* Taller Presencial 13 --- `Análisis de datos con Pandas <https://classroom.github.com/a/igH4lSOf>`_ 
 
 
 .. raw:: html

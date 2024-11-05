@@ -7,7 +7,7 @@ Sesión 09 --- Ene 15
 
 **Casos Prácticos**
 
-* Taller Presencial 12 --- `Regresión básica <>`_
+* Taller Presencial --- `Regresión básica <>`_
 
 
 .. raw:: html
