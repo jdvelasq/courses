@@ -7,7 +7,7 @@ Sesión 11 --- Ene 29
 
 **Casos Prácticos**
 
-* Taller Presencial 14 --- `Pipelines <>`_
+* Taller Presencial --- `Pipelines <>`_
 
 
 .. raw:: html

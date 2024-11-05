@@ -7,9 +7,9 @@ Sesión 08 --- Dic 18
 
 **Casos Prácticos**
 
-* Taller Presencial 10 --- `Clasificación básica de imágenes <>`_
+* Taller Presencial  --- `Clasificación básica de imágenes <>`_
 
-* Taller Presencial 11 --- `Clasificación básica de texto <>`_
+* Taller Presencial  --- `Clasificación básica de texto <>`_
 
 
 
