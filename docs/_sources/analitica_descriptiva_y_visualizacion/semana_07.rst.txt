@@ -7,9 +7,9 @@ Sesión 07 --- Dic 13
 
 **Casos Prácticos**
 
-* Taller Presencial 16 --- `Análisis de datos con Pandas <>`_ 
+* Taller Presencial 16 --- `Análisis de datos con Pandas <https://classroom.github.com/a/-k9EFEub>`_ 
 
-* Taller Presencial 17 --- `SQLite web app <>`_ 
+* Taller Presencial 17 --- `SQLite web app <https://classroom.github.com/a/618_MkGo>`_ 
 
 
 .. raw:: html

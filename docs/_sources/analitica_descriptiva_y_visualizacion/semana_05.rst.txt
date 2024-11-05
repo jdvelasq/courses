@@ -7,11 +7,11 @@ Sesión 05 --- Nov 29
 
 **Casos Prácticos**
 
-* Taller Presencial 10 --- `Limpieza de texto fingerprint <>`_
+* Taller Presencial 10 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/NNLP8qFO>`_
 
-* Taller Presencial 11 --- `Limpieza de texto ngram <>`_
+* Taller Presencial 11 --- `Limpieza de texto ngram <https://classroom.github.com/a/XU0RIjr5>`_
 
-* Taller Presencial 12 --- `Tokenización de texto <>`_
+* Taller Presencial 12 --- `Tokenización de texto <https://classroom.github.com/a/7O1YfhfL>`_
 
 .. raw:: html
 

@@ -7,11 +7,11 @@ Sesión 03 --- Nov 15
 
 **Casos Prácticos**
 
-* Taller Presencial 04 --- `Programación en Python Multiprocessing <>`_ 
+* Taller Presencial 04 --- `Programación en Python Multiprocessing <https://classroom.github.com/a/TBhw2jAn>`_ 
 
-* Taller Presencial 05 --- `Python csv2json <>`_ 
+* Taller Presencial 05 --- `Python csv2json <https://classroom.github.com/a/NtFiRlOK>`_ 
 
-* Taller Presencial 06 --- `Datos sinteticos con faker <>`_ 
+* Taller Presencial 06 --- `Datos sinteticos con faker <https://classroom.github.com/a/_oYMv6lR>`_ 
 
 .. raw:: html
 

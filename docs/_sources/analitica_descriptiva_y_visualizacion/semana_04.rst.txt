@@ -7,11 +7,11 @@ Sesión 04 --- Nov 22
 
 **Casos Prácticos**
 
-* Taller Presencial 07 --- `WordCount con Pandas <>`_ 
+* Taller Presencial 07 --- `WordCount con Pandas <https://classroom.github.com/a/WSyvyI-c>`_ 
 
-* Taller Presencial 08 --- `Subconjuntos de datos en Pandas <>`_ 
+* Taller Presencial 08 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/S4icwpQu>`_ 
 
-* Taller Presencial 09 --- `Agrupamiento y filtrado en Pandas <>`_ 
+* Taller Presencial 09 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/cw_2z3A_>`_ 
 
 
 .. raw:: html
