@@ -7,7 +7,7 @@ Sesión 11 --- Ene 29
 
 **Casos Prácticos**
 
-* Taller Presencial --- `Pipelines <>`_
+* Taller Presencial 20 --- `Pipelines <https://classroom.github.com/a/x1OjQTPw>`_
 
 
 .. raw:: html

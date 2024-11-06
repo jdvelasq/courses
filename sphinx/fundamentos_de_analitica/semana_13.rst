@@ -7,7 +7,7 @@ Sesión 13 --- Feb 12
 
 **Casos Prácticos**
 
-* Taller Presencial --- `Reducción de la dimensionalidad digits <>`_
+* Taller Presencial --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/f7V_DFLW>`_
 
 
 .. raw:: html

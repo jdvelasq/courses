@@ -7,7 +7,7 @@ Sesión 10 --- Ene 22
 
 **Casos Prácticos**
 
-* Taller Presencial --- `Ajuste de hiperparámetros <>`_
+* Taller Presencial 19 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/4dhxBV-4>`_
 
 .. raw:: html
 

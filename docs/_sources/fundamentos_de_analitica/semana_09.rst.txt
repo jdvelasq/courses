@@ -7,7 +7,7 @@ Sesión 09 --- Ene 15
 
 **Casos Prácticos**
 
-* Taller Presencial --- `Regresión básica <>`_
+* Taller Presencial 18 --- `Regresión básica <https://classroom.github.com/a/6EOguLZo>`_
 
 
 .. raw:: html

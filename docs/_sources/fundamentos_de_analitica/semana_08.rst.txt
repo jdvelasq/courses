@@ -7,9 +7,9 @@ Sesión 08 --- Dic 18
 
 **Casos Prácticos**
 
-* Taller Presencial  --- `Clasificación básica de imágenes <>`_
+* Taller Presencial 16 --- `Clasificación básica de imágenes <https://classroom.github.com/a/WyIb6MRh>`_
 
-* Taller Presencial  --- `Clasificación básica de texto <>`_
+* Taller Presencial 17 --- `Clasificación básica de texto <https://classroom.github.com/a/BL5GDS0h>`_
 
 
 
