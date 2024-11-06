@@ -7,11 +7,6 @@ Sesión 07 --- Dic 14
 
 **Casos Prácticos**
 
-* Taller Presencial 08 --- `SelectKBest para regresión <>`_ 
-
-* Taller Presencial 09 --- `SelectKBest para clasificación <>`_ 
-
-* Taller Presencial 10 --- `Reduccion de la dimensionalidad digits <>`_ 
 
 
 .. raw:: html

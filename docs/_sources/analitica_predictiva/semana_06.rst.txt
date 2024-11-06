@@ -7,7 +7,7 @@ Sesión 06 --- Dic 7
 
 **Casos Prácticos**
 
-* Taller Presencial 07 --- `Pipelines <>`_ 
+
 
 
 .. raw:: html
