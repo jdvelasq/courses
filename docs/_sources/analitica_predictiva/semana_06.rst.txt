@@ -7,6 +7,8 @@ Sesión 06 --- Dic 7
 
 **Casos Prácticos**
 
+* Taller Presencial 12 --- `Patrones de demanda diaria <https://classroom.github.com/a/6g4XHHX9>`_ 
+
 
 
 

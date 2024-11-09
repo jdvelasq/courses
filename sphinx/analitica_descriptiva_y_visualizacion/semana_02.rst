@@ -14,8 +14,6 @@ Sesión 02 --- Nov 8
 
 * Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/zV9H6lS9>`_ 
 
-* Taller Presencial 03 --- `Consultas SQL en MapReduce <https://classroom.github.com/a/FbMt_OOZ>`_ 
-
 
 .. raw:: html
 
