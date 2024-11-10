@@ -9,7 +9,7 @@ Sesión 06 --- Dic 7
 
 * Taller Presencial 12 --- `Patrones de demanda diaria <https://classroom.github.com/a/6g4XHHX9>`_ 
 
-
+* Taller Presencial 13 --- Selección automatica de características usando Lasso
 
 
 .. raw:: html

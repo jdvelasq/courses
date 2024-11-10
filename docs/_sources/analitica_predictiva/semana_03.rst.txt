@@ -13,7 +13,7 @@ Sesión 03 --- Nov 16
 
 * Taller Presencial 05 --- `Clasificación básica de texto <https://classroom.github.com/a/Ab0A50m4>`_ 
 
-* Taller Presencial 06 --- `Regresión básica <https://classroom.github.com/a/G5jRcWM3>`_ 
+
 
 
 
