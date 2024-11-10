@@ -7,6 +7,8 @@ Sesión 03 --- Nov 16
 
 **Casos Prácticos**
 
+* Taller Presencial 03 --- `Implementación de modelos <https://classroom.github.com/a/jzJW8802>`_ 
+
 * Taller Presencial 04 --- `Clasificación básica de imágenes <https://classroom.github.com/a/OvNBKMIV>`_ 
 
 * Taller Presencial 05 --- `Clasificación básica de texto <https://classroom.github.com/a/Ab0A50m4>`_ 
