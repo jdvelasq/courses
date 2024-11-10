@@ -45,6 +45,9 @@ Sesión 05 --- Nov 29
 
 * Lab 03 --- `Ingestión de texto, clusters report <>`_
 
-* Lab 04 --- `Limpieza de datos de solicitudes de credito <>`_
+* Lab 04 --- `Ingestión de datos textuales <>`_
 
-* Lab 05 --- `Ingestión de datos textuales <>`_
+* Lab 05 --- `Limpieza de datos de campañas de marketing <>`_
+
+* Lab 06 --- `Limpieza de datos de solicitudes de credito <>`_
+

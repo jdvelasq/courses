@@ -39,9 +39,9 @@ Sesión 08 --- Dic 18
    
 
 
-* Lab 07 --- `Dataset Diabetes <>`_
+* Lab 09 --- `Dataset Diabetes <>`_
 
-* Lab 08 --- `Dataset Mushrooms <>`_
+* Lab 10 --- `Dataset Mushrooms <>`_
 
-* Lab 09 --- `Dataset German <>`_
+* Lab 11 --- `Dataset German <>`_
 

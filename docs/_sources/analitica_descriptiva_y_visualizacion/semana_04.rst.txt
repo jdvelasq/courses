@@ -7,6 +7,8 @@ Sesión 04 --- Nov 22
 
 **Casos Prácticos**
 
+* Taller Presencial 06 --- `Datos sinteticos con faker <https://classroom.github.com/a/_oYMv6lR>`_ 
+
 * Taller Presencial 07 --- `WordCount con Pandas <https://classroom.github.com/a/WSyvyI-c>`_ 
 
 * Taller Presencial 08 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/S4icwpQu>`_ 

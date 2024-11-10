@@ -45,9 +45,9 @@ Sesión 05 --- Nov 27
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
   
 
-* Lab 06 --- `Matplotlib news plot <>`_
+* Lab 07 --- `Matplotlib news plot <>`_
 
-* Lab 07 --- `Matplotlib dashboard <>`_
+* Lab 08 --- `Matplotlib dashboard <>`_
 
 
 

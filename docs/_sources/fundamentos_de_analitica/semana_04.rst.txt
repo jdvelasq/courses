@@ -50,6 +50,9 @@ Sesión 04 --- Nov 20
 
 * Lab 03 --- `Ingestión de text, clusters report <>`_
 
-* Lab 04 --- `Limpieza de solicitudes de credito <>`_
+* Lab 04 --- `Ingestión de text textuales <>`_
 
-* Lab 05 --- `Ingestión de text textuales <>`_
+* Lab 05 --- `Limpieza de datos de campañas de marketing <>`_
+
+* Lab 06 --- `Limpieza de solicitudes de credito <>`_
+
