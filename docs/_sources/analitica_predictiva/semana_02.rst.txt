@@ -11,8 +11,6 @@ Sesión 02 --- Nov 9
 
 * Taller Presencial 02 --- `Despliegue de modelos de ML <https://classroom.github.com/a/DjUNUSyN>`_ 
 
-* Taller Presencial 03 --- `Implementación de modelos <https://classroom.github.com/a/jzJW8802>`_ 
-
 .. raw:: html
    
    <br>
