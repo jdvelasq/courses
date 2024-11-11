@@ -7,9 +7,6 @@ Sesión 13 --- Feb 12
 
 **Casos Prácticos**
 
-* Taller Presencial 23 --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/f7V_DFLW>`_
-
-* Taller Presencial 24 --- `Patrones de demanda diaria <https://classroom.github.com/a/vvpBuM6A>`_ 
 
 .. raw:: html
 

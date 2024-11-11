@@ -8,9 +8,7 @@ Sesión 12 --- Feb 5
 
 **Casos Prácticos**
 
-* Taller Presencial 21 --- `SelectKBest para regresión <https://classroom.github.com/a/IWrxP6nn>`_
 
-* Taller Presencial 22 --- `SelectKBest para clasificación <https://classroom.github.com/a/AWqQ_ZKI>`_
 
 
 .. raw:: html

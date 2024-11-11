@@ -7,7 +7,11 @@ Sesión 10 --- Ene 22
 
 **Casos Prácticos**
 
-* Taller Presencial 19 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/4dhxBV-4>`_
+* Taller Presencial 21 --- `SelectKBest para regresión <https://classroom.github.com/a/IWrxP6nn>`_
+
+* Taller Presencial 22 --- `SelectKBest para clasificación <https://classroom.github.com/a/AWqQ_ZKI>`_
+
+* Taller Presencial 23 --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/f7V_DFLW>`_
 
 .. raw:: html
 

@@ -21,10 +21,10 @@ Sesión 02 --- Nov 9
 
 * `Fundamentos de Optimización para ML <https://jdvelasq.github.io/curso_fundamentos_de_ml/>`_ --- 1:59:47
 
-* `Introducción a sklearn <https://youtu.be/ewMM7VNyGz8>`_ --- 21:49 min
+* `Introducción a sklearn <https://jdvelasq.github.io/curso_ml_con_sklearn/01_introduccion/01_introduccion.html>`_ --- 21:49 min
 
-* `Introducción al ML con sklearn <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=7s>`_ --- 0:17:06
+* `Introducción al ML con sklearn https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/01_introduccion_al_ML.html>`_ --- 0:17:06
 
-* `Trabajo con datos textuales <https://www.youtube.com/watch?v=7bIRMPXi6OU&t=4556s>`_ --- 0:21:40
+* `Trabajo con datos textuales <https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/06_trabajo_con_datos_textuales.html>`_ --- 0:21:40
 
 * `Datasets <https://jdvelasq.github.io/curso_ml_con_sklearn/c08_datasets.html>`_ 
