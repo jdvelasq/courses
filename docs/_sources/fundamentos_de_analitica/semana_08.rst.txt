@@ -7,8 +7,6 @@ Sesión 08 --- Dic 18
 
 **Casos Prácticos**
 
-
-
 * Taller Presencial 17 --- `Clasificación básica de texto <https://classroom.github.com/a/BL5GDS0h>`_
 
 * Taller Presencial 18 --- `Regresión básica <https://classroom.github.com/a/6EOguLZo>`_

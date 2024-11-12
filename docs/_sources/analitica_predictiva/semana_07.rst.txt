@@ -7,7 +7,7 @@ Sesión 07 --- Dic 14
 
 **Casos Prácticos**
 
-
+* Taller Presencial 14 --- Prediccion de series de tiempo (continuacion)
 
 .. raw:: html
    

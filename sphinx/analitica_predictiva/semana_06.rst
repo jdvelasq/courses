@@ -11,6 +11,8 @@ Sesión 06 --- Dic 7
 
 * Taller Presencial 13 --- Selección automatica de características usando Lasso
 
+* Taller Presencial 14 --- Prediccion de series de tiempo
+
 
 .. raw:: html
    

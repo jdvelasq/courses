@@ -8,7 +8,7 @@ Sesión 12 --- Feb 5
 
 **Casos Prácticos**
 
-
+* Taller Presencial 25 --- Prediccion de series de tiempo
 
 
 .. raw:: html

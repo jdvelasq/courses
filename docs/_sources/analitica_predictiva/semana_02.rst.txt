@@ -23,7 +23,7 @@ Sesión 02 --- Nov 9
 
 * `Introducción a sklearn <https://jdvelasq.github.io/curso_ml_con_sklearn/01_introduccion/01_introduccion.html>`_ --- 21:49 min
 
-* `Introducción al ML con sklearn https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/01_introduccion_al_ML.html>`_ --- 0:17:06
+* `Introducción al ML con sklearn <https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/01_introduccion_al_ML.html>`_ --- 0:17:06
 
 * `Trabajo con datos textuales <https://jdvelasq.github.io/curso_ml_con_sklearn/02_tutoriales_basicos/06_trabajo_con_datos_textuales.html>`_ --- 0:21:40
 
