@@ -11,10 +11,6 @@ Sesión 03 --- Nov 13
 
 * Taller Presencial 04 --- `Wordcount con Pandas <https://classroom.github.com/a/4k9RXmgo>`_
 
-* Taller Presencial 05 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/YnUvrxey>`_ 
-
-* Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/zwYoYDfP>`_ 
-
 
 .. raw:: html
 

@@ -7,6 +7,10 @@ Sesión 04 --- Nov 20
 
 **Casos Prácticos**
 
+* Taller Presencial 05 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/YnUvrxey>`_ 
+
+* Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/zwYoYDfP>`_ 
+
 * Taller Presencial 07 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/48jHTz_v>`_
 
 * Taller Presencial 08 --- `Limpieza de texto ngrams <https://classroom.github.com/a/b994k82j>`_
