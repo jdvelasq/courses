@@ -7,11 +7,12 @@ Sesión 06 --- Dic 7
 
 **Casos Prácticos**
 
+* Taller Presencial 11 --- `Reduccion de la dimensionalidad digits <https://classroom.github.com/a/LO8YNadD>`_ 
+
 * Taller Presencial 12 --- `Patrones de demanda diaria <https://classroom.github.com/a/6g4XHHX9>`_ 
 
-* Taller Presencial 13 --- Selección automatica de características usando Lasso
+* Taller Presencial 13 --- `Selección automatica de características <https://classroom.github.com/a/EG4Wuhag>`_ 
 
-* Taller Presencial 14 --- Prediccion de series de tiempo
 
 
 .. raw:: html

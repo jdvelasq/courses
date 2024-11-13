@@ -7,10 +7,11 @@ Sesión 08 --- Dic 18
 
 **Casos Prácticos**
 
+* Taller Presencial 16 --- `Clasificación básica de imágenes <https://classroom.github.com/a/WyIb6MRh>`_
+
 * Taller Presencial 17 --- `Clasificación básica de texto <https://classroom.github.com/a/BL5GDS0h>`_
 
 * Taller Presencial 18 --- `Regresión básica <https://classroom.github.com/a/6EOguLZo>`_
-
 
 
 .. raw:: html

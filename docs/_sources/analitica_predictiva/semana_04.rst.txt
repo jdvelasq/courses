@@ -12,7 +12,6 @@ Sesión 04 --- Nov 23
 
 * Taller Presencial 07 --- `Ajuste de Hiperparámetros <https://classroom.github.com/a/18VOCgor>`_ 
 
-* Taller Presencial 08 --- `Pipelines <https://classroom.github.com/a/EGlU9A6A>`_ 
 
 
 .. raw:: html

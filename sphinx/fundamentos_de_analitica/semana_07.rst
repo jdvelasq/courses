@@ -11,7 +11,7 @@ Sesión 07 --- Dic 11
 
 * Taller Presencial 15 --- `Implementación de modelos de ML <https://classroom.github.com/a/MsgQYEQ8>`_
 
-* Taller Presencial 16 --- `Clasificación básica de imágenes <https://classroom.github.com/a/WyIb6MRh>`_
+
 
 .. raw:: html
 
