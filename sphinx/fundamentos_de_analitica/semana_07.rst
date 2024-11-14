@@ -7,9 +7,9 @@ Sesión 07 --- Dic 11
 
 **Casos Prácticos**
 
-* Taller Presencial 14 --- `Despliegue de modelos de ML <https://classroom.github.com/a/_aVBp9t1>`_
+* Taller Presencial 15 --- `Despliegue de modelos de ML <https://classroom.github.com/a/_aVBp9t1>`_
 
-* Taller Presencial 15 --- `Implementación de modelos de ML <https://classroom.github.com/a/MsgQYEQ8>`_
+* Taller Presencial 16 --- `Implementación de modelos de ML <https://classroom.github.com/a/MsgQYEQ8>`_
 
 
 

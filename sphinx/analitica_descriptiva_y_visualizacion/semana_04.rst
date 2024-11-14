@@ -13,6 +13,8 @@ Sesión 04 --- Nov 22
 
 * Taller Presencial 09 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/cw_2z3A_>`_ 
 
+* Taller Presencial 10 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/6M6AxYbr>`_ 
+
 
 .. raw:: html
 

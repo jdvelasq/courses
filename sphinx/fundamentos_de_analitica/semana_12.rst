@@ -8,7 +8,7 @@ Sesión 12 --- Feb 5
 
 **Casos Prácticos**
 
-* Taller Presencial 26 --- `Predicción básica de series de tiempo <https://classroom.github.com/a/m9Ztf_r4>`_ 
+* Taller Presencial 27 --- `Predicción básica de series de tiempo <https://classroom.github.com/a/m9Ztf_r4>`_ 
 
 
 .. raw:: html

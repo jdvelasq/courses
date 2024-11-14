@@ -7,11 +7,11 @@ Sesión 10 --- Ene 22
 
 **Casos Prácticos**
 
-* Taller Presencial 21 --- `SelectKBest para regresión <https://classroom.github.com/a/IWrxP6nn>`_
+* Taller Presencial 22 --- `SelectKBest para regresión <https://classroom.github.com/a/IWrxP6nn>`_
 
-* Taller Presencial 22 --- `SelectKBest para clasificación <https://classroom.github.com/a/AWqQ_ZKI>`_
+* Taller Presencial 23 --- `SelectKBest para clasificación <https://classroom.github.com/a/AWqQ_ZKI>`_
 
-* Taller Presencial 23 --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/f7V_DFLW>`_
+* Taller Presencial 24 --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/f7V_DFLW>`_
 
 .. raw:: html
 

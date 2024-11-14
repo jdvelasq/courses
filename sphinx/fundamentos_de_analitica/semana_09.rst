@@ -7,9 +7,9 @@ Sesión 09 --- Ene 15
 
 **Casos Prácticos**
 
-* Taller Presencial 19 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/4dhxBV-4>`_
+* Taller Presencial 20 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/4dhxBV-4>`_
 
-* Taller Presencial 20 --- `Pipelines <https://classroom.github.com/a/x1OjQTPw>`_
+* Taller Presencial 21 --- `Pipelines <https://classroom.github.com/a/x1OjQTPw>`_
 
 .. raw:: html
 

@@ -7,9 +7,9 @@ Sesión 11 --- Ene 29
 
 **Casos Prácticos**
 
-* Taller Presencial 24 --- `Patrones de demanda diaria <https://classroom.github.com/a/vvpBuM6A>`_ 
+* Taller Presencial 25 --- `Patrones de demanda diaria <https://classroom.github.com/a/vvpBuM6A>`_ 
 
-* Taller Presencial 25 --- `Visualización de la estructura del mercado <https://classroom.github.com/a/8DyO8kAX>`_ 
+* Taller Presencial 26 --- `Visualización de la estructura del mercado <https://classroom.github.com/a/8DyO8kAX>`_ 
 
 
 .. raw:: html

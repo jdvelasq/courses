@@ -7,9 +7,9 @@ Sesión 05 --- Nov 27
 
 **Casos Prácticos**
 
-* Taller Presencial 10 --- `Worldmap en folium <https://classroom.github.com/a/RizfmYhC>`_
+* Taller Presencial 11 --- `Worldmap en folium <https://classroom.github.com/a/RizfmYhC>`_
 
-* Taller Presencial 11 --- `Matplotlib networkx <https://classroom.github.com/a/esBVEOUl>`_
+* Taller Presencial 12 --- `Matplotlib networkx <https://classroom.github.com/a/esBVEOUl>`_
 
 
 

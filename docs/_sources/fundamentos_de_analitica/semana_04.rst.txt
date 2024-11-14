@@ -11,11 +11,13 @@ Sesión 04 --- Nov 20
 
 * Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/zwYoYDfP>`_ 
 
-* Taller Presencial 07 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/48jHTz_v>`_
+* Taller Presencial 07 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/6U_z1_wQ>`_ 
 
-* Taller Presencial 08 --- `Limpieza de texto ngrams <https://classroom.github.com/a/b994k82j>`_
+* Taller Presencial 08 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/48jHTz_v>`_
 
-* Taller Presencial 09 --- `Tokenización de texto <https://classroom.github.com/a/f3x5aMrP>`_
+* Taller Presencial 09 --- `Limpieza de texto ngrams <https://classroom.github.com/a/b994k82j>`_
+
+* Taller Presencial 10 --- `Tokenización de texto <https://classroom.github.com/a/f3x5aMrP>`_
 
 .. raw:: html
 
