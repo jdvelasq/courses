@@ -13,7 +13,6 @@ Sesión 03 --- Nov 15
 
 * Taller Presencial 05 --- `Python csv2json <https://classroom.github.com/a/NtFiRlOK>`_ 
 
-* Taller Presencial 06 --- `Datos sinteticos con faker <https://classroom.github.com/a/_oYMv6lR>`_ 
 
 .. raw:: html
 
