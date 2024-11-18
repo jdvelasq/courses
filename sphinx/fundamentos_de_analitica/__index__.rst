@@ -34,6 +34,7 @@ Fundamentos de Analitica
     :hidden:
     :glob:
 
+    labs
     semana_01
     semana_02
     semana_03
