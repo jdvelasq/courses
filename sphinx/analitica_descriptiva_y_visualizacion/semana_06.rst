@@ -38,12 +38,3 @@ Sesión 06 --- Dic 6
 
 * `Visualización de datos en Matplotlib <https://jdvelasq.github.io/curso_visualizacion_de_datos/01_matplotlib/__index__.html>`_
 
-.. raw:: html
-
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Lab 06 --- `Matplotlib news plot <>`_
-
-* Lab 07 --- `Matplotlib dashboard <>`_
-

@@ -38,16 +38,3 @@ Sesión 05 --- Nov 29
 * `Limpieza de datos con pandas (1:17:17) <https://jdvelasq.github.io/curso_HOWTOs/04_limpieza_de_datos/__index__.html>`_
 
 
-.. raw:: html
-
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Lab 03 --- `Ingestión de texto, clusters report <>`_
-
-* Lab 04 --- `Ingestión de datos textuales <>`_
-
-* Lab 05 --- `Limpieza de datos de campañas de marketing <>`_
-
-* Lab 06 --- `Limpieza de datos de solicitudes de credito <>`_
-

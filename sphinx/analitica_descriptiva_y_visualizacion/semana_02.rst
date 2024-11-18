@@ -23,9 +23,6 @@ Sesión 02 --- Nov 8
 **Programación en Python para Data Analytics I**
 
 
-
-
-
 * `Ejemplos de programas simples en Python <https://wiki.python.org/moin/SimplePrograms>`_
 
 * `Una introducción informal a Python (60:02) <https://jdvelasq.github.io/curso_python_para_data_analytics/01_una_introduccion_informal/__index__.html>`_ 

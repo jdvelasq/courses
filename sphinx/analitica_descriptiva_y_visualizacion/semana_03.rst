@@ -48,10 +48,3 @@ Sesión 03 --- Nov 15
 * NBviewer https://nbviewer.jupyter.org
 
 
-.. raw:: html
-
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Lab 01: `Programacion básica en Python <>`_
-

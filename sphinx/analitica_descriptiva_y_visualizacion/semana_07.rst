@@ -34,9 +34,4 @@ Sesión 07 --- Dic 13
 * `Estadística Descriptiva <https://jdvelasq.github.io/curso_estadistica_para_analytics/02_estadistica_descriptiva/__index__.html>`_
 
 
-.. raw:: html
 
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-* Lab 08 --- `SQL con SQlite <>`_

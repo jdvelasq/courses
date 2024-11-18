@@ -31,16 +31,4 @@ Sesión 08 --- Dic 18
 * `Ajuste de hiperparámetros (25:08) <https://jdvelasq.github.io/curso_ml_con_sklearn/06_ajuste_de_hiperparametros/__index__.html>`_
 
 
-.. raw:: html
-
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-   
-
-
-* Lab 09 --- `Dataset Diabetes <>`_
-
-* Lab 10 --- `Dataset Mushrooms <>`_
-
-* Lab 11 --- `Dataset German <>`_
 
