@@ -45,10 +45,5 @@ Sesión 04 --- Nov 22
 
 * `Data Analytics con Pandas (2:44:57) <https://jdvelasq.github.io/curso_data_analytics_con_pandas/>`_
 
-.. raw:: html
 
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-   
 
-* Lab 02 --- `Pandas <>`_

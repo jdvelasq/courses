@@ -36,6 +36,7 @@ Analítica Descriptiva y Visualización de Datos
     :hidden:
     :glob:
 
+    labs
     semana_01
     semana_02
     semana_03

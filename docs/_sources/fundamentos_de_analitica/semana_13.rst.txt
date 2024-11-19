@@ -21,13 +21,6 @@ Sesión 13 --- Feb 12
 
 
 
-.. * **LAB** --- `Regresión Lineal Simple (GapMinder) <https://classroom.github.com/a/Y-t0TIbS>`_.
-
-.. * **LAB** --- `Regresión Lineal Multiple (insurance) <https://classroom.github.com/a/bvyWm9_z>`_.
-
-.. * **LAB** --- `Análisis de Sentimientos (Amazon) <https://classroom.github.com/a/j6fYnT8O>`_.
-
-.. * **LAB** --- `Regresión Logística (mushrooms) <https://classroom.github.com/a/CvQCAqoF>`_.
 
 .. ......................................................................................
 .. 10 Recommenation systems

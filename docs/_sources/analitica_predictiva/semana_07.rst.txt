@@ -41,24 +41,5 @@ Sesión 07 --- Dic 14
 * `Clustering <https://jdvelasq.github.io/curso_ml_con_sklearn/46_clustering/__index__.html>`_ 
 
 
-.. raw:: html
-   
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-
-* **LAB** --- `Regresión Lineal Simple (GapMinder) <>`_. 
-
-* **LAB** --- `Regresión Lineal Multiple (insurance) <>`_.
-
-* **LAB** --- `Regresión Logística (mushrooms) <>`_.
-
-* **LAB** --- `Clasificación con kNN (digits) <>`_.
-
-* **LAB** --- `Regresión con kNN <>`_.
-
-
-* **LAB** --- `Predicción de la resistencia del concreto <>`_.
-
-* **LAB** --- `Detección de créditos riesgosos usando SVMs <>`_.
 
