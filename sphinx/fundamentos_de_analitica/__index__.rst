@@ -34,6 +34,7 @@ Fundamentos de Analitica
     :hidden:
     :glob:
 
+    datacamp
     labs
     semana_01
     semana_02
