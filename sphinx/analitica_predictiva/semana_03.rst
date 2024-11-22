@@ -11,7 +11,7 @@ Sesión 03 --- Nov 16
 
 * Taller Presencial 04 --- `Clasificación básica de imágenes <https://classroom.github.com/a/OvNBKMIV>`_ 
 
-* Taller Presencial 05 --- `Clasificación básica de texto <https://classroom.github.com/a/Ab0A50m4>`_ 
+
 
 
 

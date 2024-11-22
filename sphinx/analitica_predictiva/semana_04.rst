@@ -8,6 +8,8 @@ Sesión 04 --- Nov 23
 
 **Casos Prácticos**
 
+* Taller Presencial 05 --- `Clasificación básica de texto <https://classroom.github.com/a/Ab0A50m4>`_ 
+
 * Taller Presencial 06 --- `Regresión básica <https://classroom.github.com/a/G5jRcWM3>`_    
 
 * Taller Presencial 07 --- `Ajuste de Hiperparámetros <https://classroom.github.com/a/18VOCgor>`_ 
