@@ -7,6 +7,9 @@ Sesión 05 --- Nov 29
 
 **Casos Prácticos**
 
+* Taller Presencial 10 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/6M6AxYbr>`_ 
+
+
 * Taller Presencial 11 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/NNLP8qFO>`_
 
 * Taller Presencial 12 --- `Limpieza de texto ngram <https://classroom.github.com/a/XU0RIjr5>`_
