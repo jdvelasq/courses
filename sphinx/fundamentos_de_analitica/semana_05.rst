@@ -7,6 +7,12 @@ Sesión 05 --- Nov 27
 
 **Casos Prácticos**
 
+* Taller Presencial 08 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/48jHTz_v>`_
+
+* Taller Presencial 09 --- `Limpieza de texto ngrams <https://classroom.github.com/a/b994k82j>`_
+
+* Taller Presencial 10 --- `Tokenización de texto <https://classroom.github.com/a/f3x5aMrP>`_
+
 * Taller Presencial 11 --- `Worldmap en folium <https://classroom.github.com/a/RizfmYhC>`_
 
 * Taller Presencial 12 --- `Matplotlib networkx <https://classroom.github.com/a/esBVEOUl>`_
