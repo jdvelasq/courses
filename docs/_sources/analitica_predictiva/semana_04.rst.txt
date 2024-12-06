@@ -12,7 +12,7 @@ Sesión 04 --- Nov 23
 
 * Taller Presencial 06 --- `Regresión básica <https://classroom.github.com/a/G5jRcWM3>`_    
 
-* Taller Presencial 07 --- `Ajuste de Hiperparámetros <https://classroom.github.com/a/18VOCgor>`_ 
+* Taller Presencial 07 --- `Optimización de Hiperparámetros <https://classroom.github.com/a/18VOCgor>`_ 
 
 
 

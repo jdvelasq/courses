@@ -14,10 +14,6 @@ Sesión 06 --- Dic 4
 
 * Taller Presencial 12 --- `Matplotlib networkx <https://classroom.github.com/a/esBVEOUl>`_
 
-* Taller Presencial 13 --- `Bootstrapping <https://classroom.github.com/a/BGGRjdM9>`_
-
-* Taller Presencial 14 --- `Análisis de datos con Pandas <https://classroom.github.com/a/igH4lSOf>`_ 
-
 
 .. raw:: html
 
