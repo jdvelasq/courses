@@ -7,6 +7,10 @@ Sesión 08 --- Dic 18
 
 **Casos Prácticos**
 
+* Taller Presencial 15 --- `Despliegue de modelos de ML <https://classroom.github.com/a/_aVBp9t1>`_
+
+* Taller Presencial 16 --- `Implementación de modelos de ML <https://classroom.github.com/a/MsgQYEQ8>`_
+
 * Taller Presencial 17 --- `Clasificación básica de imágenes <https://classroom.github.com/a/WyIb6MRh>`_
 
 * Taller Presencial 18 --- `Clasificación básica de texto <https://classroom.github.com/a/BL5GDS0h>`_
