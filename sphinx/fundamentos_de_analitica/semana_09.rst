@@ -7,9 +7,11 @@ Sesión 09 --- Ene 15
 
 **Casos Prácticos**
 
-* Taller Presencial 20 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/4dhxBV-4>`_
+* Taller Presencial 16 --- `Implementación de modelos de ML <https://classroom.github.com/a/MsgQYEQ8>`_
 
-* Taller Presencial 21 --- `Pipelines <https://classroom.github.com/a/x1OjQTPw>`_
+* Taller Presencial 17 --- `Clasificación básica de imágenes <https://classroom.github.com/a/WyIb6MRh>`_
+
+* Taller Presencial 18 --- `Clasificación básica de texto <https://classroom.github.com/a/BL5GDS0h>`_
 
 .. raw:: html
 
