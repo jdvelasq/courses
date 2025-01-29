@@ -7,7 +7,7 @@ Sesión 13 --- Feb 12
 
 **Casos Prácticos**
 
-* Taller Presencial 27 --- `Predicción con sktime y statsmodels <https://classroom.github.com/a/nJq4kKGu>`_ 
+* Taller Presencial 27 --- `Predicción básica de series de tiempo <https://classroom.github.com/a/m9Ztf_r4>`_ 
 
 .. raw:: html
 

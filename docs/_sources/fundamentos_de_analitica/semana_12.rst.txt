@@ -8,7 +8,13 @@ Sesión 12 --- Feb 5
 
 **Casos Prácticos**
 
-* Taller Presencial 27 --- `Predicción básica de series de tiempo <https://classroom.github.com/a/m9Ztf_r4>`_ 
+* Taller Presencial 24 --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/f7V_DFLW>`_
+
+* Taller Presencial 25 --- `Patrones de demanda diaria <https://classroom.github.com/a/vvpBuM6A>`_ 
+
+* Taller Presencial 26 --- `Visualización de la estructura del mercado <https://classroom.github.com/a/8DyO8kAX>`_ 
+
+
 
 
 .. raw:: html

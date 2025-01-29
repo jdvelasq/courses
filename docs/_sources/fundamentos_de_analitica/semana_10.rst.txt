@@ -11,7 +11,7 @@ Sesión 10 --- Ene 22
 
 * Taller Presencial 20 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/4dhxBV-4>`_
 
-* Taller Presencial 21 --- `Pipelines <https://classroom.github.com/a/x1OjQTPw>`_
+
 
 
 .. raw:: html
