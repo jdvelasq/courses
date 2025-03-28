@@ -6,13 +6,13 @@ Productos de Datos
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-* Inicio de clases: **Febrero 5, 2024**
+* Inicio del semestre: **Lunes, 31 de marzo de 2025**.
 
-* Finalización de clases: **Abril 4, 2024** (Mayo 6, 2024).
+* Finalización del semestre: **Sabado, 26 de julio de 2025**.
 
-* Entrega de talleres: **Abril 15, 2024**.
+* Reporte de notas al SIA: **Martes, 29 de julio de 2025**.
 
-* Reporte de notas al SIA: **Junio 7, 2024**.
+* Entrega de talleres: **Domingo, 8 de junio de 2025, 23:59**.
 
 
 **Nota** Incluir https://github.com/evidentlyai/evidently

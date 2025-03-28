@@ -1,4 +1,4 @@
-Sesión 06 --- Mar 16
+Sesión 06 --- May 17
 -------------------------------------------------------------------------------
 
 * Taller Presencial --- `Evaluación <https://classroom.github.com/a/NN3O7kO8>`_

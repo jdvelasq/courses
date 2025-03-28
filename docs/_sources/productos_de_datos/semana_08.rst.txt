@@ -1,4 +1,4 @@
-Sesión 08 --- Abr 06
+Sesión 08 --- May 31
 -------------------------------------------------------------------------------
 
 * `DataOps para el Chief Data Officer --12-- <https://jdvelasq.github.io/conferencia_dataops_06_for_the_chief_data_officer/>`_    

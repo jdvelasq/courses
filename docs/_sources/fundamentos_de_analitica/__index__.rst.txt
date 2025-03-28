@@ -6,13 +6,13 @@ Fundamentos de Analitica
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-* Inicio de clases: **Octubre 28, 2024**
+* Inicio del semestre: **Lunes, 31 de marzo de 2025**.
 
-* Finalización de clases: **Febrero 12, 2025**.
+* Finalización del semestre: **Sabado, 26 de julio de 2025**.
 
-* Entrega de talleres: **Febrero 19, 2025 (23:59 pm)**.
+* Reporte de notas al SIA: **Martes, 29 de julio de 2025**.
 
-* Reporte de notas al SIA: **Marzo 8, 2025**.
+* Entrega de talleres: **Miércoles, 16 de julio de 2025, 23:59 pm**.
 
 
 
