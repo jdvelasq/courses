@@ -7,11 +7,11 @@ Sesión 04 --- Abr 30
 
 **Casos Prácticos**
 
-* Taller Presencial 05 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/YnUvrxey>`_ 
+* Taller Presencial 05 --- `Subconjuntos de datos en Pandas <>`_ 
 
-* Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/zwYoYDfP>`_ 
+* Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <>`_ 
 
-* Taller Presencial 07 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/6U_z1_wQ>`_ 
+* Taller Presencial 07 --- `Manipulación de datos con ChatGPT <>`_ 
 
 
 .. raw:: html

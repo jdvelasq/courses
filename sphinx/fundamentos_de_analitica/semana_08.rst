@@ -7,7 +7,7 @@ Sesión 08 --- May 28
 
 **Casos Prácticos**
 
-* Taller Presencial 15 --- `Despliegue de modelos de ML <https://classroom.github.com/a/_aVBp9t1>`_
+* Taller Presencial 15 --- `Despliegue de modelos de ML <>`_
 
 
 

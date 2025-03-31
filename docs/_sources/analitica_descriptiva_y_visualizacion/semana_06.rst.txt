@@ -7,11 +7,11 @@ Sesión 06 --- May 16
 
 **Casos Prácticos**
 
-* Taller Presencial 14 --- `Worldmap en Folium <https://classroom.github.com/a/D0KdGwJZ>`_
+* Taller Presencial 14 --- `Worldmap en Folium <>`_
 
-* Taller Presencial 15 --- `Matplotlib Networkx <https://classroom.github.com/a/Hm0Xq0Nl>`_
+* Taller Presencial 15 --- `Matplotlib Networkx <>`_
 
-* Taller Presencial 16 --- `Visualización de precios de bolsa <https://classroom.github.com/a/40uYe2xn>`_
+* Taller Presencial 16 --- `Visualización de precios de bolsa <>`_
 
 
 

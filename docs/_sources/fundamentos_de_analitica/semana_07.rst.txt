@@ -7,9 +7,9 @@ Sesión 07 --- May 21
 
 **Casos Prácticos**
 
-* Taller Presencial 13 --- `Bootstrapping <https://classroom.github.com/a/BGGRjdM9>`_
+* Taller Presencial 13 --- `Bootstrapping <>`_
 
-* Taller Presencial 14 --- `Análisis de datos con Pandas <https://classroom.github.com/a/igH4lSOf>`_ 
+* Taller Presencial 14 --- `Análisis de datos con Pandas <>`_ 
 
 
 
