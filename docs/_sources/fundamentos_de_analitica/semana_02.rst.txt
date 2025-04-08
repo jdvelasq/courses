@@ -8,9 +8,9 @@ Sesión 02 --- Abr 9
 
 **Casos Prácticos**
 
-* Taller Presencial 01 --- `Hola mundo <>`_ 
+* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/vnXUOs5t>`_ 
 
-* Taller Presencial 02 --- `Programación en Python MapReduce <>`_ 
+* Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/mWqWbFef>`_ 
 
 
 .. raw:: html
