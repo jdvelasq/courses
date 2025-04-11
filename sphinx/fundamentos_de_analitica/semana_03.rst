@@ -7,6 +7,8 @@ Sesión 03 --- Abr 23
 
 **Casos Prácticos**
 
+* Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/mWqWbFef>`_ 
+
 * Taller Presencial 03 --- `Consultas SQL en MapReduce <>`_ 
 
 * Taller Presencial 04 --- `Wordcount con Pandas <>`_
