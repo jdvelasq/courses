@@ -8,11 +8,11 @@ Sesión 06 --- May 14
 
 **Casos Prácticos**
 
-* Taller Presencial 10 --- `Tokenización de texto <>`_
+* Taller Presencial 10 --- `Tokenización de texto <https://classroom.github.com/a/4KyUcpvc>`_
 
-* Taller Presencial 11 --- `Worldmap en folium <>`_
+* Taller Presencial 11 --- `Worldmap en folium <https://classroom.github.com/a/mth_70oD>`_
 
-* Taller Presencial 12 --- `Matplotlib networkx <>`_
+* Taller Presencial 12 --- `Matplotlib networkx <https://classroom.github.com/a/sboOyfKx>`_
 
 
 .. raw:: html
