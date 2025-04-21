@@ -7,7 +7,7 @@ Sesión 13 --- Jul 2
 
 **Casos Prácticos**
 
-* Taller Presencial 27 --- `Predicción básica de series de tiempo <>`_ 
+* Taller Presencial 27 --- `Predicción básica de series de tiempo <https://classroom.github.com/a/IwX4PI8X>`_ 
 
 .. raw:: html
 
