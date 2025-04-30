@@ -61,10 +61,28 @@ Sesión 08 --- May 31
 
 * `Vagrant <https://jdvelasq.github.io/curso_vagrant/>`_ 
 
+* `Docker <https://jdvelasq.github.io/curso_docker/>`_
 
 
 
 **Paso 6 --- Parametrice el proceso**
+
+
+* Taller Presencial 02 --- `CLI tools con argparse <https://classroom.github.com/a/_XFv-JA9>`_ 
+
+* Taller Presencial 03 --- `CLI tools con click <https://classroom.github.com/a/WU4ojY_b>`_ 
+
+* Taller Presencial 04 --- `CLI tools con typer <https://classroom.github.com/a/U7SEuqtj>`_ 
+
+* Taller Presencial 05 --- `CLI tools con Google fire <https://classroom.github.com/a/mJ42bA0u>`_ 
+
+
+* `Manejo de archivos de configuración <https://jdvelasq.github.io/curso_HOWTOs/06_archivos_de_configuracion/__index__.html>`_ 
+
+
+**Paso 7 --- Trabaje sin miedo o heroismo**
+
+
 
 
 

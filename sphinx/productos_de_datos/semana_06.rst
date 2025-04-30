@@ -13,10 +13,6 @@ Sesión 06 --- May 17
 
 * `Flask <https://jdvelasq.github.io/curso_HOWTOs/12_flask/__index__.html>`_ 
 
-* `Docker <https://jdvelasq.github.io/curso_docker/>`_
-
-* `Manejo de archivos de configuración <https://jdvelasq.github.io/curso_HOWTOs/06_archivos_de_configuracion/__index__.html>`_ 
-
 
 .. config files
 .. docker

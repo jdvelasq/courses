@@ -13,14 +13,6 @@ Sesión 04 --- Abr 30
 * Taller Presencial 04 --- `Wordcount con Pandas <https://classroom.github.com/a/_dky6zUR>`_
 
 
-* Taller Presencial 05 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/cZnTw9hQ>`_ 
-
-
-* Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/oTj59Ff5>`_ 
-
-
-* Taller Presencial 07 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/yqnD1csY>`_ 
-
 
 .. raw:: html
 
