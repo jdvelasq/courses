@@ -1,12 +1,15 @@
 Sesión 05 --- May 10
 -------------------------------------------------------------------------------
 
-**Intrdoucción a DataOps**
+* Taller Presencial 03 --- `Wordcount TDD <https://classroom.github.com/a/sPEVf5aO>`_ 
+
+* Taller Presencial 04 --- `Wordcount objetos <https://classroom.github.com/a/CoaCpJRg>`_ 
+
+* Taller Presencial 05 --- `Wordcount produccion <https://classroom.github.com/a/6PnsoO3->`_ 
+
+* Taller Presencial 06 --- `Factorizacion de codigo para ML <https://classroom.github.com/a/PbtA2AeL>`_ 
 
 
-* `Lean thinking <https://jdvelasq.github.io/conferencia_dataops_03_lean_thinking/>`_ 
 
-* `Agile Collaboration <https://jdvelasq.github.io/conferencia_dataops_04_agile_collaboration/>`_ 
 
-* `Qué es DataOps? <https://jdvelasq.github.io/conferencia_dataops_05_what_is_dataops/>`_ 
 
