@@ -1,6 +1,10 @@
 Datacamp
 -------------------------------------------------------------------------------
 
-Como complemento al curso, se recomienda realizar los siguientes cursos en Datacamp:
+Estimados estudiantes,
 
-https://www.datacamp.com/groups/shared_links/7f18b7a20d5845c32093cd3f7172b03b0907219ab2f3b1f4e0cb457a4d8fa578
+Este es el link de los cursos de DataCamp que usaremos como complemento del curso:
+
+https://www.datacamp.com/groups/shared_links/fa4e0b2c3da98f68553cc0a5e1ee76cce248ddac3b34d16281b0148952014118
+
+Para su uso, deben tener una cuenta de datacamp creada con el correo de la UNAL.
