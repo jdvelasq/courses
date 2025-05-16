@@ -17,7 +17,7 @@ Sesión 05 --- May 9
 
 * Taller Presencial 12 --- `Limpieza de texto ngram <https://classroom.github.com/a/9ebuzqcV>`_
 
-* Taller Presencial 13 --- `Tokenización de texto <https://classroom.github.com/a/sshrdZUj>`_
+
 
 .. raw:: html
 

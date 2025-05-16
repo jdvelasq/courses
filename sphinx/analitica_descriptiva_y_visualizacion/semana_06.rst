@@ -7,6 +7,8 @@ Sesión 06 --- May 16
 
 **Casos Prácticos**
 
+* Taller Presencial 13 --- `Tokenización de texto <https://classroom.github.com/a/sshrdZUj>`_
+
 * Taller Presencial 14 --- `Worldmap en Folium <https://classroom.github.com/a/9QM2r95T>`_
 
 * Taller Presencial 15 --- `Matplotlib Networkx <https://classroom.github.com/a/jPJ8Q_YC>`_
