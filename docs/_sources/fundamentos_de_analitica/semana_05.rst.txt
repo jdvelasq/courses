@@ -11,11 +11,6 @@ Sesión 05 --- May 7
 
 * Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/oTj59Ff5>`_ 
 
-* Taller Presencial 07 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/yqnD1csY>`_ 
-
-* Taller Presencial 08 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/szBzEaqH>`_
-
-* Taller Presencial 09 --- `Limpieza de texto ngrams <https://classroom.github.com/a/r_2rjgTl>`_
 
 
 

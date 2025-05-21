@@ -8,6 +8,12 @@ Sesión 06 --- May 21
 
 **Casos Prácticos**
 
+* Taller Presencial 07 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/yqnD1csY>`_ 
+
+* Taller Presencial 08 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/szBzEaqH>`_
+
+* Taller Presencial 09 --- `Limpieza de texto ngrams <https://classroom.github.com/a/r_2rjgTl>`_
+
 * Taller Presencial 10 --- `Tokenización de texto <https://classroom.github.com/a/4KyUcpvc>`_
 
 * Taller Presencial 11 --- `Worldmap en folium <https://classroom.github.com/a/mth_70oD>`_
