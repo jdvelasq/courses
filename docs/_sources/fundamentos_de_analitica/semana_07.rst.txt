@@ -7,6 +7,10 @@ Sesión 07 --- May 28
 
 **Casos Prácticos**
 
+* Taller Presencial 11 --- `Worldmap en folium <https://classroom.github.com/a/mth_70oD>`_
+
+* Taller Presencial 12 --- `Matplotlib networkx <https://classroom.github.com/a/sboOyfKx>`_
+
 * Taller Presencial 13 --- `Bootstrapping <https://classroom.github.com/a/SE9yQF-Y>`_
 
 * Taller Presencial 14 --- `Análisis de datos con Pandas <https://classroom.github.com/a/23pdopax>`_ 
