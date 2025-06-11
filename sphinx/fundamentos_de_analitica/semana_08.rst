@@ -11,7 +11,6 @@ Sesión 08 --- Jun 4
 
 * Taller Presencial 15 --- `Despliegue de modelos de ML <https://classroom.github.com/a/dUvcrSL2>`_
 
-* Taller Presencial 16 --- `Implementación de modelos de ML <https://classroom.github.com/a/oQ_gLgcb>`_
 
 
 
