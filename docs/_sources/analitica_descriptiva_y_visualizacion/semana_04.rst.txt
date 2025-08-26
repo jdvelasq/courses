@@ -1,4 +1,4 @@
-Sesión 04 --- May 2
+Sesión 04 --- Sep 19
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,9 +7,9 @@ Sesión 04 --- May 2
 
 **Casos Prácticos**
 
-* Taller Presencial 06 --- `Datos sinteticos con faker <https://classroom.github.com/a/VcXH7kDs>`_ 
+* Taller Presencial 06 --- `Datos sinteticos con faker <>`_ 
 
-* Taller Presencial 07 --- `WordCount con Pandas <https://classroom.github.com/a/8CpyHlTm>`_ 
+* Taller Presencial 07 --- `WordCount con Pandas <>`_ 
 
 
 

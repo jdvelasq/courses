@@ -1,4 +1,4 @@
-Sesión 02 --- Abr 9
+Sesión 02 --- Sep 3
 -------------------------------------------------------------------------------
 
 
@@ -8,7 +8,7 @@ Sesión 02 --- Abr 9
 
 **Casos Prácticos**
 
-* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/vnXUOs5t>`_ 
+* Taller Presencial 01 --- `Hola mundo <>`_ 
 
 
 

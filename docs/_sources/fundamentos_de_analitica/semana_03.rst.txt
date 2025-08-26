@@ -1,4 +1,4 @@
-Sesión 03 --- Abr 23
+Sesión 03 --- Sep 10
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,7 +7,7 @@ Sesión 03 --- Abr 23
 
 **Casos Prácticos**
 
-* Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/mWqWbFef>`_ 
+* Taller Presencial 02 --- `Programación en Python MapReduce <>`_ 
 
 
 
