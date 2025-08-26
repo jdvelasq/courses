@@ -1,4 +1,4 @@
-Sesión 03 --- Nov 16
+Sesión 03 --- Sep 13
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,9 +7,9 @@ Sesión 03 --- Nov 16
 
 **Casos Prácticos**
 
-* Taller Presencial 03 --- `Implementación de modelos <https://classroom.github.com/a/jzJW8802>`_ 
+* Taller Presencial 03 --- `Implementación de modelos <>`_ 
 
-* Taller Presencial 04 --- `Clasificación básica de imágenes <https://classroom.github.com/a/OvNBKMIV>`_ 
+* Taller Presencial 04 --- `Clasificación básica de imágenes <>`_ 
 
 
 

@@ -1,4 +1,4 @@
-Sesión 08 --- Dic 21 (Trabajo autonomo debido a vacaciones)
+Sesión 08 --- Oct 18
 -------------------------------------------------------------------------------
 
 .. raw:: html

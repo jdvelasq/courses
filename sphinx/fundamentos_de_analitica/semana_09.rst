@@ -1,4 +1,4 @@
-Sesión 09 --- Jun 11
+Sesión 09 --- Oct 22
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,11 +7,11 @@ Sesión 09 --- Jun 11
 
 **Casos Prácticos**
 
-* Taller Presencial 16 --- `Implementación de modelos de ML <https://classroom.github.com/a/oQ_gLgcb>`_
+* Taller Presencial 16 --- `Implementación de modelos de ML <>`_
 
-* Taller Presencial 17 --- `Clasificación básica de imágenes <https://classroom.github.com/a/mz42OFRq>`_
+* Taller Presencial 17 --- `Clasificación básica de imágenes <>`_
 
-* Taller Presencial 18 --- `Clasificación básica de texto <https://classroom.github.com/a/XJYlR6xG>`_
+* Taller Presencial 18 --- `Clasificación básica de texto <>`_
 
 .. raw:: html
 

@@ -1,4 +1,4 @@
-Sesión 07 --- May 23
+Sesión 07 --- Oct 10
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,9 +7,9 @@ Sesión 07 --- May 23
 
 **Casos Prácticos**
 
-* Taller Presencial 17 --- `Análisis de datos con Pandas <https://classroom.github.com/a/Gao6Im3d>`_ 
+* Taller Presencial 17 --- `Análisis de datos con Pandas <>`_ 
 
-* Taller Presencial 18 --- `SQLite web app <https://classroom.github.com/a/jCyKXJxE>`_ 
+* Taller Presencial 18 --- `SQLite web app <>`_ 
 
 
 .. raw:: html

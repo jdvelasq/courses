@@ -1,4 +1,4 @@
-Sesión 05 --- May 7
+Sesión 05 --- Sep 24
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,9 +7,9 @@ Sesión 05 --- May 7
 
 **Casos Prácticos**
 
-* Taller Presencial 05 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/cZnTw9hQ>`_ 
+* Taller Presencial 05 --- `Subconjuntos de datos en Pandas <>`_ 
 
-* Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/oTj59Ff5>`_ 
+* Taller Presencial 06 --- `Agrupamiento y filtrado en Pandas <>`_ 
 
 
 

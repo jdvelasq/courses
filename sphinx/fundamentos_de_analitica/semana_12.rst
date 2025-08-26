@@ -1,4 +1,4 @@
-Sesión 12 --- Jul 2
+Sesión 12 --- Nov 12
 -------------------------------------------------------------------------------
 
 
@@ -8,11 +8,11 @@ Sesión 12 --- Jul 2
 
 **Casos Prácticos**
 
-* Taller Presencial 24 --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/DIHanUfu>`_
+* Taller Presencial 24 --- `Reducción de la dimensionalidad digits <>`_
 
-* Taller Presencial 25 --- `Patrones de demanda diaria <https://classroom.github.com/a/dBbuTBnH>`_ 
+* Taller Presencial 25 --- `Patrones de demanda diaria <>`_ 
 
-* Taller Presencial 26 --- `Visualización de la estructura del mercado <https://classroom.github.com/a/yaa0cxlG>`_ 
+* Taller Presencial 26 --- `Visualización de la estructura del mercado <>`_ 
 
 
 

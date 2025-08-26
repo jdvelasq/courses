@@ -1,4 +1,4 @@
-Sesión 02 --- Nov 9
+Sesión 02 --- Sep 6
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,9 +7,9 @@ Sesión 02 --- Nov 9
 
 **Casos Prácticos**
 
-* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/81d-STPO>`_ 
+* Taller Presencial 01 --- `Hola mundo <>`_ 
 
-* Taller Presencial 02 --- `Despliegue de modelos de ML <https://classroom.github.com/a/DjUNUSyN>`_ 
+* Taller Presencial 02 --- `Despliegue de modelos de ML <>`_ 
 
 .. raw:: html
    

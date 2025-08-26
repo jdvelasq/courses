@@ -1,4 +1,4 @@
-Sesión 11 --- Jun 25
+Sesión 11 --- Nov 5
 -------------------------------------------------------------------------------
 
 .. raw:: html
@@ -7,11 +7,11 @@ Sesión 11 --- Jun 25
 
 **Casos Prácticos**
 
-* Taller Presencial 21 --- `Pipelines <https://classroom.github.com/a/HK9e_AbC>`_
+* Taller Presencial 21 --- `Pipelines <>`_
 
-* Taller Presencial 22 --- `SelectKBest para regresión <https://classroom.github.com/a/e3f0HKIb>`_
+* Taller Presencial 22 --- `SelectKBest para regresión <>`_
 
-* Taller Presencial 23 --- `SelectKBest para clasificación <https://classroom.github.com/a/vN1JLMeG>`_
+* Taller Presencial 23 --- `SelectKBest para clasificación <>`_
 
 
 

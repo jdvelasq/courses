@@ -2,15 +2,15 @@ Laboratorios
 -------------------------------------------------------------------------------
 
 
-* Lab 01 -- `Predicción del default usando bosques aleatorios <https://classroom.github.com/a/baRVkjsN>`_. 
+* Lab 01 -- `Predicción del default usando bosques aleatorios <>`_. 
 
-* Lab 02 -- `Predicción del default usando regresión logística <https://classroom.github.com/a/CHwmaCbG>`_. 
+* Lab 02 -- `Predicción del default usando regresión logística <>`_. 
 
-* Lab 03 -- `Predicción del default usando maquinas de vectores de soporte <https://classroom.github.com/a/Xe3pIOD->`_. 
+* Lab 03 -- `Predicción del default usando maquinas de vectores de soporte <>`_. 
 
-* Lab 04 -- `Predicción del default usando redes neuronales <https://classroom.github.com/a/FiZFxHpz>`_. 
+* Lab 04 -- `Predicción del default usando redes neuronales <>`_. 
 
-* Lab 05 -- `Predicción de precios usando regresion lineal <https://classroom.github.com/a/OnznMr0E>`_. 
+* Lab 05 -- `Predicción de precios usando regresion lineal <>`_. 
 
 
 

@@ -1,31 +1,31 @@
 Laboratorios
 -------------------------------------------------------------------------------
 
-* Lab 01 --- `Programacion básica en Python <https://classroom.github.com/a/qcdIL-Gz>`_
+* Lab 01 --- `Programacion básica en Python <>`_
 
-* Lab 02 --- `Pandas <https://classroom.github.com/a/oSiLXK_Y>`_
+* Lab 02 --- `Pandas <>`_
 
-* Lab 03 --- `Ingestión de texto plano <https://classroom.github.com/a/GAJcF1q1>`_
+* Lab 03 --- `Ingestión de texto plano <>`_
 
-* Lab 04 --- `Ingestión de texto en directorios <https://classroom.github.com/a/viWFhnzn>`_
+* Lab 04 --- `Ingestión de texto en directorios <>`_
 
-* Lab 05 --- `Limpieza de datos de campañas de marketing <https://classroom.github.com/a/ruOOhT4W>`_
+* Lab 05 --- `Limpieza de datos de campañas de marketing <>`_
 
-* Lab 06 --- `Limpieza de solicitudes de credito <https://classroom.github.com/a/G5n2HXoB>`_
+* Lab 06 --- `Limpieza de solicitudes de credito <>`_
 
-* Lab 07 --- `Matplotlib news plot <https://classroom.github.com/a/KVM2qXer>`_
+* Lab 07 --- `Matplotlib news plot <>`_
 
-* Lab 08 --- `Matplotlib dashboard <https://classroom.github.com/a/UauhI7cn>`_
+* Lab 08 --- `Matplotlib dashboard <>`_
 
-* Lab 09 -- `Predicción del default usando bosques aleatorios <https://classroom.github.com/a/SEKR3VfM>`_. 
+* Lab 09 -- `Predicción del default usando bosques aleatorios <>`_. 
 
-* Lab 10 -- `Predicción del default usando regresión logística <https://classroom.github.com/a/VuSfKSSC>`_. 
+* Lab 10 -- `Predicción del default usando regresión logística <>`_. 
 
-* Lab 11 -- `Predicción del default usando maquinas de vectores de soporte <https://classroom.github.com/a/BmTEiknM>`_. 
+* Lab 11 -- `Predicción del default usando maquinas de vectores de soporte <>`_. 
 
-* Lab 12 -- `Predicción del default usando redes neuronales <https://classroom.github.com/a/ZmKggEWq>`_. 
+* Lab 12 -- `Predicción del default usando redes neuronales <>`_. 
 
-* Lab 13 -- `Predicción de precios usando regresion lineal <https://classroom.github.com/a/5eanvfak>`_. 
+* Lab 13 -- `Predicción de precios usando regresion lineal <>`_. 
 
 
 
