@@ -6,13 +6,13 @@ Analítica Descriptiva y Visualización de Datos
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
 
-* Inicio del semestre: **Lunes, 31 de marzo de 2025**.
+* Inicio del semestre: **Lunes, 25 de agosto de 2025**.
 
-* Finalización del semestre: **Sabado, 26 de julio de 2025**.
+* Finalización del semestre: **Sabado, 13 de diciembre de 2025**.
 
-* Reporte de notas al SIA: **Martes, 29 de julio de 2025**.
+* Reporte de notas al SIA: **Martes, 16 de diciembre de 2025**
 
-* Entrega de talleres: **Domingo, 8 de junio de 2025, 23:59**.
+* Entrega de talleres: **Lunes, 27 de octubre de 2025, 23:59**.
 
 
 .. note::

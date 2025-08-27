@@ -148,7 +148,7 @@ html_theme = "furo"
 # "<project> v<release> documentation".
 html_title = """Cursos UNAL<br>
 <div style="font-size: 14px;">
-    <p>Mar 31, 2025</p>
+    <p>Ago 25, 2025</p>
 </div>
 """
 
