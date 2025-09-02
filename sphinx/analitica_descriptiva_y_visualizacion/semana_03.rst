@@ -7,11 +7,11 @@ Sesión 03 --- Sep 12
 
 **Casos Prácticos**
 
-* Taller Presencial 03 --- `Consultas SQL en MapReduce <>`_ 
+* Taller Presencial 03 --- `Consultas SQL en MapReduce <https://classroom.github.com/a/EmVfd3ZK>`_ 
 
-* Taller Presencial 04 --- `Programación en Python Multiprocessing <>`_ 
+* Taller Presencial 04 --- `Programación en Python Multiprocessing <https://classroom.github.com/a/bJlJE_7q>`_ 
 
-* Taller Presencial 05 --- `Python csv2json <>`_ 
+* Taller Presencial 05 --- `Python csv2json <https://classroom.github.com/a/W7n7itzF>`_ 
 
 
 .. raw:: html

@@ -7,10 +7,10 @@ Sesión 04 --- Sep 17
 
 **Casos Prácticos**
 
-* Taller Presencial 03 --- `Consultas SQL en MapReduce <>`_ 
+* Taller Presencial 03 --- `Consultas SQL en MapReduce <https://classroom.github.com/a/vb5hEbWG>`_ 
 
 
-* Taller Presencial 04 --- `Wordcount con Pandas <>`_
+* Taller Presencial 04 --- `Wordcount con Pandas <https://classroom.github.com/a/WW7O_BXD>`_
 
 
 

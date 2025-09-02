@@ -7,11 +7,10 @@ Sesión 06 --- Oct 4
 
 **Casos Prácticos**
 
-* Taller Presencial 11 --- `Reduccion de la dimensionalidad digits <>`_ 
+* Taller Presencial 11 --- `Reduccion de la dimensionalidad digits <https://classroom.github.com/a/MrNRZlOa>`_ 
 
-* Taller Presencial 12 --- `Patrones de demanda diaria <>`_ 
+* Taller Presencial 12 --- `Patrones de demanda diaria <https://classroom.github.com/a/sCIBB6WD>`_ 
 
-* Taller Presencial 13 --- `Selección automatica de características <>`_ 
 
 
 

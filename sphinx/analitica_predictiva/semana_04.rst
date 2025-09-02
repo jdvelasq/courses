@@ -8,11 +8,11 @@ Sesión 04 --- Sep 20
 
 **Casos Prácticos**
 
-* Taller Presencial 05 --- `Clasificación básica de texto <>`_ 
+* Taller Presencial 05 --- `Clasificación básica de texto <https://classroom.github.com/a/F_cqp9zy>`_ 
 
-* Taller Presencial 06 --- `Regresión básica <>`_    
+* Taller Presencial 06 --- `Regresión básica <https://classroom.github.com/a/gb7u8j-z>`_    
 
-* Taller Presencial 07 --- `Optimización de Hiperparámetros <>`_ 
+* Taller Presencial 07 --- `Optimización de Hiperparámetros <https://classroom.github.com/a/D7cGA4cP>`_ 
 
 
 

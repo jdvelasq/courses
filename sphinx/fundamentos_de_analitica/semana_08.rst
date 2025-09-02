@@ -7,9 +7,9 @@ Sesión 08 --- Oct 15
 
 **Casos Prácticos**
 
-* Taller Presencial 14 --- `Análisis de datos con Pandas <>`_ 
+* Taller Presencial 14 --- `Análisis de datos con Pandas <https://classroom.github.com/a/QBFQ7MWD>`_ 
 
-* Taller Presencial 15 --- `Despliegue de modelos de ML <>`_
+* Taller Presencial 15 --- `Despliegue de modelos de ML <https://classroom.github.com/a/6vRD2KqJ>`_
 
 
 

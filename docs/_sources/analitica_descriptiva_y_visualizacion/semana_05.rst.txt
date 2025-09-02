@@ -7,15 +7,15 @@ Sesión 05 --- Sep 26
 
 **Casos Prácticos**
 
-* Taller Presencial 08 --- `Subconjuntos de datos en Pandas <>`_ 
+* Taller Presencial 08 --- `Subconjuntos de datos en Pandas <https://classroom.github.com/a/RTIa8f7U>`_ 
 
-* Taller Presencial 09 --- `Agrupamiento y filtrado en Pandas <>`_ 
+* Taller Presencial 09 --- `Agrupamiento y filtrado en Pandas <https://classroom.github.com/a/wYeCzqv1>`_ 
 
-* Taller Presencial 10 --- `Manipulación de datos con ChatGPT <>`_ 
+* Taller Presencial 10 --- `Manipulación de datos con ChatGPT <https://classroom.github.com/a/EbWqPvFG>`_ 
 
-* Taller Presencial 11 --- `Limpieza de texto fingerprint <>`_
+* Taller Presencial 11 --- `Limpieza de texto fingerprint <https://classroom.github.com/a/bZ2wUqto>`_
 
-* Taller Presencial 12 --- `Limpieza de texto ngram <>`_
+* Taller Presencial 12 --- `Limpieza de texto ngram <https://classroom.github.com/a/xNosLGJ7>`_
 
 
 

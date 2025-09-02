@@ -7,7 +7,7 @@ Sesión 03 --- Sep 10
 
 **Casos Prácticos**
 
-* Taller Presencial 02 --- `Programación en Python MapReduce <>`_ 
+* Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/JWRqVwhO>`_ 
 
 
 

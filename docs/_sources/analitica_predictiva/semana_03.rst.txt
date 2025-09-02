@@ -7,9 +7,9 @@ Sesión 03 --- Sep 13
 
 **Casos Prácticos**
 
-* Taller Presencial 03 --- `Implementación de modelos <>`_ 
+* Taller Presencial 03 --- `Implementación de modelos <https://classroom.github.com/a/V9ryin4y>`_ 
 
-* Taller Presencial 04 --- `Clasificación básica de imágenes <>`_ 
+* Taller Presencial 04 --- `Clasificación básica de imágenes <https://classroom.github.com/a/EWCw0iSV>`_ 
 
 
 

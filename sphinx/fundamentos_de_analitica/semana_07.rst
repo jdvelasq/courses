@@ -7,11 +7,11 @@ Sesión 07 --- Oct 8
 
 **Casos Prácticos**
 
-* Taller Presencial 11 --- `Worldmap en folium <>`_
+* Taller Presencial 11 --- `Worldmap en folium <https://classroom.github.com/a/dp38LtjI>`_
 
-* Taller Presencial 12 --- `Matplotlib networkx <>`_
+* Taller Presencial 12 --- `Matplotlib networkx <https://classroom.github.com/a/FzfqFbBX>`_
 
-* Taller Presencial 13 --- `Bootstrapping <>`_
+* Taller Presencial 13 --- `Bootstrapping <https://classroom.github.com/a/on_XsBqF>`_
 
 
 

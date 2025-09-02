@@ -7,9 +7,9 @@ Sesión 10 --- Oct 29
 
 **Casos Prácticos**
 
-* Taller Presencial 19 --- `Regresión básica <>`_
+* Taller Presencial 19 --- `Regresión básica <https://classroom.github.com/a/NORYF-3F>`_
 
-* Taller Presencial 20 --- `Ajuste de hiperparámetros <>`_
+* Taller Presencial 20 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/55wEPAIN>`_
 
 
 

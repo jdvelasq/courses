@@ -7,11 +7,11 @@ Sesión 05 --- Sep 27
 
 **Casos Prácticos**
 
-* Taller Presencial 08 --- `Pipelines <>`_ 
+* Taller Presencial 08 --- `Pipelines <https://classroom.github.com/a/moTf-tf8>`_ 
 
-* Taller Presencial 09 --- `SelectKBest para regresión <>`_ 
+* Taller Presencial 09 --- `SelectKBest para regresión <https://classroom.github.com/a/U8PkEBnD>`_ 
 
-* Taller Presencial 10 --- `SelectKBest para clasificación <>`_ 
+* Taller Presencial 10 --- `SelectKBest para clasificación <https://classroom.github.com/a/cYTCCYMg>`_ 
 
 
 

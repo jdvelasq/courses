@@ -7,7 +7,7 @@ Sesión 07 --- Oct 11
 
 **Casos Prácticos**
 
-* Taller Presencial 14 --- `Prediccion basica de series de tiempo <>`_ 
+* Taller Presencial 13 --- `Prediccion basica de series de tiempo <https://classroom.github.com/a/2xWaAhy->`_ 
 
 
 .. raw:: html

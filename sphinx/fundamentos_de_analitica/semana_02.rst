@@ -8,7 +8,7 @@ Sesión 02 --- Sep 3
 
 **Casos Prácticos**
 
-* Taller Presencial 01 --- `Hola mundo <>`_ 
+* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/ciN6YDoq>`_ 
 
 
 
