@@ -7,9 +7,9 @@ Sesión 04 --- Sep 19
 
 **Casos Prácticos**
 
-* Taller Presencial 06 --- `Datos sinteticos con faker <https://classroom.github.com/a/rVkFDGOi>`_ 
+* Taller Presencial 07 --- `Datos sinteticos con faker <https://classroom.github.com/a/rVkFDGOi>`_ 
 
-* Taller Presencial 07 --- `WordCount con Pandas <https://classroom.github.com/a/_8wva2iC>`_ 
+* Taller Presencial 08 --- `WordCount con Pandas <https://classroom.github.com/a/_8wva2iC>`_ 
 
 
 

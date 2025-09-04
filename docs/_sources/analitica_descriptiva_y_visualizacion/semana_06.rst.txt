@@ -7,13 +7,13 @@ Sesión 06 --- Oct 3
 
 **Casos Prácticos**
 
-* Taller Presencial 13 --- `Tokenización de texto <https://classroom.github.com/a/6lU6VDzz>`_
+* Taller Presencial 14 --- `Tokenización de texto <https://classroom.github.com/a/6lU6VDzz>`_
 
-* Taller Presencial 14 --- `Worldmap en Folium <https://classroom.github.com/a/B7nDmpz_>`_
+* Taller Presencial 15 --- `Worldmap en Folium <https://classroom.github.com/a/B7nDmpz_>`_
 
-* Taller Presencial 15 --- `Matplotlib Networkx <https://classroom.github.com/a/8OaeXOvD>`_
+* Taller Presencial 16 --- `Matplotlib Networkx <https://classroom.github.com/a/8OaeXOvD>`_
 
-* Taller Presencial 16 --- `Visualización de precios de bolsa <https://classroom.github.com/a/DGRthhZg>`_
+* Taller Presencial 17 --- `Visualización de precios de bolsa <https://classroom.github.com/a/DGRthhZg>`_
 
 
 
