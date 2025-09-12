@@ -1,16 +1,6 @@
 Sesión 07 --- Oct 10
 -------------------------------------------------------------------------------
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 18 --- `Análisis de datos con Pandas <https://classroom.github.com/a/XfLx-wfn>`_ 
-
-* Taller Presencial 19 --- `SQLite web app <https://classroom.github.com/a/fkjEiJLZ>`_ 
-
 
 .. raw:: html
 

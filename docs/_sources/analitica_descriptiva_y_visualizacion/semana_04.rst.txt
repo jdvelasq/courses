@@ -3,18 +3,6 @@ Sesión 04 --- Sep 19
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 07 --- `Datos sinteticos con faker <https://classroom.github.com/a/rVkFDGOi>`_ 
-
-* Taller Presencial 08 --- `WordCount con Pandas <https://classroom.github.com/a/_8wva2iC>`_ 
-
-
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

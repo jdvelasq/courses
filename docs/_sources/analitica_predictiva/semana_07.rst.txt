@@ -5,16 +5,6 @@ Sesión 07 --- Oct 11
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Casos Prácticos**
-
-* Taller Presencial 13 --- `Prediccion basica de series de tiempo <https://classroom.github.com/a/2xWaAhy->`_ 
-
-
-.. raw:: html
-   
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
 **Aprendizaje Supervisado**
 
 * `Modelos de redes neuronales <https://jdvelasq.github.io/curso_ml_con_sklearn/43_modelos_de_redes_neuronales/__index__.html>`_ 

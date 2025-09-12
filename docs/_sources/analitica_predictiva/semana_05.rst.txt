@@ -5,22 +5,6 @@ Sesión 05 --- Sep 27
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Casos Prácticos**
-
-* Taller Presencial 08 --- `Pipelines <https://classroom.github.com/a/moTf-tf8>`_ 
-
-* Taller Presencial 09 --- `SelectKBest para regresión <https://classroom.github.com/a/U8PkEBnD>`_ 
-
-* Taller Presencial 10 --- `SelectKBest para clasificación <https://classroom.github.com/a/cYTCCYMg>`_ 
-
-
-
-
-.. raw:: html
-   
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
 **Transformaciones del Dataset**
 
 * `Pipelines y estimadores compuestos <https://jdvelasq.github.io/curso_ml_con_sklearn/c05_transformaciones.html>`_ 

@@ -6,15 +6,10 @@ Sesión 02 --- Sep 5
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Casos Prácticos**
+**Introducción**
 
 * Conferencia `Introducción a Python <https://jdvelasq.github.io/conferencia_intro_a_python/>`_
 
-* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/ohVtgjcU>`_ 
-
-* Taller Presencial 02 --- `Maquina Enigma <https://classroom.github.com/a/ZqijqvVl>`_ 
-
-* Taller Presencial 03 --- `Programación en Python MapReduce <https://classroom.github.com/a/qijY5-j->`_ 
 
 
 .. raw:: html

@@ -5,21 +5,6 @@ Sesión 03 --- Sep 12
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Casos Prácticos**
-
-* Taller Presencial 04 --- `Consultas SQL en MapReduce <https://classroom.github.com/a/EmVfd3ZK>`_ 
-
-* Taller Presencial 05 --- `Programación en Python Multiprocessing <https://classroom.github.com/a/bJlJE_7q>`_ 
-
-* Taller Presencial 06 --- `Python csv2json <https://classroom.github.com/a/W7n7itzF>`_ 
-
-
-.. raw:: html
-
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-
 **Programación en Python para Data Analytics II**
 
 
