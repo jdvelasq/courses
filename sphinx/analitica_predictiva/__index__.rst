@@ -29,7 +29,7 @@ Analítica Predictiva
 
 
     datacamp
-    labs
+    evaluacion
     semana_01
     semana_02
     semana_03

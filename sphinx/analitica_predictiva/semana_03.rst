@@ -5,24 +5,6 @@ Sesión 03 --- Sep 13
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Casos Prácticos**
-
-* Taller Presencial 03 --- `Implementación de modelos <https://classroom.github.com/a/V9ryin4y>`_ 
-
-* Taller Presencial 04 --- `Clasificación básica de imágenes <https://classroom.github.com/a/EWCw0iSV>`_ 
-
-
-
-
-
-
-
-.. raw:: html
-   
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-
 **Fundamentación**
 
 * `Fundamentos de Estadística Inferencial <https://jdvelasq.github.io/curso_fundametos_estadistica/01_estadistica_inferencial/__index__.html>`_ 

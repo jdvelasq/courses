@@ -6,21 +6,6 @@ Sesión 04 --- Sep 20
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Casos Prácticos**
-
-* Taller Presencial 05 --- `Clasificación básica de texto <https://classroom.github.com/a/F_cqp9zy>`_ 
-
-* Taller Presencial 06 --- `Regresión básica <https://classroom.github.com/a/gb7u8j-z>`_    
-
-* Taller Presencial 07 --- `Optimización de Hiperparámetros <https://classroom.github.com/a/D7cGA4cP>`_ 
-
-
-
-.. raw:: html
-   
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
 
 **Selección y Evaluación de Modelos**    
 

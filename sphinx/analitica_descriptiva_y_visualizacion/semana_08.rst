@@ -7,8 +7,6 @@ Sesión 08 --- Oct 17
 
 **Data Storytelling**
 
-
-
 * `Fundamentos de Narrativa de Datos <https://github.com/jdvelasq/conferencia_data_storytelling>`_
 
 

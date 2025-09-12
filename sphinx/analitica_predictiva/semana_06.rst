@@ -5,20 +5,6 @@ Sesión 06 --- Oct 4
 
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
-**Casos Prácticos**
-
-* Taller Presencial 11 --- `Reduccion de la dimensionalidad digits <https://classroom.github.com/a/MrNRZlOa>`_ 
-
-* Taller Presencial 12 --- `Patrones de demanda diaria <https://classroom.github.com/a/sCIBB6WD>`_ 
-
-
-
-
-.. raw:: html
-   
-   <br>
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
 **Aprendizaje Supervisado**
 
 * `Regresores clásicos <https://jdvelasq.github.io/curso_ml_con_sklearn/24_regresores_clasicos/__index__.html>`_ 

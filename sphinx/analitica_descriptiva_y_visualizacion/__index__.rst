@@ -37,7 +37,7 @@ Analítica Descriptiva y Visualización de Datos
     :glob:
 
     datacamp
-    labs
+    evaluacion
     semana_01
     semana_02
     semana_03
