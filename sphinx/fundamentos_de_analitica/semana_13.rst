@@ -3,14 +3,6 @@ Sesión 13 --- Nov 19
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 27 --- `Predicción básica de series de tiempo <https://classroom.github.com/a/Z_MJyC7z>`_ 
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

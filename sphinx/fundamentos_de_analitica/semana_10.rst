@@ -3,19 +3,6 @@ Sesión 10 --- Oct 29
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 19 --- `Regresión básica <https://classroom.github.com/a/NORYF-3F>`_
-
-* Taller Presencial 20 --- `Ajuste de hiperparámetros <https://classroom.github.com/a/55wEPAIN>`_
-
-
-
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

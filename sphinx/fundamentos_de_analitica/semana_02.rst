@@ -4,17 +4,6 @@ Sesión 02 --- Sep 3
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/ciN6YDoq>`_ 
-
-
-
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

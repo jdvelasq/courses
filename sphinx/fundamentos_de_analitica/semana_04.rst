@@ -3,23 +3,9 @@ Sesión 04 --- Sep 17
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 03 --- `Consultas SQL en MapReduce <https://classroom.github.com/a/vb5hEbWG>`_ 
-
-
-* Taller Presencial 04 --- `Wordcount con Pandas <https://classroom.github.com/a/WW7O_BXD>`_
-
-
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
- 
 
 **Ingestion y Limpieza de Datos**
 

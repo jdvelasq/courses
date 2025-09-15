@@ -3,18 +3,6 @@ Sesión 09 --- Oct 22
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 16 --- `Implementación de modelos de ML <https://classroom.github.com/a/EDKX9e1B>`_
-
-* Taller Presencial 17 --- `Clasificación básica de imágenes <https://classroom.github.com/a/3we2IXlj>`_
-
-* Taller Presencial 18 --- `Clasificación básica de texto <https://classroom.github.com/a/Z33wnyQC>`_
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 
