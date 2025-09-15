@@ -1,18 +1,6 @@
 Sesión 08 --- Oct 15
 -------------------------------------------------------------------------------
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 14 --- `Análisis de datos con Pandas <https://classroom.github.com/a/QBFQ7MWD>`_ 
-
-* Taller Presencial 15 --- `Despliegue de modelos de ML <https://classroom.github.com/a/6vRD2KqJ>`_
-
-
-
 
 .. raw:: html
 

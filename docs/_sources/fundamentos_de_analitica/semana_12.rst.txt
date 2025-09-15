@@ -4,21 +4,6 @@ Sesión 12 --- Nov 12
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 24 --- `Reducción de la dimensionalidad digits <https://classroom.github.com/a/-G9OpQz_>`_
-
-* Taller Presencial 25 --- `Patrones de demanda diaria <https://classroom.github.com/a/acIFqTNs>`_ 
-
-* Taller Presencial 26 --- `Visualización de la estructura del mercado <https://classroom.github.com/a/VG7YUp1t>`_ 
-
-
-
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

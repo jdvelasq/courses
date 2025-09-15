@@ -3,17 +3,6 @@ Sesión 03 --- Sep 10
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 02 --- `Programación en Python MapReduce <https://classroom.github.com/a/JWRqVwhO>`_ 
-
-
-
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
    

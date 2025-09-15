@@ -3,20 +3,6 @@ Sesión 11 --- Nov 5
 
 .. raw:: html
 
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 21 --- `Pipelines <https://classroom.github.com/a/Mt1rFHUk>`_
-
-* Taller Presencial 22 --- `SelectKBest para regresión <https://classroom.github.com/a/YRtW3B8E>`_
-
-* Taller Presencial 23 --- `SelectKBest para clasificación <https://classroom.github.com/a/pR7vYrKd>`_
-
-
-
-.. raw:: html
-
    <br>
    <hr style="height:1px;border-width:0;color:gray;background-color:gray">
 

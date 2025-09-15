@@ -1,21 +1,6 @@
 Sesión 07 --- Oct 8
 -------------------------------------------------------------------------------
 
-.. raw:: html
-
-   <hr style="height:1px;border-width:0;color:gray;background-color:gray">
-
-**Casos Prácticos**
-
-* Taller Presencial 11 --- `Worldmap en folium <https://classroom.github.com/a/dp38LtjI>`_
-
-* Taller Presencial 12 --- `Matplotlib networkx <https://classroom.github.com/a/FzfqFbBX>`_
-
-* Taller Presencial 13 --- `Bootstrapping <https://classroom.github.com/a/on_XsBqF>`_
-
-
-
-
 
 .. raw:: html
 
