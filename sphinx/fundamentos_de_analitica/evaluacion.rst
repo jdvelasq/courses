@@ -69,8 +69,6 @@ Evaluación
 
 **Laboratorios**
 
-* Taller Presencial 01 --- `Hola mundo <https://classroom.github.com/a/ciN6YDoq>`_ 
-
 * Lab 01 --- `Programacion básica en Python <https://classroom.github.com/a/-0MqY2Dw>`_
 
 * Lab 02 --- `Pandas <https://classroom.github.com/a/aJekQHOs>`_
