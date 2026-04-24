@@ -54,20 +54,20 @@ Evaluación
 
 **Laboratorios**
 
-* Lab 01 --- Programacion básica en Python
+* Lab 01 --- `Programacion básica en Python <https://classroom.github.com/a/7gMtpjDV>`_
 
-* Lab 02 --- Pandas
+* Lab 02 --- `Pandas <https://classroom.github.com/a/f0b3hdki>`_
 
-* Lab 03 --- Ingestión de texto plano
+* Lab 03 --- `Ingestión de texto plano <https://classroom.github.com/a/DsCWwH7m>`_
 
-* Lab 04 --- Ingestión de texto en directorios
+* Lab 04 --- `Ingestión de texto en directorios <https://classroom.github.com/a/xPVH0vqN>`_
 
-* Lab 05 --- Limpieza de datos de campañas de marketing 
+* Lab 05 --- `Limpieza de datos de campañas de marketing <https://classroom.github.com/a/GnyFn10d>`_
 
-* Lab 06 --- Limpieza de datos de solicitudes de credito
+* Lab 06 --- `Limpieza de datos de solicitudes de credito <https://classroom.github.com/a/9K1QRHPz>`_
 
-* Lab 07 --- Matplotlib news plot
+* Lab 07 --- `Matplotlib news plot <https://classroom.github.com/a/9imSA9SQ>`_
 
-* Lab 08 --- Matplotlib dashboard
+* Lab 08 --- `Matplotlib dashboard <https://classroom.github.com/a/9imSA9SQ>`_
 
-* Lab 09 --- SQL con SQlite
+* Lab 09 --- `SQL con SQlite <https://classroom.github.com/a/QAkaxwMh>`_
