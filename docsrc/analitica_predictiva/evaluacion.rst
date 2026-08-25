@@ -41,15 +41,15 @@ Evaluación
 
 **Laboratorios**
 
-* Lab 01 --- Predicción del default usando bosques aleatorios
+.. * Lab 01 --- Predicción del default usando bosques aleatorios
 
-* Lab 02 --- Predicción del default usando regresión logística
+.. * Lab 02 --- Predicción del default usando regresión logística
 
-* Lab 03 --- Predicción del default usando maquinas de vectores de soporte
+.. * Lab 03 --- Predicción del default usando maquinas de vectores de soporte
 
-* Lab 04 --- Predicción del default usando redes neuronales
+.. * Lab 04 --- Predicción del default usando redes neuronales
 
-* Lab 05 --- Predicción de precios usando regresion lineal
+.. * Lab 05 --- Predicción de precios usando regresion lineal
 
 
 
